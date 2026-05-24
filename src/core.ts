@@ -156,15 +156,20 @@ export async function ingestSessionFile(input: IngestSessionInput): Promise<{ pa
 export async function buildContextPack(input: BuildContextPackInput): Promise<{ contextPack: string }> {
   const files = await listMemoryFiles(input.projectScope || input.sessionScope);
   await touchMemoryFiles(files);
-  const memoryLines: string[] = [];
+  const memoryItems: MemoryItem[] = [];
   for (const filePath of files) {
     const item = await loadMemoryItem(filePath);
     if (!item || item.status === "rejected" || item.status === "outdated") {
       continue;
     }
-    const excerpt = item.content.replace(/\s+/g, " ").trim().slice(0, 500);
-    memoryLines.push(`memory:${item.kind}:${item.scope}:${item.id}\n${excerpt}`);
+    memoryItems.push(item);
   }
+  const memoryLines = rankMemoryItems(memoryItems, input.taskContext)
+    .slice(0, 3)
+    .map((item) => {
+      const excerpt = item.content.replace(/\s+/g, " ").trim().slice(0, 500);
+      return `memory:${item.kind}:${item.scope}:${item.id}\n${excerpt}`;
+    });
   return {
     contextPack: [
       `task=${input.taskContext}`,
@@ -174,6 +179,27 @@ export async function buildContextPack(input: BuildContextPackInput): Promise<{ 
       memoryLines.length > 0 ? `memories:\n${memoryLines.join("\n---\n")}` : "memories="
     ].join("\n")
   };
+}
+
+function rankMemoryItems(items: MemoryItem[], taskContext: string): MemoryItem[] {
+  const terms = taskContext
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter((term) => term.length >= 3);
+  const score = (item: MemoryItem): number => {
+    const text = `${item.id} ${item.kind} ${item.scope} ${item.content} ${(item.semantic_tags ?? []).join(" ")}`.toLowerCase();
+    const termScore = terms.reduce((sum, term) => sum + (text.includes(term) ? 3 : 0), 0);
+    const statusScore = item.status === "verified" ? 2 : 0;
+    const kindScore = item.kind === "session" ? 1 : 0;
+    return termScore + statusScore + kindScore + item.confidence;
+  };
+  return [...items].sort((left, right) => {
+    const scoreDelta = score(right) - score(left);
+    if (scoreDelta !== 0) {
+      return scoreDelta;
+    }
+    return new Date(right.updated_at).getTime() - new Date(left.updated_at).getTime();
+  });
 }
 
 export async function evaluateRubric(input: EvaluateRubricInput): Promise<{

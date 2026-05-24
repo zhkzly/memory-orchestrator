@@ -142,6 +142,35 @@ const sessionItem = {
 
 await run("node", ["dist/cli.js", "write", "--item", JSON.stringify(sessionItem)], { env: cliEnv });
 
+for (let index = 1; index <= 4; index += 1) {
+  await run(
+    "node",
+    [
+      "dist/cli.js",
+      "write",
+      "--item",
+      JSON.stringify({
+        id: `low-priority-memory-${index}`,
+        kind: "project",
+        scope: "harness-project",
+        source: sourcePath,
+        confidence: 0.2,
+        confidence_rationale: "low priority harness fixture",
+        status: "candidate",
+        content: `Low priority filler memory ${index}.`,
+        created_at: now,
+        updated_at: now,
+        retrieval_count: 0,
+        cross_project_applicable: false,
+        references: [],
+        semantic_tags: [],
+        provenance: [{ type: "file", ref: sourcePath }]
+      })
+    ],
+    { env: cliEnv }
+  );
+}
+
 const ingestedSession = JSON.parse(
   await run("node", ["dist/cli.js", "ingest-session", "--file", sessionSummaryPath], { env: cliEnv })
 );
@@ -170,6 +199,12 @@ assert(
 assert(
   inferredContext.contextPack.includes("Session ingest should capture end-of-session summaries"),
   "Expected context to include ingested session summaries."
+);
+const memoryEntries = inferredContext.contextPack.match(/^memory:/gm) ?? [];
+assert(memoryEntries.length <= 3, "Expected context to limit inline memory entries.");
+assert(
+  !inferredContext.contextPack.includes("Low priority filler memory 4."),
+  "Expected context to omit low-priority filler memory."
 );
 
 const knowledgeContext = JSON.parse(
