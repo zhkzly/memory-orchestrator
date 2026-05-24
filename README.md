@@ -41,6 +41,14 @@ node dist/cli.js doctor
 
 `doctor` verifies the vault root, context generation, agent harness entrypoint, and `session-end` hook readiness. A project-local config is optional, not required. If a checkout is not pinned yet, it still works and will suggest `init-project` only as a later convenience.
 
+Inspect the memory type policy:
+
+```bash
+memory-orchestrator memory-policy
+```
+
+This returns the machine-readable meaning, load policy, write policy, retrieval policy, and safe-apply boundary for `personal`, `project`, `evidence`, and `session` memory.
+
 ## Layered Context
 
 `context` returns a layered context pack rather than one undifferentiated search result:
@@ -83,6 +91,7 @@ node dist/cli.js status
 - `agent codex|claude [project-dir] [--task <text>]`
 - `maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]`
 - `review [--scope <scope>] [--days <n>] [--session <scope>] [--project <scope>]`
+- `memory-policy`
 - `harness [--task <text>] [--scope <scope>] [--days <n>] [--write-report]`
 - `controller [--trigger scheduled|event|manual] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--write-proposals] [--apply-safe]`
 - `controller-apply --proposal <id>`

@@ -51,6 +51,76 @@ export interface SessionTranscriptSummary {
   notes: string[];
 }
 
+export function memoryPolicy(): {
+  kinds: Record<
+    MemoryKind,
+    {
+      meaning: string;
+      load: string;
+      write: string;
+      retrieval: string;
+      autoApply: string[];
+      reviewBoundary: string;
+    }
+  >;
+  contextSections: Record<string, string[]>;
+  controller: {
+    safeApply: string[];
+    proposalFirst: string[];
+    neverSilentRewrite: string[];
+  };
+} {
+  return {
+    kinds: {
+      personal: {
+        meaning: "Long-term user model: stable preferences, communication style, durable personal constraints.",
+        load: "always_loaded",
+        write: "verified_multi_evidence_or_user_confirmed",
+        retrieval: "direct_profile_load",
+        autoApply: [],
+        reviewBoundary: "Do not rewrite silently; personal memory needs strong evidence or explicit confirmation."
+      },
+      project: {
+        meaning: "Project continuity: active decisions, architecture constraints, current status, recurring workflows.",
+        load: "project_core_plus_retrieved",
+        write: "verified_project_promotion",
+        retrieval: "scope_then_task",
+        autoApply: [],
+        reviewBoundary: "Project rewrites are proposal-first and should preserve provenance."
+      },
+      evidence: {
+        meaning: "Source-backed facts, tests, citations, and reference claims used to justify memory.",
+        load: "evidence_memory",
+        write: "source_hash_required",
+        retrieval: "task_or_reference",
+        autoApply: [],
+        reviewBoundary: "Evidence changes require source integrity checks."
+      },
+      session: {
+        meaning: "Ephemeral scratchpad: recent session summaries, temporary state, and candidate observations.",
+        load: "session_memory",
+        write: "automatic_ephemeral_ttl",
+        retrieval: "recent_plus_task",
+        autoApply: ["mark_expired_outdated"],
+        reviewBoundary: "Session memory can expire automatically, but promotion to durable memory must be verified."
+      }
+    },
+    contextSections: {
+      always_loaded: ["personal"],
+      project_core: ["project"],
+      retrieved: ["project", "evidence"],
+      session_memory: ["session"],
+      evidence_memory: ["evidence"],
+      knowledge_bases: ["external"]
+    },
+    controller: {
+      safeApply: ["session"],
+      proposalFirst: ["personal", "project", "evidence"],
+      neverSilentRewrite: ["personal", "project", "evidence"]
+    }
+  };
+}
+
 function now(): string {
   return new Date().toISOString();
 }

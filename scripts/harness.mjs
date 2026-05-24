@@ -953,6 +953,15 @@ assert(
 const inferredContext = JSON.parse(
   await run("node", [cliPath, "context", "--task", "harness task"], projectOptions)
 );
+const memoryPolicy = JSON.parse(await run("node", [cliPath, "memory-policy"], projectOptions));
+assert(memoryPolicy.kinds.personal.load === "always_loaded", "Expected personal memory policy to be always-loaded.");
+assert(memoryPolicy.kinds.personal.write === "verified_multi_evidence_or_user_confirmed", "Expected personal memory writes to require strong evidence.");
+assert(memoryPolicy.kinds.project.load === "project_core_plus_retrieved", "Expected project memory policy to match layered context.");
+assert(memoryPolicy.kinds.evidence.retrieval === "task_or_reference", "Expected evidence memory to prefer task/reference retrieval.");
+assert(memoryPolicy.kinds.session.load === "session_memory", "Expected session memory policy to match session_memory context section.");
+assert(memoryPolicy.kinds.session.autoApply.includes("mark_expired_outdated"), "Expected session memory to allow safe expiry apply.");
+assert(memoryPolicy.contextSections.always_loaded.includes("personal"), "Expected policy to document always_loaded personal memory.");
+assert(memoryPolicy.controller.safeApply.includes("session"), "Expected policy to document session-only safe apply.");
 assert(
   inferredContext.contextPack.includes("project=harness-project"),
   "Expected context to infer project without explicit --project."

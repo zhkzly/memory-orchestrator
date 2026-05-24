@@ -14,6 +14,7 @@ Use this skill when a project relies on `memory-orchestrator` for long-term memo
    - Otherwise run `memory-orchestrator status`.
    - If unconfigured, ask the user for the vault path and run `memory-orchestrator init --vault <path>`.
 2. Get task context:
+   - Run `memory-orchestrator memory-policy` if you need to confirm each memory type's load/write/retrieval rules.
    - Run `memory-orchestrator context --task "<current task>"`.
    - Read the returned sections by type:
      - `always_loaded`: long-term user profile and stable preferences; treat as always relevant unless contradicted.

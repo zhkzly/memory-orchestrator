@@ -8,7 +8,8 @@ import {
   summarizeSessionTranscript,
   buildContextPack,
   evaluateRubric,
-  cleanMemory
+  cleanMemory,
+  memoryPolicy
 } from "./core.js";
 import { addKnowledgeBase, initConfig, initProjectConfig, linkKnowledgeBase, resolveConfig, resolveVaultRoot } from "./config.js";
 import {
@@ -53,6 +54,7 @@ function usage(): string {
     "  agent codex|claude [project-dir] [--task <text>]",
     "  maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]",
     "  review [--scope <scope>] [--days <n>] [--session <scope>] [--project <scope>]",
+    "  memory-policy",
     "  harness [--task <text>] [--scope <scope>] [--days <n>] [--write-report]",
     "  controller [--trigger scheduled|event|manual] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--write-proposals] [--apply-safe]",
     "  controller-apply --proposal <id>",
@@ -780,6 +782,10 @@ async function main(): Promise<void> {
   }
   if (command === "harness") {
     console.log(JSON.stringify(await buildMemoryHarness(rest), null, 2));
+    return;
+  }
+  if (command === "memory-policy") {
+    console.log(JSON.stringify(memoryPolicy(), null, 2));
     return;
   }
   if (command === "controller") {
