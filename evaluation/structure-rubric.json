@@ -4,6 +4,13 @@
     "scope": "layered local memory system for Codex, Claude Code, Obsidian, and external knowledge bases",
     "version": "0.1.0"
   },
+  "scale": {
+    "1": "architecturally broken",
+    "2": "missing major layers or boundaries",
+    "3": "partly separated but still muddled",
+    "4": "well separated and usable with caveats",
+    "5": "clear, robust, and hard to misuse"
+  },
   "method_note": "Rubrics are treated as explicit scoring guides: criteria define what matters, evidence refs identify what was inspected, and scores summarize current evidence rather than intent.",
   "proxies": [
     {

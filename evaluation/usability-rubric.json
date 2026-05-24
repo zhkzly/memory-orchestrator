@@ -4,6 +4,13 @@
     "scope": "daily local agent memory workflow for Codex and Claude Code",
     "version": "0.1.0"
   },
+  "scale": {
+    "1": "not usable in practice",
+    "2": "usable only with heavy manual work",
+    "3": "usable but still awkward or incomplete",
+    "4": "usable for real workflows with caveats",
+    "5": "stable and low-friction for normal use"
+  },
   "proxies": [
     {
       "id": "zero-friction-startup",

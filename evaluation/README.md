@@ -18,6 +18,8 @@ Use these files to keep rubric decomposition, evidence collection, and scoring s
 2. Collect evidence into `evidence.json`.
 3. Score only from the rubric plus evidence.
 
+Each runnable rubric should define its own level scale so the score has an interpretation, not just a number.
+
 ## Rule
 
 Never edit rubric, evidence, and score in the same pass.
