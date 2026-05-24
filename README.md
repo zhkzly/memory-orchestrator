@@ -46,6 +46,7 @@ node dist/cli.js status
 - `kb read --name <name> --page <path>`
 - `agent codex|claude [project-dir] [--task <text>]`
 - `maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>]`
+- `ingest-session --file <path> [--session <scope>] [--project <scope>]`
 - `capture --raw <text> --source <source> [--session <session>] [--project <project>]`
 - `classify --candidate <json>`
 - `verify --candidate <json> --evidence <json-array>`
@@ -99,6 +100,14 @@ node dist/cli.js maintain --task "daily memory maintenance"
 ```
 
 It resolves config, infers project/session, builds a context pack, runs cleanup checks, and reports registered knowledge bases as JSON. It is intentionally read/report-first; use explicit write commands such as `capture` and `promote` for memory changes until transcript ingestion is implemented.
+
+Use `ingest-session` from a session-end hook or agent task to write a session summary file as an ephemeral candidate memory:
+
+```bash
+node dist/cli.js ingest-session --file /path/to/session-summary.md
+```
+
+This does not promote the summary into project or personal memory. Promotion remains explicit.
 
 ## Knowledge Bases
 

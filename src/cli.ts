@@ -4,6 +4,7 @@ import {
   verifyCandidate,
   promoteItem,
   writeCandidateItem,
+  ingestSessionFile,
   buildContextPack,
   evaluateRubric,
   cleanMemory
@@ -30,6 +31,7 @@ function usage(): string {
     "  kb read --name <name> --page <path>",
     "  agent codex|claude [project-dir] [--task <text>]",
     "  maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>]",
+    "  ingest-session --file <path> [--session <scope>] [--project <scope>]",
     "  capture --raw <text> --source <source> [--session <session>] [--project <project>]",
     "  classify --candidate <json>",
     "  verify --candidate <json> --evidence <json-array>",
@@ -276,6 +278,15 @@ async function main(): Promise<void> {
     const source = value(rest, "--source") ?? "";
     const { session, project } = await resolvedScopes(rest);
     console.log(JSON.stringify(await captureCandidate({ rawObservation, source, session, project }), null, 2));
+    return;
+  }
+  if (command === "ingest-session") {
+    const filePath = value(rest, "--file");
+    if (!filePath) {
+      throw new Error("ingest-session requires --file <path>.");
+    }
+    const { session, project } = await resolvedScopes(rest);
+    console.log(JSON.stringify(await ingestSessionFile({ filePath, session, project }), null, 2));
     return;
   }
   if (command === "classify") {

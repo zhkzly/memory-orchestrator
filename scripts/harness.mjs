@@ -27,8 +27,14 @@ const homeRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-home."))
 const wikiRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-wiki."));
 const binRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-bin."));
 const sourcePath = path.join(vaultRoot, "source.md");
+const sessionSummaryPath = path.join(vaultRoot, "session-summary.md");
 const mockAgentOutput = path.join(vaultRoot, "mock-agent-env.json");
 await writeFile(sourcePath, "Evidence source for the harness.\n", "utf8");
+await writeFile(
+  sessionSummaryPath,
+  "Session ingest should capture end-of-session summaries for the next context pack.\n",
+  "utf8"
+);
 await mkdir(path.join(wikiRoot, "wiki"), { recursive: true });
 await writeFile(
   path.join(wikiRoot, "wiki", "agent-memory.md"),
@@ -132,6 +138,13 @@ const sessionItem = {
 
 await run("node", ["dist/cli.js", "write", "--item", JSON.stringify(sessionItem)], { env: cliEnv });
 
+const ingestedSession = JSON.parse(
+  await run("node", ["dist/cli.js", "ingest-session", "--file", sessionSummaryPath], { env: cliEnv })
+);
+assert(ingestedSession.item.kind === "session", "Expected ingest-session to create a session memory item.");
+assert(ingestedSession.item.status === "candidate", "Expected ingest-session to write a candidate item.");
+assert(ingestedSession.path.includes("sessions"), "Expected ingest-session to write under sessions.");
+
 const inferredContext = JSON.parse(
   await run("node", ["dist/cli.js", "context", "--task", "harness task"], { env: cliEnv })
 );
@@ -146,6 +159,10 @@ assert(
 assert(
   inferredContext.contextPack.includes("Session memory should stay ephemeral"),
   "Expected context to include inline session memory without promotion."
+);
+assert(
+  inferredContext.contextPack.includes("Session ingest should capture end-of-session summaries"),
+  "Expected context to include ingested session summaries."
 );
 
 const knowledgeContext = JSON.parse(

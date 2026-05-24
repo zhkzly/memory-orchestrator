@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { promises as fs } from "node:fs";
 import {
   hashFileContents,
   loadMemoryItem,
@@ -27,6 +28,12 @@ export interface EvaluateRubricInput {
   evidenceSet: string[];
   candidateSystem: string;
   proxies: RubricProxy[];
+}
+
+export interface IngestSessionInput {
+  filePath: string;
+  session: string;
+  project: string;
 }
 
 function now(): string {
@@ -122,6 +129,28 @@ export async function writeCandidateItem(item: MemoryItem): Promise<{ path: stri
   }
   const filePath = await writeMemoryItem(item);
   return { path: filePath };
+}
+
+export async function ingestSessionFile(input: IngestSessionInput): Promise<{ path: string; item: MemoryItem }> {
+  const content = (await fs.readFile(input.filePath, "utf8")).trim();
+  const item: MemoryItem = {
+    id: `session:${randomUUID()}`,
+    kind: "session",
+    scope: `${input.project}:${input.session}`,
+    source: input.filePath,
+    confidence: 0.6,
+    confidence_rationale: "session file ingest",
+    status: "candidate",
+    content,
+    created_at: now(),
+    updated_at: now(),
+    retrieval_count: 0,
+    cross_project_applicable: false,
+    semantic_tags: ["session-ingest"],
+    provenance: [{ type: "file", ref: input.filePath }]
+  };
+  const { path } = await writeCandidateItem(item);
+  return { path, item };
 }
 
 export async function buildContextPack(input: BuildContextPackInput): Promise<{ contextPack: string }> {
