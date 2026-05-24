@@ -16,6 +16,7 @@ import {
   buildControllerSchedule,
   readControllerFeedback,
   runController,
+  runControllerApply,
   runControllerPolicy,
   runControllerReview
 } from "./controller.js";
@@ -53,12 +54,13 @@ function usage(): string {
     "  maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]",
     "  review [--scope <scope>] [--days <n>] [--session <scope>] [--project <scope>]",
     "  harness [--task <text>] [--scope <scope>] [--days <n>] [--write-report]",
-    "  controller [--trigger scheduled|event|manual] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--apply-safe]",
+    "  controller [--trigger scheduled|event|manual] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--write-proposals] [--apply-safe]",
+    "  controller-apply --proposal <id>",
     "  controller-feedback [--limit <n>] [--min-score <n>]",
     "  controller-policy init|show [--force] [--model-provider <name>] [--model-name <name>]",
     "  controller-reflection [--limit <n>] [--write-report]",
     "  controller-review ingest|show [--file <path>] [--reviewer <name>] [--limit <n>]",
-    "  controller-schedule [--format cron|systemd] [--time HH:MM] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--apply-safe]",
+    "  controller-schedule [--format cron|systemd|launchd|windows-task] [--time HH:MM] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--apply-safe]",
     "  ui [--host <host>] [--port <port>]",
     "  ingest-session --file <path> [--session <scope>] [--project <scope>]",
     "  summarize-session --file <path> [--out <path>] [--ingest] [--session <scope>] [--project <scope>]",
@@ -786,6 +788,10 @@ async function main(): Promise<void> {
   }
   if (command === "controller-feedback") {
     console.log(JSON.stringify(await readControllerFeedback(rest), null, 2));
+    return;
+  }
+  if (command === "controller-apply") {
+    console.log(JSON.stringify(await runControllerApply(rest), null, 2));
     return;
   }
   if (command === "controller-policy") {

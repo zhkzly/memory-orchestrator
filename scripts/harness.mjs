@@ -65,6 +65,8 @@ const controllerPolicyPath = path.join(vaultRoot, "controller-policy.json");
 const vaultControllerPolicyPath = path.join(vaultRoot, "agent", "controller-policy.json");
 const controllerFeedbackPath = path.join(vaultRoot, "agent", "controller-feedback.jsonl");
 const controllerReinforcementPath = path.join(vaultRoot, "agent", "controller-reinforcement.jsonl");
+const controllerProposalsPath = path.join(vaultRoot, "agent", "controller-proposals.jsonl");
+const controllerEvaluationsPath = path.join(vaultRoot, "agent", "controller-evaluations.jsonl");
 const controllerExternalReviewPath = path.join(vaultRoot, "controller-external-review.json");
 const controllerExternalReviewLogPath = path.join(vaultRoot, "agent", "controller-review-feedback.jsonl");
 const mockAgentOutput = path.join(vaultRoot, "mock-agent-env.json");
@@ -345,6 +347,16 @@ assert(projectMarkdown.includes("# Project Memory: harness-project-rule"), "Expe
 assert(projectMarkdown.includes("## Claim"), "Expected project memory to have a readable claim section.");
 assert(projectMarkdown.includes("## Provenance"), "Expected project memory to have a readable provenance section.");
 
+const personalItem = {
+  ...projectItem,
+  id: "harness-user-profile",
+  kind: "personal",
+  scope: "user",
+  content: "The user prefers direct engineering answers with explicit tradeoffs and evidence.",
+  semantic_tags: ["profile", "communication"]
+};
+await run("node", [cliPath, "promote", "--item", JSON.stringify(personalItem)], projectOptions);
+
 const contradictionPositiveItem = {
   ...projectItem,
   id: "harness-contradiction-positive",
@@ -389,6 +401,13 @@ const expiredSessionItem = {
   expires_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
 };
 await run("node", [cliPath, "write", "--item", JSON.stringify(expiredSessionItem)], projectOptions);
+
+const proposalExpiredSessionItem = {
+  ...expiredSessionItem,
+  id: "proposal-expired-session-note",
+  content: "Expired session memory should become an evaluated optimization proposal before apply."
+};
+await run("node", [cliPath, "write", "--item", JSON.stringify(proposalExpiredSessionItem)], projectOptions);
 
 for (let index = 1; index <= 4; index += 1) {
   await run(
@@ -877,6 +896,46 @@ assert(reviewArtifact.includes("## Review"), "Expected review artifact to includ
 assert(reviewArtifact.includes("## Review Items"), "Expected review artifact to include structured review items.");
 assert(reviewArtifact.includes("Do not rewrite durable memory"), "Expected review artifact to preserve safety boundary.");
 
+const proposalControllerReport = JSON.parse(
+  await run("node", [cliPath, "controller", "--policy", controllerPolicyPath, "--write-proposals"], projectOptions)
+);
+assert(
+  proposalControllerReport.proposalLogPath === controllerProposalsPath,
+  "Expected controller --write-proposals to append to the vault-owned proposal log."
+);
+assert(
+  proposalControllerReport.evaluationLogPath === controllerEvaluationsPath,
+  "Expected controller --write-proposals to append to the vault-owned evaluation log."
+);
+assert(
+  proposalControllerReport.proposals.some(
+    (proposal) => proposal.type === "mark-session-outdated" && proposal.targets.some((target) => target.includes("proposal-expired-session-note"))
+  ),
+  "Expected expired session memory to become an evaluated optimization proposal."
+);
+assert(
+  proposalControllerReport.proposals.some((proposal) => proposal.requiresReview === true && proposal.risk !== "low"),
+  "Expected durable consolidation or review proposals to require review."
+);
+const proposalLines = (await readFile(controllerProposalsPath, "utf8")).trim().split("\n");
+assert(proposalLines.length >= 1, "Expected proposal log to contain at least one entry.");
+const evaluationLines = (await readFile(controllerEvaluationsPath, "utf8")).trim().split("\n");
+assert(evaluationLines.length >= 1, "Expected evaluation log to contain at least one rubric entry.");
+const safeSessionProposal = proposalControllerReport.proposals.find(
+  (proposal) => proposal.type === "mark-session-outdated" && proposal.targets.some((target) => target.includes("proposal-expired-session-note"))
+);
+const proposalApplyReport = JSON.parse(await run("node", [cliPath, "controller-apply", "--proposal", safeSessionProposal.id], projectOptions));
+assert(
+  proposalApplyReport.applied.some((entry) => entry.includes("proposal-expired-session-note")),
+  "Expected controller-apply to apply a low-risk evaluated session proposal."
+);
+const proposalExpiredSessionMarkdown = await readFile(path.join(vaultRoot, "sessions", "proposal-expired-session-note.md"), "utf8");
+assert(proposalExpiredSessionMarkdown.includes('"status": "outdated"'), "Expected controller-apply to mark proposal session memory outdated.");
+assert(
+  proposalExpiredSessionMarkdown.includes("controller proposal apply"),
+  "Expected controller-apply update to be traceable to a proposal."
+);
+
 const appliedControllerReport = JSON.parse(
   await run("node", [cliPath, "controller", "--trigger", "scheduled", "--apply-safe"], projectOptions)
 );
@@ -903,11 +962,32 @@ assert(
   "Expected context to include inline verified project memory."
 );
 assert(
+  inferredContext.contextPack.includes("always_loaded:"),
+  "Expected context to distinguish always-loaded long-term memory."
+);
+assert(
+  inferredContext.contextPack.includes("retrieved:"),
+  "Expected context to distinguish task-retrieved memory."
+);
+assert(
+  inferredContext.contextPack.includes("session_memory:"),
+  "Expected context to distinguish session memory retrieval."
+);
+assert(
+  inferredContext.contextPack.includes("evidence_memory:"),
+  "Expected context to distinguish evidence retrieval."
+);
+assert(
+  inferredContext.contextPack.includes("memory:personal:user:harness-user-profile"),
+  "Expected context to always load user profile memory even when task terms do not match."
+);
+assert(
   !inferredContext.contextPack.includes("Low priority filler memory 4."),
   "Expected context to omit low-priority filler memory."
 );
-const memoryEntries = inferredContext.contextPack.match(/^memory:/gm) ?? [];
-assert(memoryEntries.length <= 3, "Expected context to limit inline memory entries.");
+const retrievedSection = inferredContext.contextPack.match(/retrieved:\n([\s\S]*?)\nsession_memory:/)?.[1] ?? "";
+const retrievedEntries = retrievedSection.match(/^memory:(project|evidence):/gm) ?? [];
+assert(retrievedEntries.length <= 3, "Expected context to limit task-retrieved durable memory entries.");
 
 const ingestedSessionContext = JSON.parse(
   await run("node", [cliPath, "context", "--task", "session summaries"], projectOptions)
@@ -916,7 +996,8 @@ assert(
   ingestedSessionContext.contextPack.includes("Session ingest should capture end-of-session summaries"),
   "Expected task-matched context to include ingested session summaries."
 );
-const ingestedSessionMemoryEntries = ingestedSessionContext.contextPack.match(/^memory:/gm) ?? [];
+const ingestedSessionSection = ingestedSessionContext.contextPack.match(/session_memory:\n([\s\S]*?)\nevidence_memory:/)?.[1] ?? "";
+const ingestedSessionMemoryEntries = ingestedSessionSection.match(/^memory:session:/gm) ?? [];
 assert(ingestedSessionMemoryEntries.length <= 3, "Expected ingested session context to keep inline memory bounded.");
 
 const ephemeralSessionContext = JSON.parse(
@@ -926,7 +1007,8 @@ assert(
   ephemeralSessionContext.contextPack.includes("Session memory should stay ephemeral"),
   "Expected task-matched context to include inline session memory without promotion."
 );
-const ephemeralSessionMemoryEntries = ephemeralSessionContext.contextPack.match(/^memory:/gm) ?? [];
+const ephemeralSessionSection = ephemeralSessionContext.contextPack.match(/session_memory:\n([\s\S]*?)\nevidence_memory:/)?.[1] ?? "";
+const ephemeralSessionMemoryEntries = ephemeralSessionSection.match(/^memory:session:/gm) ?? [];
 assert(ephemeralSessionMemoryEntries.length <= 3, "Expected ephemeral session context to keep inline memory bounded.");
 
 const transcriptContext = JSON.parse(
@@ -940,7 +1022,8 @@ assert(
   transcriptContext.contextPack.includes("Keep CLI-first memory policy"),
   "Expected transcript context to include session-end ingested transcript summary."
 );
-const transcriptMemoryEntries = transcriptContext.contextPack.match(/^memory:/gm) ?? [];
+const transcriptSessionSection = transcriptContext.contextPack.match(/session_memory:\n([\s\S]*?)\nevidence_memory:/)?.[1] ?? "";
+const transcriptMemoryEntries = transcriptSessionSection.match(/^memory:session:/gm) ?? [];
 assert(transcriptMemoryEntries.length <= 3, "Expected transcript context to keep inline memory bounded.");
 
 const knowledgeContext = JSON.parse(

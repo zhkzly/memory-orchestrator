@@ -18,6 +18,8 @@ skills/
     SKILL.md
   memory-cleaner/
     SKILL.md
+  memory-orchestrator-codex/
+    SKILL.md
 ```
 
 Add `references/` or `scripts/` only when a skill needs bundled material.

@@ -271,7 +271,11 @@ function renderSessionSummary(
 
 export async function buildContextPack(input: BuildContextPackInput): Promise<{ contextPack: string }> {
   const files = await listMemoryFiles(input.projectScope || input.sessionScope);
-  await touchMemoryFiles(files);
+  const globalPersonalItems = (await listAllMemoryItems()).filter(
+    ({ item }) => item.kind === "personal" && item.status === "verified"
+  );
+  const personalFiles = globalPersonalItems.map(({ filePath }) => filePath);
+  await touchMemoryFiles([...files, ...personalFiles]);
   const memoryItems: MemoryItem[] = [];
   for (const filePath of files) {
     const item = await loadMemoryItem(filePath);
@@ -280,21 +284,61 @@ export async function buildContextPack(input: BuildContextPackInput): Promise<{ 
     }
     memoryItems.push(item);
   }
-  const memoryLines = rankMemoryItems(memoryItems, input.taskContext)
+  for (const { item } of globalPersonalItems) {
+    if (!memoryItems.some((existing) => existing.id === item.id)) {
+      memoryItems.push(item);
+    }
+  }
+  const alwaysLoaded = memoryItems
+    .filter((item) => item.kind === "personal" && item.status === "verified")
+    .sort((left, right) => right.confidence - left.confidence || new Date(right.updated_at).getTime() - new Date(left.updated_at).getTime())
+    .slice(0, 5)
+    .map(renderMemoryLine);
+  const projectCore = memoryItems
+    .filter((item) => item.kind === "project" && item.status === "verified" && item.scope.includes(input.projectScope))
+    .sort((left, right) => right.confidence - left.confidence || new Date(right.updated_at).getTime() - new Date(left.updated_at).getTime())
+    .slice(0, 5)
+    .map(renderMemoryLine);
+  const retrieved = rankMemoryItems(
+    memoryItems.filter((item) => item.kind === "project" || item.kind === "evidence"),
+    input.taskContext
+  )
     .slice(0, 3)
-    .map((item) => {
-      const excerpt = item.content.replace(/\s+/g, " ").trim().slice(0, 500);
-      return `memory:${item.kind}:${item.scope}:${item.id}\n${excerpt}`;
-    });
+    .map(renderMemoryLine);
+  const sessionMemory = rankMemoryItems(
+    memoryItems.filter((item) => item.kind === "session"),
+    input.taskContext
+  )
+    .slice(0, 3)
+    .map(renderMemoryLine);
+  const evidenceMemory = rankMemoryItems(
+    memoryItems.filter((item) => item.kind === "evidence"),
+    input.taskContext
+  )
+    .slice(0, 3)
+    .map(renderMemoryLine);
   return {
     contextPack: [
       `task=${input.taskContext}`,
       `session=${input.sessionScope}`,
       `project=${input.projectScope}`,
       `files=${files.join(",")}`,
-      memoryLines.length > 0 ? `memories:\n${memoryLines.join("\n---\n")}` : "memories="
+      renderContextSection("always_loaded", alwaysLoaded),
+      renderContextSection("project_core", projectCore),
+      renderContextSection("retrieved", retrieved),
+      renderContextSection("session_memory", sessionMemory),
+      renderContextSection("evidence_memory", evidenceMemory)
     ].join("\n")
   };
+}
+
+function renderMemoryLine(item: MemoryItem): string {
+  const excerpt = item.content.replace(/\s+/g, " ").trim().slice(0, 500);
+  return `memory:${item.kind}:${item.scope}:${item.id}\n${excerpt}`;
+}
+
+function renderContextSection(name: string, lines: string[]): string {
+  return `${name}:\n${lines.length > 0 ? lines.join("\n---\n") : "- none"}`;
 }
 
 function rankMemoryItems(items: MemoryItem[], taskContext: string): MemoryItem[] {

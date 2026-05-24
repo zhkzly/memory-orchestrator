@@ -41,6 +41,25 @@ node dist/cli.js doctor
 
 `doctor` verifies the vault root, context generation, agent harness entrypoint, and `session-end` hook readiness. A project-local config is optional, not required. If a checkout is not pinned yet, it still works and will suggest `init-project` only as a later convenience.
 
+## Layered Context
+
+`context` returns a layered context pack rather than one undifferentiated search result:
+
+```bash
+memory-orchestrator context --task "current task"
+```
+
+The sections have different memory semantics:
+
+- `always_loaded`: verified personal/user model memory. This is loaded across projects and should stay compact.
+- `project_core`: verified current-project memory. This carries project rules, decisions, and stable status.
+- `retrieved`: task-matched durable project/evidence memory, ranked by lexical task matches, verified status, confidence, and recency.
+- `session_memory`: task-matched ephemeral session memory. This is useful scratchpad context, not permanent truth.
+- `evidence_memory`: task-matched evidence records and source-backed facts.
+- `knowledge_bases`: concise linked external KB excerpts added by the knowledge-base bridge.
+
+This split is intentional: long-term user/profile memory is loaded directly, while session memory is retrieved by relevance and age.
+
 ## Vault Root
 
 Memory files are written under the configured vault root. `MEMORY_ORCHESTRATOR_ROOT` remains an override for scripts and tests.
@@ -65,12 +84,13 @@ node dist/cli.js status
 - `maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]`
 - `review [--scope <scope>] [--days <n>] [--session <scope>] [--project <scope>]`
 - `harness [--task <text>] [--scope <scope>] [--days <n>] [--write-report]`
-- `controller [--trigger scheduled|event|manual] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--apply-safe]`
+- `controller [--trigger scheduled|event|manual] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--write-proposals] [--apply-safe]`
+- `controller-apply --proposal <id>`
 - `controller-feedback [--limit <n>] [--min-score <n>]`
 - `controller-policy init|show [--force] [--model-provider <name>] [--model-name <name>]`
 - `controller-reflection [--limit <n>] [--write-report]`
 - `controller-review ingest|show [--file <path>] [--reviewer <name>] [--limit <n>]`
-- `controller-schedule [--format cron|systemd] [--time HH:MM] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--apply-safe]`
+- `controller-schedule [--format cron|systemd|launchd|windows-task] [--time HH:MM] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--apply-safe]`
 - `ui [--host <host>] [--port <port>]`
 - `ingest-session --file <path> [--session <scope>] [--project <scope>]`
 - `summarize-session --file <path> [--out <path>] [--ingest] [--session <scope>] [--project <scope>]`
@@ -95,8 +115,9 @@ The `skills/` directory describes suggested agent roles:
 - context builder
 - rubric scorer
 - cleaner
+- Codex workflow integration
 
-Use them as instructions for models or wrappers. The CLI remains the source of behavior.
+Use them as instructions for models or wrappers. The CLI remains the source of behavior. The `memory-orchestrator-codex` skill is the recommended cross-project instruction layer: it tells Codex to load layered context at the start of work, use `kb search/read` for external knowledge, and run `session-end --controller-event` at the end of work.
 
 ## Codex Wrapper
 
@@ -257,6 +278,27 @@ node dist/cli.js controller-review show --limit 20
 The review JSON can include fields such as `decision`, `confidence`, `findings`, and `actions`. The command appends the record to `agent/controller-review-feedback.jsonl` with `safety: "record-only"`. It does not execute suggested actions.
 
 Use `--write-review-artifacts` to write a focused Markdown artifact under `reports/` for human or external-model review of `consolidate`, `review`, `decay`, and `expire` recommendations. This artifact is an input for later curation; it is not an auto-merge or auto-rewrite plan.
+
+Use `--write-proposals` when controller findings should become evaluated optimization proposals:
+
+```bash
+memory-orchestrator controller --trigger scheduled --write-report --write-proposals
+```
+
+This appends machine-readable entries to:
+
+- `agent/controller-proposals.jsonl`
+- `agent/controller-evaluations.jsonl`
+
+Each proposal has a risk level, targets, sources, rationale, action, review requirement, and reversibility flag. Each evaluation uses the built-in `memory-optimization-safety` rubric. Low-risk reversible session maintenance can be applied automatically after evaluation; durable memory changes remain review-first.
+
+Apply a safe evaluated proposal explicitly:
+
+```bash
+memory-orchestrator controller-apply --proposal <proposal-id>
+```
+
+Current safe apply scope is narrow: evaluated expired-session proposals can mark session memory `outdated`. Durable `people/`, `projects/`, and `notes/` rewrites are proposed and evaluated, but not silently applied.
 
 The controller also emits structured `consolidationCandidates` with the candidate ids, similarity score when available, reason, and `review-merge` action. These candidates make consolidation inspectable without allowing automatic durable memory merges.
 

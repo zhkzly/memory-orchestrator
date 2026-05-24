@@ -1,6 +1,6 @@
 import { cleanMemory, evaluateRubric } from "./core.js";
 import { resolveConfig, resolveVaultRoot } from "./config.js";
-import { listAllMemoryItems, saveMemoryItem } from "./store.js";
+import { listAllMemoryItems, loadMemoryItem, saveMemoryItem } from "./store.js";
 import { promises as fs } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -64,6 +64,39 @@ type ControllerReviewItem = {
   target: string;
   reason: string;
   action: "inspect" | "review";
+};
+
+type ControllerProposal = {
+  id: string;
+  timestamp: string;
+  type:
+    | "mark-session-outdated"
+    | "review-durable-decay"
+    | "review-consolidation"
+    | "review-budget"
+    | "review-integrity";
+  risk: "low" | "medium" | "high";
+  targets: string[];
+  sources: string[];
+  rationale: string;
+  action: string;
+  requiresReview: boolean;
+  reversible: boolean;
+};
+
+type ControllerEvaluation = {
+  timestamp: string;
+  proposalId: string;
+  rubric: "memory-optimization-safety";
+  score: number;
+  decision: "apply" | "review" | "reject";
+  checks: {
+    hasTargets: boolean;
+    reversible: boolean;
+    durableRewrite: boolean;
+    requiresReview: boolean;
+  };
+  rationale: string;
 };
 
 function defaultControllerPolicy(source = "default"): ControllerPolicy {
@@ -432,6 +465,180 @@ async function appendControllerReinforcement(input: Awaited<ReturnType<typeof ru
   return reinforcementPath;
 }
 
+function proposalId(type: string, target: string): string {
+  return `proposal:${type}:${Buffer.from(target).toString("base64url").slice(0, 32)}`;
+}
+
+function proposalTargetFile(entry: string): string {
+  const parts = entry.split(":");
+  return parts.at(-1) ?? entry;
+}
+
+function buildControllerProposals(input: {
+  expired: string[];
+  ttlBreaches: string[];
+  decay: string[];
+  consolidationCandidates: Array<{ left: string; right?: string; score?: number; reason: string; action: "review-merge" }>;
+  reviewItems: ControllerReviewItem[];
+}): ControllerProposal[] {
+  const timestamp = new Date().toISOString();
+  const proposals: ControllerProposal[] = [];
+  for (const entry of [...input.expired, ...input.ttlBreaches]) {
+    const target = proposalTargetFile(entry);
+    if (!target.includes(`${path.sep}sessions${path.sep}`)) {
+      continue;
+    }
+    proposals.push({
+      id: proposalId("mark-session-outdated", target),
+      timestamp,
+      type: "mark-session-outdated",
+      risk: "low",
+      targets: [target],
+      sources: [entry],
+      rationale: "Expired or TTL-breached session memory should stop entering future context.",
+      action: "mark-outdated",
+      requiresReview: false,
+      reversible: true
+    });
+  }
+  for (const entry of input.decay) {
+    proposals.push({
+      id: proposalId("review-durable-decay", entry),
+      timestamp,
+      type: "review-durable-decay",
+      risk: "medium",
+      targets: [entry],
+      sources: [entry],
+      rationale: "Durable memory appears stale or underused and should be reviewed before any rewrite.",
+      action: "review-only",
+      requiresReview: true,
+      reversible: false
+    });
+  }
+  for (const candidate of input.consolidationCandidates) {
+    const target = `${candidate.left}${candidate.right ? `<->${candidate.right}` : ""}`;
+    proposals.push({
+      id: proposalId("review-consolidation", target),
+      timestamp,
+      type: "review-consolidation",
+      risk: "high",
+      targets: [candidate.left, ...(candidate.right ? [candidate.right] : [])],
+      sources: [target],
+      rationale: `Potential consolidation requires review: ${candidate.reason}.`,
+      action: "review-merge",
+      requiresReview: true,
+      reversible: false
+    });
+  }
+  for (const item of input.reviewItems) {
+    proposals.push({
+      id: proposalId(`review-${item.type}`, item.target),
+      timestamp,
+      type: item.type === "budget" ? "review-budget" : "review-integrity",
+      risk: item.type === "budget" ? "medium" : "high",
+      targets: [item.target],
+      sources: [item.reason],
+      rationale: `Review item requires follow-up: ${item.reason}.`,
+      action: item.action,
+      requiresReview: true,
+      reversible: false
+    });
+  }
+  return proposals;
+}
+
+function evaluateProposal(proposal: ControllerProposal): ControllerEvaluation {
+  const durableRewrite = proposal.targets.some(
+    (target) => target.includes(`${path.sep}people${path.sep}`) || target.includes(`${path.sep}projects${path.sep}`) || target.includes(`${path.sep}notes${path.sep}`)
+  );
+  const hasTargets = proposal.targets.length > 0 && proposal.targets.every((target) => target.trim().length > 0);
+  const score =
+    proposal.risk === "low" && hasTargets && proposal.reversible && !durableRewrite && !proposal.requiresReview
+      ? 5
+      : proposal.risk === "medium" && hasTargets
+        ? 3
+        : hasTargets
+          ? 2
+          : 1;
+  const decision = score >= 4 && !proposal.requiresReview ? "apply" : score >= 2 ? "review" : "reject";
+  return {
+    timestamp: new Date().toISOString(),
+    proposalId: proposal.id,
+    rubric: "memory-optimization-safety",
+    score,
+    decision,
+    checks: {
+      hasTargets,
+      reversible: proposal.reversible,
+      durableRewrite,
+      requiresReview: proposal.requiresReview
+    },
+    rationale:
+      decision === "apply"
+        ? "Low-risk reversible session maintenance may be applied automatically."
+        : "Durable or ambiguous memory optimization requires review before rewriting."
+  };
+}
+
+async function appendControllerProposals(input: { vaultRoot: string; proposals: ControllerProposal[]; evaluations: ControllerEvaluation[] }): Promise<{
+  proposalLogPath: string;
+  evaluationLogPath: string;
+}> {
+  const proposalLogPath = path.join(input.vaultRoot, "agent", "controller-proposals.jsonl");
+  const evaluationLogPath = path.join(input.vaultRoot, "agent", "controller-evaluations.jsonl");
+  await fs.mkdir(path.dirname(proposalLogPath), { recursive: true });
+  for (const proposal of input.proposals) {
+    await fs.appendFile(proposalLogPath, `${JSON.stringify(proposal)}\n`, "utf8");
+  }
+  for (const evaluation of input.evaluations) {
+    await fs.appendFile(evaluationLogPath, `${JSON.stringify(evaluation)}\n`, "utf8");
+  }
+  return { proposalLogPath, evaluationLogPath };
+}
+
+export async function runControllerApply(args: string[]): Promise<{
+  vaultRoot: string;
+  proposalId: string;
+  applied: string[];
+  skipped: string[];
+}> {
+  const config = await resolveConfig(process.cwd());
+  const vaultRoot = resolveVaultRoot(config);
+  const proposalIdValue = value(args, "--proposal");
+  if (!proposalIdValue) {
+    throw new Error("controller-apply requires --proposal <id>.");
+  }
+  const proposalLogPath = path.join(vaultRoot, "agent", "controller-proposals.jsonl");
+  const evaluationLogPath = path.join(vaultRoot, "agent", "controller-evaluations.jsonl");
+  const proposals = await readJsonl<ControllerProposal>(proposalLogPath);
+  const evaluations = await readJsonl<ControllerEvaluation>(evaluationLogPath);
+  const proposal = [...proposals].reverse().find((entry) => entry.id === proposalIdValue);
+  const evaluation = [...evaluations].reverse().find((entry) => entry.proposalId === proposalIdValue);
+  const applied: string[] = [];
+  const skipped: string[] = [];
+  if (!proposal) {
+    return { vaultRoot, proposalId: proposalIdValue, applied, skipped: [`missing-proposal:${proposalIdValue}`] };
+  }
+  if (!evaluation || evaluation.decision !== "apply" || proposal.type !== "mark-session-outdated" || proposal.requiresReview) {
+    return { vaultRoot, proposalId: proposalIdValue, applied, skipped: [`requires-review:${proposal.id}`] };
+  }
+  for (const target of proposal.targets) {
+    const item = await loadMemoryItem(target);
+    if (!item || item.kind !== "session") {
+      skipped.push(`not-session:${target}`);
+      continue;
+    }
+    await saveMemoryItem(target, {
+      ...item,
+      status: "outdated",
+      updated_at: new Date().toISOString(),
+      confidence_rationale: `${item.confidence_rationale ?? "none"}; controller proposal apply ${proposal.id}`
+    });
+    applied.push(target);
+  }
+  return { vaultRoot, proposalId: proposalIdValue, applied, skipped };
+}
+
 type ControllerFeedbackEntry = {
   timestamp?: string;
   trigger?: string;
@@ -718,9 +925,12 @@ export async function runController(args: string[]): Promise<{
     model: NonNullable<ControllerPolicy["model"]>;
     reviewPrompt: string;
   };
+  proposals: ControllerProposal[];
   reviewArtifacts: string[];
   feedbackLogPath?: string;
   reinforcementLogPath?: string;
+  proposalLogPath?: string;
+  evaluationLogPath?: string;
   nextActions: string[];
   reportPath?: string;
 }> {
@@ -939,6 +1149,13 @@ export async function runController(args: string[]): Promise<{
       "Identify which review items need human confirmation, which consolidate items are safe to merge later, and which decay items should remain untouched."
     ].join("\n")
   };
+  const proposals = buildControllerProposals({
+    expired,
+    ttlBreaches,
+    decay,
+    consolidationCandidates,
+    reviewItems
+  });
   const report = {
     vaultRoot,
     scope: "vault" as const,
@@ -957,9 +1174,11 @@ export async function runController(args: string[]): Promise<{
     applied: { expiredSessionItems: appliedExpiredSessionItems },
     structure,
     feedback,
+    proposals,
     nextActions: [
       "Run this controller from an independent scheduler so vault health is not biased by the current project.",
       "Use event triggers after session-end, promotion, or knowledge-base link changes for narrower follow-up checks.",
+      "Use --write-proposals to turn reports into evaluated optimization proposals before applying safe changes.",
       "Review keep/decay/consolidate/review/expire recommendations before editing durable memory.",
       "Keep LLM Wiki registered as an external knowledge base rather than importing it into core memory."
     ]
@@ -976,10 +1195,14 @@ export async function runController(args: string[]): Promise<{
   };
   const feedbackLogPath = args.includes("--write-feedback") ? await appendControllerFeedback(result) : undefined;
   const reinforcementLogPath = args.includes("--write-reinforcement") ? await appendControllerReinforcement(result) : undefined;
+  const proposalLogs = args.includes("--write-proposals")
+    ? await appendControllerProposals({ vaultRoot, proposals, evaluations: proposals.map(evaluateProposal) })
+    : undefined;
   return {
     ...result,
     ...(feedbackLogPath ? { feedbackLogPath } : {}),
-    ...(reinforcementLogPath ? { reinforcementLogPath } : {})
+    ...(reinforcementLogPath ? { reinforcementLogPath } : {}),
+    ...(proposalLogs ? proposalLogs : {})
   };
 }
 
