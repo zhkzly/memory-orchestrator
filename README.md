@@ -56,6 +56,7 @@ node dist/cli.js status
 - `ui [--host <host>] [--port <port>]`
 - `ingest-session --file <path> [--session <scope>] [--project <scope>]`
 - `summarize-session --file <path> [--out <path>] [--ingest] [--session <scope>] [--project <scope>]`
+- `session-end (--transcript <path> | --summary <path>) [--task <text>] [--write-report]`
 - `capture --raw <text> --source <source> [--session <session>] [--project <project>]`
 - `classify --candidate <json>`
 - `verify --candidate <json> --evidence <json-array>`
@@ -135,6 +136,14 @@ node dist/cli.js summarize-session --file /path/to/transcript.md --ingest
 ```
 
 The first-pass summarizer is deterministic. It extracts only explicit `Decision:`, `TODO:`, `Evidence:`, `Open Question:`, and `Note:` lines into a Markdown session summary, then `--ingest` stores that summary as ephemeral session memory. It does not call an LLM or infer durable project facts on its own.
+
+Use `session-end` as the preferred hook command when an agent or wrapper finishes a session:
+
+```bash
+node dist/cli.js session-end --transcript /path/to/transcript.md --task "session-end" --write-report
+```
+
+It infers the project/session, summarizes a transcript or ingests a prepared summary, writes ephemeral session memory, runs cleanup checks, and optionally writes a maintenance report. This is the intended place for Codex, Claude, cron, or shell hooks to integrate without owning memory policy.
 
 ## Knowledge Bases
 

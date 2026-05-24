@@ -39,6 +39,7 @@ function usage(): string {
     "  ui [--host <host>] [--port <port>]",
     "  ingest-session --file <path> [--session <scope>] [--project <scope>]",
     "  summarize-session --file <path> [--out <path>] [--ingest] [--session <scope>] [--project <scope>]",
+    "  session-end (--transcript <path> | --summary <path>) [--task <text>] [--write-report] [--session <scope>] [--project <scope>]",
     "  capture --raw <text> --source <source> [--session <session>] [--project <project>]",
     "  classify --candidate <json>",
     "  verify --candidate <json> --evidence <json-array>",
@@ -507,6 +508,65 @@ async function main(): Promise<void> {
       return;
     }
     console.log(JSON.stringify(summary, null, 2));
+    return;
+  }
+  if (command === "session-end") {
+    const transcriptPath = value(rest, "--transcript");
+    const summaryPath = value(rest, "--summary");
+    if (!transcriptPath && !summaryPath) {
+      throw new Error("session-end requires --transcript <path> or --summary <path>.");
+    }
+    if (transcriptPath && summaryPath) {
+      throw new Error("session-end accepts either --transcript <path> or --summary <path>, not both.");
+    }
+    const config = await resolveConfig(process.cwd());
+    const vaultRoot = resolveVaultRoot(config);
+    const { session, project } = await resolvedScopes(rest);
+    const task = value(rest, "--task") ?? "session-end";
+    const summary = transcriptPath
+      ? await summarizeSessionTranscript({
+          filePath: transcriptPath,
+          outPath: value(rest, "--out")
+        })
+      : undefined;
+    const ingest = await ingestSessionFile({
+      filePath: summary?.summaryPath ?? summaryPath ?? "",
+      session,
+      project
+    });
+    const cleanup = await cleanMemory(project);
+    const reportPath = rest.includes("--write-report")
+      ? await writeMaintenanceReport({
+          vaultRoot,
+          project,
+          session,
+          scope: project,
+          task,
+          cleanup,
+          knowledgeBases: listKnowledgeBases(config),
+          nextActions: [
+            "Review session memory before promoting durable project, personal, or evidence items.",
+            "Keep session-end writes ephemeral unless later evidence supports promotion.",
+            "Use context before the next agent run to confirm the captured summary is retrievable."
+          ]
+        })
+      : undefined;
+    console.log(
+      JSON.stringify(
+        {
+          vaultRoot,
+          project,
+          session,
+          task,
+          ...(summary ? { summary } : {}),
+          ingest,
+          cleanup,
+          ...(reportPath ? { reportPath } : {})
+        },
+        null,
+        2
+      )
+    );
     return;
   }
   if (command === "classify") {

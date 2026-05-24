@@ -341,6 +341,16 @@ const transcriptSummary = await readFile(summarizedSession.summaryPath, "utf8");
 assert(transcriptSummary.includes("## Decisions"), "Expected transcript summary to include decisions.");
 assert(transcriptSummary.includes("Keep CLI-first memory policy"), "Expected transcript summary to preserve decisions.");
 assert(transcriptSummary.includes("## TODOs"), "Expected transcript summary to include TODOs.");
+const sessionEnd = JSON.parse(
+  await run(
+    "node",
+    [cliPath, "session-end", "--transcript", transcriptPath, "--task", "session-end hook", "--write-report"],
+    projectOptions
+  )
+);
+assert(sessionEnd.project === "harness-project", "Expected session-end to infer project.");
+assert(sessionEnd.ingest?.item?.kind === "session", "Expected session-end to ingest transcript summary.");
+assert(sessionEnd.reportPath?.includes("reports"), "Expected session-end to write a maintenance report.");
 
 const inferredContext = JSON.parse(
   await run("node", [cliPath, "context", "--task", "harness task"], projectOptions)
@@ -386,6 +396,10 @@ const transcriptContext = JSON.parse(
 assert(
   transcriptContext.contextPack.includes("Test transcript summarization"),
   "Expected task-matched context to include summarized transcript memory."
+);
+assert(
+  transcriptContext.contextPack.includes("Keep CLI-first memory policy"),
+  "Expected transcript context to include session-end ingested transcript summary."
 );
 const transcriptMemoryEntries = transcriptContext.contextPack.match(/^memory:/gm) ?? [];
 assert(transcriptMemoryEntries.length <= 3, "Expected transcript context to keep inline memory bounded.");
