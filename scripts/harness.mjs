@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -23,10 +23,57 @@ function assert(condition, message) {
 }
 
 const vaultRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-vault."));
+const homeRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-home."));
+const wikiRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-wiki."));
 const sourcePath = path.join(vaultRoot, "source.md");
 await writeFile(sourcePath, "Evidence source for the harness.\n", "utf8");
+await mkdir(path.join(wikiRoot, "wiki"), { recursive: true });
+await writeFile(
+  path.join(wikiRoot, "wiki", "agent-memory.md"),
+  "# Agent Memory\n\nLLM Wiki should stay separate from personal and project memory.\n",
+  "utf8"
+);
 
 await run("npm", ["run", "build"]);
+
+const cliEnv = { ...process.env, HOME: homeRoot };
+
+await run("node", ["dist/cli.js", "init", "--vault", vaultRoot, "--project", "harness-project"], { env: cliEnv });
+
+const status = JSON.parse(await run("node", ["dist/cli.js", "status"], { env: cliEnv }));
+assert(status.vaultRoot === vaultRoot, "Expected status to resolve configured vault root.");
+assert(status.project === "harness-project", "Expected status to use configured default project.");
+
+await run("node", ["dist/cli.js", "kb", "add", "--name", "memory-research", "--root", wikiRoot], { env: cliEnv });
+await run("node", ["dist/cli.js", "kb", "link", "--name", "memory-research", "--project", "harness-project"], {
+  env: cliEnv
+});
+const knowledgeBases = JSON.parse(await run("node", ["dist/cli.js", "kb", "list"], { env: cliEnv }));
+assert(knowledgeBases.length === 1, "Expected one registered knowledge base.");
+assert(
+  knowledgeBases[0].linkedProjects.includes("harness-project"),
+  "Expected knowledge base to link to harness-project."
+);
+const searchResults = JSON.parse(
+  await run("node", ["dist/cli.js", "kb", "search", "--name", "memory-research", "--query", "LLM Wiki"], {
+    env: cliEnv
+  })
+);
+assert(searchResults[0]?.path === "wiki/agent-memory.md", "Expected kb search to find the wiki page.");
+const wikiPage = JSON.parse(
+  await run("node", ["dist/cli.js", "kb", "read", "--name", "memory-research", "--page", "wiki/agent-memory.md"], {
+    env: cliEnv
+  })
+);
+assert(wikiPage.content.includes("LLM Wiki"), "Expected kb read to return page content.");
+
+const inferredContext = JSON.parse(
+  await run("node", ["dist/cli.js", "context", "--task", "harness task"], { env: cliEnv })
+);
+assert(
+  inferredContext.contextPack.includes("project=harness-project"),
+  "Expected context to infer project without explicit --project."
+);
 
 await run("node", [
   "dist/cli.js",
@@ -65,7 +112,7 @@ const item = {
 const promoteOutput = await run(
   "node",
   ["dist/cli.js", "promote", "--item", JSON.stringify(item)],
-  { env: { ...process.env, MEMORY_ORCHESTRATOR_ROOT: vaultRoot } }
+  { env: cliEnv }
 );
 const promoted = JSON.parse(promoteOutput);
 assert(promoted.path.endsWith("notes/harness-evidence.md"), "Expected evidence item to be written under notes.");
@@ -73,7 +120,7 @@ assert(promoted.path.endsWith("notes/harness-evidence.md"), "Expected evidence i
 const cleanOutput = await run(
   "node",
   ["dist/cli.js", "clean", "--scope", "memory"],
-  { env: { ...process.env, MEMORY_ORCHESTRATOR_ROOT: vaultRoot } }
+  { env: cliEnv }
 );
 const cleanReport = JSON.parse(cleanOutput);
 assert(

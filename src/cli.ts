@@ -1,4 +1,7 @@
 import { captureCandidate, classifyCandidate, verifyCandidate, promoteItem, buildContextPack, evaluateRubric, cleanMemory } from "./core.js";
+import { addKnowledgeBase, initConfig, linkKnowledgeBase, resolveConfig, resolveVaultRoot } from "./config.js";
+import { inferProject, inferSession } from "./identity.js";
+import { listKnowledgeBases, readKnowledgeBasePage, searchKnowledgeBase } from "./kb.js";
 import { memoryItemSchema, rubricProxySchema } from "./schemas.js";
 import { promises as fs } from "node:fs";
 
@@ -7,11 +10,18 @@ function usage(): string {
     "memory-orchestrator CLI",
     "",
     "Commands:",
-    "  capture --raw <text> --source <source> --session <session> --project <project>",
+    "  init --vault <path> [--project <default-project>]",
+    "  status",
+    "  kb list",
+    "  kb add --name <name> --root <path> [--type llm_wiki|folder] [--api <url>] [--description <text>]",
+    "  kb link --name <name> --project <project>",
+    "  kb search --name <name> --query <text> [--limit <n>]",
+    "  kb read --name <name> --page <path>",
+    "  capture --raw <text> --source <source> [--session <session>] [--project <project>]",
     "  classify --candidate <json>",
     "  verify --candidate <json> --evidence <json-array>",
     "  promote --item <json>",
-    "  context --task <text> --session <scope> --project <scope>",
+    "  context --task <text> [--session <scope>] [--project <scope>]",
     "  rubric --definition <text> --evidence <json-array> --system <text> --proxies <json-array>",
     "  score --rubric <file> --evidence <file> --out <file>",
     "  clean --scope <scope>"
@@ -23,6 +33,14 @@ function value(args: string[], flag: string): string | undefined {
   return index >= 0 ? args[index + 1] : undefined;
 }
 
+async function resolvedScopes(args: string[]): Promise<{ project: string; session: string }> {
+  const config = await resolveConfig(process.cwd());
+  return {
+    project: await inferProject(process.cwd(), config, value(args, "--project")),
+    session: await inferSession(process.cwd(), value(args, "--session"))
+  };
+}
+
 async function main(): Promise<void> {
   const [command, ...rest] = process.argv.slice(2);
   if (!command) {
@@ -30,11 +48,91 @@ async function main(): Promise<void> {
     return;
   }
 
+  if (command === "init") {
+    const vaultRoot = value(rest, "--vault");
+    if (!vaultRoot) {
+      throw new Error("init requires --vault <path>.");
+    }
+    console.log(JSON.stringify(await initConfig({ vaultRoot, defaultProject: value(rest, "--project") }), null, 2));
+    return;
+  }
+  if (command === "status") {
+    const config = await resolveConfig(process.cwd());
+    const scopes = await resolvedScopes(rest);
+    console.log(
+      JSON.stringify(
+        {
+          vaultRoot: resolveVaultRoot(config),
+          project: scopes.project,
+          session: scopes.session,
+          knowledgeBases: config.knowledgeBases ?? []
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+  if (command === "kb" && rest[0] === "list") {
+    const config = await resolveConfig(process.cwd());
+    console.log(JSON.stringify(listKnowledgeBases(config), null, 2));
+    return;
+  }
+  if (command === "kb" && rest[0] === "add") {
+    const name = value(rest, "--name");
+    const root = value(rest, "--root");
+    if (!name || !root) {
+      throw new Error("kb add requires --name <name> and --root <path>.");
+    }
+    console.log(
+      JSON.stringify(
+        await addKnowledgeBase({
+          name,
+          root,
+          type: (value(rest, "--type") as "llm_wiki" | "folder" | undefined) ?? "llm_wiki",
+          api: value(rest, "--api"),
+          description: value(rest, "--description")
+        }),
+        null,
+        2
+      )
+    );
+    return;
+  }
+  if (command === "kb" && rest[0] === "link") {
+    const name = value(rest, "--name");
+    const project = value(rest, "--project");
+    if (!name || !project) {
+      throw new Error("kb link requires --name <name> and --project <project>.");
+    }
+    console.log(JSON.stringify(await linkKnowledgeBase({ name, project }), null, 2));
+    return;
+  }
+  if (command === "kb" && rest[0] === "search") {
+    const name = value(rest, "--name");
+    const query = value(rest, "--query");
+    const limit = Number(value(rest, "--limit") ?? "5");
+    if (!name || !query) {
+      throw new Error("kb search requires --name <name> and --query <text>.");
+    }
+    const config = await resolveConfig(process.cwd());
+    console.log(JSON.stringify(await searchKnowledgeBase(config, name, query, Number.isNaN(limit) ? 5 : limit), null, 2));
+    return;
+  }
+  if (command === "kb" && rest[0] === "read") {
+    const name = value(rest, "--name");
+    const page = value(rest, "--page");
+    if (!name || !page) {
+      throw new Error("kb read requires --name <name> and --page <path>.");
+    }
+    const config = await resolveConfig(process.cwd());
+    console.log(JSON.stringify(await readKnowledgeBasePage(config, name, page), null, 2));
+    return;
+  }
   if (command === "capture") {
     const rawObservation = value(rest, "--raw") ?? "";
     const source = value(rest, "--source") ?? "";
-    const session = value(rest, "--session") ?? "";
-    const project = value(rest, "--project") ?? "";
+    const { session, project } = await resolvedScopes(rest);
     console.log(JSON.stringify(await captureCandidate({ rawObservation, source, session, project }), null, 2));
     return;
   }
@@ -59,12 +157,13 @@ async function main(): Promise<void> {
     return;
   }
   if (command === "context") {
+    const { session, project } = await resolvedScopes(rest);
     console.log(
       JSON.stringify(
         await buildContextPack({
           taskContext: value(rest, "--task") ?? "",
-          sessionScope: value(rest, "--session") ?? "",
-          projectScope: value(rest, "--project") ?? ""
+          sessionScope: session,
+          projectScope: project
         }),
         null,
         2
@@ -127,7 +226,8 @@ async function main(): Promise<void> {
     return;
   }
   if (command === "clean") {
-    console.log(JSON.stringify(await cleanMemory(value(rest, "--scope") ?? ""), null, 2));
+    const { project } = await resolvedScopes(rest);
+    console.log(JSON.stringify(await cleanMemory(value(rest, "--scope") ?? project), null, 2));
     return;
   }
 

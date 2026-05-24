@@ -2,7 +2,7 @@
 
 Memory Orchestrator is a CLI-first local memory system for agent workflows. It captures candidate memories, verifies them against evidence, promotes durable items into a Markdown vault, builds task context packs, scores memory-system quality with rubric proxies, and marks stale or unsafe memory records for cleanup.
 
-The CLI is the canonical interface. Skills are included as optional instructions for agents that need a human-readable workflow layer, but they do not own policy.
+The CLI is the canonical backend interface. Harnesses and agent wrappers should provide the daily user-facing entry point. Skills are included as optional instructions for agents that need a human-readable workflow layer, but they do not own policy.
 
 ## Status
 
@@ -15,33 +15,40 @@ npm install
 npm run build
 ```
 
-Run commands from the repository root during development:
+Configure the memory vault once:
 
 ```bash
-npm run dev -- capture --raw "Project prefers CLI-first memory updates" --source notes/source.md --session 2026-05-24 --project memory
+npm run dev -- init --vault /path/to/obsidian-vault --project memory-orchestrator
 ```
 
-After build, run the compiled CLI:
+After that, commands infer project and session when possible:
 
 ```bash
-node dist/cli.js context --task "prepare next session" --session memory --project memory
+node dist/cli.js context --task "prepare next session"
 ```
 
 ## Vault Root
 
-Memory files are written under `MEMORY_ORCHESTRATOR_ROOT` when set, otherwise under the current working directory.
+Memory files are written under the configured vault root. `MEMORY_ORCHESTRATOR_ROOT` remains an override for scripts and tests.
 
 ```bash
-MEMORY_ORCHESTRATOR_ROOT=/path/to/obsidian-vault node dist/cli.js context --task "next task" --session daily --project memory
+node dist/cli.js status
 ```
 
 ## Commands
 
-- `capture --raw <text> --source <source> --session <session> --project <project>`
+- `init --vault <path> [--project <default-project>]`
+- `status`
+- `kb list`
+- `kb add --name <name> --root <path> [--type llm_wiki|folder] [--api <url>]`
+- `kb link --name <name> --project <project>`
+- `kb search --name <name> --query <text>`
+- `kb read --name <name> --page <path>`
+- `capture --raw <text> --source <source> [--session <session>] [--project <project>]`
 - `classify --candidate <json>`
 - `verify --candidate <json> --evidence <json-array>`
 - `promote --item <json>`
-- `context --task <text> --session <scope> --project <scope>`
+- `context --task <text> [--session <scope>] [--project <scope>]`
 - `rubric --definition <text> --evidence <json-array> --system <text> --proxies <json-array>`
 - `score --rubric <file> --evidence <file> --out <file>`
 - `clean --scope <scope>`
@@ -68,6 +75,18 @@ MEMORY_ORCHESTRATOR_ROOT=/path/to/vault ./examples/codex-memory /path/to/vault
 ```
 
 It starts Codex with the vault added as an explicit directory and points this CLI at the same vault.
+
+## Knowledge Bases
+
+LLM Wiki projects should be registered as external professional knowledge bases, not imported into the memory vault:
+
+```bash
+node dist/cli.js kb add --name memory-research --root /path/to/llm-wiki --type llm_wiki --api http://127.0.0.1:19828
+node dist/cli.js kb link --name memory-research --project memory-orchestrator
+node dist/cli.js kb search --name memory-research --query "agent memory"
+```
+
+The fallback implementation searches local Markdown files under the registered root. API-backed querying can be added behind the same command boundary.
 
 ## MCP
 

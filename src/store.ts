@@ -1,20 +1,23 @@
 import { promises as fs } from "node:fs";
 import { createHash } from "node:crypto";
 import path from "node:path";
+import { resolveConfig, resolveVaultRoot } from "./config.js";
 import type { MemoryItem } from "./types.js";
 
-const ROOT_DIR = process.env.MEMORY_ORCHESTRATOR_ROOT ?? process.cwd();
+async function rootDir(): Promise<string> {
+  return resolveVaultRoot(await resolveConfig(process.cwd()));
+}
 
-function memoryFilePath(item: MemoryItem): string {
+async function memoryFilePath(item: MemoryItem): Promise<string> {
   const folder =
     item.kind === "personal"
       ? "people"
       : item.kind === "project"
         ? "projects"
         : item.kind === "evidence"
-          ? "notes"
+        ? "notes"
           : "sessions";
-  return path.join(ROOT_DIR, folder, `${item.id}.md`);
+  return path.join(await rootDir(), folder, `${item.id}.md`);
 }
 
 function serializeItem(item: MemoryItem): string {
@@ -54,7 +57,7 @@ async function walkMarkdownFiles(dir: string): Promise<string[]> {
 }
 
 export async function writeMemoryItem(item: MemoryItem): Promise<string> {
-  const filePath = memoryFilePath(item);
+  const filePath = await memoryFilePath(item);
   await ensureDir(filePath);
   await fs.writeFile(filePath, serializeItem(item), "utf8");
   return filePath;
@@ -65,8 +68,9 @@ export async function readMemoryItem(pathname: string): Promise<string> {
 }
 
 export async function listMemoryFiles(scope: string): Promise<string[]> {
+  const root = await rootDir();
   const candidates = ["people", "projects", "notes", "sessions", "rubrics"].map((folder) =>
-    path.join(ROOT_DIR, folder, `${scope}.md`)
+    path.join(root, folder, `${scope}.md`)
   );
   const existing: string[] = [];
   for (const filePath of candidates) {
@@ -81,7 +85,8 @@ export async function listMemoryFiles(scope: string): Promise<string[]> {
 }
 
 export async function listAllMemoryFiles(): Promise<string[]> {
-  const roots = ["people", "projects", "notes", "sessions", "rubrics"].map((folder) => path.join(ROOT_DIR, folder));
+  const root = await rootDir();
+  const roots = ["people", "projects", "notes", "sessions", "rubrics"].map((folder) => path.join(root, folder));
   const files: string[] = [];
   for (const root of roots) {
     try {
@@ -132,9 +137,10 @@ export async function touchMemoryFiles(filePaths: string[]): Promise<void> {
 }
 
 export async function hashFileContents(relativeOrAbsolutePath: string): Promise<string | null> {
+  const root = await rootDir();
   const filePath = path.isAbsolute(relativeOrAbsolutePath)
     ? relativeOrAbsolutePath
-    : path.join(ROOT_DIR, relativeOrAbsolutePath);
+    : path.join(root, relativeOrAbsolutePath);
   try {
     const content = await fs.readFile(filePath);
     return createHash("sha256").update(content).digest("hex");
