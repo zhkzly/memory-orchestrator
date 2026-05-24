@@ -26,12 +26,15 @@ export async function inferProject(cwd: string, config: MemoryConfig, explicit?:
   if (explicit?.trim()) {
     return slug(explicit);
   }
-  if (config.defaultProject?.trim()) {
+  if (config.projectConfigPath && config.defaultProject?.trim()) {
     return slug(config.defaultProject);
   }
   const repoRoot = await git(["rev-parse", "--show-toplevel"], cwd);
   if (repoRoot) {
     return slug(path.basename(repoRoot));
+  }
+  if (config.defaultProject?.trim() && config.vaultRoot && path.resolve(cwd) === path.resolve(config.vaultRoot)) {
+    return slug(config.defaultProject);
   }
   return slug(path.basename(path.resolve(cwd))) || "default-project";
 }

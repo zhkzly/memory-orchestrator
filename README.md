@@ -21,6 +21,12 @@ Configure the memory vault once:
 npm run dev -- init --vault /path/to/obsidian-vault --project memory-orchestrator
 ```
 
+Optionally bind a repository to a stable project name once:
+
+```bash
+node dist/cli.js init-project --project current-project
+```
+
 After that, commands infer project and session when possible:
 
 ```bash
@@ -38,6 +44,7 @@ node dist/cli.js status
 ## Commands
 
 - `init --vault <path> [--project <default-project>]`
+- `init-project [--project <project>] [--vault <path>]`
 - `status`
 - `kb list`
 - `kb add --name <name> --root <path> [--type llm_wiki|folder] [--api <url>]`

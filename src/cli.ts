@@ -9,7 +9,7 @@ import {
   evaluateRubric,
   cleanMemory
 } from "./core.js";
-import { addKnowledgeBase, initConfig, linkKnowledgeBase, resolveConfig, resolveVaultRoot } from "./config.js";
+import { addKnowledgeBase, initConfig, initProjectConfig, linkKnowledgeBase, resolveConfig, resolveVaultRoot } from "./config.js";
 import { inferProject, inferSession } from "./identity.js";
 import { listKnowledgeBases, readKnowledgeBasePage, searchKnowledgeBase } from "./kb.js";
 import { memoryItemSchema, rubricProxySchema } from "./schemas.js";
@@ -24,6 +24,7 @@ function usage(): string {
     "",
     "Commands:",
     "  init --vault <path> [--project <default-project>]",
+    "  init-project [--project <project>] [--vault <path>]",
     "  status",
     "  kb list",
     "  kb add --name <name> --root <path> [--type llm_wiki|folder] [--api <url>] [--description <text>]",
@@ -164,7 +165,7 @@ function positional(args: string[]): string[] {
 }
 
 async function spawnAgent(agent: "codex" | "claude", args: string[]): Promise<void> {
-  const projectDir = positional(args.slice(1)).slice(1)[0] ?? process.cwd();
+  const projectDir = positional(args.slice(1))[0] ?? process.cwd();
   const config = await resolveConfig(projectDir);
   const vaultRoot = resolveVaultRoot(config, projectDir);
   const project = await inferProject(projectDir, config, value(args, "--project"));
@@ -206,6 +207,20 @@ async function main(): Promise<void> {
       throw new Error("init requires --vault <path>.");
     }
     console.log(JSON.stringify(await initConfig({ vaultRoot, defaultProject: value(rest, "--project") }), null, 2));
+    return;
+  }
+  if (command === "init-project") {
+    console.log(
+      JSON.stringify(
+        await initProjectConfig({
+          cwd: process.cwd(),
+          project: value(rest, "--project"),
+          vaultRoot: value(rest, "--vault")
+        }),
+        null,
+        2
+      )
+    );
     return;
   }
   if (command === "status") {

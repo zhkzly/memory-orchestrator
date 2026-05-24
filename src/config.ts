@@ -15,6 +15,7 @@ export interface MemoryConfig {
   vaultRoot?: string;
   defaultProject?: string;
   knowledgeBases?: KnowledgeBaseConfig[];
+  projectConfigPath?: string;
 }
 
 const CONFIG_DIR = path.join(homedir(), ".config", "memory-orchestrator");
@@ -58,7 +59,7 @@ export async function writeGlobalConfig(config: MemoryConfig): Promise<string> {
 
 export async function readProjectConfig(cwd = process.cwd()): Promise<MemoryConfig> {
   const projectConfigPath = await findUp(cwd, PROJECT_CONFIG);
-  return projectConfigPath ? ((await readJsonFile<MemoryConfig>(projectConfigPath)) ?? {}) : {};
+  return projectConfigPath ? { ...((await readJsonFile<MemoryConfig>(projectConfigPath)) ?? {}), projectConfigPath } : {};
 }
 
 export async function resolveConfig(cwd = process.cwd()): Promise<MemoryConfig> {
@@ -84,6 +85,20 @@ export async function initConfig(input: { vaultRoot: string; defaultProject?: st
     defaultProject: input.defaultProject ?? previous.defaultProject
   };
   return { path: await writeGlobalConfig(config), config };
+}
+
+export async function initProjectConfig(input: {
+  cwd: string;
+  project?: string;
+  vaultRoot?: string;
+}): Promise<{ path: string; config: MemoryConfig }> {
+  const config: MemoryConfig = {
+    ...(input.project ? { defaultProject: input.project } : {}),
+    ...(input.vaultRoot ? { vaultRoot: path.resolve(input.vaultRoot) } : {})
+  };
+  const configPath = path.join(path.resolve(input.cwd), PROJECT_CONFIG);
+  await fs.writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
+  return { path: configPath, config: { ...config, projectConfigPath: configPath } };
 }
 
 export async function addKnowledgeBase(input: KnowledgeBaseConfig): Promise<{ path: string; config: MemoryConfig }> {
