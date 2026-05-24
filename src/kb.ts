@@ -18,6 +18,12 @@ interface ApiSearchResult {
   snippet?: string;
 }
 
+interface LlmWikiSearchPayload {
+  tokenHits?: ApiSearchResult[];
+  vectorHits?: ApiSearchResult[];
+  results?: ApiSearchResult[];
+}
+
 function findKnowledgeBase(config: MemoryConfig, name: string): KnowledgeBaseConfig {
   const knowledgeBase = (config.knowledgeBases ?? []).find((kb) => kb.name === name);
   if (!knowledgeBase) {
@@ -128,6 +134,10 @@ async function searchKnowledgeBaseApi(
   query: string,
   limit: number
 ): Promise<KnowledgeBaseSearchResult[] | null> {
+  const llmWikiResults = await searchLlmWikiApi(knowledgeBase, query, limit);
+  if (llmWikiResults) {
+    return llmWikiResults;
+  }
   try {
     const url = new URL("/search", knowledgeBase.api);
     url.searchParams.set("query", query);
@@ -141,25 +151,65 @@ async function searchKnowledgeBaseApi(
     if (!rawResults) {
       return null;
     }
-    return rawResults.slice(0, limit).map((result) => {
-      const resultPath = result.path ?? result.file ?? "";
-      const resultExcerpt = result.excerpt ?? result.snippet ?? result.content ?? "";
-      return {
-        knowledgeBase: knowledgeBase.name,
-        path: resultPath,
-        title: result.title ?? path.basename(resultPath, ".md"),
-        excerpt: resultExcerpt.replace(/\s+/g, " ").trim().slice(0, 240)
-      };
-    });
+    return normalizeApiSearchResults(knowledgeBase, rawResults, limit);
   } catch {
     return null;
   }
+}
+
+async function searchLlmWikiApi(
+  knowledgeBase: KnowledgeBaseConfig,
+  query: string,
+  limit: number
+): Promise<KnowledgeBaseSearchResult[] | null> {
+  try {
+    const url = new URL("/api/v1/projects/current/search", knowledgeBase.api);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: apiHeaders(),
+      body: JSON.stringify({ query, limit })
+    });
+    if (!response.ok) {
+      return null;
+    }
+    const payload = (await response.json()) as LlmWikiSearchPayload | ApiSearchResult[];
+    const rawResults = Array.isArray(payload)
+      ? payload
+      : [...(payload.tokenHits ?? []), ...(payload.vectorHits ?? []), ...(payload.results ?? [])];
+    if (rawResults.length === 0) {
+      return null;
+    }
+    return normalizeApiSearchResults(knowledgeBase, rawResults, limit);
+  } catch {
+    return null;
+  }
+}
+
+function normalizeApiSearchResults(
+  knowledgeBase: KnowledgeBaseConfig,
+  rawResults: ApiSearchResult[],
+  limit: number
+): KnowledgeBaseSearchResult[] {
+  return rawResults.slice(0, limit).map((result) => {
+    const resultPath = result.path ?? result.file ?? "";
+    const resultExcerpt = result.excerpt ?? result.snippet ?? result.content ?? "";
+    return {
+      knowledgeBase: knowledgeBase.name,
+      path: resultPath,
+      title: result.title ?? path.basename(resultPath, ".md"),
+      excerpt: resultExcerpt.replace(/\s+/g, " ").trim().slice(0, 240)
+    };
+  });
 }
 
 async function readKnowledgeBasePageApi(
   knowledgeBase: KnowledgeBaseConfig,
   page: string
 ): Promise<{ knowledgeBase: string; path: string; content: string } | null> {
+  const llmWikiPage = await readLlmWikiPageApi(knowledgeBase, page);
+  if (llmWikiPage) {
+    return llmWikiPage;
+  }
   try {
     const url = new URL("/read", knowledgeBase.api);
     url.searchParams.set("page", page);
@@ -179,4 +229,37 @@ async function readKnowledgeBasePageApi(
   } catch {
     return null;
   }
+}
+
+async function readLlmWikiPageApi(
+  knowledgeBase: KnowledgeBaseConfig,
+  page: string
+): Promise<{ knowledgeBase: string; path: string; content: string } | null> {
+  try {
+    const url = new URL("/api/v1/projects/current/files/content", knowledgeBase.api);
+    url.searchParams.set("path", page);
+    const response = await fetch(url, { headers: apiHeaders() });
+    if (!response.ok) {
+      return null;
+    }
+    const payload = (await response.json()) as { path?: string; content?: string };
+    if (!payload.content) {
+      return null;
+    }
+    return {
+      knowledgeBase: knowledgeBase.name,
+      path: payload.path ?? page,
+      content: payload.content
+    };
+  } catch {
+    return null;
+  }
+}
+
+function apiHeaders(): HeadersInit {
+  const headers: Record<string, string> = { "content-type": "application/json" };
+  if (process.env.LLM_WIKI_API_TOKEN) {
+    headers.authorization = `Bearer ${process.env.LLM_WIKI_API_TOKEN}`;
+  }
+  return headers;
 }

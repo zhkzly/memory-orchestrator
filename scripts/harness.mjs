@@ -125,18 +125,56 @@ const apiServer = createServer((request, response) => {
   response.statusCode = 404;
   response.end(JSON.stringify({ error: "not found" }));
 });
+const llmWikiApiServer = createServer((request, response) => {
+  const url = new URL(request.url ?? "/", "http://127.0.0.1");
+  response.setHeader("content-type", "application/json");
+  if (url.pathname === "/api/v1/projects/current/search" && request.method === "POST") {
+    assert(request.headers.authorization === "Bearer harness-token", "Expected LLM Wiki API token header.");
+    response.end(
+      JSON.stringify({
+        mode: "hybrid",
+        tokenHits: [
+          {
+            path: "wiki/real-api-memory.md",
+            title: "Real API Memory",
+            snippet: "Real LLM Wiki API search result should win over folder fallback."
+          }
+        ],
+        vectorHits: []
+      })
+    );
+    return;
+  }
+  if (url.pathname === "/api/v1/projects/current/files/content") {
+    assert(request.headers.authorization === "Bearer harness-token", "Expected LLM Wiki API token header.");
+    assert(url.searchParams.get("path") === "wiki/real-api-memory.md", "Expected LLM Wiki read path query.");
+    response.end(
+      JSON.stringify({ path: "wiki/real-api-memory.md", content: "# Real API Memory\n\nRead through real LLM Wiki API shape.\n" })
+    );
+    return;
+  }
+  response.statusCode = 404;
+  response.end(JSON.stringify({ error: "not found" }));
+});
 await new Promise((resolve) => apiServer.listen(0, "127.0.0.1", resolve));
+await new Promise((resolve) => llmWikiApiServer.listen(0, "127.0.0.1", resolve));
 const apiAddress = apiServer.address();
 const apiBase =
   typeof apiAddress === "object" && apiAddress ? `http://127.0.0.1:${apiAddress.port}` : "http://127.0.0.1:0";
+const llmWikiApiAddress = llmWikiApiServer.address();
+const llmWikiApiBase =
+  typeof llmWikiApiAddress === "object" && llmWikiApiAddress
+    ? `http://127.0.0.1:${llmWikiApiAddress.port}`
+    : "http://127.0.0.1:0";
 
 const cliEnv = { ...process.env, HOME: homeRoot };
 const agentEnv = {
   ...cliEnv,
   PATH: `${binRoot}${path.delimiter}${process.env.PATH ?? ""}`,
+  LLM_WIKI_API_TOKEN: "harness-token",
   MOCK_AGENT_OUTPUT: mockAgentOutput
 };
-const projectOptions = { env: cliEnv, cwd: harnessProjectRoot };
+const projectOptions = { env: { ...cliEnv, LLM_WIKI_API_TOKEN: "harness-token" }, cwd: harnessProjectRoot };
 
 await run("node", ["dist/cli.js", "init", "--vault", vaultRoot, "--project", "harness-project"], { env: cliEnv });
 
@@ -198,6 +236,17 @@ const wikiPage = JSON.parse(
   await run("node", [cliPath, "kb", "read", "--name", "memory-research", "--page", "wiki/api-memory.md"], projectOptions)
 );
 assert(wikiPage.content.includes("Read through LLM Wiki API"), "Expected kb read to prefer the API adapter.");
+
+await run("node", [cliPath, "kb", "add", "--name", "real-llm-wiki", "--root", wikiRoot, "--api", llmWikiApiBase], projectOptions);
+await run("node", [cliPath, "kb", "link", "--name", "real-llm-wiki", "--project", "harness-project"], projectOptions);
+const realApiSearchResults = JSON.parse(
+  await run("node", [cliPath, "kb", "search", "--name", "real-llm-wiki", "--query", "real api"], projectOptions)
+);
+assert(realApiSearchResults[0]?.path === "wiki/real-api-memory.md", "Expected kb search to support real LLM Wiki API.");
+const realApiPage = JSON.parse(
+  await run("node", [cliPath, "kb", "read", "--name", "real-llm-wiki", "--page", "wiki/real-api-memory.md"], projectOptions)
+);
+assert(realApiPage.content.includes("real LLM Wiki API shape"), "Expected kb read to support real LLM Wiki API.");
 
 const now = new Date().toISOString();
 const projectItem = {
@@ -362,7 +411,12 @@ assert(
   "Expected maintain to include a task-aware context pack."
 );
 assert(Array.isArray(maintenanceReport.cleanup.markers), "Expected maintain to include cleanup markers.");
-assert(maintenanceReport.knowledgeBases.length === 2, "Expected maintain to include registered knowledge bases.");
+assert(
+  ["memory-research", "fallback-research", "real-llm-wiki"].every((name) =>
+    maintenanceReport.knowledgeBases.some((kb) => kb.name === name)
+  ),
+  "Expected maintain to include registered knowledge bases."
+);
 const writtenMaintenanceReport = JSON.parse(
   await run("node", [cliPath, "maintain", "--task", "harness task", "--write-report"], projectOptions)
 );
@@ -473,6 +527,7 @@ assert(
 );
 
 apiServer.close();
+llmWikiApiServer.close();
 
 console.log(
   JSON.stringify(

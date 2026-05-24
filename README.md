@@ -141,12 +141,18 @@ The first-pass summarizer is deterministic. It extracts only explicit `Decision:
 LLM Wiki projects should be registered as external professional knowledge bases, not imported into the memory vault:
 
 ```bash
+export LLM_WIKI_API_TOKEN=<token-from-llm-wiki>
 node dist/cli.js kb add --name memory-research --root /path/to/llm-wiki --type llm_wiki --api http://127.0.0.1:19828
 node dist/cli.js kb link --name memory-research --project memory-orchestrator
 node dist/cli.js kb search --name memory-research --query "agent memory"
 ```
 
-When `--api` is configured, `kb search` and `kb read` try the LLM Wiki-style HTTP API first, then fall back to local Markdown files under the registered root if the API is unavailable.
+When `--api` is configured, `kb search` and `kb read` try the LLM Wiki local HTTP API first:
+
+- `POST /api/v1/projects/current/search`
+- `GET /api/v1/projects/current/files/content?path=<page>`
+
+If `LLM_WIKI_API_TOKEN` is set, the CLI sends it as a bearer token. If the API is unavailable, commands fall back to local Markdown files under the registered root.
 
 When a knowledge base is linked to the active project, `context`, `maintain`, and `agent` include concise task-matching knowledge-base excerpts in the generated context pack. They do not import the whole wiki.
 
