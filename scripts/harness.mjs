@@ -356,6 +356,10 @@ const ingestedSession = JSON.parse(
 );
 assert(ingestedSession.item.kind === "session", "Expected ingest-session to create a session memory item.");
 assert(ingestedSession.item.status === "candidate", "Expected ingest-session to write a candidate item.");
+assert(
+  new Date(ingestedSession.item.expires_at).getTime() > Date.now(),
+  "Expected ingested session memory to have a future expiration."
+);
 assert(ingestedSession.path.includes("sessions"), "Expected ingest-session to write under sessions.");
 const sessionMarkdown = await readFile(ingestedSession.path, "utf8");
 assert(sessionMarkdown.includes("# Session Memory:"), "Expected ingested session memory to have a readable title.");
@@ -378,6 +382,10 @@ const sessionEnd = JSON.parse(
 );
 assert(sessionEnd.project === "harness-project", "Expected session-end to infer project.");
 assert(sessionEnd.ingest?.item?.kind === "session", "Expected session-end to ingest transcript summary.");
+assert(
+  new Date(sessionEnd.ingest.item.expires_at).getTime() > Date.now(),
+  "Expected session-end memory to have a future expiration."
+);
 assert(sessionEnd.reportPath?.includes("reports"), "Expected session-end to write a maintenance report.");
 
 const inferredContext = JSON.parse(

@@ -29,6 +29,10 @@
       "type": "file"
     },
     {
+      "ref": "src/core.ts expiresInDays",
+      "type": "file"
+    },
+    {
       "ref": "src/store.ts serializeItem",
       "type": "file"
     },

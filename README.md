@@ -155,6 +155,8 @@ node dist/cli.js session-end --transcript /path/to/transcript.md --task "session
 
 It infers the project/session, summarizes a transcript or ingests a prepared summary, writes ephemeral session memory, runs cleanup checks, and optionally writes a maintenance report. This is the intended place for Codex, Claude, cron, or shell hooks to integrate without owning memory policy.
 
+Session memory is intentionally short-lived: ingest and session-end outputs currently expire after 7 days so scratchpad material does not silently become permanent project history.
+
 ## Knowledge Bases
 
 LLM Wiki projects should be registered as external professional knowledge bases, not imported into the memory vault:

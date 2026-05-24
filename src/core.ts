@@ -55,6 +55,10 @@ function now(): string {
   return new Date().toISOString();
 }
 
+function expiresInDays(days: number): string {
+  return new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+}
+
 export function inferKind(content: string): MemoryKind {
   const text = content.toLowerCase();
   if (text.includes("preference") || text.includes("prefrence") || text.includes("user")) {
@@ -85,7 +89,7 @@ export async function captureCandidate(input: CaptureCandidateInput): Promise<Me
     verified_at: undefined,
     retrieval_count: 0,
     cross_project_applicable: kind === "evidence",
-    expires_at: kind === "session" ? now() : undefined,
+    expires_at: kind === "session" ? expiresInDays(7) : undefined,
     semantic_tags: [],
     provenance: [{ type: "session", ref: input.session }]
   };
@@ -161,6 +165,7 @@ export async function ingestSessionFile(input: IngestSessionInput): Promise<{ pa
     updated_at: now(),
     retrieval_count: 0,
     cross_project_applicable: false,
+    expires_at: expiresInDays(7),
     semantic_tags: ["session-ingest"],
     provenance: [{ type: "file", ref: input.filePath }]
   };

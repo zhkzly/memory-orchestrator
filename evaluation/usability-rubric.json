@@ -85,6 +85,10 @@
         {
           "ref": "src/cli.ts session-end command",
           "type": "file"
+        },
+        {
+          "ref": "src/core.ts expiresInDays",
+          "type": "file"
         }
       ],
       "score": 5
