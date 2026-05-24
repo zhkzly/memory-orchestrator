@@ -596,6 +596,32 @@ async function appendControllerProposals(input: { vaultRoot: string; proposals: 
   return { proposalLogPath, evaluationLogPath };
 }
 
+async function applyEvaluatedSessionProposal(
+  proposal: ControllerProposal,
+  evaluation: ControllerEvaluation | undefined
+): Promise<{ applied: string[]; skipped: string[] }> {
+  const applied: string[] = [];
+  const skipped: string[] = [];
+  if (!evaluation || evaluation.decision !== "apply" || proposal.type !== "mark-session-outdated" || proposal.requiresReview) {
+    return { applied, skipped: [`requires-review:${proposal.id}`] };
+  }
+  for (const target of proposal.targets) {
+    const item = await loadMemoryItem(target);
+    if (!item || item.kind !== "session") {
+      skipped.push(`not-session:${target}`);
+      continue;
+    }
+    await saveMemoryItem(target, {
+      ...item,
+      status: "outdated",
+      updated_at: new Date().toISOString(),
+      confidence_rationale: `${item.confidence_rationale ?? "none"}; controller proposal apply ${proposal.id}`
+    });
+    applied.push(target);
+  }
+  return { applied, skipped };
+}
+
 export async function runControllerApply(args: string[]): Promise<{
   vaultRoot: string;
   proposalId: string;
@@ -614,28 +640,10 @@ export async function runControllerApply(args: string[]): Promise<{
   const evaluations = await readJsonl<ControllerEvaluation>(evaluationLogPath);
   const proposal = [...proposals].reverse().find((entry) => entry.id === proposalIdValue);
   const evaluation = [...evaluations].reverse().find((entry) => entry.proposalId === proposalIdValue);
-  const applied: string[] = [];
-  const skipped: string[] = [];
   if (!proposal) {
-    return { vaultRoot, proposalId: proposalIdValue, applied, skipped: [`missing-proposal:${proposalIdValue}`] };
+    return { vaultRoot, proposalId: proposalIdValue, applied: [], skipped: [`missing-proposal:${proposalIdValue}`] };
   }
-  if (!evaluation || evaluation.decision !== "apply" || proposal.type !== "mark-session-outdated" || proposal.requiresReview) {
-    return { vaultRoot, proposalId: proposalIdValue, applied, skipped: [`requires-review:${proposal.id}`] };
-  }
-  for (const target of proposal.targets) {
-    const item = await loadMemoryItem(target);
-    if (!item || item.kind !== "session") {
-      skipped.push(`not-session:${target}`);
-      continue;
-    }
-    await saveMemoryItem(target, {
-      ...item,
-      status: "outdated",
-      updated_at: new Date().toISOString(),
-      confidence_rationale: `${item.confidence_rationale ?? "none"}; controller proposal apply ${proposal.id}`
-    });
-    applied.push(target);
-  }
+  const { applied, skipped } = await applyEvaluatedSessionProposal(proposal, evaluation);
   return { vaultRoot, proposalId: proposalIdValue, applied, skipped };
 }
 
@@ -954,7 +962,6 @@ export async function runController(args: string[]): Promise<{
   const oversizedFiles: string[] = [];
   const keep: string[] = [];
   const review: string[] = [];
-  const appliedExpiredSessionItems: string[] = [];
   for (const { filePath, item } of items) {
     const expiresAt = item.expires_at ? new Date(item.expires_at).getTime() : null;
     const ageDays = dayDelta(item.created_at) ?? dayDelta(item.updated_at) ?? 0;
@@ -965,23 +972,6 @@ export async function runController(args: string[]): Promise<{
     }
     if (expiresAt !== null && expiresAt <= Date.now()) {
       expired.push(`${item.id}:${filePath}`);
-      if (applySafe && item.kind === "session" && item.status !== "outdated") {
-        await saveMemoryItem(filePath, {
-          ...item,
-          status: "outdated",
-          updated_at: new Date().toISOString(),
-          confidence_rationale: `${item.confidence_rationale ?? "none"}; controller safe expiry`
-        });
-        appliedExpiredSessionItems.push(`${item.id}:${filePath}`);
-      }
-    } else if (ttlBreached && applySafe && item.kind === "session" && item.status !== "outdated") {
-      await saveMemoryItem(filePath, {
-        ...item,
-        status: "outdated",
-        updated_at: new Date().toISOString(),
-        confidence_rationale: `${item.confidence_rationale ?? "none"}; controller safe ttl expiry`
-      });
-      appliedExpiredSessionItems.push(`${item.id}:${filePath}`);
     } else if (expiresAt !== null && expiresAt - Date.now() <= policy.expiringSoonDays * 24 * 60 * 60 * 1000) {
       expiringSoon.push(`${item.id}:${filePath}`);
     }
@@ -1156,6 +1146,22 @@ export async function runController(args: string[]): Promise<{
     consolidationCandidates,
     reviewItems
   });
+  const evaluations = proposals.map(evaluateProposal);
+  const proposalLogs = args.includes("--write-proposals") || applySafe
+    ? await appendControllerProposals({ vaultRoot, proposals, evaluations })
+    : undefined;
+  const appliedExpiredSessionItems: string[] = [];
+  const skippedSafeApply: string[] = [];
+  if (applySafe) {
+    for (const proposal of proposals) {
+      const evaluation = evaluations.find((entry) => entry.proposalId === proposal.id);
+      const proposalApply = await applyEvaluatedSessionProposal(proposal, evaluation);
+      appliedExpiredSessionItems.push(
+        ...proposalApply.applied.map((target) => `${path.basename(target, ".md")}:${target}`)
+      );
+      skippedSafeApply.push(...proposalApply.skipped);
+    }
+  }
   const report = {
     vaultRoot,
     scope: "vault" as const,
@@ -1171,7 +1177,7 @@ export async function runController(args: string[]): Promise<{
     recommendations,
     consolidationCandidates,
     reviewItems,
-    applied: { expiredSessionItems: appliedExpiredSessionItems },
+    applied: { expiredSessionItems: appliedExpiredSessionItems, skipped: skippedSafeApply },
     structure,
     feedback,
     proposals,
@@ -1195,9 +1201,6 @@ export async function runController(args: string[]): Promise<{
   };
   const feedbackLogPath = args.includes("--write-feedback") ? await appendControllerFeedback(result) : undefined;
   const reinforcementLogPath = args.includes("--write-reinforcement") ? await appendControllerReinforcement(result) : undefined;
-  const proposalLogs = args.includes("--write-proposals")
-    ? await appendControllerProposals({ vaultRoot, proposals, evaluations: proposals.map(evaluateProposal) })
-    : undefined;
   return {
     ...result,
     ...(feedbackLogPath ? { feedbackLogPath } : {}),

@@ -951,14 +951,28 @@ const appliedControllerReport = JSON.parse(
   await run("node", [cliPath, "controller", "--trigger", "scheduled", "--apply-safe"], projectOptions)
 );
 assert(
+  appliedControllerReport.proposalLogPath === controllerProposalsPath,
+  "Expected controller --apply-safe to write proposal history before applying safe changes."
+);
+assert(
+  appliedControllerReport.evaluationLogPath === controllerEvaluationsPath,
+  "Expected controller --apply-safe to write evaluation history before applying safe changes."
+);
+assert(
+  appliedControllerReport.proposals.some(
+    (proposal) => proposal.type === "mark-session-outdated" && proposal.targets.some((target) => target.includes("expired-session-note"))
+  ),
+  "Expected controller --apply-safe to evaluate expired session proposals before applying them."
+);
+assert(
   appliedControllerReport.applied.expiredSessionItems.some((item) => item.includes("expired-session-note")),
   "Expected controller --apply-safe to mark expired session memory."
 );
 const expiredSessionMarkdown = await readFile(path.join(vaultRoot, "sessions", "expired-session-note.md"), "utf8");
 assert(expiredSessionMarkdown.includes('"status": "outdated"'), "Expected expired session memory to be marked outdated.");
 assert(
-  expiredSessionMarkdown.includes("controller safe expiry"),
-  "Expected expired session memory update to be traceable to controller policy."
+  expiredSessionMarkdown.includes("controller proposal apply"),
+  "Expected expired session memory update to be traceable to an evaluated controller proposal."
 );
 
 const inferredContext = JSON.parse(

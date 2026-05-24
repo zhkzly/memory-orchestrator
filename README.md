@@ -253,7 +253,7 @@ When `controller` runs without `--policy`, it checks this vault-owned policy fil
 `fileLengthBudgets` applies to actual Markdown files in vault layers such as `people/`, `projects/`, `notes/`, and `sessions/`.
 Oversized Markdown files are reported under `budgets.oversizedFiles` and become structured `budget` review items with reason `file-length-budget`.
 
-Add `--apply-safe` only when the controller should perform bounded deterministic maintenance. The first safe action marks expired session memory as `outdated` with a traceable controller rationale. It does not rewrite personal, project, or evidence memory.
+Add `--apply-safe` only when the controller should perform bounded deterministic maintenance. Safe apply still generates optimization proposals and built-in `memory-optimization-safety` evaluations first, writes those entries to the proposal/evaluation logs, then applies only evaluated low-risk reversible session maintenance. It does not rewrite personal, project, or evidence memory.
 
 The controller also emits a deterministic feedback score plus a review prompt. That prompt is meant for an external model or human reviewer to inspect, not for the controller itself to execute.
 
