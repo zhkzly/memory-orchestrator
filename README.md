@@ -44,6 +44,7 @@ node dist/cli.js status
 - `kb link --name <name> --project <project>`
 - `kb search --name <name> --query <text>`
 - `kb read --name <name> --page <path>`
+- `agent codex|claude [project-dir] [--task <text>]`
 - `capture --raw <text> --source <source> [--session <session>] [--project <project>]`
 - `classify --candidate <json>`
 - `verify --candidate <json> --evidence <json-array>`
@@ -68,13 +69,22 @@ Use them as instructions for models or wrappers. The CLI remains the source of b
 
 ## Codex Wrapper
 
-`examples/codex-memory` shows the intended pattern:
+`examples/codex-memory` shows the intended pattern after one-time config:
 
 ```bash
-MEMORY_ORCHESTRATOR_ROOT=/path/to/vault ./examples/codex-memory /path/to/vault
+memory-orchestrator init --vault /path/to/vault --project memory-orchestrator
+./examples/codex-memory /path/to/project
 ```
 
-It starts Codex with the vault added as an explicit directory and points this CLI at the same vault.
+It starts Codex with the configured vault and project directory added explicitly.
+
+`examples/claude-memory` uses the same config but launches Claude Code:
+
+```bash
+./examples/claude-memory /path/to/project
+```
+
+Both wrappers call `memory-orchestrator agent`, which injects `MEMORY_ORCHESTRATOR_ROOT`, `MEMORY_ORCHESTRATOR_PROJECT`, `MEMORY_ORCHESTRATOR_SESSION`, and `MEMORY_ORCHESTRATOR_CONTEXT` into the agent environment.
 
 ## Knowledge Bases
 

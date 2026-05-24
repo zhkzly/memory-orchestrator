@@ -3,6 +3,7 @@ import { addKnowledgeBase, initConfig, linkKnowledgeBase, resolveConfig, resolve
 import { inferProject, inferSession } from "./identity.js";
 import { listKnowledgeBases, readKnowledgeBasePage, searchKnowledgeBase } from "./kb.js";
 import { memoryItemSchema, rubricProxySchema } from "./schemas.js";
+import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
 
 function usage(): string {
@@ -17,6 +18,7 @@ function usage(): string {
     "  kb link --name <name> --project <project>",
     "  kb search --name <name> --query <text> [--limit <n>]",
     "  kb read --name <name> --page <path>",
+    "  agent codex|claude [project-dir] [--task <text>]",
     "  capture --raw <text> --source <source> [--session <session>] [--project <project>]",
     "  classify --candidate <json>",
     "  verify --candidate <json> --evidence <json-array>",
@@ -39,6 +41,48 @@ async function resolvedScopes(args: string[]): Promise<{ project: string; sessio
     project: await inferProject(process.cwd(), config, value(args, "--project")),
     session: await inferSession(process.cwd(), value(args, "--session"))
   };
+}
+
+function positional(args: string[]): string[] {
+  const values: string[] = [];
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (arg.startsWith("--")) {
+      index += 1;
+    } else {
+      values.push(arg);
+    }
+  }
+  return values;
+}
+
+async function spawnAgent(agent: "codex" | "claude", args: string[]): Promise<void> {
+  const projectDir = positional(args.slice(1)).slice(1)[0] ?? process.cwd();
+  const config = await resolveConfig(projectDir);
+  const vaultRoot = resolveVaultRoot(config, projectDir);
+  const project = await inferProject(projectDir, config, value(args, "--project"));
+  const session = await inferSession(projectDir, value(args, "--session"));
+  const context = await buildContextPack({
+    taskContext: value(args, "--task") ?? "",
+    projectScope: project,
+    sessionScope: session
+  });
+  const env = {
+    ...process.env,
+    MEMORY_ORCHESTRATOR_ROOT: vaultRoot,
+    MEMORY_ORCHESTRATOR_PROJECT: project,
+    MEMORY_ORCHESTRATOR_SESSION: session,
+    MEMORY_ORCHESTRATOR_CONTEXT: context.contextPack
+  };
+  const commandArgs = agent === "codex" ? ["--add-dir", vaultRoot, "--add-dir", projectDir] : [];
+  const child = spawn(agent, commandArgs, { cwd: projectDir, env, stdio: "inherit" });
+  await new Promise<void>((resolve, reject) => {
+    child.on("exit", (code) => {
+      process.exitCode = code ?? 0;
+      resolve();
+    });
+    child.on("error", reject);
+  });
 }
 
 async function main(): Promise<void> {
@@ -127,6 +171,14 @@ async function main(): Promise<void> {
     }
     const config = await resolveConfig(process.cwd());
     console.log(JSON.stringify(await readKnowledgeBasePage(config, name, page), null, 2));
+    return;
+  }
+  if (command === "agent") {
+    const agent = rest[0];
+    if (agent !== "codex" && agent !== "claude") {
+      throw new Error("agent requires codex or claude.");
+    }
+    await spawnAgent(agent, rest);
     return;
   }
   if (command === "capture") {

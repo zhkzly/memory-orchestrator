@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { chmod, mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -25,7 +25,9 @@ function assert(condition, message) {
 const vaultRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-vault."));
 const homeRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-home."));
 const wikiRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-wiki."));
+const binRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-bin."));
 const sourcePath = path.join(vaultRoot, "source.md");
+const mockAgentOutput = path.join(vaultRoot, "mock-agent-env.json");
 await writeFile(sourcePath, "Evidence source for the harness.\n", "utf8");
 await mkdir(path.join(wikiRoot, "wiki"), { recursive: true });
 await writeFile(
@@ -33,10 +35,31 @@ await writeFile(
   "# Agent Memory\n\nLLM Wiki should stay separate from personal and project memory.\n",
   "utf8"
 );
+await writeFile(
+  path.join(binRoot, "codex"),
+  [
+    "#!/usr/bin/env node",
+    "const fs = require('node:fs');",
+    "fs.writeFileSync(process.env.MOCK_AGENT_OUTPUT, JSON.stringify({",
+    "  root: process.env.MEMORY_ORCHESTRATOR_ROOT,",
+    "  project: process.env.MEMORY_ORCHESTRATOR_PROJECT,",
+    "  session: process.env.MEMORY_ORCHESTRATOR_SESSION,",
+    "  context: process.env.MEMORY_ORCHESTRATOR_CONTEXT,",
+    "  argv: process.argv.slice(2)",
+    "}, null, 2));"
+  ].join("\n"),
+  "utf8"
+);
+await chmod(path.join(binRoot, "codex"), 0o755);
 
 await run("npm", ["run", "build"]);
 
 const cliEnv = { ...process.env, HOME: homeRoot };
+const agentEnv = {
+  ...cliEnv,
+  PATH: `${binRoot}${path.delimiter}${process.env.PATH ?? ""}`,
+  MOCK_AGENT_OUTPUT: mockAgentOutput
+};
 
 await run("node", ["dist/cli.js", "init", "--vault", vaultRoot, "--project", "harness-project"], { env: cliEnv });
 
@@ -74,6 +97,13 @@ assert(
   inferredContext.contextPack.includes("project=harness-project"),
   "Expected context to infer project without explicit --project."
 );
+
+await run("node", ["dist/cli.js", "agent", "codex", repoRoot, "--task", "harness task"], { env: agentEnv });
+const mockAgentEnv = JSON.parse(await readFile(mockAgentOutput, "utf8"));
+assert(mockAgentEnv.root === vaultRoot, "Expected agent harness to inject configured vault root.");
+assert(mockAgentEnv.project === "harness-project", "Expected agent harness to inject inferred project.");
+assert(mockAgentEnv.context.includes("task=harness task"), "Expected agent harness to inject memory context.");
+assert(mockAgentEnv.argv.includes("--add-dir"), "Expected codex harness to add explicit directories.");
 
 await run("node", [
   "dist/cli.js",

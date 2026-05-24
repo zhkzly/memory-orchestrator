@@ -13,4 +13,4 @@ if ! memory-orchestrator status >/dev/null 2>&1; then
   exit 2
 fi
 
-exec memory-orchestrator agent codex "$PROJECT_DIR"
+exec memory-orchestrator agent claude "$PROJECT_DIR"
