@@ -267,11 +267,22 @@ Cleanup also includes a conservative `direct_contradiction:` marker for matching
 Use `controller-schedule` to generate an installable daily scheduler snippet without letting a project-local agent own the schedule:
 
 ```bash
-node dist/cli.js controller-schedule --format cron --time 03:30 --policy /path/to/controller-policy.json --write-report --write-feedback --write-reinforcement
-node dist/cli.js controller-schedule --format systemd --time 03:30 --write-report
+memory-orchestrator controller-schedule --format cron --time 03:30 --policy /path/to/controller-policy.json --write-report --write-feedback --write-reinforcement
+memory-orchestrator controller-schedule --format systemd --time 03:30 --write-report
+memory-orchestrator controller-schedule --format launchd --time 03:30 --write-report
+memory-orchestrator controller-schedule --format windows-task --time 03:30 --write-report
 ```
 
-This command only prints cron or user-systemd text. It does not install anything. The generated command pins `MEMORY_ORCHESTRATOR_ROOT` to the resolved vault root and runs `controller --trigger scheduled`, so scheduled maintenance remains vault-scoped and independent of whichever project happens to be active.
+This command only prints scheduler configuration and shell commands. It does not install anything by itself. The generated output includes a stable `scheduleId`, an `installCommand`, and an `uninstallCommand`, so a scheduled controller pass can be added, replaced, or removed deliberately.
+
+Supported scheduler formats:
+
+- `cron` for Unix/Linux cron.
+- `systemd` for Linux user systemd timers.
+- `launchd` for macOS LaunchAgents.
+- `windows-task` for Windows Task Scheduler through `schtasks`.
+
+The generated command pins `MEMORY_ORCHESTRATOR_ROOT` to the resolved vault root and runs `controller --trigger scheduled`, so scheduled maintenance remains vault-scoped and independent of whichever project happens to be active.
 
 Use `ingest-session` from a session-end hook or agent task to write a session summary file as an ephemeral candidate memory:
 

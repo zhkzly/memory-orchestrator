@@ -680,12 +680,16 @@ const cronSchedule = JSON.parse(
 );
 assert(cronSchedule.format === "cron", "Expected controller-schedule to emit cron format.");
 assert(cronSchedule.trigger === "scheduled", "Expected controller-schedule to target scheduled controller runs.");
+assert(cronSchedule.scheduleId === "memory-orchestrator-controller", "Expected controller-schedule to emit a stable default schedule id.");
 assert(
   cronSchedule.command.includes("controller --trigger scheduled"),
   "Expected controller-schedule command to run the vault controller in scheduled mode."
 );
 assert(cronSchedule.command.includes(controllerPolicyPath), "Expected controller-schedule to include the policy path.");
 assert(cronSchedule.cron.includes("30 3 * * *"), "Expected controller-schedule to encode the requested daily time.");
+assert(cronSchedule.cron.includes("# memory-orchestrator-controller"), "Expected cron output to include a removable schedule marker.");
+assert(cronSchedule.installCommand.includes("crontab"), "Expected cron output to include an install command.");
+assert(cronSchedule.uninstallCommand.includes("grep -v"), "Expected cron output to include a removal command.");
 assert(
   !cronSchedule.command.includes("--project"),
   "Expected controller-schedule to avoid project-scoped policy flags."
@@ -697,10 +701,32 @@ const systemdSchedule = JSON.parse(
 assert(systemdSchedule.format === "systemd", "Expected controller-schedule to emit systemd format.");
 assert(systemdSchedule.service.includes("[Service]"), "Expected systemd schedule to include a service unit.");
 assert(systemdSchedule.timer.includes("OnCalendar=*-*-* 03:30:00"), "Expected systemd schedule to encode the requested daily time.");
+assert(systemdSchedule.installCommand.includes("systemctl --user enable --now"), "Expected systemd output to include an enable command.");
+assert(systemdSchedule.uninstallCommand.includes("systemctl --user disable --now"), "Expected systemd output to include a disable command.");
 assert(
   systemdSchedule.installHint.includes("systemctl --user"),
   "Expected systemd schedule to include a user-level install hint."
 );
+
+const launchdSchedule = JSON.parse(
+  await run("node", [cliPath, "controller-schedule", "--format", "launchd", "--time", "03:30"], projectOptions)
+);
+assert(launchdSchedule.format === "launchd", "Expected controller-schedule to emit launchd format.");
+assert(launchdSchedule.label === "local.memory-orchestrator-controller", "Expected launchd output to include a stable label.");
+assert(launchdSchedule.plist.includes("<key>StartCalendarInterval</key>"), "Expected launchd plist to include daily scheduling.");
+assert(launchdSchedule.plist.includes("<integer>3</integer>"), "Expected launchd plist to encode the requested hour.");
+assert(launchdSchedule.installCommand.includes("launchctl bootstrap"), "Expected launchd output to include an install command.");
+assert(launchdSchedule.uninstallCommand.includes("launchctl bootout"), "Expected launchd output to include an uninstall command.");
+
+const windowsSchedule = JSON.parse(
+  await run("node", [cliPath, "controller-schedule", "--format", "windows-task", "--time", "03:30"], projectOptions)
+);
+assert(windowsSchedule.format === "windows-task", "Expected controller-schedule to emit Windows Task Scheduler format.");
+assert(windowsSchedule.taskName === "MemoryOrchestratorController", "Expected Windows output to include a stable task name.");
+assert(windowsSchedule.installCommand.includes("schtasks /Create"), "Expected Windows output to include a schtasks create command.");
+assert(windowsSchedule.installCommand.includes("/ST 03:30"), "Expected Windows install command to encode the requested time.");
+assert(windowsSchedule.uninstallCommand.includes("schtasks /Delete"), "Expected Windows output to include a schtasks delete command.");
+assert(windowsSchedule.command.includes("set MEMORY_ORCHESTRATOR_ROOT="), "Expected Windows command to set the vault root.");
 
 const policyControllerReport = JSON.parse(
   await run("node", [cliPath, "controller", "--policy", controllerPolicyPath], projectOptions)

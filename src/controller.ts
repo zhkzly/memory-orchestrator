@@ -1001,6 +1001,23 @@ function shellQuote(value: string): string {
   return `'${value.replace(/'/g, "'\\''")}'`;
 }
 
+function scheduleId(args: string[]): string {
+  const raw = value(args, "--name") ?? "memory-orchestrator-controller";
+  return raw
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80) || "memory-orchestrator-controller";
+}
+
+function windowsTaskName(id: string): string {
+  return id
+    .split(/[^a-z0-9]+/i)
+    .filter(Boolean)
+    .map((part) => part.slice(0, 1).toUpperCase() + part.slice(1))
+    .join("") || "MemoryOrchestratorController";
+}
+
 function controllerArgs(args: string[]): string[] {
   const commandArgs = ["controller", "--trigger", "scheduled"];
   const policyPath = value(args, "--policy");
@@ -1037,57 +1054,157 @@ function controllerExecStart(args: string[]): string {
   return `memory-orchestrator ${controllerArgs(args).map(shellArg).join(" ")}`;
 }
 
+function xmlEscape(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function launchdPlist(args: string[], vaultRoot: string, label: string, time: { hour: number; minute: number }): string {
+  const programArguments = ["memory-orchestrator", ...controllerArgs(args)]
+    .map((argument) => ["\t\t<string>", xmlEscape(argument), "</string>"].join(""))
+    .join("\n");
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">',
+    '<plist version="1.0">',
+    '<dict>',
+    "\t<key>Label</key>",
+    `\t<string>${xmlEscape(label)}</string>`,
+    "\t<key>EnvironmentVariables</key>",
+    "\t<dict>",
+    "\t\t<key>MEMORY_ORCHESTRATOR_ROOT</key>",
+    `\t\t<string>${xmlEscape(vaultRoot)}</string>`,
+    "\t</dict>",
+    "\t<key>ProgramArguments</key>",
+    "\t<array>",
+    programArguments,
+    "\t</array>",
+    "\t<key>StartCalendarInterval</key>",
+    "\t<dict>",
+    "\t\t<key>Hour</key>",
+    `\t\t<integer>${time.hour}</integer>`,
+    "\t\t<key>Minute</key>",
+    `\t\t<integer>${time.minute}</integer>`,
+    "\t</dict>",
+    "\t<key>RunAtLoad</key>",
+    "\t<false/>",
+    "</dict>",
+    "</plist>"
+  ].join("\n");
+}
+
+function windowsCommand(args: string[], vaultRoot: string): string {
+  const command = ["memory-orchestrator", ...controllerArgs(args)].join(" ");
+  return `cmd.exe /c "set MEMORY_ORCHESTRATOR_ROOT=${vaultRoot}&& ${command}"`;
+}
+
+function windowsQuote(value: string): string {
+  return `"${value.replace(/"/g, '\\"')}"`;
+}
+
 export async function buildControllerSchedule(args: string[]): Promise<{
-  format: "cron" | "systemd";
+  format: "cron" | "systemd" | "launchd" | "windows-task";
   trigger: "scheduled";
   vaultRoot: string;
+  scheduleId: string;
   command: string;
+  installCommand: string;
+  uninstallCommand: string;
   cron?: string;
   service?: string;
   timer?: string;
+  label?: string;
+  plist?: string;
+  taskName?: string;
   installHint: string;
+  uninstallHint: string;
 }> {
   const config = await resolveConfig(process.cwd());
   const vaultRoot = resolveVaultRoot(config);
-  const format = value(args, "--format") === "systemd" ? "systemd" : "cron";
+  const rawFormat = value(args, "--format") ?? "cron";
+  const format =
+    rawFormat === "systemd" || rawFormat === "launchd" || rawFormat === "windows-task" || rawFormat === "cron" ? rawFormat : "cron";
   const time = parseDailyTime(value(args, "--time"));
+  const id = scheduleId(args);
   const command = controllerCommand(args, vaultRoot);
   if (format === "cron") {
+    const marker = `# ${id}`;
+    const cron = `${time.minute} ${time.hour} * * * ${command} ${marker}`;
     return {
       format,
       trigger: "scheduled",
       vaultRoot,
+      scheduleId: id,
       command,
-      cron: `${time.minute} ${time.hour} * * * ${command}`,
-      installHint: "Install manually with crontab -e after reviewing the command."
+      cron,
+      installCommand: `(crontab -l 2>/dev/null | grep -v ${shellQuote(id)}; printf '%s\\n' ${shellQuote(cron)}) | crontab -`,
+      uninstallCommand: `crontab -l 2>/dev/null | grep -v ${shellQuote(id)} | crontab -`,
+      installHint: "Review installCommand, then run it to add or replace the cron entry.",
+      uninstallHint: "Run uninstallCommand to remove the cron entry with this schedule id."
     };
   }
+  if (format === "systemd") {
+    const unitBase = id;
+    return {
+      format,
+      trigger: "scheduled",
+      vaultRoot,
+      scheduleId: id,
+      command,
+      installCommand: `systemctl --user daemon-reload && systemctl --user enable --now ${unitBase}.timer`,
+      uninstallCommand: `systemctl --user disable --now ${unitBase}.timer; rm -f ~/.config/systemd/user/${unitBase}.service ~/.config/systemd/user/${unitBase}.timer; systemctl --user daemon-reload`,
+      service: [
+        "[Unit]",
+        "Description=Memory Orchestrator vault controller",
+        "",
+        "[Service]",
+        "Type=oneshot",
+        `Environment=MEMORY_ORCHESTRATOR_ROOT=${vaultRoot}`,
+        `ExecStart=${controllerExecStart(args)}`
+      ].join("\n"),
+      timer: [
+        "[Unit]",
+        "Description=Run Memory Orchestrator vault controller daily",
+        "",
+        "[Timer]",
+        `OnCalendar=*-*-* ${time.value}:00`,
+        "Persistent=true",
+        "",
+        "[Install]",
+        "WantedBy=timers.target"
+      ].join("\n"),
+      installHint: `Review, save service/timer as ~/.config/systemd/user/${unitBase}.{service,timer}, then run installCommand with systemctl --user.`,
+      uninstallHint: "Run uninstallCommand to disable and remove the user service and timer."
+    };
+  }
+  if (format === "launchd") {
+    const label = `local.${id}`;
+    const plistPath = `~/Library/LaunchAgents/${label}.plist`;
+    return {
+      format,
+      trigger: "scheduled",
+      vaultRoot,
+      scheduleId: id,
+      command,
+      label,
+      plist: launchdPlist(args, vaultRoot, label, time),
+      installCommand: `mkdir -p ~/Library/LaunchAgents && launchctl bootstrap gui/$(id -u) ${plistPath} && launchctl enable gui/$(id -u)/${label}`,
+      uninstallCommand: `launchctl bootout gui/$(id -u)/${label} 2>/dev/null; rm -f ${plistPath}`,
+      installHint: `Review plist, save it as ${plistPath}, then run installCommand.`,
+      uninstallHint: "Run uninstallCommand to unload and remove the LaunchAgent."
+    };
+  }
+  const taskName = windowsTaskName(id);
+  const winCommand = windowsCommand(args, vaultRoot);
   return {
     format,
     trigger: "scheduled",
     vaultRoot,
-    command,
-    service: [
-      "[Unit]",
-      "Description=Memory Orchestrator vault controller",
-      "",
-      "[Service]",
-      "Type=oneshot",
-      `Environment=MEMORY_ORCHESTRATOR_ROOT=${vaultRoot}`,
-      `ExecStart=${controllerExecStart(args)}`
-    ].join("\n"),
-    timer: [
-      "[Unit]",
-      "Description=Run Memory Orchestrator vault controller daily",
-      "",
-      "[Timer]",
-      `OnCalendar=*-*-* ${time.value}:00`,
-      "Persistent=true",
-      "",
-      "[Install]",
-      "WantedBy=timers.target"
-    ].join("\n"),
-    installHint:
-      "Review, save as ~/.config/systemd/user/memory-orchestrator-controller.{service,timer}, then run systemctl --user daemon-reload && systemctl --user enable --now memory-orchestrator-controller.timer."
+    scheduleId: id,
+    command: winCommand,
+    taskName,
+    installCommand: `schtasks /Create /TN ${windowsQuote(taskName)} /SC DAILY /ST ${time.value} /TR ${windowsQuote(winCommand)} /F`,
+    uninstallCommand: `schtasks /Delete /TN ${windowsQuote(taskName)} /F`,
+    installHint: "Run installCommand from PowerShell or cmd.exe to create or replace the scheduled task.",
+    uninstallHint: "Run uninstallCommand from PowerShell or cmd.exe to delete the scheduled task."
   };
 }
