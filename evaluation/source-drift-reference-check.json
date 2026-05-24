@@ -1,0 +1,26 @@
+{
+  "scenario": "source drift, expiry, semantic conflict, and reference integrity detection",
+  "command": "MEMORY_ORCHESTRATOR_ROOT=/tmp/memory-orchestrator-e2e node dist/cli.js clean --scope demo",
+  "observed_markers": [
+    "never_retrieved:/tmp/memory-orchestrator-e2e/projects/project-dangling-reference.md",
+    "dangling_reference:/tmp/memory-orchestrator-e2e/projects/project-dangling-reference.md->missing-memory-id",
+    "never_retrieved:/tmp/memory-orchestrator-e2e/notes/evidence-source-drift.md",
+    "source_drift:/tmp/memory-orchestrator-e2e/notes/evidence-source-drift.md",
+    "expired:/tmp/memory-orchestrator-e2e7/projects/project-expired.md",
+    "semantic_conflict:project:demo:branch-naming",
+    "circular_reference:ref-a->ref-b->ref-a"
+  ],
+  "proves": [
+    "evidence entries with source_content_hash can detect source drift",
+    "entries with references can detect missing referenced memory ids",
+    "project/evidence entries with retrieval_count 0 can be marked as never retrieved",
+    "entries with expires_at can be marked expired",
+    "same-scope project memories with conflicting semantic_tags can be flagged",
+    "reference cycles can be detected during cleanup"
+  ],
+  "limits": [
+    "semantic contradiction detection is tag-based, not deep natural-language entailment",
+    "TTL policy is field-driven and does not yet assign expiry automatically by layer",
+    "circular references are detected during clean, not prevented before write"
+  ]
+}

@@ -1,0 +1,267 @@
+{
+  "candidate": "CLI-first vault memory system",
+  "rubric": "evaluation/cli-first-rubric.json",
+  "proxies": [
+    {
+      "id": "personal-separation",
+      "score": 4,
+      "evidence": [
+        {
+          "ref": "people/user.md",
+          "type": "file"
+        },
+        {
+          "ref": "projects/current-project.md",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "id": "project-continuity",
+      "score": 4,
+      "evidence": [
+        {
+          "ref": "projects/current-project.md",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/src/cli.ts",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "id": "evidence-layer",
+      "score": 4,
+      "evidence": [
+        {
+          "ref": "notes/memory-evaluation-roles.md",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/evaluation/sample-evidence.json",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "id": "knowledge-base-separation",
+      "score": 4,
+      "evidence": [
+        {
+          "ref": "notes/memory-system-layer-boundaries.md",
+          "type": "file"
+        },
+        {
+          "ref": "notes/memory-system-llm-wiki-extension.md",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/evaluation/independent-rubric-decomposition.json",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "id": "classification-rules",
+      "score": 4,
+      "evidence": [
+        {
+          "ref": "notes/memory-system-architecture.md#Classification Rules",
+          "type": "file"
+        },
+        {
+          "ref": "notes/memory-system-layer-boundaries.md#Rejection Rules",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "id": "conflict-protocol",
+      "score": 4,
+      "evidence": [
+        {
+          "ref": "notes/memory-system-architecture.md#Verification Conflict Protocol",
+          "type": "file"
+        },
+        {
+          "ref": "notes/memory-evaluation-roles.md",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "id": "cli-executable",
+      "score": 5,
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/src/cli.ts",
+          "type": "file"
+        },
+        {
+          "ref": "npm run build",
+          "type": "test"
+        }
+      ]
+    },
+    {
+      "id": "mcp-adapter",
+      "score": 4,
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/src/core.ts",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/src/mcp.ts",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "id": "independent-evaluation",
+      "score": 4,
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/evaluation/README.md",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/evaluation/independent-rubric-decomposition.json",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/src/cli.ts score command",
+          "type": "test"
+        }
+      ]
+    },
+    {
+      "id": "known-limitations-staleness",
+      "score": 4,
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/evaluation/independent-rubric-decomposition.json",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/evaluation/source-drift-reference-check.json",
+          "type": "test"
+        },
+        {
+          "ref": "memory-orchestrator/src/core.ts cleanMemory",
+          "type": "file"
+        },
+        {
+          "ref": "TODO.md",
+          "type": "file"
+        },
+        {
+          "ref": "projects/current-project.md",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "id": "cross-reference-integrity",
+      "score": 4,
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/evaluation/source-drift-reference-check.json",
+          "type": "test"
+        },
+        {
+          "ref": "memory-orchestrator/src/types.ts references",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/src/core.ts cleanMemory",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "id": "semantic-conflict-detection",
+      "score": 3,
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/evaluation/source-drift-reference-check.json",
+          "type": "test"
+        },
+        {
+          "ref": "memory-orchestrator/src/types.ts semantic_tags",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/src/core.ts cleanMemory",
+          "type": "file"
+        }
+      ]
+    }
+  ],
+  "criteria": [
+    {
+      "name": "Personal Model Fidelity",
+      "score": 4,
+      "risks": []
+    },
+    {
+      "name": "Project-Scoped Context Retention",
+      "score": 4,
+      "risks": []
+    },
+    {
+      "name": "Evidence Grounding",
+      "score": 4,
+      "risks": []
+    },
+    {
+      "name": "Identity Model vs. Knowledge Base Separation",
+      "score": 4,
+      "risks": []
+    },
+    {
+      "name": "Scope Integrity and Boundary Enforcement",
+      "score": 4,
+      "risks": []
+    },
+    {
+      "name": "Independent Evaluability and Falsifiability",
+      "score": 4,
+      "risks": []
+    },
+    {
+      "name": "Implementability",
+      "score": 5,
+      "risks": []
+    },
+    {
+      "name": "Portability / Exitability",
+      "score": 4,
+      "risks": []
+    },
+    {
+      "name": "Evaluation Independence",
+      "score": 4,
+      "risks": []
+    },
+    {
+      "name": "Staleness Detection and Temporal Integrity",
+      "score": 4,
+      "risks": []
+    },
+    {
+      "name": "Cross-Reference Integrity",
+      "score": 4,
+      "risks": []
+    },
+    {
+      "name": "Update Safety",
+      "score": 3,
+      "risks": []
+    }
+  ],
+  "overall_score": 4,
+  "recommendation": "accept",
+  "notes": []
+}

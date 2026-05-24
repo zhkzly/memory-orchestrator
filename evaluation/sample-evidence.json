@@ -1,0 +1,12 @@
+{
+  "items": [
+    {
+      "ref": "npm run build",
+      "type": "test"
+    },
+    {
+      "ref": "node dist/cli.js capture --raw ...",
+      "type": "test"
+    }
+  ]
+}

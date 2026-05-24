@@ -1,0 +1,37 @@
+{
+  "candidate": {
+    "name": "CLI-first memory orchestrator",
+    "scope": "local vault memory system",
+    "version": "0.1.0"
+  },
+  "proxies": [
+    {
+      "id": "proxy-1",
+      "criterion": "CLI usability",
+      "target": "The system can be used directly from shell and by skills.",
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/src/cli.ts",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "proxy-2",
+      "criterion": "Evidence separation",
+      "target": "Rubric, evidence, and score are separate artifacts.",
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/evaluation/rubric-template.md",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/evaluation/score-report-template.json",
+          "type": "file"
+        }
+      ],
+      "score": 5
+    }
+  ]
+}

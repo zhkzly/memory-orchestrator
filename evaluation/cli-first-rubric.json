@@ -1,0 +1,229 @@
+{
+  "candidate": {
+    "name": "CLI-first vault memory system",
+    "scope": "local Obsidian-backed memory orchestration for coding agents",
+    "version": "0.1.0"
+  },
+  "proxies": [
+    {
+      "id": "personal-separation",
+      "criterion": "Personal Model Fidelity",
+      "target": "Personal preferences are separated from project facts.",
+      "evidence": [
+        {
+          "ref": "people/user.md",
+          "type": "file"
+        },
+        {
+          "ref": "projects/current-project.md",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "project-continuity",
+      "criterion": "Project-Scoped Context Retention",
+      "target": "Project bugs, branch conventions, and decisions can persist across sessions.",
+      "evidence": [
+        {
+          "ref": "projects/current-project.md",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/src/cli.ts",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "evidence-layer",
+      "criterion": "Evidence Grounding",
+      "target": "Evidence is stored separately and scoring requires evidence references.",
+      "evidence": [
+        {
+          "ref": "notes/memory-evaluation-roles.md",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/evaluation/sample-evidence.json",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "knowledge-base-separation",
+      "criterion": "Identity Model vs. Knowledge Base Separation",
+      "target": "Professional knowledge bases are separated from the personal model, project memory, atomic evidence, and session scratchpad.",
+      "evidence": [
+        {
+          "ref": "notes/memory-system-layer-boundaries.md",
+          "type": "file"
+        },
+        {
+          "ref": "notes/memory-system-llm-wiki-extension.md",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/evaluation/independent-rubric-decomposition.json",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "classification-rules",
+      "criterion": "Scope Integrity and Boundary Enforcement",
+      "target": "Classification rules define how personal, project, evidence, professional knowledge, and session items are separated.",
+      "evidence": [
+        {
+          "ref": "notes/memory-system-architecture.md#Classification Rules",
+          "type": "file"
+        },
+        {
+          "ref": "notes/memory-system-layer-boundaries.md#Rejection Rules",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "conflict-protocol",
+      "criterion": "Independent Evaluability and Falsifiability",
+      "target": "Verifier/classifier disagreements are not silently promoted.",
+      "evidence": [
+        {
+          "ref": "notes/memory-system-architecture.md#Verification Conflict Protocol",
+          "type": "file"
+        },
+        {
+          "ref": "notes/memory-evaluation-roles.md",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "cli-executable",
+      "criterion": "Implementability",
+      "target": "The system can be executed locally without depending on MCP.",
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/src/cli.ts",
+          "type": "file"
+        },
+        {
+          "ref": "npm run build",
+          "type": "test"
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "mcp-adapter",
+      "criterion": "Portability / Exitability",
+      "target": "MCP is optional and does not own the core logic.",
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/src/core.ts",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/src/mcp.ts",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "independent-evaluation",
+      "criterion": "Evaluation Independence",
+      "target": "Rubric, evidence, score, and independent rubric decomposition are separated into auditable artifacts.",
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/evaluation/README.md",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/evaluation/independent-rubric-decomposition.json",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/src/cli.ts score command",
+          "type": "test"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "known-limitations-staleness",
+      "criterion": "Staleness Detection and Temporal Integrity",
+      "target": "The CLI detects source drift, expired entries, never-retrieved memories, and records the remaining limits of automatic temporal policy.",
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/evaluation/independent-rubric-decomposition.json",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/evaluation/source-drift-reference-check.json",
+          "type": "test"
+        },
+        {
+          "ref": "memory-orchestrator/src/core.ts cleanMemory",
+          "type": "file"
+        },
+        {
+          "ref": "TODO.md",
+          "type": "file"
+        },
+        {
+          "ref": "projects/current-project.md",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "cross-reference-integrity",
+      "criterion": "Cross-Reference Integrity",
+      "target": "The cleaner detects dangling references and circular references in stored memory items.",
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/evaluation/source-drift-reference-check.json",
+          "type": "test"
+        },
+        {
+          "ref": "memory-orchestrator/src/types.ts references",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/src/core.ts cleanMemory",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "semantic-conflict-detection",
+      "criterion": "Update Safety",
+      "target": "The cleaner detects same-scope semantic tag conflicts as a minimum contradiction signal.",
+      "evidence": [
+        {
+          "ref": "memory-orchestrator/evaluation/source-drift-reference-check.json",
+          "type": "test"
+        },
+        {
+          "ref": "memory-orchestrator/src/types.ts semantic_tags",
+          "type": "file"
+        },
+        {
+          "ref": "memory-orchestrator/src/core.ts cleanMemory",
+          "type": "file"
+        }
+      ],
+      "score": 3
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "version": "0.1.0",
+  "memory_item": {
+    "id": "string",
+    "kind": "personal|project|evidence|session",
+    "scope": "string",
+    "source": "string",
+    "confidence": 0.0,
+    "status": "candidate|verified|rejected|outdated",
+    "content": "string",
+    "created_at": "iso8601",
+    "updated_at": "iso8601",
+    "provenance": [
+      {
+        "type": "prompt|file|diff|correction|session",
+        "ref": "string"
+      }
+    ]
+  },
+  "rubric_proxy": {
+    "id": "string",
+    "criterion": "string",
+    "target": "string",
+    "evidence": [
+      {
+        "ref": "string",
+        "type": "file|prompt|diff|test|session"
+      }
+    ],
+    "score": 0
+  }
+}

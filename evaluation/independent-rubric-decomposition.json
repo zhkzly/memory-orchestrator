@@ -1,0 +1,182 @@
+{
+  "source": "claude-cli independent rubric decomposer",
+  "created_at": "2026-05-24T12:33:31+08:00",
+  "criteria": [
+    {
+      "name": "Separation of Memory Types",
+      "target": "Durable personal modeling, project-scoped continuity, evidence-backed knowledge, professional knowledge bases, and session context must occupy distinct, non-leaking boundaries.",
+      "proxies": [
+        {
+          "name": "Personal-to-project isolation",
+          "evidence_required": "Adding a user preference must not alter any project-scoped memory entry."
+        },
+        {
+          "name": "Knowledge-to-identity isolation",
+          "evidence_required": "Storing a factual reference must not modify the user model or persona traits."
+        },
+        {
+          "name": "Session-to-durable isolation",
+          "evidence_required": "Ephemeral session context must not be persisted into durable storage without an explicit promotion step."
+        },
+        {
+          "name": "Schema-level type enforcement",
+          "evidence_required": "Each memory type must have distinct structure or validation rules that prevent cross-type contamination."
+        }
+      ]
+    },
+    {
+      "name": "Lifecycle and Durability Gradation",
+      "target": "Session, project, personal, evidence, and professional knowledge memories must have different lifecycles.",
+      "proxies": [
+        {
+          "name": "Session memory expiry",
+          "evidence_required": "Session-scoped memory is inaccessible after the session ends or is clearly marked expired."
+        },
+        {
+          "name": "Durable memory survival",
+          "evidence_required": "Personal memory written in one session is retrievable intact in a later session."
+        },
+        {
+          "name": "Explicit promotion path",
+          "evidence_required": "Session context can only become durable memory through a documented review or confirmation step."
+        },
+        {
+          "name": "Retirement and deprecation",
+          "evidence_required": "Outdated project memory can be marked retired/deprecated without silent deletion."
+        }
+      ]
+    },
+    {
+      "name": "Evidence Grounding and Source Traceability",
+      "target": "Knowledge and reference memories must cite verifiable origins and distinguish observed facts from inferred claims.",
+      "proxies": [
+        {
+          "name": "Source citation requirement",
+          "evidence_required": "Every reference-type memory includes a mandatory source field that can be checked."
+        },
+        {
+          "name": "Observed-vs-inferred tagging",
+          "evidence_required": "Direct user statements and inferred claims are tagged differently and queryable."
+        },
+        {
+          "name": "Rejection of unevidenced claims",
+          "evidence_required": "The system refuses to persist factual claims without evidence and returns a rejection reason."
+        },
+        {
+          "name": "Audit trail from memory to origin",
+          "evidence_required": "A selected memory can be traced back to its originating interaction or source document."
+        }
+      ]
+    },
+    {
+      "name": "Identity Model vs. Knowledge Base Separation",
+      "target": "The system must separate who the user is from what the user knows, cites, or stores.",
+      "proxies": [
+        {
+          "name": "Trait-vs-trivia boundary",
+          "evidence_required": "A domain fact stated by the user is not recorded as a user trait."
+        },
+        {
+          "name": "Independent retrieval paths",
+          "evidence_required": "User-model queries and knowledge-base queries use separate retrieval paths or filters."
+        },
+        {
+          "name": "No anthropomorphization of knowledge",
+          "evidence_required": "Knowledge entries do not contain person-like attributes."
+        },
+        {
+          "name": "Role vs. knowledge non-conflation",
+          "evidence_required": "Updating the user's role does not mutate project or knowledge entries."
+        }
+      ]
+    },
+    {
+      "name": "Independent Evaluability and Falsifiability",
+      "target": "Every stored memory entry and evaluation score must be independently checkable from its evidence.",
+      "proxies": [
+        {
+          "name": "Self-contained entry structure",
+          "evidence_required": "A memory entry contains claim, source, timestamp, type, and scope."
+        },
+        {
+          "name": "Falsifiability criterion",
+          "evidence_required": "The entry structure supports identifying evidence that would prove the claim wrong."
+        },
+        {
+          "name": "Third-party verification simulation",
+          "evidence_required": "An evaluator without original context can check the entry using only cited evidence."
+        },
+        {
+          "name": "Conflicting evidence resolution",
+          "evidence_required": "Contradictory memories are surfaced as conflicts rather than silently resolved."
+        }
+      ]
+    },
+    {
+      "name": "Scope Integrity and Boundary Enforcement",
+      "target": "Project-scoped memories must not leak into personal modeling or other projects.",
+      "proxies": [
+        {
+          "name": "Project-scope containment",
+          "evidence_required": "A project constraint is only retrievable within that project's context."
+        },
+        {
+          "name": "Cross-project isolation",
+          "evidence_required": "Project A memories are not retrievable from Project B unless explicitly shared."
+        },
+        {
+          "name": "Scope validation at write time",
+          "evidence_required": "Invalid or ambiguous scope is rejected at ingestion."
+        },
+        {
+          "name": "Session isolation",
+          "evidence_required": "Concurrent or sequential session states do not contaminate each other."
+        }
+      ]
+    },
+    {
+      "name": "Staleness Detection and Temporal Integrity",
+      "target": "Changeable facts must carry freshness metadata and defer to current observable state when stale.",
+      "proxies": [
+        {
+          "name": "Timestamp and freshness indicator",
+          "evidence_required": "Every memory entry has creation and, where applicable, last-verified timestamps."
+        },
+        {
+          "name": "Staleness flag on conflict",
+          "evidence_required": "Contradiction with current state marks a memory potentially stale."
+        },
+        {
+          "name": "Current-state preference",
+          "evidence_required": "Live observable state takes precedence over stale stored memory."
+        },
+        {
+          "name": "Staleness propagation to dependents",
+          "evidence_required": "Memories depending on stale entries are flagged or warned."
+        }
+      ]
+    },
+    {
+      "name": "Cross-Reference Integrity",
+      "target": "References between memories must resolve, and broken or cyclic references must be handled explicitly.",
+      "proxies": [
+        {
+          "name": "Reference resolvability",
+          "evidence_required": "Cross-references resolve to existing memory entries."
+        },
+        {
+          "name": "Dangling reference detection",
+          "evidence_required": "Deleting a referenced memory prevents deletion or flags dependent memories."
+        },
+        {
+          "name": "Circular reference handling",
+          "evidence_required": "Circular references are rejected or traversed with bounded depth."
+        },
+        {
+          "name": "Cascading update on target change",
+          "evidence_required": "Identifier changes update inbound references or flag them."
+        }
+      ]
+    }
+  ]
+}

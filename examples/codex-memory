@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+VAULT_ROOT="${1:-${MEMORY_ORCHESTRATOR_ROOT:-}}"
+
+if [[ -z "$VAULT_ROOT" ]]; then
+  echo "Usage: MEMORY_ORCHESTRATOR_ROOT=/path/to/vault examples/codex-memory [vault-root]" >&2
+  exit 2
+fi
+
+export MEMORY_ORCHESTRATOR_ROOT="$VAULT_ROOT"
+exec codex --add-dir "$VAULT_ROOT"

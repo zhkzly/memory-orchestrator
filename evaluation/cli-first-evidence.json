@@ -1,0 +1,56 @@
+{
+  "items": [
+    {
+      "ref": "notes/memory-system-decision-record.md",
+      "type": "file"
+    },
+    {
+      "ref": "notes/memory-system-implementation-plan.md",
+      "type": "file"
+    },
+    {
+      "ref": "memory-orchestrator/src/core.ts",
+      "type": "file"
+    },
+    {
+      "ref": "memory-orchestrator/src/cli.ts",
+      "type": "file"
+    },
+    {
+      "ref": "memory-orchestrator/src/mcp.ts",
+      "type": "file"
+    },
+    {
+      "ref": "memory-orchestrator/evaluation/README.md",
+      "type": "file"
+    },
+    {
+      "ref": "memory-orchestrator/evaluation/independent-rubric-decomposition.json",
+      "type": "file"
+    },
+    {
+      "ref": "memory-orchestrator/evaluation/source-drift-reference-check.json",
+      "type": "test"
+    },
+    {
+      "ref": "notes/memory-system-layer-boundaries.md",
+      "type": "file"
+    },
+    {
+      "ref": "notes/memory-system-fact-evidence.md",
+      "type": "file"
+    },
+    {
+      "ref": "notes/memory-system-llm-wiki-extension.md",
+      "type": "file"
+    },
+    {
+      "ref": "npm run build",
+      "type": "test"
+    },
+    {
+      "ref": "node dist/cli.js score --rubric evaluation/cli-first-rubric.json --evidence evaluation/cli-first-evidence.json",
+      "type": "test"
+    }
+  ]
+}
