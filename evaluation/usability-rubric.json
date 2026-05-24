@@ -141,6 +141,14 @@
         {
           "ref": "scripts/harness.mjs real LLM Wiki API assertions",
           "type": "test"
+        },
+        {
+          "ref": "src/kb.ts doctorKnowledgeBase",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs kb doctor assertions",
+          "type": "test"
         }
       ],
       "score": 5

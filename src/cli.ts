@@ -12,7 +12,7 @@ import {
 } from "./core.js";
 import { addKnowledgeBase, initConfig, initProjectConfig, linkKnowledgeBase, resolveConfig, resolveVaultRoot } from "./config.js";
 import { inferProject, inferSession } from "./identity.js";
-import { listKnowledgeBases, readKnowledgeBasePage, searchKnowledgeBase } from "./kb.js";
+import { doctorKnowledgeBase, listKnowledgeBases, readKnowledgeBasePage, searchKnowledgeBase } from "./kb.js";
 import { memoryItemSchema, rubricProxySchema } from "./schemas.js";
 import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
@@ -33,6 +33,7 @@ function usage(): string {
     "  kb list",
     "  kb add --name <name> --root <path> [--type llm_wiki|folder] [--api <url>] [--description <text>]",
     "  kb link --name <name> --project <project>",
+    "  kb doctor --name <name> [--query <text>]",
     "  kb search --name <name> --query <text> [--limit <n>]",
     "  kb read --name <name> --page <path>",
     "  agent codex|claude [project-dir] [--task <text>]",
@@ -462,6 +463,15 @@ async function main(): Promise<void> {
       throw new Error("kb link requires --name <name> and --project <project>.");
     }
     console.log(JSON.stringify(await linkKnowledgeBase({ name, project }), null, 2));
+    return;
+  }
+  if (command === "kb" && rest[0] === "doctor") {
+    const name = value(rest, "--name");
+    if (!name) {
+      throw new Error("kb doctor requires --name <name>.");
+    }
+    const config = await resolveConfig(process.cwd());
+    console.log(JSON.stringify(await doctorKnowledgeBase(config, name, value(rest, "--query") ?? "memory"), null, 2));
     return;
   }
   if (command === "kb" && rest[0] === "search") {

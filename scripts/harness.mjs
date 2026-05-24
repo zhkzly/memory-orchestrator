@@ -248,6 +248,12 @@ const fallbackResults = JSON.parse(
   await run("node", [cliPath, "kb", "search", "--name", "fallback-research", "--query", "LLM Wiki"], projectOptions)
 );
 assert(fallbackResults[0]?.path === "wiki/agent-memory.md", "Expected kb search to fall back to local files.");
+const fallbackDoctor = JSON.parse(
+  await run("node", [cliPath, "kb", "doctor", "--name", "fallback-research", "--query", "LLM Wiki"], projectOptions)
+);
+assert(fallbackDoctor.ready === true, "Expected kb doctor to accept local fallback when API is unavailable.");
+assert(fallbackDoctor.checks.api.ok === false, "Expected kb doctor to report unavailable API.");
+assert(fallbackDoctor.checks.localFallback.ok === true, "Expected kb doctor to report local fallback readiness.");
 const wikiPage = JSON.parse(
   await run("node", [cliPath, "kb", "read", "--name", "memory-research", "--page", "wiki/api-memory.md"], projectOptions)
 );
@@ -263,6 +269,12 @@ const realApiPage = JSON.parse(
   await run("node", [cliPath, "kb", "read", "--name", "real-llm-wiki", "--page", "wiki/real-api-memory.md"], projectOptions)
 );
 assert(realApiPage.content.includes("real LLM Wiki API shape"), "Expected kb read to support real LLM Wiki API.");
+const realApiDoctor = JSON.parse(
+  await run("node", [cliPath, "kb", "doctor", "--name", "real-llm-wiki", "--query", "real api"], projectOptions)
+);
+assert(realApiDoctor.ready === true, "Expected kb doctor to mark real LLM Wiki API as ready.");
+assert(realApiDoctor.checks.api.ok === true, "Expected kb doctor to report API readiness.");
+assert(realApiDoctor.checks.auth.ok === true, "Expected kb doctor to report token presence.");
 
 const now = new Date().toISOString();
 const projectItem = {

@@ -37,6 +37,10 @@
       "type": "file"
     },
     {
+      "ref": "src/kb.ts doctorKnowledgeBase",
+      "type": "file"
+    },
+    {
       "ref": "README.md",
       "type": "file"
     },

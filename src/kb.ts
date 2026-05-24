@@ -9,6 +9,19 @@ export interface KnowledgeBaseSearchResult {
   excerpt: string;
 }
 
+export interface KnowledgeBaseDoctorReport {
+  name: string;
+  ready: boolean;
+  checks: {
+    registered: { ok: boolean; detail: string };
+    root: { ok: boolean; detail: string };
+    api: { ok: boolean; detail: string };
+    auth: { ok: boolean; detail: string };
+    localFallback: { ok: boolean; detail: string };
+  };
+  nextActions: string[];
+}
+
 interface ApiSearchResult {
   path?: string;
   file?: string;
@@ -64,6 +77,68 @@ export function listKnowledgeBases(config: MemoryConfig): KnowledgeBaseConfig[] 
   return config.knowledgeBases ?? [];
 }
 
+export async function doctorKnowledgeBase(
+  config: MemoryConfig,
+  name: string,
+  query = "memory"
+): Promise<KnowledgeBaseDoctorReport> {
+  const knowledgeBase = (config.knowledgeBases ?? []).find((kb) => kb.name === name);
+  if (!knowledgeBase) {
+    return {
+      name,
+      ready: false,
+      checks: {
+        registered: { ok: false, detail: `knowledge base not found: ${name}` },
+        root: { ok: false, detail: "not checked" },
+        api: { ok: false, detail: "not checked" },
+        auth: { ok: false, detail: "not checked" },
+        localFallback: { ok: false, detail: "not checked" }
+      },
+      nextActions: ["Run memory-orchestrator kb add --name <name> --root <path> [--api <url>]."]
+    };
+  }
+  const rootOk = await directoryReadable(knowledgeBase.root);
+  const apiResults = knowledgeBase.api ? await searchLlmWikiApi(knowledgeBase, query, 1) : null;
+  const localResults = rootOk ? await searchKnowledgeBaseFiles(knowledgeBase, query, 1) : [];
+  const apiOk = Boolean(apiResults?.length);
+  const fallbackOk = localResults.length > 0;
+  const nextActions: string[] = [];
+  if (!rootOk) {
+    nextActions.push("Fix the knowledge-base root path or run kb add with the correct --root.");
+  }
+  if (knowledgeBase.api && !apiOk) {
+    nextActions.push("Start LLM Wiki, verify --api points at http://127.0.0.1:19828, and set LLM_WIKI_API_TOKEN if auth is enabled.");
+  }
+  if (!knowledgeBase.api && !fallbackOk) {
+    nextActions.push("Add Markdown files under the knowledge-base root or configure --api.");
+  }
+  if (knowledgeBase.api && !apiOk && !fallbackOk) {
+    nextActions.push("API and local fallback both failed; check the registered root and API configuration.");
+  }
+  const ready = rootOk && (apiOk || fallbackOk);
+  return {
+    name,
+    ready,
+    checks: {
+      registered: { ok: true, detail: `${knowledgeBase.type}:${knowledgeBase.name}` },
+      root: { ok: rootOk, detail: knowledgeBase.root },
+      api: {
+        ok: knowledgeBase.api ? apiOk : false,
+        detail: knowledgeBase.api ? `${knowledgeBase.api}${apiOk ? " returned results" : " did not return results"}` : "no API configured"
+      },
+      auth: {
+        ok: Boolean(process.env.LLM_WIKI_API_TOKEN),
+        detail: process.env.LLM_WIKI_API_TOKEN ? "LLM_WIKI_API_TOKEN is set" : "LLM_WIKI_API_TOKEN is not set"
+      },
+      localFallback: {
+        ok: fallbackOk,
+        detail: fallbackOk ? "local Markdown fallback returned results" : "local Markdown fallback returned no results"
+      }
+    },
+    nextActions: ready ? ["Knowledge base is ready for kb search/read and context integration."] : nextActions
+  };
+}
+
 export async function searchKnowledgeBase(
   config: MemoryConfig,
   name: string,
@@ -78,6 +153,15 @@ export async function searchKnowledgeBase(
     }
   }
   return searchKnowledgeBaseFiles(knowledgeBase, query, limit);
+}
+
+async function directoryReadable(dirPath: string): Promise<boolean> {
+  try {
+    await fs.access(dirPath);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function searchKnowledgeBaseFiles(
