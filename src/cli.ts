@@ -15,6 +15,7 @@ import { listKnowledgeBases, readKnowledgeBasePage, searchKnowledgeBase } from "
 import { memoryItemSchema, rubricProxySchema } from "./schemas.js";
 import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
+import path from "node:path";
 import type { MemoryConfig } from "./config.js";
 
 function usage(): string {
@@ -97,6 +98,56 @@ async function buildCliContext(input: {
     task: input.task
   });
   return context;
+}
+
+async function writeMaintenanceReport(input: {
+  vaultRoot: string;
+  project: string;
+  session: string;
+  scope: string;
+  task: string;
+  cleanup: { markers: string[] };
+  knowledgeBases: ReturnType<typeof listKnowledgeBases>;
+  nextActions: string[];
+}): Promise<string> {
+  const reportsDir = path.join(input.vaultRoot, "reports");
+  await fs.mkdir(reportsDir, { recursive: true });
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const reportPath = path.join(reportsDir, `maintenance-${input.scope}-${timestamp}.md`);
+  const knowledgeBases =
+    input.knowledgeBases
+      .map((kb) => `- ${kb.name} (${kb.type}) root=${kb.root}${kb.api ? ` api=${kb.api}` : ""}`)
+      .join("\n") || "- none";
+  const cleanupMarkers = input.cleanup.markers.map((marker) => `- ${marker}`).join("\n") || "- none";
+  const nextActions = input.nextActions.map((action) => `- ${action}`).join("\n");
+  await fs.writeFile(
+    reportPath,
+    [
+      "# Maintenance Report",
+      "",
+      "## Scope",
+      "",
+      `- project: ${input.project}`,
+      `- session: ${input.session}`,
+      `- scope: ${input.scope}`,
+      `- task: ${input.task}`,
+      "",
+      "## Cleanup Markers",
+      "",
+      cleanupMarkers,
+      "",
+      "## Knowledge Bases",
+      "",
+      knowledgeBases,
+      "",
+      "## Next Actions",
+      "",
+      nextActions,
+      ""
+    ].join("\n"),
+    "utf8"
+  );
+  return reportPath;
 }
 
 function positional(args: string[]): string[] {
@@ -251,21 +302,37 @@ async function main(): Promise<void> {
       session
     });
     const cleanup = await cleanMemory(scope);
-    console.log(
-      JSON.stringify(
-        {
+    const report = {
+      vaultRoot,
+      project,
+      session,
+      scope,
+      context,
+      cleanup,
+      knowledgeBases: listKnowledgeBases(config),
+      nextActions: [
+        "Review cleanup markers before promoting or deleting memory.",
+        "Use kb search/read for linked professional knowledge; do not import whole knowledge bases into memory.",
+        "Use capture/promote for explicit writes; maintain is intentionally read/report-first."
+      ]
+    };
+    const reportPath = rest.includes("--write-report")
+      ? await writeMaintenanceReport({
           vaultRoot,
           project,
           session,
           scope,
-          context,
+          task,
           cleanup,
-          knowledgeBases: listKnowledgeBases(config),
-          nextActions: [
-            "Review cleanup markers before promoting or deleting memory.",
-            "Use kb search/read for linked professional knowledge; do not import whole knowledge bases into memory.",
-            "Use capture/promote for explicit writes; maintain is intentionally read/report-first."
-          ]
+          knowledgeBases: report.knowledgeBases,
+          nextActions: report.nextActions
+        })
+      : undefined;
+    console.log(
+      JSON.stringify(
+        {
+          ...report,
+          ...(reportPath ? { reportPath } : {})
         },
         null,
         2

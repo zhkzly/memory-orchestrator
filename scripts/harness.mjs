@@ -272,6 +272,16 @@ assert(
 );
 assert(Array.isArray(maintenanceReport.cleanup.markers), "Expected maintain to include cleanup markers.");
 assert(maintenanceReport.knowledgeBases.length === 2, "Expected maintain to include registered knowledge bases.");
+const writtenMaintenanceReport = JSON.parse(
+  await run("node", ["dist/cli.js", "maintain", "--task", "harness task", "--write-report"], { env: cliEnv })
+);
+assert(writtenMaintenanceReport.reportPath?.includes("reports"), "Expected maintain to write a report under reports.");
+const maintenanceMarkdown = await readFile(writtenMaintenanceReport.reportPath, "utf8");
+assert(maintenanceMarkdown.includes("# Maintenance Report"), "Expected maintenance report to have a readable title.");
+assert(maintenanceMarkdown.includes("## Scope"), "Expected maintenance report to include scope.");
+assert(maintenanceMarkdown.includes("## Cleanup Markers"), "Expected maintenance report to include cleanup markers.");
+assert(maintenanceMarkdown.includes("## Knowledge Bases"), "Expected maintenance report to include knowledge bases.");
+assert(maintenanceMarkdown.includes("## Next Actions"), "Expected maintenance report to include next actions.");
 
 await run("node", ["dist/cli.js", "agent", "codex", repoRoot, "--task", "LLM Wiki"], { env: agentEnv });
 const mockAgentEnv = JSON.parse(await readFile(mockAgentOutput, "utf8"));

@@ -45,7 +45,7 @@ node dist/cli.js status
 - `kb search --name <name> --query <text>`
 - `kb read --name <name> --page <path>`
 - `agent codex|claude [project-dir] [--task <text>]`
-- `maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>]`
+- `maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]`
 - `ingest-session --file <path> [--session <scope>] [--project <scope>]`
 - `capture --raw <text> --source <source> [--session <session>] [--project <project>]`
 - `classify --candidate <json>`
@@ -100,6 +100,8 @@ node dist/cli.js maintain --task "daily memory maintenance"
 ```
 
 It resolves config, infers project/session, builds a context pack, runs cleanup checks, and reports registered knowledge bases as JSON. It is intentionally read/report-first; use explicit write commands such as `capture` and `promote` for memory changes until transcript ingestion is implemented.
+
+Add `--write-report` to also write a human-readable Markdown report under `reports/` for later Obsidian review.
 
 Use `ingest-session` from a session-end hook or agent task to write a session summary file as an ephemeral candidate memory:
 
