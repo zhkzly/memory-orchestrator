@@ -439,6 +439,7 @@ function htmlPage(): string {
     "<body>",
     "<h1>Memory Orchestrator</h1>",
     "<section><h2>Status</h2><pre id=\"status\">Loading...</pre></section>",
+    "<section><h2>Project Init</h2><form id=\"init-project\"><input name=\"project\" placeholder=\"project\"><input name=\"vaultRoot\" placeholder=\"vault root optional\"><button>Initialize</button></form></section>",
     "<section><h2>Knowledge Bases</h2><pre id=\"kb\">Loading...</pre></section>",
     "<section><h2>Add Knowledge Base</h2><form id=\"add-kb\"><input name=\"name\" placeholder=\"name\"><input name=\"root\" placeholder=\"root\"><input name=\"api\" placeholder=\"api optional\"><button>Add</button></form></section>",
     "<section><h2>Link Knowledge Base</h2><form id=\"link-kb\"><input name=\"name\" placeholder=\"name\"><input name=\"project\" placeholder=\"project\"><button>Link</button></form></section>",
@@ -446,7 +447,7 @@ function htmlPage(): string {
     "<script>",
     "for (const name of ['status','kb','reports']) fetch('/api/' + name).then(r => r.json()).then(j => document.getElementById(name).textContent = JSON.stringify(j, null, 2));",
     "async function postForm(id, url) { const form = document.getElementById(id); form.addEventListener('submit', async (event) => { event.preventDefault(); const body = Object.fromEntries(new FormData(form).entries()); await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }); location.reload(); }); }",
-    "postForm('add-kb', '/api/kb/add'); postForm('link-kb', '/api/kb/link');",
+    "postForm('init-project', '/api/project/init'); postForm('add-kb', '/api/kb/add'); postForm('link-kb', '/api/kb/link');",
     "</script>",
     "</body>",
     "</html>"
@@ -475,9 +476,10 @@ async function readRequestJson<T>(request: IncomingMessage): Promise<T> {
 async function serveUi(args: string[]): Promise<void> {
   const host = value(args, "--host") ?? "127.0.0.1";
   const requestedPort = Number(value(args, "--port") ?? "8765");
+  const projectCwd = value(args, "--cwd") ?? process.cwd();
   const server = createServer(async (request, response) => {
     const url = new URL(request.url ?? "/", `http://${host}`);
-    const config = await resolveConfig(process.cwd());
+    const config = await resolveConfig(projectCwd);
     const vaultRoot = resolveVaultRoot(config);
     const scopes = await resolvedScopes(args);
     if (url.pathname === "/") {
@@ -493,6 +495,22 @@ async function serveUi(args: string[]): Promise<void> {
     if (url.pathname === "/api/kb") {
       response.setHeader("content-type", "application/json");
       response.end(JSON.stringify(listKnowledgeBases(config), null, 2));
+      return;
+    }
+    if (url.pathname === "/api/project/init" && request.method === "POST") {
+      const body = await readRequestJson<{ project?: string; vaultRoot?: string }>(request);
+      if (!body.project) {
+        response.statusCode = 400;
+        response.end(JSON.stringify({ ok: false, error: "project is required" }));
+        return;
+      }
+      const result = await initProjectConfig({
+        cwd: projectCwd,
+        project: body.project,
+        vaultRoot: body.vaultRoot || undefined
+      });
+      response.setHeader("content-type", "application/json");
+      response.end(JSON.stringify({ ok: true, path: result.path, config: result.config }, null, 2));
       return;
     }
     if (url.pathname === "/api/kb/add" && request.method === "POST") {

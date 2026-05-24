@@ -136,10 +136,10 @@ This command is intentionally read-only. It is the CLI path for post-hoc human r
 Start a local review UI:
 
 ```bash
-node dist/cli.js ui
+node dist/cli.js ui --cwd /path/to/project
 ```
 
-The UI binds to `127.0.0.1` by default and exposes status, knowledge-base registry, maintenance reports, and safe knowledge-base add/link actions. It is a review/configuration aid, not the policy owner.
+The UI binds to `127.0.0.1` by default and exposes status, project initialization, knowledge-base registry, maintenance reports, and safe knowledge-base add/link actions. It is a review/configuration aid, not the policy owner.
 
 Use `harness` when an external scheduler, Codex workflow, Claude workflow, or shell wrapper needs one stable memory-system health and context entrypoint:
 

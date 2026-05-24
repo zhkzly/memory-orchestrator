@@ -56,6 +56,7 @@ const binRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-bin."));
 const inferredProjectRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-inferred-project."));
 const localProjectRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-local-project."));
 const harnessProjectRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-harness-project."));
+const uiProjectRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-ui-project."));
 const sourcePath = path.join(vaultRoot, "source.md");
 const sessionSummaryPath = path.join(vaultRoot, "session-summary.md");
 const transcriptPath = path.join(vaultRoot, "session-transcript.md");
@@ -538,7 +539,7 @@ assert(maintenanceMarkdown.includes("## Cleanup Markers"), "Expected maintenance
 assert(maintenanceMarkdown.includes("## Knowledge Bases"), "Expected maintenance report to include knowledge bases.");
 assert(maintenanceMarkdown.includes("## Next Actions"), "Expected maintenance report to include next actions.");
 
-const uiProcess = spawn("node", [cliPath, "ui", "--port", "0"], {
+const uiProcess = spawn("node", [cliPath, "ui", "--port", "0", "--cwd", uiProjectRoot], {
   ...projectOptions,
   stdio: ["ignore", "pipe", "pipe"]
 });
@@ -549,7 +550,24 @@ const uiStatus = await fetch(`${uiUrl}/api/status`).then((response) => response.
 assert(uiStatus.project === "harness-project", "Expected UI API to use project-local config.");
 const uiHome = await fetch(uiUrl).then((response) => response.text());
 assert(uiHome.includes("Memory Orchestrator"), "Expected UI homepage to render.");
+assert(uiHome.includes("Project Init"), "Expected UI homepage to include project bootstrap form.");
 assert(uiHome.includes("Add Knowledge Base"), "Expected UI homepage to include KB configuration form.");
+const uiProjectInit = await fetch(`${uiUrl}/api/project/init`, {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ project: "ui-project", vaultRoot })
+}).then((response) => response.json());
+assert(uiProjectInit.ok === true, "Expected UI to initialize a project-local config.");
+const uiProjectStatus = JSON.parse(
+  await run("node", [cliPath, "status"], {
+    env: cliEnv,
+    cwd: uiProjectRoot
+  })
+);
+assert(
+  uiProjectStatus.project === "ui-project",
+  "Expected UI project initialization to pin the new checkout."
+);
 const uiKbAdd = await fetch(`${uiUrl}/api/kb/add`, {
   method: "POST",
   headers: { "content-type": "application/json" },
