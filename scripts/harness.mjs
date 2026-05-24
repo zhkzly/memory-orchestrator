@@ -343,6 +343,24 @@ const uiStatus = await fetch(`${uiUrl}/api/status`).then((response) => response.
 assert(uiStatus.project === "harness-project", "Expected UI API to use project-local config.");
 const uiHome = await fetch(uiUrl).then((response) => response.text());
 assert(uiHome.includes("Memory Orchestrator"), "Expected UI homepage to render.");
+assert(uiHome.includes("Add Knowledge Base"), "Expected UI homepage to include KB configuration form.");
+const uiKbAdd = await fetch(`${uiUrl}/api/kb/add`, {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ name: "ui-research", root: wikiRoot, type: "llm_wiki" })
+}).then((response) => response.json());
+assert(uiKbAdd.ok === true, "Expected UI to add a knowledge base.");
+const uiKbLink = await fetch(`${uiUrl}/api/kb/link`, {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ name: "ui-research", project: "harness-project" })
+}).then((response) => response.json());
+assert(uiKbLink.ok === true, "Expected UI to link a knowledge base.");
+const uiKnowledgeBases = await fetch(`${uiUrl}/api/kb`).then((response) => response.json());
+assert(
+  uiKnowledgeBases.some((kb) => kb.name === "ui-research" && kb.linkedProjects.includes("harness-project")),
+  "Expected UI-added knowledge base to appear in registry."
+);
 uiProcess.kill();
 
 await run("node", [cliPath, "agent", "codex", harnessProjectRoot, "--task", "LLM Wiki"], { env: agentEnv });

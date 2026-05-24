@@ -16,6 +16,7 @@ import { memoryItemSchema, rubricProxySchema } from "./schemas.js";
 import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
 import { createServer } from "node:http";
+import type { IncomingMessage } from "node:http";
 import path from "node:path";
 import type { MemoryConfig } from "./config.js";
 
@@ -162,9 +163,13 @@ function htmlPage(): string {
     "<h1>Memory Orchestrator</h1>",
     "<section><h2>Status</h2><pre id=\"status\">Loading...</pre></section>",
     "<section><h2>Knowledge Bases</h2><pre id=\"kb\">Loading...</pre></section>",
+    "<section><h2>Add Knowledge Base</h2><form id=\"add-kb\"><input name=\"name\" placeholder=\"name\"><input name=\"root\" placeholder=\"root\"><input name=\"api\" placeholder=\"api optional\"><button>Add</button></form></section>",
+    "<section><h2>Link Knowledge Base</h2><form id=\"link-kb\"><input name=\"name\" placeholder=\"name\"><input name=\"project\" placeholder=\"project\"><button>Link</button></form></section>",
     "<section><h2>Reports</h2><pre id=\"reports\">Loading...</pre></section>",
     "<script>",
     "for (const name of ['status','kb','reports']) fetch('/api/' + name).then(r => r.json()).then(j => document.getElementById(name).textContent = JSON.stringify(j, null, 2));",
+    "async function postForm(id, url) { const form = document.getElementById(id); form.addEventListener('submit', async (event) => { event.preventDefault(); const body = Object.fromEntries(new FormData(form).entries()); await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }); location.reload(); }); }",
+    "postForm('add-kb', '/api/kb/add'); postForm('link-kb', '/api/kb/link');",
     "</script>",
     "</body>",
     "</html>"
@@ -181,14 +186,23 @@ async function listReports(vaultRoot: string): Promise<string[]> {
   }
 }
 
+async function readRequestJson<T>(request: IncomingMessage): Promise<T> {
+  const chunks: Buffer[] = [];
+  await new Promise<void>((resolve) => {
+    request.on("data", (chunk) => chunks.push(chunk));
+    request.on("end", resolve);
+  });
+  return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}") as T;
+}
+
 async function serveUi(args: string[]): Promise<void> {
   const host = value(args, "--host") ?? "127.0.0.1";
   const requestedPort = Number(value(args, "--port") ?? "8765");
-  const config = await resolveConfig(process.cwd());
-  const vaultRoot = resolveVaultRoot(config);
-  const scopes = await resolvedScopes(args);
   const server = createServer(async (request, response) => {
     const url = new URL(request.url ?? "/", `http://${host}`);
+    const config = await resolveConfig(process.cwd());
+    const vaultRoot = resolveVaultRoot(config);
+    const scopes = await resolvedScopes(args);
     if (url.pathname === "/") {
       response.setHeader("content-type", "text/html; charset=utf-8");
       response.end(htmlPage());
@@ -202,6 +216,35 @@ async function serveUi(args: string[]): Promise<void> {
     if (url.pathname === "/api/kb") {
       response.setHeader("content-type", "application/json");
       response.end(JSON.stringify(listKnowledgeBases(config), null, 2));
+      return;
+    }
+    if (url.pathname === "/api/kb/add" && request.method === "POST") {
+      const body = await readRequestJson<{ name?: string; root?: string; type?: "llm_wiki" | "folder"; api?: string }>(request);
+      if (!body.name || !body.root) {
+        response.statusCode = 400;
+        response.end(JSON.stringify({ ok: false, error: "name and root are required" }));
+        return;
+      }
+      await addKnowledgeBase({
+        name: body.name,
+        root: body.root,
+        type: body.type ?? "llm_wiki",
+        api: body.api || undefined
+      });
+      response.setHeader("content-type", "application/json");
+      response.end(JSON.stringify({ ok: true }));
+      return;
+    }
+    if (url.pathname === "/api/kb/link" && request.method === "POST") {
+      const body = await readRequestJson<{ name?: string; project?: string }>(request);
+      if (!body.name || !body.project) {
+        response.statusCode = 400;
+        response.end(JSON.stringify({ ok: false, error: "name and project are required" }));
+        return;
+      }
+      await linkKnowledgeBase({ name: body.name, project: body.project });
+      response.setHeader("content-type", "application/json");
+      response.end(JSON.stringify({ ok: true }));
       return;
     }
     if (url.pathname === "/api/reports") {

@@ -117,7 +117,7 @@ Start a local review UI:
 node dist/cli.js ui
 ```
 
-The UI binds to `127.0.0.1` by default and exposes status, knowledge-base registry, and maintenance reports. It is a review/configuration aid, not the policy owner.
+The UI binds to `127.0.0.1` by default and exposes status, knowledge-base registry, maintenance reports, and safe knowledge-base add/link actions. It is a review/configuration aid, not the policy owner.
 
 Use `ingest-session` from a session-end hook or agent task to write a session summary file as an ephemeral candidate memory:
 
