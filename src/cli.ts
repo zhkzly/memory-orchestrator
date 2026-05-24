@@ -5,6 +5,7 @@ import {
   promoteItem,
   writeCandidateItem,
   ingestSessionFile,
+  summarizeSessionTranscript,
   buildContextPack,
   evaluateRubric,
   cleanMemory
@@ -37,6 +38,7 @@ function usage(): string {
     "  maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]",
     "  ui [--host <host>] [--port <port>]",
     "  ingest-session --file <path> [--session <scope>] [--project <scope>]",
+    "  summarize-session --file <path> [--out <path>] [--ingest] [--session <scope>] [--project <scope>]",
     "  capture --raw <text> --source <source> [--session <session>] [--project <project>]",
     "  classify --candidate <json>",
     "  verify --candidate <json> --evidence <json-array>",
@@ -483,6 +485,28 @@ async function main(): Promise<void> {
     }
     const { session, project } = await resolvedScopes(rest);
     console.log(JSON.stringify(await ingestSessionFile({ filePath, session, project }), null, 2));
+    return;
+  }
+  if (command === "summarize-session") {
+    const filePath = value(rest, "--file");
+    if (!filePath) {
+      throw new Error("summarize-session requires --file <path>.");
+    }
+    const summary = await summarizeSessionTranscript({
+      filePath,
+      outPath: value(rest, "--out")
+    });
+    if (rest.includes("--ingest")) {
+      const { session, project } = await resolvedScopes(rest);
+      const ingested = await ingestSessionFile({
+        filePath: summary.summaryPath,
+        session,
+        project
+      });
+      console.log(JSON.stringify({ ...summary, path: ingested.path, item: ingested.item }, null, 2));
+      return;
+    }
+    console.log(JSON.stringify(summary, null, 2));
     return;
   }
   if (command === "classify") {

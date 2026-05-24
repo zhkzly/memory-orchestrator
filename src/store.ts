@@ -80,7 +80,7 @@ function parseItemFromMarkdown(markdown: string): MemoryItem | null {
 }
 
 function claimFromBody(body: string): string | null {
-  const match = body.match(/## Claim\n\n([\s\S]*?)(?=\n## |\s*$)/);
+  const match = body.match(/## Claim\n\n([\s\S]*?)(?=\n## Metadata\n|\s*$)/);
   return match ? match[1].trim() : null;
 }
 

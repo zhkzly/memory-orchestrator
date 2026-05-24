@@ -58,11 +58,22 @@ const localProjectRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-
 const harnessProjectRoot = await mkdtemp(path.join(tmpdir(), "memory-orchestrator-harness-project."));
 const sourcePath = path.join(vaultRoot, "source.md");
 const sessionSummaryPath = path.join(vaultRoot, "session-summary.md");
+const transcriptPath = path.join(vaultRoot, "session-transcript.md");
 const mockAgentOutput = path.join(vaultRoot, "mock-agent-env.json");
 await writeFile(sourcePath, "Evidence source for the harness.\n", "utf8");
 await writeFile(
   sessionSummaryPath,
   "Session ingest should capture end-of-session summaries for the next context pack.\n",
+  "utf8"
+);
+await writeFile(
+  transcriptPath,
+  [
+    "User: Need memory usability work.",
+    "Decision: Keep CLI-first memory policy and use UI only as a review/config aid.",
+    "TODO: Test transcript summarization for session-end workflow.",
+    "Evidence: Harness should verify summarized transcripts enter future context."
+  ].join("\n"),
   "utf8"
 );
 await mkdir(path.join(wikiRoot, "wiki"), { recursive: true });
@@ -272,6 +283,15 @@ assert(ingestedSession.path.includes("sessions"), "Expected ingest-session to wr
 const sessionMarkdown = await readFile(ingestedSession.path, "utf8");
 assert(sessionMarkdown.includes("# Session Memory:"), "Expected ingested session memory to have a readable title.");
 assert(sessionMarkdown.includes("## Suggested Maintenance"), "Expected ingested session memory to have maintenance guidance.");
+const summarizedSession = JSON.parse(
+  await run("node", [cliPath, "summarize-session", "--file", transcriptPath, "--ingest"], projectOptions)
+);
+assert(summarizedSession.summaryPath?.includes("session-summary"), "Expected summarize-session to write a summary file.");
+assert(summarizedSession.item?.kind === "session", "Expected summarize-session --ingest to create a session item.");
+const transcriptSummary = await readFile(summarizedSession.summaryPath, "utf8");
+assert(transcriptSummary.includes("## Decisions"), "Expected transcript summary to include decisions.");
+assert(transcriptSummary.includes("Keep CLI-first memory policy"), "Expected transcript summary to preserve decisions.");
+assert(transcriptSummary.includes("## TODOs"), "Expected transcript summary to include TODOs.");
 
 const inferredContext = JSON.parse(
   await run("node", [cliPath, "context", "--task", "harness task"], projectOptions)
@@ -285,19 +305,41 @@ assert(
   "Expected context to include inline verified project memory."
 );
 assert(
-  inferredContext.contextPack.includes("Session memory should stay ephemeral"),
-  "Expected context to include inline session memory without promotion."
-);
-assert(
-  inferredContext.contextPack.includes("Session ingest should capture end-of-session summaries"),
-  "Expected context to include ingested session summaries."
-);
-const memoryEntries = inferredContext.contextPack.match(/^memory:/gm) ?? [];
-assert(memoryEntries.length <= 3, "Expected context to limit inline memory entries.");
-assert(
   !inferredContext.contextPack.includes("Low priority filler memory 4."),
   "Expected context to omit low-priority filler memory."
 );
+const memoryEntries = inferredContext.contextPack.match(/^memory:/gm) ?? [];
+assert(memoryEntries.length <= 3, "Expected context to limit inline memory entries.");
+
+const ingestedSessionContext = JSON.parse(
+  await run("node", [cliPath, "context", "--task", "session summaries"], projectOptions)
+);
+assert(
+  ingestedSessionContext.contextPack.includes("Session ingest should capture end-of-session summaries"),
+  "Expected task-matched context to include ingested session summaries."
+);
+const ingestedSessionMemoryEntries = ingestedSessionContext.contextPack.match(/^memory:/gm) ?? [];
+assert(ingestedSessionMemoryEntries.length <= 3, "Expected ingested session context to keep inline memory bounded.");
+
+const ephemeralSessionContext = JSON.parse(
+  await run("node", [cliPath, "context", "--task", "ephemeral session memory"], projectOptions)
+);
+assert(
+  ephemeralSessionContext.contextPack.includes("Session memory should stay ephemeral"),
+  "Expected task-matched context to include inline session memory without promotion."
+);
+const ephemeralSessionMemoryEntries = ephemeralSessionContext.contextPack.match(/^memory:/gm) ?? [];
+assert(ephemeralSessionMemoryEntries.length <= 3, "Expected ephemeral session context to keep inline memory bounded.");
+
+const transcriptContext = JSON.parse(
+  await run("node", [cliPath, "context", "--task", "transcript summarization"], projectOptions)
+);
+assert(
+  transcriptContext.contextPack.includes("Test transcript summarization"),
+  "Expected task-matched context to include summarized transcript memory."
+);
+const transcriptMemoryEntries = transcriptContext.contextPack.match(/^memory:/gm) ?? [];
+assert(transcriptMemoryEntries.length <= 3, "Expected transcript context to keep inline memory bounded.");
 
 const knowledgeContext = JSON.parse(
   await run("node", [cliPath, "context", "--task", "LLM Wiki"], projectOptions)

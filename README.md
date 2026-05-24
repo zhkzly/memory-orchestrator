@@ -55,6 +55,7 @@ node dist/cli.js status
 - `maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]`
 - `ui [--host <host>] [--port <port>]`
 - `ingest-session --file <path> [--session <scope>] [--project <scope>]`
+- `summarize-session --file <path> [--out <path>] [--ingest] [--session <scope>] [--project <scope>]`
 - `capture --raw <text> --source <source> [--session <session>] [--project <project>]`
 - `classify --candidate <json>`
 - `verify --candidate <json> --evidence <json-array>`
@@ -107,7 +108,7 @@ Use `maintain` as the first schedulable automation surface:
 node dist/cli.js maintain --task "daily memory maintenance"
 ```
 
-It resolves config, infers project/session, builds a context pack, runs cleanup checks, and reports registered knowledge bases as JSON. It is intentionally read/report-first; use explicit write commands such as `capture` and `promote` for memory changes until transcript ingestion is implemented.
+It resolves config, infers project/session, builds a context pack, runs cleanup checks, and reports registered knowledge bases as JSON. It is intentionally read/report-first; use explicit write commands such as `capture`, `promote`, `ingest-session`, or `summarize-session --ingest` for memory changes.
 
 Add `--write-report` to also write a human-readable Markdown report under `reports/` for later Obsidian review.
 
@@ -126,6 +127,14 @@ node dist/cli.js ingest-session --file /path/to/session-summary.md
 ```
 
 This does not promote the summary into project or personal memory. Promotion remains explicit.
+
+Use `summarize-session` when a session hook has a transcript rather than a prepared summary:
+
+```bash
+node dist/cli.js summarize-session --file /path/to/transcript.md --ingest
+```
+
+The first-pass summarizer is deterministic. It extracts only explicit `Decision:`, `TODO:`, `Evidence:`, `Open Question:`, and `Note:` lines into a Markdown session summary, then `--ingest` stores that summary as ephemeral session memory. It does not call an LLM or infer durable project facts on its own.
 
 ## Knowledge Bases
 

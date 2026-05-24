@@ -36,6 +36,21 @@ export interface IngestSessionInput {
   project: string;
 }
 
+export interface SummarizeSessionInput {
+  filePath: string;
+  outPath?: string;
+}
+
+export interface SessionTranscriptSummary {
+  summaryPath: string;
+  content: string;
+  decisions: string[];
+  todos: string[];
+  evidence: string[];
+  openQuestions: string[];
+  notes: string[];
+}
+
 function now(): string {
   return new Date().toISOString();
 }
@@ -151,6 +166,102 @@ export async function ingestSessionFile(input: IngestSessionInput): Promise<{ pa
   };
   const { path } = await writeCandidateItem(item);
   return { path, item };
+}
+
+export async function summarizeSessionTranscript(input: SummarizeSessionInput): Promise<SessionTranscriptSummary> {
+  const content = await fs.readFile(input.filePath, "utf8");
+  const sections = extractSessionSections(content);
+  const summaryPath =
+    input.outPath ??
+    `${input.filePath.replace(/\.[^/.]+$/, "")}-session-summary.md`;
+  const markdown = renderSessionSummary(input.filePath, sections);
+  await fs.writeFile(summaryPath, markdown, "utf8");
+  return {
+    summaryPath,
+    content: markdown,
+    ...sections
+  };
+}
+
+function extractSessionSections(content: string): Omit<SessionTranscriptSummary, "summaryPath" | "content"> {
+  const sections = {
+    decisions: [] as string[],
+    todos: [] as string[],
+    evidence: [] as string[],
+    openQuestions: [] as string[],
+    notes: [] as string[]
+  };
+  for (const rawLine of content.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line) {
+      continue;
+    }
+    const match = line.match(/^(decision|decisions|todo|todos|task|evidence|source|open question|question|note|notes)\s*:\s*(.+)$/i);
+    if (!match) {
+      continue;
+    }
+    const label = match[1].toLowerCase();
+    const value = match[2].trim();
+    if (!value) {
+      continue;
+    }
+    if (label === "decision" || label === "decisions") {
+      sections.decisions.push(value);
+    } else if (label === "todo" || label === "todos" || label === "task") {
+      sections.todos.push(value);
+    } else if (label === "evidence" || label === "source") {
+      sections.evidence.push(value);
+    } else if (label === "open question" || label === "question") {
+      sections.openQuestions.push(value);
+    } else {
+      sections.notes.push(value);
+    }
+  }
+  if (
+    sections.decisions.length === 0 &&
+    sections.todos.length === 0 &&
+    sections.evidence.length === 0 &&
+    sections.openQuestions.length === 0 &&
+    sections.notes.length === 0
+  ) {
+    sections.notes.push("No explicit Decision/TODO/Evidence markers were found in this transcript.");
+  }
+  return sections;
+}
+
+function renderSessionSummary(
+  sourcePath: string,
+  sections: Omit<SessionTranscriptSummary, "summaryPath" | "content">
+): string {
+  const bullets = (items: string[]) => (items.length > 0 ? items.map((item) => `- ${item}`).join("\n") : "- none");
+  return [
+    "# Session Summary",
+    "",
+    "## Source",
+    "",
+    `- ${sourcePath}`,
+    "",
+    "## Decisions",
+    "",
+    bullets(sections.decisions),
+    "",
+    "## TODOs",
+    "",
+    bullets(sections.todos),
+    "",
+    "## Evidence",
+    "",
+    bullets(sections.evidence),
+    "",
+    "## Open Questions",
+    "",
+    bullets(sections.openQuestions),
+    "",
+    "## Notes",
+    "",
+    bullets(sections.notes),
+    ""
+  ].join("\n");
 }
 
 export async function buildContextPack(input: BuildContextPackInput): Promise<{ contextPack: string }> {
