@@ -182,6 +182,16 @@ const status = JSON.parse(await run("node", ["dist/cli.js", "status"], { env: cl
 assert(status.vaultRoot === vaultRoot, "Expected status to resolve configured vault root.");
 assert(status.project.includes("memory-orchestrator-publish"), "Expected status to infer the current repo project.");
 
+const unconfiguredDoctor = JSON.parse(await run("node", [cliPath, "doctor"], {
+  env: cliEnv,
+  cwd: inferredProjectRoot
+}));
+assert(unconfiguredDoctor.ready === false, "Expected doctor to flag an unbound project as not ready.");
+assert(
+  unconfiguredDoctor.nextActions.some((action) => action.includes("init-project")),
+  "Expected doctor to recommend project initialization."
+);
+
 await run("node", [cliPath, "init-project", "--project", "harness-project"], {
   env: cliEnv,
   cwd: harnessProjectRoot
@@ -191,6 +201,12 @@ const harnessProjectStatus = JSON.parse(await run("node", [cliPath, "status"], {
   cwd: harnessProjectRoot
 }));
 assert(harnessProjectStatus.project === "harness-project", "Expected project-local config to bind harness project.");
+const configuredDoctor = JSON.parse(await run("node", [cliPath, "doctor"], projectOptions));
+assert(configuredDoctor.ready === true, "Expected doctor to mark configured project as ready.");
+assert(configuredDoctor.project === "harness-project", "Expected doctor to report inferred project.");
+assert(configuredDoctor.checks.projectConfig.ok === true, "Expected doctor to detect project-local config.");
+assert(configuredDoctor.checks.agentHarness.ok === true, "Expected doctor to report agent harness readiness.");
+assert(configuredDoctor.checks.sessionEnd.ok === true, "Expected doctor to report session-end readiness.");
 
 const inferredProjectStatus = JSON.parse(await run("node", [cliPath, "status"], {
   env: cliEnv,

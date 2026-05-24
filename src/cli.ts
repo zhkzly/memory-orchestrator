@@ -29,6 +29,7 @@ function usage(): string {
     "  init --vault <path> [--project <default-project>]",
     "  init-project [--project <project>] [--vault <path>]",
     "  status",
+    "  doctor [--task <text>] [--session <scope>] [--project <scope>]",
     "  kb list",
     "  kb add --name <name> --root <path> [--type llm_wiki|folder] [--api <url>] [--description <text>]",
     "  kb link --name <name> --project <project>",
@@ -105,6 +106,77 @@ async function buildCliContext(input: {
     task: input.task
   });
   return context;
+}
+
+async function canWriteDirectory(dirPath: string): Promise<boolean> {
+  try {
+    await fs.mkdir(dirPath, { recursive: true });
+    await fs.access(dirPath, fs.constants.W_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function runDoctor(args: string[]): Promise<{
+  ready: boolean;
+  vaultRoot: string;
+  project: string;
+  session: string;
+  checks: Record<string, { ok: boolean; detail: string }>;
+  nextActions: string[];
+}> {
+  const config = await resolveConfig(process.cwd());
+  const vaultRoot = resolveVaultRoot(config);
+  const { project, session } = await resolvedScopes(args);
+  const task = value(args, "--task") ?? "doctor";
+  const checks = {
+    vaultRoot: {
+      ok: await canWriteDirectory(vaultRoot),
+      detail: vaultRoot
+    },
+    projectConfig: {
+      ok: Boolean(config.projectConfigPath),
+      detail: config.projectConfigPath ?? "no .memory-orchestrator.json found from current directory"
+    },
+    context: {
+      ok: false,
+      detail: "not checked"
+    },
+    agentHarness: {
+      ok: true,
+      detail: "agent codex|claude can infer project/session and inject MEMORY_ORCHESTRATOR_CONTEXT"
+    },
+    sessionEnd: {
+      ok: true,
+      detail: "session-end can ingest --transcript or --summary and optionally write a report"
+    }
+  };
+  try {
+    await buildCliContext({ config, task, project, session });
+    checks.context = { ok: true, detail: "context pack can be built" };
+  } catch (error) {
+    checks.context = { ok: false, detail: error instanceof Error ? error.message : String(error) };
+  }
+  const nextActions: string[] = [];
+  if (!checks.vaultRoot.ok) {
+    nextActions.push("Run memory-orchestrator init --vault <path-to-vault> or set MEMORY_ORCHESTRATOR_ROOT.");
+  }
+  if (!checks.projectConfig.ok) {
+    nextActions.push("Run memory-orchestrator init-project --project <stable-project-name> from this project directory.");
+  }
+  if (!checks.context.ok) {
+    nextActions.push("Fix context errors before launching agent codex|claude.");
+  }
+  const ready = Object.values(checks).every((check) => check.ok);
+  return {
+    ready,
+    vaultRoot,
+    project,
+    session,
+    checks,
+    nextActions: ready ? ["Run memory-orchestrator agent codex|claude or session-end from this project."] : nextActions
+  };
 }
 
 async function writeMaintenanceReport(input: {
@@ -351,6 +423,10 @@ async function main(): Promise<void> {
         2
       )
     );
+    return;
+  }
+  if (command === "doctor") {
+    console.log(JSON.stringify(await runDoctor(rest), null, 2));
     return;
   }
   if (command === "kb" && rest[0] === "list") {

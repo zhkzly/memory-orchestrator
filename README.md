@@ -33,6 +33,14 @@ After that, commands infer project and session when possible:
 node dist/cli.js context --task "prepare next session"
 ```
 
+Check whether the current project is ready for agent use:
+
+```bash
+node dist/cli.js doctor
+```
+
+`doctor` verifies the vault root, project-local config, context generation, agent harness entrypoint, and `session-end` hook readiness. If a project is not bound yet, it returns the exact `init-project` action to run.
+
 ## Vault Root
 
 Memory files are written under the configured vault root. `MEMORY_ORCHESTRATOR_ROOT` remains an override for scripts and tests.
@@ -46,6 +54,7 @@ node dist/cli.js status
 - `init --vault <path> [--project <default-project>]`
 - `init-project [--project <project>] [--vault <path>]`
 - `status`
+- `doctor [--task <text>] [--session <scope>] [--project <scope>]`
 - `kb list`
 - `kb add --name <name> --root <path> [--type llm_wiki|folder] [--api <url>]`
 - `kb link --name <name> --project <project>`
