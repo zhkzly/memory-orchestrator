@@ -14,6 +14,7 @@ import { addKnowledgeBase, initConfig, initProjectConfig, linkKnowledgeBase, res
 import { inferProject, inferSession } from "./identity.js";
 import { doctorKnowledgeBase, listKnowledgeBases, readKnowledgeBasePage, searchKnowledgeBase } from "./kb.js";
 import { memoryItemSchema, rubricProxySchema } from "./schemas.js";
+import { listAllMemoryItems } from "./store.js";
 import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
 import { createServer } from "node:http";
@@ -38,6 +39,7 @@ function usage(): string {
     "  kb read --name <name> --page <path>",
     "  agent codex|claude [project-dir] [--task <text>]",
     "  maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]",
+    "  review [--scope <scope>] [--days <n>] [--session <scope>] [--project <scope>]",
     "  ui [--host <host>] [--port <port>]",
     "  ingest-session --file <path> [--session <scope>] [--project <scope>]",
     "  summarize-session --file <path> [--out <path>] [--ingest] [--session <scope>] [--project <scope>]",
@@ -228,6 +230,74 @@ async function writeMaintenanceReport(input: {
     "utf8"
   );
   return reportPath;
+}
+
+function summarizeMemoryItem(item: {
+  id: string;
+  kind: string;
+  scope: string;
+  status: string;
+  source: string;
+  content: string;
+  expires_at?: string;
+  updated_at?: string;
+  last_retrieved_at?: string;
+}): Record<string, string | undefined> {
+  return {
+    id: item.id,
+    kind: item.kind,
+    scope: item.scope,
+    status: item.status,
+    source: item.source,
+    expires_at: item.expires_at,
+    updated_at: item.updated_at,
+    last_retrieved_at: item.last_retrieved_at,
+    excerpt: item.content.replace(/\s+/g, " ").trim().slice(0, 240)
+  };
+}
+
+async function buildReviewReport(args: string[]): Promise<{
+  vaultRoot: string;
+  project: string;
+  session: string;
+  scope: string;
+  reviewWindowDays: number;
+  sessionItems: ReturnType<typeof summarizeMemoryItem>[];
+  expiringSessionItems: ReturnType<typeof summarizeMemoryItem>[];
+  reports: string[];
+  nextActions: string[];
+}> {
+  const config = await resolveConfig(process.cwd());
+  const vaultRoot = resolveVaultRoot(config);
+  const { project, session } = await resolvedScopes(args);
+  const scope = value(args, "--scope") ?? project;
+  const parsedDays = Number(value(args, "--days") ?? "7");
+  const reviewWindowDays = Number.isFinite(parsedDays) && parsedDays > 0 ? parsedDays : 7;
+  const cutoff = Date.now() + reviewWindowDays * 24 * 60 * 60 * 1000;
+  const sessionItems = (await listAllMemoryItems())
+    .map(({ item }) => item)
+    .filter((item) => item.kind === "session" && item.scope.includes(scope));
+  const summarizedSessionItems = sessionItems.map((item) => summarizeMemoryItem(item));
+  const expiringSessionItems = sessionItems
+    .filter((item) => item.expires_at && new Date(item.expires_at).getTime() <= cutoff)
+    .map((item) => summarizeMemoryItem(item));
+  const reports = await listReports(vaultRoot);
+  const scopedReports = reports.filter((reportPath) => reportPath.includes(scope));
+  return {
+    vaultRoot,
+    project,
+    session,
+    scope,
+    reviewWindowDays,
+    sessionItems: summarizedSessionItems,
+    expiringSessionItems,
+    reports: scopedReports.length > 0 ? scopedReports : reports,
+    nextActions: [
+      "Review session memory before promoting anything durable.",
+      "Open the matching report files and edit the vault directly if the summary is stale.",
+      "Use maintain or clean only after the human review step is done."
+    ]
+  };
 }
 
 function htmlPage(): string {
@@ -556,6 +626,10 @@ async function main(): Promise<void> {
         2
       )
     );
+    return;
+  }
+  if (command === "review") {
+    console.log(JSON.stringify(await buildReviewReport(rest), null, 2));
     return;
   }
   if (command === "capture") {

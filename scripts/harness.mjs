@@ -388,6 +388,28 @@ assert(
 );
 assert(sessionEnd.reportPath?.includes("reports"), "Expected session-end to write a maintenance report.");
 
+const reviewReport = JSON.parse(
+  await run("node", [cliPath, "review", "--scope", "harness-project", "--days", "8"], projectOptions)
+);
+assert(reviewReport.project === "harness-project", "Expected review to infer project.");
+assert(reviewReport.scope === "harness-project", "Expected review to use the requested scope.");
+assert(
+  reviewReport.sessionItems.some((item) => item.id === sessionEnd.ingest.item.id),
+  "Expected review to include session-end memory."
+);
+assert(
+  reviewReport.expiringSessionItems.some((item) => item.id === sessionEnd.ingest.item.id),
+  "Expected review to flag session-end memory inside the review window."
+);
+assert(
+  reviewReport.reports.includes(sessionEnd.reportPath),
+  "Expected review to include existing maintenance reports."
+);
+assert(
+  reviewReport.nextActions.some((action) => action.includes("Review session memory")),
+  "Expected review to recommend post-hoc human review."
+);
+
 const inferredContext = JSON.parse(
   await run("node", [cliPath, "context", "--task", "harness task"], projectOptions)
 );

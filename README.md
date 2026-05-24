@@ -63,6 +63,7 @@ node dist/cli.js status
 - `kb read --name <name> --page <path>`
 - `agent codex|claude [project-dir] [--task <text>]`
 - `maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]`
+- `review [--scope <scope>] [--days <n>] [--session <scope>] [--project <scope>]`
 - `ui [--host <host>] [--port <port>]`
 - `ingest-session --file <path> [--session <scope>] [--project <scope>]`
 - `summarize-session --file <path> [--out <path>] [--ingest] [--session <scope>] [--project <scope>]`
@@ -122,6 +123,14 @@ node dist/cli.js maintain --task "daily memory maintenance"
 It resolves config, infers project/session, builds a context pack, runs cleanup checks, and reports registered knowledge bases as JSON. It is intentionally read/report-first; use explicit write commands such as `capture`, `promote`, `ingest-session`, or `summarize-session --ingest` for memory changes.
 
 Add `--write-report` to also write a human-readable Markdown report under `reports/` for later Obsidian review.
+
+Use `review` a few days later to list session memories, session items nearing expiry, and matching maintenance reports for a scope:
+
+```bash
+node dist/cli.js review --scope memory-orchestrator --days 7
+```
+
+This command is intentionally read-only. It is the CLI path for post-hoc human review: inspect the listed session files and reports in Obsidian, then edit or promote only what still deserves to become durable project/evidence memory.
 
 Start a local review UI:
 
