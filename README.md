@@ -49,6 +49,17 @@ memory-orchestrator memory-policy
 
 This returns the machine-readable meaning, load policy, write policy, retrieval policy, and safe-apply boundary for `personal`, `project`, `evidence`, and `session` memory.
 
+Query one memory layer through that policy:
+
+```bash
+memory-orchestrator memory-query --kind personal
+memory-orchestrator memory-query --kind project --task "current task"
+memory-orchestrator memory-query --kind session --task "current task"
+memory-orchestrator memory-query --kind evidence --task "LLM Wiki"
+```
+
+`memory-query` returns bounded JSON with the selected kind's policy metadata plus matching excerpts. Durable `personal`, `project`, and `evidence` queries return verified items; `session` queries can return candidate scratchpad items.
+
 ## Layered Context
 
 `context` returns a layered context pack rather than one undifferentiated search result:
@@ -92,6 +103,7 @@ node dist/cli.js status
 - `maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]`
 - `review [--scope <scope>] [--days <n>] [--session <scope>] [--project <scope>]`
 - `memory-policy`
+- `memory-query --kind personal|project|evidence|session [--task <text>] [--limit <n>] [--session <scope>] [--project <scope>]`
 - `harness [--task <text>] [--scope <scope>] [--days <n>] [--write-report]`
 - `controller [--trigger scheduled|event|manual] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--write-proposals] [--apply-safe]`
 - `controller-apply --proposal <id>`

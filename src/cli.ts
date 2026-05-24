@@ -9,7 +9,8 @@ import {
   buildContextPack,
   evaluateRubric,
   cleanMemory,
-  memoryPolicy
+  memoryPolicy,
+  queryMemory
 } from "./core.js";
 import { addKnowledgeBase, initConfig, initProjectConfig, linkKnowledgeBase, resolveConfig, resolveVaultRoot } from "./config.js";
 import {
@@ -33,6 +34,7 @@ import type { IncomingMessage } from "node:http";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import type { MemoryConfig } from "./config.js";
+import type { MemoryKind } from "./types.js";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -55,6 +57,7 @@ function usage(): string {
     "  maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]",
     "  review [--scope <scope>] [--days <n>] [--session <scope>] [--project <scope>]",
     "  memory-policy",
+    "  memory-query --kind personal|project|evidence|session [--task <text>] [--limit <n>] [--session <scope>] [--project <scope>]",
     "  harness [--task <text>] [--scope <scope>] [--days <n>] [--write-report]",
     "  controller [--trigger scheduled|event|manual] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--write-proposals] [--apply-safe]",
     "  controller-apply --proposal <id>",
@@ -114,6 +117,13 @@ async function resolvedScopes(args: string[]): Promise<{ project: string; sessio
     project: await inferProject(process.cwd(), config, value(args, "--project")),
     session: await inferSession(process.cwd(), value(args, "--session"))
   };
+}
+
+function parseMemoryKind(value: string | undefined): MemoryKind {
+  if (value === "personal" || value === "project" || value === "evidence" || value === "session") {
+    return value;
+  }
+  throw new Error("memory-query requires --kind personal|project|evidence|session.");
 }
 
 async function contextWithLinkedKnowledgeBases(input: {
@@ -786,6 +796,24 @@ async function main(): Promise<void> {
   }
   if (command === "memory-policy") {
     console.log(JSON.stringify(memoryPolicy(), null, 2));
+    return;
+  }
+  if (command === "memory-query") {
+    const { session, project } = await resolvedScopes(rest);
+    const limit = Number(value(rest, "--limit") ?? "5");
+    console.log(
+      JSON.stringify(
+        await queryMemory({
+          kind: parseMemoryKind(value(rest, "--kind")),
+          taskContext: value(rest, "--task") ?? "",
+          sessionScope: session,
+          projectScope: project,
+          limit: Number.isNaN(limit) ? 5 : limit
+        }),
+        null,
+        2
+      )
+    );
     return;
   }
   if (command === "controller") {

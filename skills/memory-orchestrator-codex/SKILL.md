@@ -16,6 +16,7 @@ Use this skill when a project relies on `memory-orchestrator` for long-term memo
 2. Get task context:
    - Run `memory-orchestrator memory-policy` if you need to confirm each memory type's load/write/retrieval rules.
    - Run `memory-orchestrator context --task "<current task>"`.
+   - Use `memory-orchestrator memory-query --kind <personal|project|evidence|session> --task "<current task>"` when you need a typed, bounded JSON view of one memory layer.
    - Read the returned sections by type:
      - `always_loaded`: long-term user profile and stable preferences; treat as always relevant unless contradicted.
      - `project_core`: current project facts and rules; load before task-specific memories.

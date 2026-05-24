@@ -23,6 +23,43 @@ export interface BuildContextPackInput {
   projectScope: string;
 }
 
+export interface QueryMemoryInput {
+  kind: MemoryKind;
+  taskContext: string;
+  sessionScope: string;
+  projectScope: string;
+  limit?: number;
+}
+
+export interface QueryMemoryResult {
+  kind: MemoryKind;
+  meaning: string;
+  load: string;
+  write: string;
+  retrieval: string;
+  autoApply: string[];
+  reviewBoundary: string;
+  scope: {
+    project: string;
+    session: string;
+  };
+  items: Array<{
+    id: string;
+    kind: MemoryKind;
+    scope: string;
+    status: string;
+    confidence: number;
+    updated_at: string;
+    retrieval_count: number;
+    last_retrieved_at?: string;
+    source: string;
+    source_content_hash?: string;
+    semantic_tags: string[];
+    references: string[];
+    excerpt: string;
+  }>;
+}
+
 export interface EvaluateRubricInput {
   rubricDefinition: string;
   evidenceSet: string[];
@@ -402,6 +439,28 @@ export async function buildContextPack(input: BuildContextPackInput): Promise<{ 
   };
 }
 
+export async function queryMemory(input: QueryMemoryInput): Promise<QueryMemoryResult> {
+  const policy = memoryPolicy().kinds[input.kind];
+  const limit = normalizedLimit(input.limit, 5);
+  const entries = await collectQueryEntries(input);
+  const selected = selectQueryEntries(input.kind, entries, input.taskContext, input.projectScope).slice(0, limit);
+  await touchMemoryFiles(selected.map((entry) => entry.filePath));
+  return {
+    kind: input.kind,
+    meaning: policy.meaning,
+    load: policy.load,
+    write: policy.write,
+    retrieval: policy.retrieval,
+    autoApply: policy.autoApply,
+    reviewBoundary: policy.reviewBoundary,
+    scope: {
+      project: input.projectScope,
+      session: input.sessionScope
+    },
+    items: selected.map(({ item }) => renderQueryItem(item))
+  };
+}
+
 function renderMemoryLine(item: MemoryItem): string {
   const excerpt = item.content.replace(/\s+/g, " ").trim().slice(0, 500);
   return `memory:${item.kind}:${item.scope}:${item.id}\n${excerpt}`;
@@ -430,6 +489,84 @@ function rankMemoryItems(items: MemoryItem[], taskContext: string): MemoryItem[]
     }
     return new Date(right.updated_at).getTime() - new Date(left.updated_at).getTime();
   });
+}
+
+async function collectQueryEntries(input: QueryMemoryInput): Promise<Array<{ filePath: string; item: MemoryItem }>> {
+  if (input.kind === "personal" || input.kind === "evidence") {
+    return listAllMemoryItems();
+  }
+  const files = await listMemoryFiles(input.projectScope || input.sessionScope);
+  const entries: Array<{ filePath: string; item: MemoryItem }> = [];
+  for (const filePath of files) {
+    const item = await loadMemoryItem(filePath);
+    if (item) {
+      entries.push({ filePath, item });
+    }
+  }
+  return entries;
+}
+
+function selectQueryEntries(
+  kind: MemoryKind,
+  entries: Array<{ filePath: string; item: MemoryItem }>,
+  taskContext: string,
+  projectScope: string
+): Array<{ filePath: string; item: MemoryItem }> {
+  const candidates = entries.filter(({ item }) => {
+    if (item.kind !== kind || item.status === "rejected" || item.status === "outdated") {
+      return false;
+    }
+    if (kind === "session") {
+      return true;
+    }
+    if (item.status !== "verified") {
+      return false;
+    }
+    return kind !== "project" || item.scope.includes(projectScope);
+  });
+  if (kind === "personal") {
+    return candidates.sort(compareStableMemory);
+  }
+  const fileById = new Map(candidates.map((entry) => [entry.item.id, entry.filePath]));
+  return rankMemoryItems(candidates.map(({ item }) => item), taskContext).map((item) => ({
+    item,
+    filePath: fileById.get(item.id) ?? ""
+  }));
+}
+
+function compareStableMemory(
+  left: { item: MemoryItem },
+  right: { item: MemoryItem }
+): number {
+  return (
+    right.item.confidence - left.item.confidence ||
+    new Date(right.item.updated_at).getTime() - new Date(left.item.updated_at).getTime()
+  );
+}
+
+function normalizedLimit(limit: number | undefined, fallback: number): number {
+  if (!limit || Number.isNaN(limit) || limit < 1) {
+    return fallback;
+  }
+  return Math.min(Math.floor(limit), 50);
+}
+
+function renderQueryItem(item: MemoryItem): QueryMemoryResult["items"][number] {
+  return {
+    id: item.id,
+    kind: item.kind,
+    scope: item.scope,
+    status: item.status,
+    confidence: item.confidence,
+    updated_at: item.updated_at,
+    retrieval_count: item.retrieval_count ?? 0,
+    last_retrieved_at: item.last_retrieved_at,
+    source: item.source,
+    source_content_hash: item.source_content_hash,
+    semantic_tags: item.semantic_tags ?? [],
+    references: item.references ?? [],
+    excerpt: item.content.replace(/\s+/g, " ").trim().slice(0, 500)
+  };
 }
 
 export async function evaluateRubric(input: EvaluateRubricInput): Promise<{

@@ -357,6 +357,17 @@ const personalItem = {
 };
 await run("node", [cliPath, "promote", "--item", JSON.stringify(personalItem)], projectOptions);
 
+const queryEvidenceItem = {
+  ...projectItem,
+  id: "harness-query-evidence",
+  kind: "evidence",
+  scope: "memory:harness",
+  content: "LLM Wiki evidence should remain source-backed and retrievable through memory-query.",
+  cross_project_applicable: true,
+  semantic_tags: ["LLM", "Wiki", "evidence"]
+};
+await run("node", [cliPath, "promote", "--item", JSON.stringify(queryEvidenceItem)], projectOptions);
+
 const contradictionPositiveItem = {
   ...projectItem,
   id: "harness-contradiction-positive",
@@ -962,6 +973,30 @@ assert(memoryPolicy.kinds.session.load === "session_memory", "Expected session m
 assert(memoryPolicy.kinds.session.autoApply.includes("mark_expired_outdated"), "Expected session memory to allow safe expiry apply.");
 assert(memoryPolicy.contextSections.always_loaded.includes("personal"), "Expected policy to document always_loaded personal memory.");
 assert(memoryPolicy.controller.safeApply.includes("session"), "Expected policy to document session-only safe apply.");
+
+const personalQuery = JSON.parse(await run("node", [cliPath, "memory-query", "--kind", "personal"], projectOptions));
+assert(personalQuery.kind === "personal", "Expected memory-query to return the requested kind.");
+assert(personalQuery.load === "always_loaded", "Expected personal memory-query to be direct-load.");
+assert(personalQuery.items.some((item) => item.id === "harness-user-profile"), "Expected personal memory-query to return the user profile memory.");
+assert(personalQuery.items.length <= 5, "Expected personal memory-query to keep the result bounded.");
+
+const projectQuery = JSON.parse(await run("node", [cliPath, "memory-query", "--kind", "project", "--task", "harness task"], projectOptions));
+assert(projectQuery.kind === "project", "Expected project memory-query to return project kind.");
+assert(projectQuery.load === "project_core_plus_retrieved", "Expected project memory-query to match layered policy.");
+assert(projectQuery.items.some((item) => item.id === "harness-project-rule"), "Expected project memory-query to return verified project memory.");
+assert(projectQuery.items.every((item) => typeof item.excerpt === "string"), "Expected memory-query to return excerpts.");
+
+const sessionQuery = JSON.parse(await run("node", [cliPath, "memory-query", "--kind", "session", "--task", "ephemeral session memory"], projectOptions));
+assert(sessionQuery.kind === "session", "Expected session memory-query to return session kind.");
+assert(sessionQuery.load === "session_memory", "Expected session memory-query to match session_memory policy.");
+assert(sessionQuery.items.some((item) => item.id === "harness-session-note"), "Expected session memory-query to return session memories.");
+
+const evidenceQuery = JSON.parse(await run("node", [cliPath, "memory-query", "--kind", "evidence", "--task", "LLM Wiki"], projectOptions));
+assert(evidenceQuery.kind === "evidence", "Expected evidence memory-query to return evidence kind.");
+assert(evidenceQuery.retrieval === "task_or_reference", "Expected evidence memory-query to expose retrieval policy.");
+assert(evidenceQuery.items.some((item) => item.kind === "evidence"), "Expected evidence memory-query to return evidence items.");
+assert(evidenceQuery.items.length <= 5, "Expected evidence memory-query to keep the result bounded.");
+
 assert(
   inferredContext.contextPack.includes("project=harness-project"),
   "Expected context to infer project without explicit --project."
