@@ -9,6 +9,15 @@ export interface KnowledgeBaseSearchResult {
   excerpt: string;
 }
 
+interface ApiSearchResult {
+  path?: string;
+  file?: string;
+  title?: string;
+  excerpt?: string;
+  content?: string;
+  snippet?: string;
+}
+
 function findKnowledgeBase(config: MemoryConfig, name: string): KnowledgeBaseConfig {
   const knowledgeBase = (config.knowledgeBases ?? []).find((kb) => kb.name === name);
   if (!knowledgeBase) {
@@ -56,6 +65,20 @@ export async function searchKnowledgeBase(
   limit = 5
 ): Promise<KnowledgeBaseSearchResult[]> {
   const knowledgeBase = findKnowledgeBase(config, name);
+  if (knowledgeBase.api) {
+    const apiResults = await searchKnowledgeBaseApi(knowledgeBase, query, limit);
+    if (apiResults) {
+      return apiResults;
+    }
+  }
+  return searchKnowledgeBaseFiles(knowledgeBase, query, limit);
+}
+
+async function searchKnowledgeBaseFiles(
+  knowledgeBase: KnowledgeBaseConfig,
+  query: string,
+  limit = 5
+): Promise<KnowledgeBaseSearchResult[]> {
   const files = await walkMarkdownFiles(knowledgeBase.root);
   const results: KnowledgeBaseSearchResult[] = [];
   for (const filePath of files) {
@@ -82,6 +105,12 @@ export async function readKnowledgeBasePage(config: MemoryConfig, name: string, 
   content: string;
 }> {
   const knowledgeBase = findKnowledgeBase(config, name);
+  if (knowledgeBase.api) {
+    const apiPage = await readKnowledgeBasePageApi(knowledgeBase, page);
+    if (apiPage) {
+      return apiPage;
+    }
+  }
   const root = path.resolve(knowledgeBase.root);
   const filePath = path.resolve(root, page);
   if (!filePath.startsWith(root)) {
@@ -92,4 +121,62 @@ export async function readKnowledgeBasePage(config: MemoryConfig, name: string, 
     path: path.relative(root, filePath),
     content: await fs.readFile(filePath, "utf8")
   };
+}
+
+async function searchKnowledgeBaseApi(
+  knowledgeBase: KnowledgeBaseConfig,
+  query: string,
+  limit: number
+): Promise<KnowledgeBaseSearchResult[] | null> {
+  try {
+    const url = new URL("/search", knowledgeBase.api);
+    url.searchParams.set("query", query);
+    url.searchParams.set("limit", String(limit));
+    const response = await fetch(url);
+    if (!response.ok) {
+      return null;
+    }
+    const payload = (await response.json()) as { results?: ApiSearchResult[] } | ApiSearchResult[];
+    const rawResults = Array.isArray(payload) ? payload : payload.results;
+    if (!rawResults) {
+      return null;
+    }
+    return rawResults.slice(0, limit).map((result) => {
+      const resultPath = result.path ?? result.file ?? "";
+      const resultExcerpt = result.excerpt ?? result.snippet ?? result.content ?? "";
+      return {
+        knowledgeBase: knowledgeBase.name,
+        path: resultPath,
+        title: result.title ?? path.basename(resultPath, ".md"),
+        excerpt: resultExcerpt.replace(/\s+/g, " ").trim().slice(0, 240)
+      };
+    });
+  } catch {
+    return null;
+  }
+}
+
+async function readKnowledgeBasePageApi(
+  knowledgeBase: KnowledgeBaseConfig,
+  page: string
+): Promise<{ knowledgeBase: string; path: string; content: string } | null> {
+  try {
+    const url = new URL("/read", knowledgeBase.api);
+    url.searchParams.set("page", page);
+    const response = await fetch(url);
+    if (!response.ok) {
+      return null;
+    }
+    const payload = (await response.json()) as { path?: string; content?: string };
+    if (!payload.content) {
+      return null;
+    }
+    return {
+      knowledgeBase: knowledgeBase.name,
+      path: payload.path ?? page,
+      content: payload.content
+    };
+  } catch {
+    return null;
+  }
 }

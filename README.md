@@ -119,7 +119,7 @@ node dist/cli.js kb link --name memory-research --project memory-orchestrator
 node dist/cli.js kb search --name memory-research --query "agent memory"
 ```
 
-The fallback implementation searches local Markdown files under the registered root. API-backed querying can be added behind the same command boundary.
+When `--api` is configured, `kb search` and `kb read` try the LLM Wiki-style HTTP API first, then fall back to local Markdown files under the registered root if the API is unavailable.
 
 When a knowledge base is linked to the active project, `context`, `maintain`, and `agent` include concise task-matching knowledge-base excerpts in the generated context pack. They do not import the whole wiki.
 
