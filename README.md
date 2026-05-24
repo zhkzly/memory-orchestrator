@@ -149,6 +149,8 @@ node dist/cli.js harness --task "daily memory maintenance" --scope memory-orches
 
 The harness command composes `doctor`, `maintain`, and `review`. It reports readiness, task-aware context, cleanup markers, registered knowledge bases, expiring session memory, and optional report paths in one JSON response. It is still read/report-first; it does not turn the memory system into an autonomous background agent.
 
+It also includes a structure score from `evaluation/structure-rubric.json`, which keeps memory-architecture quality separate from daily usability scoring.
+
 Use `ingest-session` from a session-end hook or agent task to write a session summary file as an ephemeral candidate memory:
 
 ```bash
@@ -226,6 +228,12 @@ Run the usability rubric directly:
 
 ```bash
 node dist/cli.js score --rubric evaluation/usability-rubric.json --evidence evaluation/usability-evidence.json --out usability-score-report.json
+```
+
+Run the structure rubric directly:
+
+```bash
+node dist/cli.js score --rubric evaluation/structure-rubric.json --evidence evaluation/structure-evidence.json --out structure-score-report.json
 ```
 
 ## Repository Policy

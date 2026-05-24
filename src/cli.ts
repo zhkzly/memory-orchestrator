@@ -17,10 +17,14 @@ import { memoryItemSchema, rubricProxySchema } from "./schemas.js";
 import { listAllMemoryItems } from "./store.js";
 import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import type { IncomingMessage } from "node:http";
+import { fileURLToPath } from "node:url";
 import path from "node:path";
 import type { MemoryConfig } from "./config.js";
+
+const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 function usage(): string {
   return [
@@ -361,18 +365,26 @@ async function buildMemoryHarness(args: string[]): Promise<{
   doctor: Awaited<ReturnType<typeof runDoctor>>;
   maintenance: Awaited<ReturnType<typeof runMaintenance>>;
   review: Awaited<ReturnType<typeof buildReviewReport>>;
+  structure: {
+    candidate: { name: string; scope: string; version: string };
+    overall_score: number;
+    criterionScores: Record<string, number>;
+    recommendation: string;
+  };
   reportPath?: string;
   nextActions: string[];
 }> {
   const doctor = await runDoctor(args);
   const maintenance = await runMaintenance(args);
   const review = await buildReviewReport(args);
+  const structure = await scoreStructure();
   const reportPath = args.includes("--write-report") ? maintenance.reportPath : undefined;
   return {
     ready: doctor.ready,
     doctor,
     maintenance,
     review,
+    structure,
     ...(reportPath ? { reportPath } : {}),
     nextActions: [
       ...doctor.nextActions,
@@ -380,6 +392,30 @@ async function buildMemoryHarness(args: string[]): Promise<{
       "Use memory-orchestrator review for later human curation of session memory.",
       "Use memory-orchestrator agent codex|claude as the external launcher, not as a policy owner."
     ]
+  };
+}
+
+async function scoreStructure(): Promise<{
+  candidate: { name: string; scope: string; version: string };
+  overall_score: number;
+  criterionScores: Record<string, number>;
+  recommendation: string;
+}> {
+  const rubric = JSON.parse(await readFile(path.join(packageRoot, "evaluation/structure-rubric.json"), "utf8"));
+  const evidence = JSON.parse(await readFile(path.join(packageRoot, "evaluation/structure-evidence.json"), "utf8"));
+  const result = await evaluateRubric({
+    proxies: rubric.proxies,
+    rubricDefinition: JSON.stringify(rubric, null, 2),
+    evidenceSet: evidence.items,
+    candidateSystem: rubric.candidate.name
+  });
+  return {
+    candidate: rubric.candidate,
+    overall_score:
+      Object.values(result.criterionScores).reduce((sum, score) => sum + score, 0) /
+      Math.max(Object.values(result.criterionScores).length, 1),
+    criterionScores: result.criterionScores,
+    recommendation: result.recommendation
   };
 }
 

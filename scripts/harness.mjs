@@ -435,6 +435,18 @@ assert(
   harnessReport.nextActions.some((action) => action.includes("agent codex|claude")),
   "Expected memory harness to point agents at the launcher surface."
 );
+assert(
+  harnessReport.structure.overall_score >= 4,
+  "Expected memory harness to include a credible structure score."
+);
+assert(
+  harnessReport.structure.recommendation === "accept",
+  "Expected memory harness structure score to accept the current architecture."
+);
+assert(
+  harnessReport.structure.overall_score >= 4.4,
+  "Expected memory harness structure score to stay above the acceptance threshold."
+);
 
 const inferredContext = JSON.parse(
   await run("node", [cliPath, "context", "--task", "harness task"], projectOptions)

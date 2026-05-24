@@ -1,0 +1,128 @@
+{
+  "items": [
+    {
+      "ref": "src/store.ts memoryFilePath",
+      "type": "file"
+    },
+    {
+      "ref": "src/types.ts MemoryItem kind",
+      "type": "file"
+    },
+    {
+      "ref": "README.md Knowledge Bases",
+      "type": "file"
+    },
+    {
+      "ref": "src/identity.ts",
+      "type": "file"
+    },
+    {
+      "ref": "src/core.ts buildContextPack",
+      "type": "file"
+    },
+    {
+      "ref": "scripts/harness.mjs project inference and context assertions",
+      "type": "test"
+    },
+    {
+      "ref": "src/core.ts ingestSessionFile",
+      "type": "file"
+    },
+    {
+      "ref": "src/core.ts expiresInDays",
+      "type": "file"
+    },
+    {
+      "ref": "src/cli.ts review command",
+      "type": "file"
+    },
+    {
+      "ref": "scripts/harness.mjs review assertions",
+      "type": "test"
+    },
+    {
+      "ref": "src/core.ts verifyCandidate",
+      "type": "file"
+    },
+    {
+      "ref": "src/store.ts serializeItem",
+      "type": "file"
+    },
+    {
+      "ref": "scripts/harness.mjs verified evidence promotion assertions",
+      "type": "test"
+    },
+    {
+      "ref": "src/kb.ts",
+      "type": "file"
+    },
+    {
+      "ref": "src/cli.ts kb commands",
+      "type": "file"
+    },
+    {
+      "ref": "scripts/harness.mjs LLM Wiki API and fallback assertions",
+      "type": "test"
+    },
+    {
+      "ref": "src/cli.ts agent command",
+      "type": "file"
+    },
+    {
+      "ref": "src/cli.ts harness command",
+      "type": "file"
+    },
+    {
+      "ref": "examples/codex-memory",
+      "type": "file"
+    },
+    {
+      "ref": "examples/claude-memory",
+      "type": "file"
+    },
+    {
+      "ref": "scripts/harness.mjs memory harness assertions",
+      "type": "test"
+    },
+    {
+      "ref": "src/cli.ts writeMaintenanceReport",
+      "type": "file"
+    },
+    {
+      "ref": "README.md Maintenance Automation",
+      "type": "file"
+    },
+    {
+      "ref": "src/core.ts cleanMemory",
+      "type": "file"
+    },
+    {
+      "ref": "scripts/harness.mjs cleanup marker assertions",
+      "type": "test"
+    },
+    {
+      "ref": "src/core.ts buildContextPack",
+      "type": "file"
+    },
+    {
+      "ref": "src/cli.ts contextWithLinkedKnowledgeBases",
+      "type": "file"
+    },
+    {
+      "ref": "scripts/harness.mjs context ranking and limit assertions",
+      "type": "test"
+    },
+    {
+      "ref": "src/cli.ts",
+      "type": "file"
+    },
+    {
+      "ref": "src/mcp.ts",
+      "type": "file"
+    },
+    {
+      "ref": "README.md MCP",
+      "type": "file"
+    }
+  ]
+}

@@ -9,6 +9,8 @@ Use these files to keep rubric decomposition, evidence collection, and scoring s
 - `score-report.json`: produced by the scorer
 - `usability-rubric.json`: runnable proxy rubric for daily usability and memory-harness readiness
 - `usability-evidence.json`: evidence set for the usability rubric
+- `structure-rubric.json`: runnable proxy rubric for memory-architecture and layering quality
+- `structure-evidence.json`: evidence set for the structure rubric
 
 ## Process
 
@@ -30,3 +32,9 @@ node dist/cli.js score --rubric evaluation/usability-rubric.json --evidence eval
 ```
 
 The full harness also runs this score and requires an overall score of at least 4.5.
+
+Run the structure rubric directly:
+
+```bash
+node dist/cli.js score --rubric evaluation/structure-rubric.json --evidence evaluation/structure-evidence.json --out structure-score-report.json
+```

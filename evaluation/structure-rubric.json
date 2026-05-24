@@ -1,0 +1,222 @@
+{
+  "candidate": {
+    "name": "Memory Orchestrator memory architecture",
+    "scope": "layered local memory system for Codex, Claude Code, Obsidian, and external knowledge bases",
+    "version": "0.1.0"
+  },
+  "method_note": "Rubrics are treated as explicit scoring guides: criteria define what matters, evidence refs identify what was inspected, and scores summarize current evidence rather than intent.",
+  "proxies": [
+    {
+      "id": "layer-separation",
+      "criterion": "Layer Separation",
+      "target": "Personal memory, project memory, evidence notes, professional knowledge bases, and session scratchpad material have distinct storage and retrieval roles.",
+      "evidence": [
+        {
+          "ref": "src/store.ts memoryFilePath",
+          "type": "file"
+        },
+        {
+          "ref": "src/types.ts MemoryItem kind",
+          "type": "file"
+        },
+        {
+          "ref": "README.md Knowledge Bases",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "scope-containment",
+      "criterion": "Scope Containment",
+      "target": "Project and session context can be inferred and filtered without leaking unrelated project memories into a context pack.",
+      "evidence": [
+        {
+          "ref": "src/identity.ts",
+          "type": "file"
+        },
+        {
+          "ref": "src/core.ts buildContextPack",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs project inference and context assertions",
+          "type": "test"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "session-durability-boundary",
+      "criterion": "Session Durability Boundary",
+      "target": "Session writes stay ephemeral by default and require explicit review or promotion before becoming durable project, personal, or evidence memory.",
+      "evidence": [
+        {
+          "ref": "src/core.ts ingestSessionFile",
+          "type": "file"
+        },
+        {
+          "ref": "src/core.ts expiresInDays",
+          "type": "file"
+        },
+        {
+          "ref": "src/cli.ts review command",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs review assertions",
+          "type": "test"
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "evidence-grounding",
+      "criterion": "Evidence Grounding",
+      "target": "Durable claims carry provenance and evidence references, and verification is distinct from capture.",
+      "evidence": [
+        {
+          "ref": "src/core.ts verifyCandidate",
+          "type": "file"
+        },
+        {
+          "ref": "src/store.ts serializeItem",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs verified evidence promotion assertions",
+          "type": "test"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "external-knowledge-boundary",
+      "criterion": "External Knowledge Boundary",
+      "target": "LLM Wiki and folder-backed knowledge bases are linked and queried as external professional knowledge instead of being imported wholesale into memory.",
+      "evidence": [
+        {
+          "ref": "src/kb.ts",
+          "type": "file"
+        },
+        {
+          "ref": "src/cli.ts kb commands",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs LLM Wiki API and fallback assertions",
+          "type": "test"
+        },
+        {
+          "ref": "README.md Knowledge Bases",
+          "type": "file"
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "agent-interface-boundary",
+      "criterion": "Agent Interface Boundary",
+      "target": "Codex, Claude, cron, and shell wrappers call the same CLI surfaces; agents do not own memory policy.",
+      "evidence": [
+        {
+          "ref": "src/cli.ts agent command",
+          "type": "file"
+        },
+        {
+          "ref": "src/cli.ts harness command",
+          "type": "file"
+        },
+        {
+          "ref": "examples/codex-memory",
+          "type": "file"
+        },
+        {
+          "ref": "examples/claude-memory",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs memory harness assertions",
+          "type": "test"
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "human-auditability",
+      "criterion": "Human Auditability",
+      "target": "Generated memory and maintenance outputs remain readable and editable in a Markdown vault after automatic writes.",
+      "evidence": [
+        {
+          "ref": "src/store.ts serializeItem",
+          "type": "file"
+        },
+        {
+          "ref": "src/cli.ts writeMaintenanceReport",
+          "type": "file"
+        },
+        {
+          "ref": "README.md Maintenance Automation",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "maintenance-safety",
+      "criterion": "Maintenance Safety",
+      "target": "Cleanup detects stale, unsafe, dangling, circular, expired, or conflicting records before any destructive automation exists.",
+      "evidence": [
+        {
+          "ref": "src/core.ts cleanMemory",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs cleanup marker assertions",
+          "type": "test"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "retrieval-quality",
+      "criterion": "Retrieval Quality",
+      "target": "Context packs retrieve bounded, task-relevant memory and knowledge excerpts without flooding the agent context.",
+      "evidence": [
+        {
+          "ref": "src/core.ts buildContextPack",
+          "type": "file"
+        },
+        {
+          "ref": "src/cli.ts contextWithLinkedKnowledgeBases",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs context ranking and limit assertions",
+          "type": "test"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "implementation-portability",
+      "criterion": "Implementation Portability",
+      "target": "Core behavior is available through local CLI and MCP adapter without requiring one hosted service or one agent vendor.",
+      "evidence": [
+        {
+          "ref": "src/cli.ts",
+          "type": "file"
+        },
+        {
+          "ref": "src/mcp.ts",
+          "type": "file"
+        },
+        {
+          "ref": "README.md MCP",
+          "type": "file"
+        }
+      ],
+      "score": 5
+    }
+  ]
+}
