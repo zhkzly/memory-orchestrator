@@ -117,6 +117,10 @@ const projectItem = {
 };
 
 await run("node", ["dist/cli.js", "promote", "--item", JSON.stringify(projectItem)], { env: cliEnv });
+const projectMarkdown = await readFile(path.join(vaultRoot, "projects", "harness-project-rule.md"), "utf8");
+assert(projectMarkdown.includes("# Project Memory: harness-project-rule"), "Expected project memory to have a readable title.");
+assert(projectMarkdown.includes("## Claim"), "Expected project memory to have a readable claim section.");
+assert(projectMarkdown.includes("## Provenance"), "Expected project memory to have a readable provenance section.");
 
 const sessionItem = {
   id: "harness-session-note",
@@ -144,6 +148,9 @@ const ingestedSession = JSON.parse(
 assert(ingestedSession.item.kind === "session", "Expected ingest-session to create a session memory item.");
 assert(ingestedSession.item.status === "candidate", "Expected ingest-session to write a candidate item.");
 assert(ingestedSession.path.includes("sessions"), "Expected ingest-session to write under sessions.");
+const sessionMarkdown = await readFile(ingestedSession.path, "utf8");
+assert(sessionMarkdown.includes("# Session Memory:"), "Expected ingested session memory to have a readable title.");
+assert(sessionMarkdown.includes("## Suggested Maintenance"), "Expected ingested session memory to have maintenance guidance.");
 
 const inferredContext = JSON.parse(
   await run("node", ["dist/cli.js", "context", "--task", "harness task"], { env: cliEnv })

@@ -21,7 +21,48 @@ async function memoryFilePath(item: MemoryItem): Promise<string> {
 }
 
 function serializeItem(item: MemoryItem): string {
-  return `---\n${JSON.stringify(item, null, 2)}\n---\n\n${item.content}\n`;
+  const title = `${item.kind[0].toUpperCase()}${item.kind.slice(1)} Memory: ${item.id}`;
+  const provenance = item.provenance.map((source) => `- ${source.type}: ${source.ref}`).join("\n") || "- none";
+  const references = (item.references ?? []).map((reference) => `- ${reference}`).join("\n") || "- none";
+  const maintenance =
+    item.kind === "session"
+      ? "Keep ephemeral unless a later review promotes a supported project or evidence item."
+      : item.status === "candidate"
+        ? "Review evidence and either promote, revise, or leave as candidate."
+        : "Keep while accurate; mark outdated if the project direction or source changes.";
+  return [
+    "---",
+    JSON.stringify(item, null, 2),
+    "---",
+    "",
+    `# ${title}`,
+    "",
+    "## Claim",
+    "",
+    item.content,
+    "",
+    "## Metadata",
+    "",
+    `- kind: ${item.kind}`,
+    `- scope: ${item.scope}`,
+    `- status: ${item.status}`,
+    `- confidence: ${item.confidence}`,
+    item.confidence_rationale ? `- confidence rationale: ${item.confidence_rationale}` : "- confidence rationale: none",
+    `- source: ${item.source}`,
+    "",
+    "## Provenance",
+    "",
+    provenance,
+    "",
+    "## References",
+    "",
+    references,
+    "",
+    "## Suggested Maintenance",
+    "",
+    maintenance,
+    ""
+  ].join("\n");
 }
 
 function parseItemFromMarkdown(markdown: string): MemoryItem | null {
@@ -31,11 +72,16 @@ function parseItemFromMarkdown(markdown: string): MemoryItem | null {
   }
   try {
     const item = JSON.parse(match[1]) as MemoryItem;
-    item.content = match[2].replace(/\n$/, "");
+    item.content = claimFromBody(match[2]) ?? item.content;
     return item;
   } catch {
     return null;
   }
+}
+
+function claimFromBody(body: string): string | null {
+  const match = body.match(/## Claim\n\n([\s\S]*?)(?=\n## |\s*$)/);
+  return match ? match[1].trim() : null;
 }
 
 async function ensureDir(filePath: string): Promise<void> {

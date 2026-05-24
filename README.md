@@ -125,6 +125,8 @@ When a knowledge base is linked to the active project, `context`, `maintain`, an
 
 Context packs also include concise inline excerpts from matching memory items. Use `write` for candidate or session memory that should remain visible without being promoted, and use `promote` only for verified durable memory.
 
+Generated memory files keep machine-readable frontmatter, then include human-readable sections such as `## Claim`, `## Metadata`, `## Provenance`, and `## Suggested Maintenance` so the vault can be reviewed and edited directly.
+
 ## MCP
 
 The MCP adapter wraps the same core operations:
