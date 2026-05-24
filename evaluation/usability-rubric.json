@@ -1,0 +1,181 @@
+{
+  "candidate": {
+    "name": "Memory Orchestrator usability surface",
+    "scope": "daily local agent memory workflow for Codex and Claude Code",
+    "version": "0.1.0"
+  },
+  "proxies": [
+    {
+      "id": "zero-friction-startup",
+      "criterion": "Zero-Friction Startup",
+      "target": "A project can discover whether memory is ready and get concrete next actions without manually passing vault, project, and session flags every time.",
+      "evidence": [
+        {
+          "ref": "src/cli.ts doctor command",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs doctor assertions",
+          "type": "test"
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "automatic-capture",
+      "criterion": "Automatic Capture",
+      "target": "A session hook can ingest a transcript or summary without write-time human approval while keeping durable promotion separate.",
+      "evidence": [
+        {
+          "ref": "src/cli.ts session-end command",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs session-end assertions",
+          "type": "test"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "human-readable-maintenance",
+      "criterion": "Human-Readable Maintainability",
+      "target": "Generated memory and maintenance outputs are readable in an Obsidian vault after the fact.",
+      "evidence": [
+        {
+          "ref": "src/store.ts serializeItem",
+          "type": "file"
+        },
+        {
+          "ref": "src/cli.ts writeMaintenanceReport",
+          "type": "file"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "useful-context-pack",
+      "criterion": "Useful Context Pack",
+      "target": "Context packs include bounded, task-matching memory and knowledge-base excerpts.",
+      "evidence": [
+        {
+          "ref": "src/core.ts buildContextPack",
+          "type": "file"
+        },
+        {
+          "ref": "src/cli.ts contextWithLinkedKnowledgeBases",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs context assertions",
+          "type": "test"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "low-human-cost",
+      "criterion": "Low Human Cost",
+      "target": "The normal path relies on CLI automation and post-hoc review rather than asking the user to approve every memory write.",
+      "evidence": [
+        {
+          "ref": "src/cli.ts maintain command",
+          "type": "file"
+        },
+        {
+          "ref": "src/cli.ts session-end command",
+          "type": "file"
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "agent-native-integration",
+      "criterion": "Agent-Native Integration",
+      "target": "Codex and Claude can be launched with memory context, and a matching end-of-session hook exists.",
+      "evidence": [
+        {
+          "ref": "src/cli.ts agent command",
+          "type": "file"
+        },
+        {
+          "ref": "examples/codex-memory",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs mock Codex assertions",
+          "type": "test"
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "cli-automation-surface",
+      "criterion": "CLI Automation Surface",
+      "target": "Core workflows expose stable commands that hooks, cron, wrappers, and agents can call.",
+      "evidence": [
+        {
+          "ref": "README.md Commands",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs",
+          "type": "test"
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "knowledge-adapter-clarity",
+      "criterion": "Knowledge Adapter Clarity",
+      "target": "Professional knowledge bases such as LLM Wiki are registered and linked without importing the whole wiki into personal or project memory.",
+      "evidence": [
+        {
+          "ref": "src/kb.ts",
+          "type": "file"
+        },
+        {
+          "ref": "README.md Knowledge Bases",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs real LLM Wiki API assertions",
+          "type": "test"
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "maintenance-effectiveness",
+      "criterion": "Maintenance Effectiveness",
+      "target": "The system detects obvious stale, conflicting, or unsafe memory records before automated cleanup is allowed.",
+      "evidence": [
+        {
+          "ref": "src/core.ts cleanMemory",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs cleanup assertions",
+          "type": "test"
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "review-ui",
+      "criterion": "Review UI",
+      "target": "A local UI exposes status, knowledge-base registry, reports, and safe configuration actions without owning memory policy.",
+      "evidence": [
+        {
+          "ref": "src/cli.ts ui command",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs UI assertions",
+          "type": "test"
+        }
+      ],
+      "score": 5
+    }
+  ]
+}

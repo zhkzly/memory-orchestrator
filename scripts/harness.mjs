@@ -513,6 +513,22 @@ await run("node", [
 
 const scoreReport = JSON.parse(await readFile(path.join(vaultRoot, "score-report.json"), "utf8"));
 assert(scoreReport.recommendation === "accept", "Expected rubric recommendation to be accept.");
+await run("node", [
+  cliPath,
+  "score",
+  "--rubric",
+  "evaluation/usability-rubric.json",
+  "--evidence",
+  "evaluation/usability-evidence.json",
+  "--out",
+  path.join(vaultRoot, "usability-score-report.json")
+]);
+const usabilityScoreReport = JSON.parse(await readFile(path.join(vaultRoot, "usability-score-report.json"), "utf8"));
+assert(usabilityScoreReport.overall_score >= 4.5, "Expected usability rubric score to meet the acceptance threshold.");
+assert(
+  usabilityScoreReport.criteria.some((criterion) => criterion.name === "Zero-Friction Startup"),
+  "Expected usability rubric to include startup readiness."
+);
 
 const item = {
   id: "harness-evidence",

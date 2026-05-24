@@ -196,7 +196,13 @@ Run the full local check:
 npm run harness
 ```
 
-The harness builds the TypeScript project, runs a score report, promotes a verified evidence item into a temporary vault, and verifies cleanup markers.
+The harness builds the TypeScript project, runs structure and usability score reports, promotes a verified evidence item into a temporary vault, and verifies cleanup markers.
+
+Run the usability rubric directly:
+
+```bash
+node dist/cli.js score --rubric evaluation/usability-rubric.json --evidence evaluation/usability-evidence.json --out usability-score-report.json
+```
 
 ## Repository Policy
 

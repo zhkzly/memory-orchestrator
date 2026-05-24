@@ -1,0 +1,60 @@
+{
+  "items": [
+    {
+      "ref": "src/cli.ts doctor command",
+      "type": "file"
+    },
+    {
+      "ref": "src/cli.ts agent command",
+      "type": "file"
+    },
+    {
+      "ref": "src/cli.ts session-end command",
+      "type": "file"
+    },
+    {
+      "ref": "src/cli.ts maintain command",
+      "type": "file"
+    },
+    {
+      "ref": "src/cli.ts ui command",
+      "type": "file"
+    },
+    {
+      "ref": "src/core.ts buildContextPack",
+      "type": "file"
+    },
+    {
+      "ref": "src/core.ts cleanMemory",
+      "type": "file"
+    },
+    {
+      "ref": "src/store.ts serializeItem",
+      "type": "file"
+    },
+    {
+      "ref": "src/kb.ts",
+      "type": "file"
+    },
+    {
+      "ref": "README.md",
+      "type": "file"
+    },
+    {
+      "ref": "examples/codex-memory",
+      "type": "file"
+    },
+    {
+      "ref": "scripts/harness.mjs",
+      "type": "test"
+    },
+    {
+      "ref": "npm run build",
+      "type": "test"
+    },
+    {
+      "ref": "npm run harness",
+      "type": "test"
+    }
+  ]
+}
