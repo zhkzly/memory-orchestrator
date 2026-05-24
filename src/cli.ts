@@ -145,7 +145,9 @@ async function runDoctor(args: string[]): Promise<{
     },
     projectConfig: {
       ok: Boolean(config.projectConfigPath),
-      detail: config.projectConfigPath ?? "no .memory-orchestrator.json found from current directory"
+      detail: config.projectConfigPath
+        ? config.projectConfigPath
+        : "no .memory-orchestrator.json found from current directory; project is still inferable, but init-project can pin it"
     },
     context: {
       ok: false,
@@ -176,14 +178,24 @@ async function runDoctor(args: string[]): Promise<{
   if (!checks.context.ok) {
     nextActions.push("Fix context errors before launching agent codex|claude.");
   }
-  const ready = Object.values(checks).every((check) => check.ok);
+  if (!checks.projectConfig.ok) {
+    nextActions.push(
+      "Optional: run memory-orchestrator init-project --project <stable-project-name> from this checkout to pin an explicit project-local binding."
+    );
+  }
+  const ready = checks.vaultRoot.ok && checks.context.ok && checks.agentHarness.ok && checks.sessionEnd.ok;
   return {
     ready,
     vaultRoot,
     project,
     session,
     checks,
-    nextActions: ready ? ["Run memory-orchestrator agent codex|claude or session-end from this project."] : nextActions
+    nextActions: ready
+      ? [
+          "Run memory-orchestrator agent codex|claude or session-end from this project.",
+          ...(checks.projectConfig.ok ? [] : ["Pin a project-local config later if you want an explicit checkout binding."])
+        ]
+      : nextActions
   };
 }
 

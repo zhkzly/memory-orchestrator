@@ -186,10 +186,10 @@ const unconfiguredDoctor = JSON.parse(await run("node", [cliPath, "doctor"], {
   env: cliEnv,
   cwd: inferredProjectRoot
 }));
-assert(unconfiguredDoctor.ready === false, "Expected doctor to flag an unbound project as not ready.");
+assert(unconfiguredDoctor.ready === true, "Expected doctor to allow an unbound project to remain usable.");
 assert(
-  unconfiguredDoctor.nextActions.some((action) => action.includes("init-project")),
-  "Expected doctor to recommend project initialization."
+  unconfiguredDoctor.nextActions.some((action) => action.includes("Pin a project-local config later")),
+  "Expected doctor to treat project initialization as an optional later convenience."
 );
 
 await run("node", [cliPath, "init-project", "--project", "harness-project"], {

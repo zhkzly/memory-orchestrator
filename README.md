@@ -39,7 +39,7 @@ Check whether the current project is ready for agent use:
 node dist/cli.js doctor
 ```
 
-`doctor` verifies the vault root, project-local config, context generation, agent harness entrypoint, and `session-end` hook readiness. If a project is not bound yet, it returns the exact `init-project` action to run.
+`doctor` verifies the vault root, context generation, agent harness entrypoint, and `session-end` hook readiness. A project-local config is optional, not required. If a checkout is not pinned yet, it still works and will suggest `init-project` only as a later convenience.
 
 ## Vault Root
 
