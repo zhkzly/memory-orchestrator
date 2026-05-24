@@ -64,6 +64,7 @@ node dist/cli.js status
 - `agent codex|claude [project-dir] [--task <text>]`
 - `maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]`
 - `review [--scope <scope>] [--days <n>] [--session <scope>] [--project <scope>]`
+- `harness [--task <text>] [--scope <scope>] [--days <n>] [--write-report]`
 - `ui [--host <host>] [--port <port>]`
 - `ingest-session --file <path> [--session <scope>] [--project <scope>]`
 - `summarize-session --file <path> [--out <path>] [--ingest] [--session <scope>] [--project <scope>]`
@@ -139,6 +140,14 @@ node dist/cli.js ui
 ```
 
 The UI binds to `127.0.0.1` by default and exposes status, knowledge-base registry, maintenance reports, and safe knowledge-base add/link actions. It is a review/configuration aid, not the policy owner.
+
+Use `harness` when an external scheduler, Codex workflow, Claude workflow, or shell wrapper needs one stable memory-system health and context entrypoint:
+
+```bash
+node dist/cli.js harness --task "daily memory maintenance" --scope memory-orchestrator --days 7 --write-report
+```
+
+The harness command composes `doctor`, `maintain`, and `review`. It reports readiness, task-aware context, cleanup markers, registered knowledge bases, expiring session memory, and optional report paths in one JSON response. It is still read/report-first; it does not turn the memory system into an autonomous background agent.
 
 Use `ingest-session` from a session-end hook or agent task to write a session summary file as an ephemeral candidate memory:
 

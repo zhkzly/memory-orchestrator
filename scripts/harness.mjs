@@ -410,6 +410,32 @@ assert(
   "Expected review to recommend post-hoc human review."
 );
 
+const harnessReport = JSON.parse(
+  await run(
+    "node",
+    [cliPath, "harness", "--task", "harness task", "--scope", "harness-project", "--days", "8", "--write-report"],
+    projectOptions
+  )
+);
+assert(harnessReport.ready === true, "Expected memory harness to report readiness.");
+assert(harnessReport.doctor.ready === true, "Expected memory harness to include doctor readiness.");
+assert(
+  harnessReport.maintenance.context.contextPack.includes("task=harness task"),
+  "Expected memory harness to include task-aware maintenance context."
+);
+assert(
+  harnessReport.review.expiringSessionItems.some((item) => item.id === sessionEnd.ingest.item.id),
+  "Expected memory harness to include post-hoc review data."
+);
+assert(
+  harnessReport.reportPath?.includes("reports"),
+  "Expected memory harness to write a maintenance report when requested."
+);
+assert(
+  harnessReport.nextActions.some((action) => action.includes("agent codex|claude")),
+  "Expected memory harness to point agents at the launcher surface."
+);
+
 const inferredContext = JSON.parse(
   await run("node", [cliPath, "context", "--task", "harness task"], projectOptions)
 );

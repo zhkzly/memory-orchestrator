@@ -83,6 +83,10 @@
           "type": "file"
         },
         {
+          "ref": "src/cli.ts review command",
+          "type": "file"
+        },
+        {
           "ref": "src/cli.ts session-end command",
           "type": "file"
         },
@@ -116,18 +120,26 @@
     {
       "id": "cli-automation-surface",
       "criterion": "CLI Automation Surface",
-      "target": "Core workflows expose stable commands that hooks, cron, wrappers, and agents can call.",
+      "target": "Core workflows expose a stable composite harness plus narrow commands that hooks, cron, wrappers, and agents can call.",
       "evidence": [
         {
           "ref": "README.md Commands",
           "type": "file"
         },
         {
+          "ref": "src/cli.ts harness command",
+          "type": "file"
+        },
+        {
+          "ref": "scripts/harness.mjs memory harness assertions",
+          "type": "test"
+        },
+        {
           "ref": "scripts/harness.mjs",
           "type": "test"
         }
       ],
-      "score": 4
+      "score": 5
     },
     {
       "id": "knowledge-adapter-clarity",

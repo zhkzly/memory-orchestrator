@@ -40,6 +40,7 @@ function usage(): string {
     "  agent codex|claude [project-dir] [--task <text>]",
     "  maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]",
     "  review [--scope <scope>] [--days <n>] [--session <scope>] [--project <scope>]",
+    "  harness [--task <text>] [--scope <scope>] [--days <n>] [--write-report]",
     "  ui [--host <host>] [--port <port>]",
     "  ingest-session --file <path> [--session <scope>] [--project <scope>]",
     "  summarize-session --file <path> [--out <path>] [--ingest] [--session <scope>] [--project <scope>]",
@@ -296,6 +297,88 @@ async function buildReviewReport(args: string[]): Promise<{
       "Review session memory before promoting anything durable.",
       "Open the matching report files and edit the vault directly if the summary is stale.",
       "Use maintain or clean only after the human review step is done."
+    ]
+  };
+}
+
+async function runMaintenance(args: string[]): Promise<{
+  vaultRoot: string;
+  project: string;
+  session: string;
+  scope: string;
+  context: { contextPack: string };
+  cleanup: Awaited<ReturnType<typeof cleanMemory>>;
+  knowledgeBases: ReturnType<typeof listKnowledgeBases>;
+  nextActions: string[];
+  reportPath?: string;
+}> {
+  const config = await resolveConfig(process.cwd());
+  const vaultRoot = resolveVaultRoot(config);
+  const { session, project } = await resolvedScopes(args);
+  const scope = value(args, "--scope") ?? project;
+  const task = value(args, "--task") ?? "maintenance";
+  const context = await buildCliContext({
+    config,
+    task,
+    project,
+    session
+  });
+  const cleanup = await cleanMemory(scope);
+  const report = {
+    vaultRoot,
+    project,
+    session,
+    scope,
+    context,
+    cleanup,
+    knowledgeBases: listKnowledgeBases(config),
+    nextActions: [
+      "Review cleanup markers before promoting or deleting memory.",
+      "Use kb search/read for linked professional knowledge; do not import whole knowledge bases into memory.",
+      "Use capture/promote for explicit writes; maintain is intentionally read/report-first."
+    ]
+  };
+  const reportPath = args.includes("--write-report")
+    ? await writeMaintenanceReport({
+        vaultRoot,
+        project,
+        session,
+        scope,
+        task,
+        cleanup,
+        knowledgeBases: report.knowledgeBases,
+        nextActions: report.nextActions
+      })
+    : undefined;
+  return {
+    ...report,
+    ...(reportPath ? { reportPath } : {})
+  };
+}
+
+async function buildMemoryHarness(args: string[]): Promise<{
+  ready: boolean;
+  doctor: Awaited<ReturnType<typeof runDoctor>>;
+  maintenance: Awaited<ReturnType<typeof runMaintenance>>;
+  review: Awaited<ReturnType<typeof buildReviewReport>>;
+  reportPath?: string;
+  nextActions: string[];
+}> {
+  const doctor = await runDoctor(args);
+  const maintenance = await runMaintenance(args);
+  const review = await buildReviewReport(args);
+  const reportPath = args.includes("--write-report") ? maintenance.reportPath : undefined;
+  return {
+    ready: doctor.ready,
+    doctor,
+    maintenance,
+    review,
+    ...(reportPath ? { reportPath } : {}),
+    nextActions: [
+      ...doctor.nextActions,
+      "Use memory-orchestrator maintain for cleanup and report generation.",
+      "Use memory-orchestrator review for later human curation of session memory.",
+      "Use memory-orchestrator agent codex|claude as the external launcher, not as a policy owner."
     ]
   };
 }
@@ -578,58 +661,15 @@ async function main(): Promise<void> {
     return;
   }
   if (command === "maintain") {
-    const config = await resolveConfig(process.cwd());
-    const vaultRoot = resolveVaultRoot(config);
-    const { session, project } = await resolvedScopes(rest);
-    const scope = value(rest, "--scope") ?? project;
-    const task = value(rest, "--task") ?? "maintenance";
-    const context = await buildCliContext({
-      config,
-      task,
-      project,
-      session
-    });
-    const cleanup = await cleanMemory(scope);
-    const report = {
-      vaultRoot,
-      project,
-      session,
-      scope,
-      context,
-      cleanup,
-      knowledgeBases: listKnowledgeBases(config),
-      nextActions: [
-        "Review cleanup markers before promoting or deleting memory.",
-        "Use kb search/read for linked professional knowledge; do not import whole knowledge bases into memory.",
-        "Use capture/promote for explicit writes; maintain is intentionally read/report-first."
-      ]
-    };
-    const reportPath = rest.includes("--write-report")
-      ? await writeMaintenanceReport({
-          vaultRoot,
-          project,
-          session,
-          scope,
-          task,
-          cleanup,
-          knowledgeBases: report.knowledgeBases,
-          nextActions: report.nextActions
-        })
-      : undefined;
-    console.log(
-      JSON.stringify(
-        {
-          ...report,
-          ...(reportPath ? { reportPath } : {})
-        },
-        null,
-        2
-      )
-    );
+    console.log(JSON.stringify(await runMaintenance(rest), null, 2));
     return;
   }
   if (command === "review") {
     console.log(JSON.stringify(await buildReviewReport(rest), null, 2));
+    return;
+  }
+  if (command === "harness") {
+    console.log(JSON.stringify(await buildMemoryHarness(rest), null, 2));
     return;
   }
   if (command === "capture") {
