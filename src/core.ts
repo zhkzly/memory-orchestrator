@@ -346,6 +346,19 @@ export async function evaluateRubric(input: EvaluateRubricInput): Promise<{
   };
 }
 
+function contradictionKey(content: string): { polarity: "positive" | "negative"; key: string } | null {
+  const normalized = content.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+  const negative = normalized.match(/\b(must|should)\s+not\s+(.+)/);
+  if (negative) {
+    return { polarity: "negative", key: `${negative[1]} ${negative[2]}`.trim() };
+  }
+  const positive = normalized.match(/\b(must|should)\s+(.+)/);
+  if (positive) {
+    return { polarity: "positive", key: `${positive[1]} ${positive[2]}`.trim() };
+  }
+  return null;
+}
+
 export async function cleanMemory(targetScope: string): Promise<{ markers: string[] }> {
   const files = await listMemoryFiles(targetScope);
   const markers: string[] = [];
@@ -400,6 +413,21 @@ export async function cleanMemory(targetScope: string): Promise<{ markers: strin
       const contents = new Set(items.map((item) => item.content));
       if (contents.size > 1) {
         markers.push(`semantic_conflict:${bucketKey}:${tag}`);
+      }
+      const byClaim = new Map<string, { positive: string[]; negative: string[] }>();
+      for (const item of items) {
+        const claim = contradictionKey(item.content);
+        if (!claim) {
+          continue;
+        }
+        const bucket = byClaim.get(claim.key) ?? { positive: [], negative: [] };
+        bucket[claim.polarity].push(item.id);
+        byClaim.set(claim.key, bucket);
+      }
+      for (const [claimKey, polarity] of byClaim.entries()) {
+        if (polarity.positive.length > 0 && polarity.negative.length > 0) {
+          markers.push(`direct_contradiction:${bucketKey}:${tag}:${claimKey}:${polarity.positive.join(",")}<>${polarity.negative.join(",")}`);
+        }
       }
     }
   }
