@@ -1,4 +1,4 @@
-import { execFile } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import { chmod, mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
@@ -16,6 +16,31 @@ async function run(command, args, options = {}) {
     ...options
   });
   return result.stdout.trim();
+}
+
+function waitForLine(child, pattern) {
+  return new Promise((resolve, reject) => {
+    let output = "";
+    const timer = setTimeout(() => reject(new Error(`Timed out waiting for ${pattern}`)), 5000);
+    child.stdout.on("data", (chunk) => {
+      output += chunk.toString();
+      const line = output.split("\n").find((candidate) => candidate.includes(pattern));
+      if (line) {
+        clearTimeout(timer);
+        resolve(line);
+      }
+    });
+    child.on("error", (error) => {
+      clearTimeout(timer);
+      reject(error);
+    });
+    child.on("exit", (code) => {
+      if (code && code !== 0) {
+        clearTimeout(timer);
+        reject(new Error(`Process exited before ${pattern}: ${code}`));
+      }
+    });
+  });
 }
 
 function assert(condition, message) {
@@ -306,6 +331,19 @@ assert(maintenanceMarkdown.includes("## Scope"), "Expected maintenance report to
 assert(maintenanceMarkdown.includes("## Cleanup Markers"), "Expected maintenance report to include cleanup markers.");
 assert(maintenanceMarkdown.includes("## Knowledge Bases"), "Expected maintenance report to include knowledge bases.");
 assert(maintenanceMarkdown.includes("## Next Actions"), "Expected maintenance report to include next actions.");
+
+const uiProcess = spawn("node", [cliPath, "ui", "--port", "0"], {
+  ...projectOptions,
+  stdio: ["ignore", "pipe", "pipe"]
+});
+const uiLine = await waitForLine(uiProcess, "memory-orchestrator ui");
+const uiUrl = uiLine.match(/http:\/\/[^\s]+/)?.[0];
+assert(uiUrl, "Expected ui command to print its local URL.");
+const uiStatus = await fetch(`${uiUrl}/api/status`).then((response) => response.json());
+assert(uiStatus.project === "harness-project", "Expected UI API to use project-local config.");
+const uiHome = await fetch(uiUrl).then((response) => response.text());
+assert(uiHome.includes("Memory Orchestrator"), "Expected UI homepage to render.");
+uiProcess.kill();
 
 await run("node", [cliPath, "agent", "codex", harnessProjectRoot, "--task", "LLM Wiki"], { env: agentEnv });
 const mockAgentEnv = JSON.parse(await readFile(mockAgentOutput, "utf8"));

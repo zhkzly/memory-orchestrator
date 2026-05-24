@@ -15,6 +15,7 @@ import { listKnowledgeBases, readKnowledgeBasePage, searchKnowledgeBase } from "
 import { memoryItemSchema, rubricProxySchema } from "./schemas.js";
 import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
+import { createServer } from "node:http";
 import path from "node:path";
 import type { MemoryConfig } from "./config.js";
 
@@ -32,7 +33,8 @@ function usage(): string {
     "  kb search --name <name> --query <text> [--limit <n>]",
     "  kb read --name <name> --page <path>",
     "  agent codex|claude [project-dir] [--task <text>]",
-    "  maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>]",
+    "  maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]",
+    "  ui [--host <host>] [--port <port>]",
     "  ingest-session --file <path> [--session <scope>] [--project <scope>]",
     "  capture --raw <text> --source <source> [--session <session>] [--project <project>]",
     "  classify --candidate <json>",
@@ -149,6 +151,71 @@ async function writeMaintenanceReport(input: {
     "utf8"
   );
   return reportPath;
+}
+
+function htmlPage(): string {
+  return [
+    "<!doctype html>",
+    "<html>",
+    "<head><meta charset=\"utf-8\"><title>Memory Orchestrator</title></head>",
+    "<body>",
+    "<h1>Memory Orchestrator</h1>",
+    "<section><h2>Status</h2><pre id=\"status\">Loading...</pre></section>",
+    "<section><h2>Knowledge Bases</h2><pre id=\"kb\">Loading...</pre></section>",
+    "<section><h2>Reports</h2><pre id=\"reports\">Loading...</pre></section>",
+    "<script>",
+    "for (const name of ['status','kb','reports']) fetch('/api/' + name).then(r => r.json()).then(j => document.getElementById(name).textContent = JSON.stringify(j, null, 2));",
+    "</script>",
+    "</body>",
+    "</html>"
+  ].join("\n");
+}
+
+async function listReports(vaultRoot: string): Promise<string[]> {
+  const reportsDir = path.join(vaultRoot, "reports");
+  try {
+    const entries = await fs.readdir(reportsDir, { withFileTypes: true });
+    return entries.filter((entry) => entry.isFile() && entry.name.endsWith(".md")).map((entry) => path.join(reportsDir, entry.name));
+  } catch {
+    return [];
+  }
+}
+
+async function serveUi(args: string[]): Promise<void> {
+  const host = value(args, "--host") ?? "127.0.0.1";
+  const requestedPort = Number(value(args, "--port") ?? "8765");
+  const config = await resolveConfig(process.cwd());
+  const vaultRoot = resolveVaultRoot(config);
+  const scopes = await resolvedScopes(args);
+  const server = createServer(async (request, response) => {
+    const url = new URL(request.url ?? "/", `http://${host}`);
+    if (url.pathname === "/") {
+      response.setHeader("content-type", "text/html; charset=utf-8");
+      response.end(htmlPage());
+      return;
+    }
+    if (url.pathname === "/api/status") {
+      response.setHeader("content-type", "application/json");
+      response.end(JSON.stringify({ vaultRoot, ...scopes }, null, 2));
+      return;
+    }
+    if (url.pathname === "/api/kb") {
+      response.setHeader("content-type", "application/json");
+      response.end(JSON.stringify(listKnowledgeBases(config), null, 2));
+      return;
+    }
+    if (url.pathname === "/api/reports") {
+      response.setHeader("content-type", "application/json");
+      response.end(JSON.stringify(await listReports(vaultRoot), null, 2));
+      return;
+    }
+    response.statusCode = 404;
+    response.end("not found");
+  });
+  await new Promise<void>((resolve) => server.listen(requestedPort, host, resolve));
+  const address = server.address();
+  const port = typeof address === "object" && address ? address.port : requestedPort;
+  console.log(`memory-orchestrator ui http://${host}:${port}`);
 }
 
 function positional(args: string[]): string[] {
@@ -302,6 +369,10 @@ async function main(): Promise<void> {
       throw new Error("agent requires codex or claude.");
     }
     await spawnAgent(agent, rest);
+    return;
+  }
+  if (command === "ui") {
+    await serveUi(rest);
     return;
   }
   if (command === "maintain") {
