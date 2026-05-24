@@ -1,4 +1,9 @@
-# memory-rubric-scorer
+---
+name: memory-rubric-scorer
+description: Use when evaluating a memory system with rubric proxies and evidence-backed scores.
+---
+
+# Memory Rubric Scorer
 
 Purpose:
 - score a candidate memory system using evidence-backed proxy items

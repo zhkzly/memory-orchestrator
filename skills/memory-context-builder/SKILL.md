@@ -1,4 +1,9 @@
-# memory-context-builder
+---
+name: memory-context-builder
+description: Use when starting or resuming work that needs a scoped memory context pack.
+---
+
+# Memory Context Builder
 
 Purpose:
 - assemble the minimum context pack for the next run

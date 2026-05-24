@@ -1,4 +1,9 @@
-# memory-cleaner
+---
+name: memory-cleaner
+description: Use when reviewing memory records for stale claims, contradictions, duplicate records, or reference problems.
+---
+
+# Memory Cleaner
 
 Purpose:
 - remove duplicates, mark contradictions, and downgrade stale claims

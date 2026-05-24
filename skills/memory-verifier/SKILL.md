@@ -1,4 +1,9 @@
-# memory-verifier
+---
+name: memory-verifier
+description: Use when a memory candidate needs evidence review before it can become durable memory.
+---
+
+# Memory Verifier
 
 Purpose:
 - check whether a candidate should be stored durably

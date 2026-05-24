@@ -1,4 +1,9 @@
-# memory-extractor
+---
+name: memory-extractor
+description: Use when a session may contain durable memory candidates that should be captured before verification or promotion.
+---
+
+# Memory Extractor
 
 Purpose:
 - identify candidate memory items from current work

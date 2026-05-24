@@ -1,4 +1,9 @@
-# memory-writer
+---
+name: memory-writer
+description: Use when a verified memory item should be promoted into the correct durable Markdown layer.
+---
+
+# Memory Writer
 
 Purpose:
 - write verified items to the correct markdown target
