@@ -2,7 +2,7 @@
 
 Memory Orchestrator is a CLI-first local memory system for agent workflows. It captures candidate memories, verifies them against evidence, promotes durable items into a Markdown vault, builds task context packs, scores memory-system quality with rubric proxies, and marks stale or unsafe memory records for cleanup.
 
-The CLI is the canonical backend interface. Harnesses and agent wrappers should provide the daily user-facing entry point. Skills are included as optional instructions for agents that need a human-readable workflow layer, but they do not own policy.
+The CLI is the canonical interface. Harnesses, agent wrappers, cron jobs, and session hooks should call the same commands instead of owning memory policy. Skills are included as optional instructions for agents that need a human-readable workflow layer, but they do not own policy.
 
 ## Status
 
@@ -45,6 +45,7 @@ node dist/cli.js status
 - `kb search --name <name> --query <text>`
 - `kb read --name <name> --page <path>`
 - `agent codex|claude [project-dir] [--task <text>]`
+- `maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>]`
 - `capture --raw <text> --source <source> [--session <session>] [--project <project>]`
 - `classify --candidate <json>`
 - `verify --candidate <json> --evidence <json-array>`
@@ -86,6 +87,18 @@ It starts Codex with the configured vault and project directory added explicitly
 
 Both wrappers call `memory-orchestrator agent`, which injects `MEMORY_ORCHESTRATOR_ROOT`, `MEMORY_ORCHESTRATOR_PROJECT`, `MEMORY_ORCHESTRATOR_SESSION`, and `MEMORY_ORCHESTRATOR_CONTEXT` into the agent environment.
 
+Wrappers are optional. Codex and Claude can also call `memory-orchestrator` commands directly during a session.
+
+## Maintenance Automation
+
+Use `maintain` as the first schedulable automation surface:
+
+```bash
+node dist/cli.js maintain --task "daily memory maintenance"
+```
+
+It resolves config, infers project/session, builds a context pack, runs cleanup checks, and reports registered knowledge bases as JSON. It is intentionally read/report-first; use explicit write commands such as `capture` and `promote` for memory changes until transcript ingestion is implemented.
+
 ## Knowledge Bases
 
 LLM Wiki projects should be registered as external professional knowledge bases, not imported into the memory vault:
@@ -97,6 +110,8 @@ node dist/cli.js kb search --name memory-research --query "agent memory"
 ```
 
 The fallback implementation searches local Markdown files under the registered root. API-backed querying can be added behind the same command boundary.
+
+When a knowledge base is linked to the active project, `context`, `maintain`, and `agent` include concise task-matching knowledge-base excerpts in the generated context pack. They do not import the whole wiki.
 
 ## MCP
 

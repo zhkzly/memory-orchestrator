@@ -98,11 +98,38 @@ assert(
   "Expected context to infer project without explicit --project."
 );
 
-await run("node", ["dist/cli.js", "agent", "codex", repoRoot, "--task", "harness task"], { env: agentEnv });
+const knowledgeContext = JSON.parse(
+  await run("node", ["dist/cli.js", "context", "--task", "LLM Wiki"], { env: cliEnv })
+);
+assert(
+  knowledgeContext.contextPack.includes("kb:memory-research:wiki/agent-memory.md"),
+  "Expected context to include linked knowledge-base matches."
+);
+assert(
+  knowledgeContext.contextPack.includes("LLM Wiki should stay separate"),
+  "Expected context to include a concise linked knowledge-base excerpt."
+);
+
+const maintenanceReport = JSON.parse(
+  await run("node", ["dist/cli.js", "maintain", "--task", "harness task"], { env: cliEnv })
+);
+assert(maintenanceReport.project === "harness-project", "Expected maintain to infer project.");
+assert(
+  maintenanceReport.context.contextPack.includes("task=harness task"),
+  "Expected maintain to include a task-aware context pack."
+);
+assert(Array.isArray(maintenanceReport.cleanup.markers), "Expected maintain to include cleanup markers.");
+assert(maintenanceReport.knowledgeBases.length === 1, "Expected maintain to include registered knowledge bases.");
+
+await run("node", ["dist/cli.js", "agent", "codex", repoRoot, "--task", "LLM Wiki"], { env: agentEnv });
 const mockAgentEnv = JSON.parse(await readFile(mockAgentOutput, "utf8"));
 assert(mockAgentEnv.root === vaultRoot, "Expected agent harness to inject configured vault root.");
 assert(mockAgentEnv.project === "harness-project", "Expected agent harness to inject inferred project.");
-assert(mockAgentEnv.context.includes("task=harness task"), "Expected agent harness to inject memory context.");
+assert(mockAgentEnv.context.includes("task=LLM Wiki"), "Expected agent harness to inject memory context.");
+assert(
+  mockAgentEnv.context.includes("kb:memory-research:wiki/agent-memory.md"),
+  "Expected agent harness context to include linked knowledge-base matches."
+);
 assert(mockAgentEnv.argv.includes("--add-dir"), "Expected codex harness to add explicit directories.");
 
 await run("node", [

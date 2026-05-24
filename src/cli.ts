@@ -5,6 +5,7 @@ import { listKnowledgeBases, readKnowledgeBasePage, searchKnowledgeBase } from "
 import { memoryItemSchema, rubricProxySchema } from "./schemas.js";
 import { spawn } from "node:child_process";
 import { promises as fs } from "node:fs";
+import type { MemoryConfig } from "./config.js";
 
 function usage(): string {
   return [
@@ -19,6 +20,7 @@ function usage(): string {
     "  kb search --name <name> --query <text> [--limit <n>]",
     "  kb read --name <name> --page <path>",
     "  agent codex|claude [project-dir] [--task <text>]",
+    "  maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>]",
     "  capture --raw <text> --source <source> [--session <session>] [--project <project>]",
     "  classify --candidate <json>",
     "  verify --candidate <json> --evidence <json-array>",
@@ -43,6 +45,48 @@ async function resolvedScopes(args: string[]): Promise<{ project: string; sessio
   };
 }
 
+async function contextWithLinkedKnowledgeBases(input: {
+  config: MemoryConfig;
+  contextPack: string;
+  project: string;
+  task: string;
+}): Promise<string> {
+  if (!input.task.trim()) {
+    return input.contextPack;
+  }
+  const matches: string[] = [];
+  for (const knowledgeBase of listKnowledgeBases(input.config)) {
+    if (!(knowledgeBase.linkedProjects ?? []).includes(input.project)) {
+      continue;
+    }
+    const results = await searchKnowledgeBase(input.config, knowledgeBase.name, input.task, 2);
+    for (const result of results) {
+      matches.push(`kb:${result.knowledgeBase}:${result.path}\ntitle=${result.title}\nexcerpt=${result.excerpt}`);
+    }
+  }
+  return matches.length > 0 ? `${input.contextPack}\nknowledgeBases:\n${matches.join("\n---\n")}` : input.contextPack;
+}
+
+async function buildCliContext(input: {
+  config: MemoryConfig;
+  task: string;
+  project: string;
+  session: string;
+}): Promise<{ contextPack: string }> {
+  const context = await buildContextPack({
+    taskContext: input.task,
+    sessionScope: input.session,
+    projectScope: input.project
+  });
+  context.contextPack = await contextWithLinkedKnowledgeBases({
+    config: input.config,
+    contextPack: context.contextPack,
+    project: input.project,
+    task: input.task
+  });
+  return context;
+}
+
 function positional(args: string[]): string[] {
   const values: string[] = [];
   for (let index = 0; index < args.length; index += 1) {
@@ -62,10 +106,11 @@ async function spawnAgent(agent: "codex" | "claude", args: string[]): Promise<vo
   const vaultRoot = resolveVaultRoot(config, projectDir);
   const project = await inferProject(projectDir, config, value(args, "--project"));
   const session = await inferSession(projectDir, value(args, "--session"));
-  const context = await buildContextPack({
-    taskContext: value(args, "--task") ?? "",
-    projectScope: project,
-    sessionScope: session
+  const context = await buildCliContext({
+    config,
+    task: value(args, "--task") ?? "",
+    project,
+    session
   });
   const env = {
     ...process.env,
@@ -181,6 +226,41 @@ async function main(): Promise<void> {
     await spawnAgent(agent, rest);
     return;
   }
+  if (command === "maintain") {
+    const config = await resolveConfig(process.cwd());
+    const vaultRoot = resolveVaultRoot(config);
+    const { session, project } = await resolvedScopes(rest);
+    const scope = value(rest, "--scope") ?? project;
+    const task = value(rest, "--task") ?? "maintenance";
+    const context = await buildCliContext({
+      config,
+      task,
+      project,
+      session
+    });
+    const cleanup = await cleanMemory(scope);
+    console.log(
+      JSON.stringify(
+        {
+          vaultRoot,
+          project,
+          session,
+          scope,
+          context,
+          cleanup,
+          knowledgeBases: listKnowledgeBases(config),
+          nextActions: [
+            "Review cleanup markers before promoting or deleting memory.",
+            "Use kb search/read for linked professional knowledge; do not import whole knowledge bases into memory.",
+            "Use capture/promote for explicit writes; maintain is intentionally read/report-first."
+          ]
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
   if (command === "capture") {
     const rawObservation = value(rest, "--raw") ?? "";
     const source = value(rest, "--source") ?? "";
@@ -209,14 +289,18 @@ async function main(): Promise<void> {
     return;
   }
   if (command === "context") {
+    const config = await resolveConfig(process.cwd());
     const { session, project } = await resolvedScopes(rest);
+    const task = value(rest, "--task") ?? "";
+    const context = await buildCliContext({
+      config,
+      task,
+      project,
+      session
+    });
     console.log(
       JSON.stringify(
-        await buildContextPack({
-          taskContext: value(rest, "--task") ?? "",
-          sessionScope: session,
-          projectScope: project
-        }),
+        context,
         null,
         2
       )
