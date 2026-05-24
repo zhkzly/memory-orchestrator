@@ -72,16 +72,22 @@ export async function listMemoryFiles(scope: string): Promise<string[]> {
   const candidates = ["people", "projects", "notes", "sessions", "rubrics"].map((folder) =>
     path.join(root, folder, `${scope}.md`)
   );
-  const existing: string[] = [];
+  const existing = new Set<string>();
   for (const filePath of candidates) {
     try {
       await fs.access(filePath);
-      existing.push(filePath);
+      existing.add(filePath);
     } catch {
       // ignore missing files
     }
   }
-  return existing;
+  for (const filePath of await listAllMemoryFiles()) {
+    const item = await loadMemoryItem(filePath);
+    if (item?.scope.includes(scope)) {
+      existing.add(filePath);
+    }
+  }
+  return [...existing];
 }
 
 export async function listAllMemoryFiles(): Promise<string[]> {

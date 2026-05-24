@@ -90,12 +90,62 @@ const wikiPage = JSON.parse(
 );
 assert(wikiPage.content.includes("LLM Wiki"), "Expected kb read to return page content.");
 
+const now = new Date().toISOString();
+const projectItem = {
+  id: "harness-project-rule",
+  kind: "project",
+  scope: "harness-project",
+  source: sourcePath,
+  confidence: 0.9,
+  confidence_rationale: "harness project fixture",
+  status: "verified",
+  content: "Project context packs must include concise verified project memory.",
+  created_at: now,
+  updated_at: now,
+  verified_at: now,
+  retrieval_count: 0,
+  cross_project_applicable: false,
+  references: [],
+  semantic_tags: ["context"],
+  provenance: [{ type: "file", ref: sourcePath }]
+};
+
+await run("node", ["dist/cli.js", "promote", "--item", JSON.stringify(projectItem)], { env: cliEnv });
+
+const sessionItem = {
+  id: "harness-session-note",
+  kind: "session",
+  scope: "harness-project",
+  source: sourcePath,
+  confidence: 0.6,
+  confidence_rationale: "harness session fixture",
+  status: "candidate",
+  content: "Session memory should stay ephemeral but remain visible to current context.",
+  created_at: now,
+  updated_at: now,
+  retrieval_count: 0,
+  cross_project_applicable: false,
+  references: [],
+  semantic_tags: ["context"],
+  provenance: [{ type: "session", ref: "harness" }]
+};
+
+await run("node", ["dist/cli.js", "write", "--item", JSON.stringify(sessionItem)], { env: cliEnv });
+
 const inferredContext = JSON.parse(
   await run("node", ["dist/cli.js", "context", "--task", "harness task"], { env: cliEnv })
 );
 assert(
   inferredContext.contextPack.includes("project=harness-project"),
   "Expected context to infer project without explicit --project."
+);
+assert(
+  inferredContext.contextPack.includes("Project context packs must include concise verified project memory."),
+  "Expected context to include inline verified project memory."
+);
+assert(
+  inferredContext.contextPack.includes("Session memory should stay ephemeral"),
+  "Expected context to include inline session memory without promotion."
 );
 
 const knowledgeContext = JSON.parse(
@@ -146,7 +196,6 @@ await run("node", [
 const scoreReport = JSON.parse(await readFile(path.join(vaultRoot, "score-report.json"), "utf8"));
 assert(scoreReport.recommendation === "accept", "Expected rubric recommendation to be accept.");
 
-const now = new Date().toISOString();
 const item = {
   id: "harness-evidence",
   kind: "evidence",

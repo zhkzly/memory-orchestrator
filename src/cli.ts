@@ -1,4 +1,13 @@
-import { captureCandidate, classifyCandidate, verifyCandidate, promoteItem, buildContextPack, evaluateRubric, cleanMemory } from "./core.js";
+import {
+  captureCandidate,
+  classifyCandidate,
+  verifyCandidate,
+  promoteItem,
+  writeCandidateItem,
+  buildContextPack,
+  evaluateRubric,
+  cleanMemory
+} from "./core.js";
 import { addKnowledgeBase, initConfig, linkKnowledgeBase, resolveConfig, resolveVaultRoot } from "./config.js";
 import { inferProject, inferSession } from "./identity.js";
 import { listKnowledgeBases, readKnowledgeBasePage, searchKnowledgeBase } from "./kb.js";
@@ -24,6 +33,7 @@ function usage(): string {
     "  capture --raw <text> --source <source> [--session <session>] [--project <project>]",
     "  classify --candidate <json>",
     "  verify --candidate <json> --evidence <json-array>",
+    "  write --item <json>",
     "  promote --item <json>",
     "  context --task <text> [--session <scope>] [--project <scope>]",
     "  rubric --definition <text> --evidence <json-array> --system <text> --proxies <json-array>",
@@ -282,6 +292,12 @@ async function main(): Promise<void> {
     const candidate = memoryItemSchema.parse(JSON.parse(value(rest, "--candidate") ?? "{}"));
     const evidence = JSON.parse(value(rest, "--evidence") ?? "[]");
     console.log(JSON.stringify(await verifyCandidate(candidate, evidence), null, 2));
+    return;
+  }
+  if (command === "write") {
+    console.log(
+      JSON.stringify(await writeCandidateItem(memoryItemSchema.parse(JSON.parse(value(rest, "--item") ?? "{}"))), null, 2)
+    );
     return;
   }
   if (command === "promote") {

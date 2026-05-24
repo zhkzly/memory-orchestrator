@@ -49,6 +49,7 @@ node dist/cli.js status
 - `capture --raw <text> --source <source> [--session <session>] [--project <project>]`
 - `classify --candidate <json>`
 - `verify --candidate <json> --evidence <json-array>`
+- `write --item <json>`
 - `promote --item <json>`
 - `context --task <text> [--session <scope>] [--project <scope>]`
 - `rubric --definition <text> --evidence <json-array> --system <text> --proxies <json-array>`
@@ -112,6 +113,8 @@ node dist/cli.js kb search --name memory-research --query "agent memory"
 The fallback implementation searches local Markdown files under the registered root. API-backed querying can be added behind the same command boundary.
 
 When a knowledge base is linked to the active project, `context`, `maintain`, and `agent` include concise task-matching knowledge-base excerpts in the generated context pack. They do not import the whole wiki.
+
+Context packs also include concise inline excerpts from matching memory items. Use `write` for candidate or session memory that should remain visible without being promoted, and use `promote` only for verified durable memory.
 
 ## MCP
 

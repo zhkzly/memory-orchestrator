@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import {
   hashFileContents,
+  loadMemoryItem,
   listAllMemoryItems,
   listMemoryFiles,
   touchMemoryFiles,
@@ -112,15 +113,36 @@ export async function promoteItem(item: MemoryItem): Promise<{ path: string }> {
   return { path: filePath };
 }
 
+export async function writeCandidateItem(item: MemoryItem): Promise<{ path: string }> {
+  if (!item.scope.trim()) {
+    throw new Error("Cannot write memory item without a scope.");
+  }
+  if (item.status === "verified" && item.kind !== "session") {
+    throw new Error("Use promote for verified durable memory items.");
+  }
+  const filePath = await writeMemoryItem(item);
+  return { path: filePath };
+}
+
 export async function buildContextPack(input: BuildContextPackInput): Promise<{ contextPack: string }> {
   const files = await listMemoryFiles(input.projectScope || input.sessionScope);
   await touchMemoryFiles(files);
+  const memoryLines: string[] = [];
+  for (const filePath of files) {
+    const item = await loadMemoryItem(filePath);
+    if (!item || item.status === "rejected" || item.status === "outdated") {
+      continue;
+    }
+    const excerpt = item.content.replace(/\s+/g, " ").trim().slice(0, 500);
+    memoryLines.push(`memory:${item.kind}:${item.scope}:${item.id}\n${excerpt}`);
+  }
   return {
     contextPack: [
       `task=${input.taskContext}`,
       `session=${input.sessionScope}`,
       `project=${input.projectScope}`,
-      `files=${files.join(",")}`
+      `files=${files.join(",")}`,
+      memoryLines.length > 0 ? `memories:\n${memoryLines.join("\n---\n")}` : "memories="
     ].join("\n")
   };
 }
