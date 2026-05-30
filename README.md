@@ -140,6 +140,14 @@ The `skills/` directory describes suggested agent roles:
 
 Use them as instructions for models or wrappers. The CLI remains the source of behavior. The `memory-orchestrator-codex` skill is the recommended cross-project instruction layer: it tells Codex to load layered context at the start of work, use `kb search/read` for external knowledge, and run `session-end --controller-event` at the end of work.
 
+Install the Codex skill locally when you want Codex to discover it from other project folders:
+
+```bash
+install -D -m 0644 skills/memory-orchestrator-codex/SKILL.md ~/.codex/skills/memory-orchestrator-codex/SKILL.md
+```
+
+After that, future Codex sessions can use the skill metadata without being started inside this repository. The skill is still only an instruction layer; all durable behavior remains in the `memory-orchestrator` CLI.
+
 ## Codex Wrapper
 
 `examples/codex-memory` shows the intended pattern after one-time config:
