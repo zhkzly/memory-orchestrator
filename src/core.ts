@@ -23,6 +23,43 @@ export interface BuildContextPackInput {
   projectScope: string;
 }
 
+export interface QueryMemoryInput {
+  kind: MemoryKind;
+  taskContext: string;
+  sessionScope: string;
+  projectScope: string;
+  limit?: number;
+}
+
+export interface QueryMemoryResult {
+  kind: MemoryKind;
+  meaning: string;
+  load: string;
+  write: string;
+  retrieval: string;
+  autoApply: string[];
+  reviewBoundary: string;
+  scope: {
+    project: string;
+    session: string;
+  };
+  items: Array<{
+    id: string;
+    kind: MemoryKind;
+    scope: string;
+    status: string;
+    confidence: number;
+    updated_at: string;
+    retrieval_count: number;
+    last_retrieved_at?: string;
+    source: string;
+    source_content_hash?: string;
+    semantic_tags: string[];
+    references: string[];
+    excerpt: string;
+  }>;
+}
+
 export interface EvaluateRubricInput {
   rubricDefinition: string;
   evidenceSet: string[];
@@ -49,6 +86,76 @@ export interface SessionTranscriptSummary {
   evidence: string[];
   openQuestions: string[];
   notes: string[];
+}
+
+export function memoryPolicy(): {
+  kinds: Record<
+    MemoryKind,
+    {
+      meaning: string;
+      load: string;
+      write: string;
+      retrieval: string;
+      autoApply: string[];
+      reviewBoundary: string;
+    }
+  >;
+  contextSections: Record<string, string[]>;
+  controller: {
+    safeApply: string[];
+    proposalFirst: string[];
+    neverSilentRewrite: string[];
+  };
+} {
+  return {
+    kinds: {
+      personal: {
+        meaning: "Long-term user model: stable preferences, communication style, durable personal constraints.",
+        load: "always_loaded",
+        write: "verified_multi_evidence_or_user_confirmed",
+        retrieval: "direct_profile_load",
+        autoApply: [],
+        reviewBoundary: "Do not rewrite silently; personal memory needs strong evidence or explicit confirmation."
+      },
+      project: {
+        meaning: "Project continuity: active decisions, architecture constraints, current status, recurring workflows.",
+        load: "project_core_plus_retrieved",
+        write: "verified_project_promotion",
+        retrieval: "scope_then_task",
+        autoApply: [],
+        reviewBoundary: "Project rewrites are proposal-first and should preserve provenance."
+      },
+      evidence: {
+        meaning: "Source-backed facts, tests, citations, and reference claims used to justify memory.",
+        load: "evidence_memory",
+        write: "source_hash_required",
+        retrieval: "task_or_reference",
+        autoApply: [],
+        reviewBoundary: "Evidence changes require source integrity checks."
+      },
+      session: {
+        meaning: "Ephemeral scratchpad: recent session summaries, temporary state, and candidate observations.",
+        load: "session_memory",
+        write: "automatic_ephemeral_ttl",
+        retrieval: "recent_plus_task",
+        autoApply: ["mark_expired_outdated"],
+        reviewBoundary: "Session memory can expire automatically, but promotion to durable memory must be verified."
+      }
+    },
+    contextSections: {
+      always_loaded: ["personal"],
+      project_core: ["project"],
+      retrieved: ["project", "evidence"],
+      session_memory: ["session"],
+      evidence_memory: ["evidence"],
+      knowledge_bases: ["external"]
+    },
+    controller: {
+      safeApply: ["session"],
+      proposalFirst: ["personal", "project", "evidence"],
+      neverSilentRewrite: ["personal", "project", "evidence"]
+    }
+  };
 }
 
 function now(): string {
@@ -271,7 +378,11 @@ function renderSessionSummary(
 
 export async function buildContextPack(input: BuildContextPackInput): Promise<{ contextPack: string }> {
   const files = await listMemoryFiles(input.projectScope || input.sessionScope);
-  await touchMemoryFiles(files);
+  const globalPersonalItems = (await listAllMemoryItems()).filter(
+    ({ item }) => item.kind === "personal" && item.status === "verified"
+  );
+  const personalFiles = globalPersonalItems.map(({ filePath }) => filePath);
+  await touchMemoryFiles([...files, ...personalFiles]);
   const memoryItems: MemoryItem[] = [];
   for (const filePath of files) {
     const item = await loadMemoryItem(filePath);
@@ -280,21 +391,83 @@ export async function buildContextPack(input: BuildContextPackInput): Promise<{ 
     }
     memoryItems.push(item);
   }
-  const memoryLines = rankMemoryItems(memoryItems, input.taskContext)
+  for (const { item } of globalPersonalItems) {
+    if (!memoryItems.some((existing) => existing.id === item.id)) {
+      memoryItems.push(item);
+    }
+  }
+  const alwaysLoaded = memoryItems
+    .filter((item) => item.kind === "personal" && item.status === "verified")
+    .sort((left, right) => right.confidence - left.confidence || new Date(right.updated_at).getTime() - new Date(left.updated_at).getTime())
+    .slice(0, 5)
+    .map(renderMemoryLine);
+  const projectCore = memoryItems
+    .filter((item) => item.kind === "project" && item.status === "verified" && item.scope.includes(input.projectScope))
+    .sort((left, right) => right.confidence - left.confidence || new Date(right.updated_at).getTime() - new Date(left.updated_at).getTime())
+    .slice(0, 5)
+    .map(renderMemoryLine);
+  const retrieved = rankMemoryItems(
+    memoryItems.filter((item) => item.kind === "project" || item.kind === "evidence"),
+    input.taskContext
+  )
     .slice(0, 3)
-    .map((item) => {
-      const excerpt = item.content.replace(/\s+/g, " ").trim().slice(0, 500);
-      return `memory:${item.kind}:${item.scope}:${item.id}\n${excerpt}`;
-    });
+    .map(renderMemoryLine);
+  const sessionMemory = rankMemoryItems(
+    memoryItems.filter((item) => item.kind === "session"),
+    input.taskContext
+  )
+    .slice(0, 3)
+    .map(renderMemoryLine);
+  const evidenceMemory = rankMemoryItems(
+    memoryItems.filter((item) => item.kind === "evidence"),
+    input.taskContext
+  )
+    .slice(0, 3)
+    .map(renderMemoryLine);
   return {
     contextPack: [
       `task=${input.taskContext}`,
       `session=${input.sessionScope}`,
       `project=${input.projectScope}`,
       `files=${files.join(",")}`,
-      memoryLines.length > 0 ? `memories:\n${memoryLines.join("\n---\n")}` : "memories="
+      renderContextSection("always_loaded", alwaysLoaded),
+      renderContextSection("project_core", projectCore),
+      renderContextSection("retrieved", retrieved),
+      renderContextSection("session_memory", sessionMemory),
+      renderContextSection("evidence_memory", evidenceMemory)
     ].join("\n")
   };
+}
+
+export async function queryMemory(input: QueryMemoryInput): Promise<QueryMemoryResult> {
+  const policy = memoryPolicy().kinds[input.kind];
+  const limit = normalizedLimit(input.limit, 5);
+  const entries = await collectQueryEntries(input);
+  const selected = selectQueryEntries(input.kind, entries, input.taskContext, input.projectScope).slice(0, limit);
+  await touchMemoryFiles(selected.map((entry) => entry.filePath));
+  return {
+    kind: input.kind,
+    meaning: policy.meaning,
+    load: policy.load,
+    write: policy.write,
+    retrieval: policy.retrieval,
+    autoApply: policy.autoApply,
+    reviewBoundary: policy.reviewBoundary,
+    scope: {
+      project: input.projectScope,
+      session: input.sessionScope
+    },
+    items: selected.map(({ item }) => renderQueryItem(item))
+  };
+}
+
+function renderMemoryLine(item: MemoryItem): string {
+  const excerpt = item.content.replace(/\s+/g, " ").trim().slice(0, 500);
+  return `memory:${item.kind}:${item.scope}:${item.id}\n${excerpt}`;
+}
+
+function renderContextSection(name: string, lines: string[]): string {
+  return `${name}:\n${lines.length > 0 ? lines.join("\n---\n") : "- none"}`;
 }
 
 function rankMemoryItems(items: MemoryItem[], taskContext: string): MemoryItem[] {
@@ -316,6 +489,84 @@ function rankMemoryItems(items: MemoryItem[], taskContext: string): MemoryItem[]
     }
     return new Date(right.updated_at).getTime() - new Date(left.updated_at).getTime();
   });
+}
+
+async function collectQueryEntries(input: QueryMemoryInput): Promise<Array<{ filePath: string; item: MemoryItem }>> {
+  if (input.kind === "personal" || input.kind === "evidence") {
+    return listAllMemoryItems();
+  }
+  const files = await listMemoryFiles(input.projectScope || input.sessionScope);
+  const entries: Array<{ filePath: string; item: MemoryItem }> = [];
+  for (const filePath of files) {
+    const item = await loadMemoryItem(filePath);
+    if (item) {
+      entries.push({ filePath, item });
+    }
+  }
+  return entries;
+}
+
+function selectQueryEntries(
+  kind: MemoryKind,
+  entries: Array<{ filePath: string; item: MemoryItem }>,
+  taskContext: string,
+  projectScope: string
+): Array<{ filePath: string; item: MemoryItem }> {
+  const candidates = entries.filter(({ item }) => {
+    if (item.kind !== kind || item.status === "rejected" || item.status === "outdated") {
+      return false;
+    }
+    if (kind === "session") {
+      return true;
+    }
+    if (item.status !== "verified") {
+      return false;
+    }
+    return kind !== "project" || item.scope.includes(projectScope);
+  });
+  if (kind === "personal") {
+    return candidates.sort(compareStableMemory);
+  }
+  const fileById = new Map(candidates.map((entry) => [entry.item.id, entry.filePath]));
+  return rankMemoryItems(candidates.map(({ item }) => item), taskContext).map((item) => ({
+    item,
+    filePath: fileById.get(item.id) ?? ""
+  }));
+}
+
+function compareStableMemory(
+  left: { item: MemoryItem },
+  right: { item: MemoryItem }
+): number {
+  return (
+    right.item.confidence - left.item.confidence ||
+    new Date(right.item.updated_at).getTime() - new Date(left.item.updated_at).getTime()
+  );
+}
+
+function normalizedLimit(limit: number | undefined, fallback: number): number {
+  if (!limit || Number.isNaN(limit) || limit < 1) {
+    return fallback;
+  }
+  return Math.min(Math.floor(limit), 50);
+}
+
+function renderQueryItem(item: MemoryItem): QueryMemoryResult["items"][number] {
+  return {
+    id: item.id,
+    kind: item.kind,
+    scope: item.scope,
+    status: item.status,
+    confidence: item.confidence,
+    updated_at: item.updated_at,
+    retrieval_count: item.retrieval_count ?? 0,
+    last_retrieved_at: item.last_retrieved_at,
+    source: item.source,
+    source_content_hash: item.source_content_hash,
+    semantic_tags: item.semantic_tags ?? [],
+    references: item.references ?? [],
+    excerpt: item.content.replace(/\s+/g, " ").trim().slice(0, 500)
+  };
 }
 
 export async function evaluateRubric(input: EvaluateRubricInput): Promise<{
@@ -344,6 +595,19 @@ export async function evaluateRubric(input: EvaluateRubricInput): Promise<{
     source: input.candidateSystem,
     rubricDefinition: input.rubricDefinition
   };
+}
+
+function contradictionKey(content: string): { polarity: "positive" | "negative"; key: string } | null {
+  const normalized = content.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+  const negative = normalized.match(/\b(must|should)\s+not\s+(.+)/);
+  if (negative) {
+    return { polarity: "negative", key: `${negative[1]} ${negative[2]}`.trim() };
+  }
+  const positive = normalized.match(/\b(must|should)\s+(.+)/);
+  if (positive) {
+    return { polarity: "positive", key: `${positive[1]} ${positive[2]}`.trim() };
+  }
+  return null;
 }
 
 export async function cleanMemory(targetScope: string): Promise<{ markers: string[] }> {
@@ -400,6 +664,21 @@ export async function cleanMemory(targetScope: string): Promise<{ markers: strin
       const contents = new Set(items.map((item) => item.content));
       if (contents.size > 1) {
         markers.push(`semantic_conflict:${bucketKey}:${tag}`);
+      }
+      const byClaim = new Map<string, { positive: string[]; negative: string[] }>();
+      for (const item of items) {
+        const claim = contradictionKey(item.content);
+        if (!claim) {
+          continue;
+        }
+        const bucket = byClaim.get(claim.key) ?? { positive: [], negative: [] };
+        bucket[claim.polarity].push(item.id);
+        byClaim.set(claim.key, bucket);
+      }
+      for (const [claimKey, polarity] of byClaim.entries()) {
+        if (polarity.positive.length > 0 && polarity.negative.length > 0) {
+          markers.push(`direct_contradiction:${bucketKey}:${tag}:${claimKey}:${polarity.positive.join(",")}<>${polarity.negative.join(",")}`);
+        }
       }
     }
   }

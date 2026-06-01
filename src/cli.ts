@@ -8,9 +8,20 @@ import {
   summarizeSessionTranscript,
   buildContextPack,
   evaluateRubric,
-  cleanMemory
+  cleanMemory,
+  memoryPolicy,
+  queryMemory
 } from "./core.js";
 import { addKnowledgeBase, initConfig, initProjectConfig, linkKnowledgeBase, resolveConfig, resolveVaultRoot } from "./config.js";
+import {
+  buildControllerReflection,
+  buildControllerSchedule,
+  readControllerFeedback,
+  runController,
+  runControllerApply,
+  runControllerPolicy,
+  runControllerReview
+} from "./controller.js";
 import { inferProject, inferSession } from "./identity.js";
 import { doctorKnowledgeBase, listKnowledgeBases, readKnowledgeBasePage, searchKnowledgeBase } from "./kb.js";
 import { memoryItemSchema, rubricProxySchema } from "./schemas.js";
@@ -23,6 +34,7 @@ import type { IncomingMessage } from "node:http";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import type { MemoryConfig } from "./config.js";
+import type { MemoryKind } from "./types.js";
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -44,11 +56,20 @@ function usage(): string {
     "  agent codex|claude [project-dir] [--task <text>]",
     "  maintain [--task <text>] [--session <scope>] [--project <scope>] [--scope <scope>] [--write-report]",
     "  review [--scope <scope>] [--days <n>] [--session <scope>] [--project <scope>]",
+    "  memory-policy",
+    "  memory-query --kind personal|project|evidence|session [--task <text>] [--limit <n>] [--session <scope>] [--project <scope>]",
     "  harness [--task <text>] [--scope <scope>] [--days <n>] [--write-report]",
+    "  controller [--trigger scheduled|event|manual] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--write-proposals] [--apply-safe]",
+    "  controller-apply --proposal <id>",
+    "  controller-feedback [--limit <n>] [--min-score <n>]",
+    "  controller-policy init|show [--force] [--model-provider <name>] [--model-name <name>]",
+    "  controller-reflection [--limit <n>] [--write-report]",
+    "  controller-review ingest|show [--file <path>] [--reviewer <name>] [--limit <n>]",
+    "  controller-schedule [--format cron|systemd|launchd|windows-task] [--time HH:MM] [--policy <file>] [--write-report] [--write-review-artifacts] [--write-feedback] [--write-reinforcement] [--apply-safe]",
     "  ui [--host <host>] [--port <port>]",
     "  ingest-session --file <path> [--session <scope>] [--project <scope>]",
     "  summarize-session --file <path> [--out <path>] [--ingest] [--session <scope>] [--project <scope>]",
-    "  session-end (--transcript <path> | --summary <path>) [--task <text>] [--write-report] [--session <scope>] [--project <scope>]",
+    "  session-end (--transcript <path> | --summary <path>) [--task <text>] [--write-report] [--controller-event] [--controller-policy <file>] [--controller-report] [--controller-review-artifacts] [--controller-feedback] [--controller-reinforcement] [--controller-apply-safe] [--session <scope>] [--project <scope>]",
     "  capture --raw <text> --source <source> [--session <session>] [--project <project>]",
     "  classify --candidate <json>",
     "  verify --candidate <json> --evidence <json-array>",
@@ -66,12 +87,43 @@ function value(args: string[], flag: string): string | undefined {
   return index >= 0 ? args[index + 1] : undefined;
 }
 
+function controllerEventArgs(args: string[]): string[] {
+  const controllerArgs = ["--trigger", "event"];
+  const policyPath = value(args, "--controller-policy");
+  if (policyPath) {
+    controllerArgs.push("--policy", policyPath);
+  }
+  if (args.includes("--controller-report")) {
+    controllerArgs.push("--write-report");
+  }
+  if (args.includes("--controller-review-artifacts")) {
+    controllerArgs.push("--write-review-artifacts");
+  }
+  if (args.includes("--controller-feedback")) {
+    controllerArgs.push("--write-feedback");
+  }
+  if (args.includes("--controller-reinforcement")) {
+    controllerArgs.push("--write-reinforcement");
+  }
+  if (args.includes("--controller-apply-safe")) {
+    controllerArgs.push("--apply-safe");
+  }
+  return controllerArgs;
+}
+
 async function resolvedScopes(args: string[]): Promise<{ project: string; session: string }> {
   const config = await resolveConfig(process.cwd());
   return {
     project: await inferProject(process.cwd(), config, value(args, "--project")),
     session: await inferSession(process.cwd(), value(args, "--session"))
   };
+}
+
+function parseMemoryKind(value: string | undefined): MemoryKind {
+  if (value === "personal" || value === "project" || value === "evidence" || value === "session") {
+    return value;
+  }
+  throw new Error("memory-query requires --kind personal|project|evidence|session.");
 }
 
 async function contextWithLinkedKnowledgeBases(input: {
@@ -377,6 +429,7 @@ async function buildMemoryHarness(args: string[]): Promise<{
   doctor: Awaited<ReturnType<typeof runDoctor>>;
   maintenance: Awaited<ReturnType<typeof runMaintenance>>;
   review: Awaited<ReturnType<typeof buildReviewReport>>;
+  controller: Awaited<ReturnType<typeof runController>>;
   structure: {
     candidate: { name: string; scope: string; version: string };
     overall_score: number;
@@ -389,6 +442,7 @@ async function buildMemoryHarness(args: string[]): Promise<{
   const doctor = await runDoctor(args);
   const maintenance = await runMaintenance(args);
   const review = await buildReviewReport(args);
+  const controller = await runController(["--trigger", "manual", ...(args.includes("--write-report") ? ["--write-report"] : [])]);
   const structure = await scoreStructure();
   const reportPath = args.includes("--write-report") ? maintenance.reportPath : undefined;
   return {
@@ -396,12 +450,14 @@ async function buildMemoryHarness(args: string[]): Promise<{
     doctor,
     maintenance,
     review,
+    controller,
     structure,
     ...(reportPath ? { reportPath } : {}),
     nextActions: [
       ...doctor.nextActions,
       "Use memory-orchestrator maintain for cleanup and report generation.",
       "Use memory-orchestrator review for later human curation of session memory.",
+      "Use memory-orchestrator controller for independent vault-level memory governance.",
       "Use memory-orchestrator agent codex|claude as the external launcher, not as a policy owner."
     ]
   };
@@ -738,6 +794,56 @@ async function main(): Promise<void> {
     console.log(JSON.stringify(await buildMemoryHarness(rest), null, 2));
     return;
   }
+  if (command === "memory-policy") {
+    console.log(JSON.stringify(memoryPolicy(), null, 2));
+    return;
+  }
+  if (command === "memory-query") {
+    const { session, project } = await resolvedScopes(rest);
+    const limit = Number(value(rest, "--limit") ?? "5");
+    console.log(
+      JSON.stringify(
+        await queryMemory({
+          kind: parseMemoryKind(value(rest, "--kind")),
+          taskContext: value(rest, "--task") ?? "",
+          sessionScope: session,
+          projectScope: project,
+          limit: Number.isNaN(limit) ? 5 : limit
+        }),
+        null,
+        2
+      )
+    );
+    return;
+  }
+  if (command === "controller") {
+    console.log(JSON.stringify(await runController(rest), null, 2));
+    return;
+  }
+  if (command === "controller-feedback") {
+    console.log(JSON.stringify(await readControllerFeedback(rest), null, 2));
+    return;
+  }
+  if (command === "controller-apply") {
+    console.log(JSON.stringify(await runControllerApply(rest), null, 2));
+    return;
+  }
+  if (command === "controller-policy") {
+    console.log(JSON.stringify(await runControllerPolicy(rest), null, 2));
+    return;
+  }
+  if (command === "controller-reflection") {
+    console.log(JSON.stringify(await buildControllerReflection(rest), null, 2));
+    return;
+  }
+  if (command === "controller-review") {
+    console.log(JSON.stringify(await runControllerReview(rest), null, 2));
+    return;
+  }
+  if (command === "controller-schedule") {
+    console.log(JSON.stringify(await buildControllerSchedule(rest), null, 2));
+    return;
+  }
   if (command === "capture") {
     const rawObservation = value(rest, "--raw") ?? "";
     const source = value(rest, "--source") ?? "";
@@ -817,6 +923,7 @@ async function main(): Promise<void> {
           ]
         })
       : undefined;
+    const controller = rest.includes("--controller-event") ? await runController(controllerEventArgs(rest)) : undefined;
     console.log(
       JSON.stringify(
         {
@@ -827,7 +934,8 @@ async function main(): Promise<void> {
           ...(summary ? { summary } : {}),
           ingest,
           cleanup,
-          ...(reportPath ? { reportPath } : {})
+          ...(reportPath ? { reportPath } : {}),
+          ...(controller ? { controller } : {})
         },
         null,
         2
