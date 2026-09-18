@@ -1,0 +1,24 @@
+{
+  "before_learning": {
+    "planned_slots": 2,
+    "stored_runs": 1,
+    "receipt_count": 0,
+    "experience_count": 0,
+    "sampling_finished": false
+  },
+  "during_open_group": {
+    "actual_model_calls": 0,
+    "scripted_generate_calls": 2,
+    "learning_status": "noop",
+    "learning_error": null,
+    "experience_count": 1,
+    "receipt_count": 0,
+    "sampling_finished": false
+  },
+  "after_cleanup": {
+    "stored_runs": 2,
+    "receipt_count": 1,
+    "sampling_finished": true
+  },
+  "reproduced": true
+}

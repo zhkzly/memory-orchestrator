@@ -1,0 +1,60 @@
+{
+  "head": "4a71ccf1b030986dec97bfda5d01d4a8745f1b7e",
+  "evidence_kind": "constructed temporary-Store probes, not benchmark results",
+  "noncompleted_candidate_is_published": {
+    "validation_status": "accepted",
+    "reported_candidate_execution_statuses": [
+      "cancelled",
+      "cancelled",
+      "cancelled",
+      "cancelled"
+    ],
+    "candidate_outcomes": [
+      "pass",
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "new_generation": 1
+  },
+  "persisted_results_ignored_without_validation": {
+    "interruption": "audit_interruption",
+    "stored_result_count": 8,
+    "stored_outcomes": {
+      "pass": 6,
+      "fail": 2,
+      "unknown": 0
+    },
+    "report_outcomes": {
+      "pass": 0,
+      "fail": 0,
+      "unknown": 8
+    },
+    "reported_unaccounted_requests": 8,
+    "reported_comparison_results": 0
+  },
+  "sampling_quality_missing_from_report": {
+    "stored_feedback_outcomes": {
+      "pass": 2,
+      "fail": 1,
+      "unknown": 0
+    },
+    "sampling_slots": 3,
+    "report_outcomes": {
+      "pass": 0,
+      "fail": 0,
+      "unknown": 0
+    },
+    "observed_success_rate": null,
+    "comparisons": 0
+  },
+  "validation_attempts_labelled_candidate_count": {
+    "unique_stored_candidates": 1,
+    "validation_attempts": 2,
+    "reported_candidate_counts": {
+      "accepted": 2,
+      "rejected": 0,
+      "unknown": 0
+    }
+  }
+}

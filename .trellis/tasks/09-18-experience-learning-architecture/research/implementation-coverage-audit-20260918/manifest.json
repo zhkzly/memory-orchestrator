@@ -1,0 +1,311 @@
+{
+  "audited_commit": "4a71ccf1b030986dec97bfda5d01d4a8745f1b7e",
+  "contract_version": "1.5.0",
+  "review_kind": "read-only implementation coverage audit; not a fix or benchmark",
+  "baseline": {
+    "tests": 126,
+    "exit_code": 0,
+    "log": "baseline-tests.txt"
+  },
+  "new_probes": {
+    "actual_model_calls": 0,
+    "network_calls": 0,
+    "product_file_mutations": 0,
+    "note": "Probe assertions demonstrate the defects. Exit 0 is reproduction, not a repaired acceptance result."
+  },
+  "findings": [
+    {
+      "id": "F01",
+      "priority": null,
+      "title": "终态评分政策与执行状态统计口径需明确",
+      "nodes": [
+        "N09",
+        "N10"
+      ],
+      "questions": [
+        "Q06",
+        "Q24",
+        "Q26"
+      ],
+      "locations": [
+        {
+          "file": "src/memory_orchestrator/evaluation.py",
+          "line": 180
+        },
+        {
+          "file": "src/memory_orchestrator/evaluation.py",
+          "line": 423
+        }
+      ],
+      "evidence": "probes/n09_n11_results.json",
+      "evidence_key": "noncompleted_candidate_is_published",
+      "status": "needs_decision",
+      "classification": "contract_and_reporting_gap",
+      "qualification": "The probe kept a correct artifact and an independent verifier returned pass. v1.5 does not prohibit all non-completed executions from being evaluated/published; wrongful publication is not established."
+    },
+    {
+      "id": "F02",
+      "priority": "P1",
+      "title": "迟到反馈可错绑已知运行和产物",
+      "nodes": [
+        "N05"
+      ],
+      "questions": [
+        "Q07",
+        "Q09"
+      ],
+      "locations": [
+        {
+          "file": "src/memory_orchestrator/store.py",
+          "line": 411
+        }
+      ],
+      "evidence": "probes/n01_n05_results.jsonl",
+      "evidence_key": "late_feedback_wrong_known_run_and_state",
+      "status": "open",
+      "classification": "reproduced_bug"
+    },
+    {
+      "id": "F03",
+      "priority": "P1",
+      "title": "已知调用配对与目标切换未进入模型证据包",
+      "nodes": [
+        "N04",
+        "N06",
+        "N07"
+      ],
+      "questions": [
+        "Q09",
+        "Q10",
+        "Q11",
+        "Q18"
+      ],
+      "locations": [
+        {
+          "file": "src/memory_orchestrator/evidence.py",
+          "line": 174
+        },
+        {
+          "file": "src/memory_orchestrator/evidence.py",
+          "line": 266
+        },
+        {
+          "file": "src/memory_orchestrator/learning.py",
+          "line": 329
+        }
+      ],
+      "evidence": "probes/n04_n08_results.json",
+      "evidence_key": "call_metadata_loss / goal_metadata_loss",
+      "status": "open",
+      "classification": "reproduced_bug"
+    },
+    {
+      "id": "F04",
+      "priority": "P1",
+      "title": "采样组未闭合即可写入学习经验",
+      "nodes": [
+        "N03",
+        "N06"
+      ],
+      "questions": [
+        "Q04",
+        "Q05"
+      ],
+      "locations": [
+        {
+          "file": "src/memory_orchestrator/learning.py",
+          "line": 65
+        },
+        {
+          "file": "src/memory_orchestrator/learning.py",
+          "line": 228
+        }
+      ],
+      "evidence": "probes/open_group_results.json",
+      "evidence_key": "during_open_group",
+      "status": "open",
+      "classification": "reproduced_bug"
+    },
+    {
+      "id": "F05",
+      "priority": "P2",
+      "title": "相同有效候选使整轮演化停止",
+      "nodes": [
+        "N08",
+        "N09"
+      ],
+      "questions": [
+        "Q20",
+        "Q22",
+        "Q24"
+      ],
+      "locations": [
+        {
+          "file": "src/memory_orchestrator/learning.py",
+          "line": 417
+        },
+        {
+          "file": "src/memory_orchestrator/engine.py",
+          "line": 19
+        },
+        {
+          "file": "src/memory_orchestrator/evaluation.py",
+          "line": 302
+        }
+      ],
+      "evidence": "probes/n04_n08_results.json",
+      "evidence_key": "duplicate_candidate_evolution",
+      "status": "open",
+      "classification": "reproduced_bug"
+    },
+    {
+      "id": "F06",
+      "priority": "P2",
+      "title": "非完成终态中的有效部分事件没有进入学习输入",
+      "nodes": [
+        "N03",
+        "N04"
+      ],
+      "questions": [
+        "Q02",
+        "Q10",
+        "Q11"
+      ],
+      "locations": [
+        {
+          "file": "src/memory_orchestrator/sampling.py",
+          "line": 175
+        },
+        {
+          "file": "src/memory_orchestrator/sampling.py",
+          "line": 220
+        }
+      ],
+      "evidence": "probes/n01_n05_results.jsonl",
+      "evidence_key": "timeout_partial_trace",
+      "status": "open",
+      "classification": "reproduced_bug"
+    },
+    {
+      "id": "F07",
+      "priority": "P2",
+      "title": "声明初态与实际报告矛盾未被核对",
+      "nodes": [
+        "N03"
+      ],
+      "questions": [
+        "Q04",
+        "Q05",
+        "Q23"
+      ],
+      "locations": [
+        {
+          "file": "src/memory_orchestrator/sampling.py",
+          "line": 161
+        }
+      ],
+      "evidence": "probes/n01_n05_results.jsonl",
+      "evidence_key": "reported_initial_state_contradicts_plan",
+      "status": "open",
+      "classification": "reproduced_bug"
+    },
+    {
+      "id": "F08",
+      "priority": "P2",
+      "title": "报告漏读已持久化但未形成验证记录的结果",
+      "nodes": [
+        "N11"
+      ],
+      "questions": [
+        "Q06",
+        "Q27"
+      ],
+      "locations": [
+        {
+          "file": "src/memory_orchestrator/report.py",
+          "line": 70
+        },
+        {
+          "file": "src/memory_orchestrator/report.py",
+          "line": 118
+        }
+      ],
+      "evidence": "probes/n09_n11_results.json",
+      "evidence_key": "persisted_results_ignored_without_validation",
+      "status": "open",
+      "classification": "reproduced_bug"
+    },
+    {
+      "id": "F09",
+      "priority": "P2",
+      "title": "报告没有采样质量统计",
+      "nodes": [
+        "N11"
+      ],
+      "questions": [
+        "Q06",
+        "Q27"
+      ],
+      "locations": [
+        {
+          "file": "src/memory_orchestrator/report.py",
+          "line": 148
+        },
+        {
+          "file": "src/memory_orchestrator/report.py",
+          "line": 169
+        }
+      ],
+      "evidence": "probes/n09_n11_results.json",
+      "evidence_key": "sampling_quality_missing_from_report",
+      "status": "open",
+      "classification": "reproduced_bug"
+    },
+    {
+      "id": "F10",
+      "priority": "P2",
+      "title": "验证次数被标成候选数量",
+      "nodes": [
+        "N11"
+      ],
+      "questions": [
+        "Q06",
+        "Q27"
+      ],
+      "locations": [
+        {
+          "file": "src/memory_orchestrator/report.py",
+          "line": 179
+        }
+      ],
+      "evidence": "probes/n09_n11_results.json",
+      "evidence_key": "validation_attempts_labelled_candidate_count",
+      "status": "open",
+      "classification": "reproduced_bug"
+    }
+  ],
+  "source_hashes": {
+    "src/memory_orchestrator/__init__.py": "34411261695cb1c20da720b9c792ae0bc4a8a7ff8278ce364cb24701221485d1",
+    "src/memory_orchestrator/candidates.py": "b951064335e93d0ed7d37ed430aea18c26b51ffbb65a8f7293be60ca7524a4fa",
+    "src/memory_orchestrator/context.py": "88b2a7d9ca0d8b1e4a430ffa22a1ebac80cd5ce7f51668849d40ce92893c8849",
+    "src/memory_orchestrator/engine.py": "dadcdeabe5aae5abbb6386490724776204e6fb2aba512ed5991907674e67ae64",
+    "src/memory_orchestrator/evaluation.py": "85a24c1f2c6523b88e108941e572537e8d4085624e3b87fc1ec18774127e83f2",
+    "src/memory_orchestrator/evidence.py": "1e68e7ae11de20a921a7076eb4ab226662598cb0a7c36666eba8d368fa153a05",
+    "src/memory_orchestrator/learning.py": "a041271b3109362703702cec022a205ac378e5d9efe33bed8e0522982eb5e047",
+    "src/memory_orchestrator/model.py": "441f5d181269782462a0498ec9a49613ab7a78ea26bcd1039df77df09a2e6032",
+    "src/memory_orchestrator/release.py": "cf0505f85a5f6102f532c6604c64a40fc42f08e8193ecc3d63f33ad1658b4405",
+    "src/memory_orchestrator/report.py": "a69a5a5d61417bef39ed836e5e93dfdbed0aaa00c733a69ff483687dca465e60",
+    "src/memory_orchestrator/sampling.py": "c4d2c888fa0ac4da027e0d71ee8ecbcf1eea706f22895a6670d2756a679313d1",
+    "src/memory_orchestrator/schemas.py": "ba1a4ccde874e80e1c1f4b80d1333913a75e5cfdb8bd485ff273d0d6246ebf1e",
+    "src/memory_orchestrator/store.py": "812ba61f6a966d4216197ad166b71a3d3502203cb127ebabd0ca2b384c832975",
+    "docs/blueprint/project-contract.json": "cfb5c34e4077c0adad846fdccd49cefbbc29e852ecb7b91314299579021ff085",
+    "docs/blueprint/build.mjs": "ee08bc71f7f3eb0acdabccc01909a51767c35389ec13e449983c102241b23c56",
+    "docs/blueprint/viewer.template.html": "d97d409e17c5ae7bc152b437d9ee72ef6cedad55e6c851324e4f76825aa12295"
+  },
+  "counts": {
+    "reproduced_bugs": 9,
+    "P1": 3,
+    "P2": 6,
+    "contract_and_reporting_gaps": 1
+  }
+}

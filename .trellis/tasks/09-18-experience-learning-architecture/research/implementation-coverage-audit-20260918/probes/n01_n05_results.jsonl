@@ -1,0 +1,3 @@
+{"probe": "late_feedback_wrong_known_run_and_state", "accepted": true, "subject_is_first_episode": true, "stored_run_is_other_episode": true, "state_matches_subject_run": false, "binding_status": "bound"}
+{"probe": "timeout_partial_trace", "raw_contains_partial": true, "episode_contains_partial": false, "index_contains_partial": false, "gaps": ["Execution did not report both reset-state and environment identity; independent comparability unknown.", "Detailed execution events were not supplied; result material alone is available."]}
+{"probe": "reported_initial_state_contradicts_plan", "state_matches_plan": false, "execution_status": "completed", "capture_gaps": ["Detailed execution events were not supplied; result material alone is available."], "comparability": false}

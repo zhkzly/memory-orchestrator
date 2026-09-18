@@ -1,0 +1,94 @@
+{
+  "source_head": "4a71ccf1b030986dec97bfda5d01d4a8745f1b7e",
+  "actual_model_calls": 0,
+  "network_calls": 0,
+  "call_metadata_loss": {
+    "first_pairs": [
+      {
+        "episode_id": "demo:import-1",
+        "call_id": "c1",
+        "action_event_ids": [
+          "a1"
+        ],
+        "result_event_ids": [
+          "r1"
+        ],
+        "status": "paired"
+      },
+      {
+        "episode_id": "demo:import-1",
+        "call_id": "c2",
+        "action_event_ids": [
+          "a2"
+        ],
+        "result_event_ids": [
+          "r2"
+        ],
+        "status": "paired"
+      }
+    ],
+    "second_pairs": [
+      {
+        "episode_id": "demo:import-1",
+        "call_id": "c1",
+        "action_event_ids": [
+          "a1"
+        ],
+        "result_event_ids": [
+          "r2"
+        ],
+        "status": "paired"
+      },
+      {
+        "episode_id": "demo:import-1",
+        "call_id": "c2",
+        "action_event_ids": [
+          "a2"
+        ],
+        "result_event_ids": [
+          "r1"
+        ],
+        "status": "paired"
+      }
+    ],
+    "packets_equal_except_packet_id": true,
+    "packet_fragment_fields": [
+      "episode_id",
+      "event_id",
+      "kind",
+      "range",
+      "raw_hash",
+      "raw_ref",
+      "ref_id",
+      "task_revision",
+      "text"
+    ]
+  },
+  "goal_metadata_loss": {
+    "first_relations": [
+      "continues",
+      "switches"
+    ],
+    "second_relations": [
+      "continues",
+      "continues"
+    ],
+    "packets_equal_except_packet_id": true
+  },
+  "duplicate_candidate_evolution": {
+    "learning_status": "proposed",
+    "candidate_slots": [
+      "candidate",
+      "candidate"
+    ],
+    "proposal_ids_differ": true,
+    "same_candidate_digest": true,
+    "engine_status": "error",
+    "engine_error_code": "duplicate_candidate",
+    "actual_model_calls": 0,
+    "scripted_generate_calls": 4,
+    "execute_calls": 0,
+    "evaluate_calls": 0,
+    "active_generation": 0
+  }
+}
