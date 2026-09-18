@@ -162,6 +162,34 @@ class ModelTests(unittest.TestCase):
                 self.assertTrue(result["usage"][0]["usage_diagnostics"])
                 json.dumps(result, allow_nan=False)
 
+    def test_transport_fee_metadata_survives_the_structured_call(self):
+        reply = response(EXAMPLES["abstain"])
+        reply["usage"].update(monetary_cost=0.125, currency="USD", price_version="invoice-v2")
+        result = StructuredModel(FakeCall([reply]), limits=limits()).generate("extract_v1", inputs())
+        for record in (result["usage"][0], result["raw_response"]["usage"]):
+            self.assertEqual(record.get("monetary_cost"), 0.125)
+            self.assertEqual(record.get("currency"), "USD")
+            self.assertEqual(record.get("price_version"), "invoice-v2")
+        # No price is inferred from token counts, and malformed fees remain unknown.
+        for cost in (None, float("nan"), True, -1):
+            bad = response(EXAMPLES["abstain"])
+            bad["usage"].update(monetary_cost=cost, currency="USD")
+            result = StructuredModel(FakeCall([bad]), limits=limits()).generate("extract_v1", inputs())
+            self.assertIsNone(result["usage"][0].get("monetary_cost"))
+            if cost is not None:
+                self.assertTrue(result["usage"][0].get("usage_diagnostics"))
+            json.dumps(result, allow_nan=False)
+
+    def test_sdk_preserves_explicit_fee_without_pricing_by_guess(self):
+        def create(**kwargs):
+            return {"choices": [{"finish_reason": "stop", "message": {"content": "{}"}}],
+                    "usage": {"prompt_tokens": 4, "completion_tokens": 2,
+                              "monetary_cost": 0.02, "currency": "test-unit", "price_version": "fixed"}}
+        client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+        result = make_openai_call(timeout=10, client=client)({"messages": [], "max_output_tokens": 20})
+        self.assertEqual(result["usage"].get("monetary_cost"), 0.02)
+        self.assertEqual(result["usage"].get("price_version"), "fixed")
+
     def test_semantic_check_shares_format_repair_and_call_budgets(self):
         bad = copy.deepcopy(EXAMPLES["diagnosis"])
         bad["targets"] = [{"skill_id": "csv-typed-transformation", "revision": "new", "rule_id": None}]

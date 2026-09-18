@@ -1,0 +1,25 @@
+test_comparison_reports_quality_regression_and_stability_by_case (test_memory_report.MemoryReportTests.test_comparison_reports_quality_regression_and_stability_by_case) ... ok
+test_comparison_terminal_states_are_separate_from_known_scores (test_memory_report.MemoryReportTests.test_comparison_terminal_states_are_separate_from_known_scores) ... ok
+test_complete_and_failed_candidate_costs_are_counted_once (test_memory_report.MemoryReportTests.test_complete_and_failed_candidate_costs_are_counted_once) ... ok
+test_early_sampling_scores_survive_both_persistence_interruptions (test_memory_report.MemoryReportTests.test_early_sampling_scores_survive_both_persistence_interruptions) ... ok
+test_entire_unfinished_plan_remains_in_denominator (test_memory_report.MemoryReportTests.test_entire_unfinished_plan_remains_in_denominator) ... ok
+test_explicit_assessment_cannot_borrow_other_runs_feedback (test_memory_report.MemoryReportTests.test_explicit_assessment_cannot_borrow_other_runs_feedback) ... ok
+test_historical_comparison_status_not_recomputed_after_publication (test_memory_report.MemoryReportTests.test_historical_comparison_status_not_recomputed_after_publication) ... ok
+test_invalid_cost_and_missing_time_do_not_become_known_zero (test_memory_report.MemoryReportTests.test_invalid_cost_and_missing_time_do_not_become_known_zero) ... ok
+test_invalid_tokens_rejected_and_all_unknowns_not_zero (test_memory_report.MemoryReportTests.test_invalid_tokens_rejected_and_all_unknowns_not_zero) ... ok
+test_legacy_sampling_requires_unique_bound_feedback (test_memory_report.MemoryReportTests.test_legacy_sampling_requires_unique_bound_feedback) ... ok
+test_missing_comparison_results_stay_missing_per_split (test_memory_report.MemoryReportTests.test_missing_comparison_results_stay_missing_per_split) ... ok
+test_missing_usage_stays_unknown (test_memory_report.MemoryReportTests.test_missing_usage_stays_unknown) ... ok
+test_observed_results_survive_interruption_before_validation (test_memory_report.MemoryReportTests.test_observed_results_survive_interruption_before_validation) ... ok
+test_partial_result_any_all_keep_missing_repeats_unknown (test_memory_report.MemoryReportTests.test_partial_result_any_all_keep_missing_repeats_unknown) ... ok
+test_revalidation_counts_attempts_not_additional_candidates (test_memory_report.MemoryReportTests.test_revalidation_counts_attempts_not_additional_candidates) ... ok
+test_sampling_quality_modes_any_all_and_terminal_states (test_memory_report.MemoryReportTests.test_sampling_quality_modes_any_all_and_terminal_states) ... ok
+test_scheduling_unknowns_are_not_zero_cost_evidence (test_memory_report.MemoryReportTests.test_scheduling_unknowns_are_not_zero_cost_evidence) ... ok
+test_token_measures_have_independent_subtotals_and_missing_counts (test_memory_report.MemoryReportTests.test_token_measures_have_independent_subtotals_and_missing_counts) ... ok
+test_unfinished_sampling_slots_prevent_complete_cost_claim (test_memory_report.MemoryReportTests.test_unfinished_sampling_slots_prevent_complete_cost_claim) ... ok
+test_usage_deduplication_conflict_and_currencies (test_memory_report.MemoryReportTests.test_usage_deduplication_conflict_and_currencies) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 6.023s
+
+OK

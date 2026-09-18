@@ -1,0 +1,15 @@
+test_a_later_priced_callback_does_not_erase_an_unreturned_attempt (test_memory_completion.CompletionConsumers.test_a_later_priced_callback_does_not_erase_an_unreturned_attempt) ... ok
+test_co_use_from_another_task_or_revision_does_not_change_selection (test_memory_completion.CompletionConsumers.test_co_use_from_another_task_or_revision_does_not_change_selection) ... ok
+test_current_task_filters_unrelated_project_facts_before_budget (test_memory_completion.CompletionConsumers.test_current_task_filters_unrelated_project_facts_before_budget) ... ok
+test_interrupted_model_learning_keeps_reported_costs_incomplete (test_memory_completion.CompletionConsumers.test_interrupted_model_learning_keeps_reported_costs_incomplete) ... ok
+test_multi_criterion_assessment_is_consumed_by_sampling_report (test_memory_completion.CompletionConsumers.test_multi_criterion_assessment_is_consumed_by_sampling_report) ... ok
+test_selection_has_actual_maintenance_time_in_report (test_memory_completion.CompletionConsumers.test_selection_has_actual_maintenance_time_in_report) ... ok
+test_two_actual_releases_and_rollback_reach_longitudinal_report (test_memory_completion.CompletionConsumers.test_two_actual_releases_and_rollback_reach_longitudinal_report) ... ok
+test_real_same_core_runs_all_modes_with_frozen_final_and_equal_budgets (test_memory_experiments.ExperimentTests.test_real_same_core_runs_all_modes_with_frozen_final_and_equal_budgets) ... ok
+test_retained_caller_config_cannot_change_frozen_arm_execution (test_memory_experiments.ExperimentTests.test_retained_caller_config_cannot_change_frozen_arm_execution) ... ok
+test_split_audit_rejects_source_and_content_leakage_without_claiming_unknown_provenance (test_memory_experiments.ExperimentTests.test_split_audit_rejects_source_and_content_leakage_without_claiming_unknown_provenance) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 10.518s
+
+OK

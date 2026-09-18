@@ -28,6 +28,8 @@ LEARNING = {'packet': {'max_chars': 28000, 'max_fragment_chars': 1200, 'max_cata
             'max_expansions': 2, 'max_experiences': 3, 'max_read_requests': 4,
             'max_related_experiences': 4, 'max_related_episodes': 8, 'max_related_chars': 16000,
             'candidate_count': 1, 'max_operations': 3, 'max_skills': 20, 'max_asset_bytes': 20000,
+            'necessity': {'max_compared_skills': 20},
+            'maintenance': {'max_chars': 20000, 'max_pairs': 6, 'max_actions': 4},
             'evaluation_scope': 'local CSV repair; target and regression, no transfer claim'}
 
 
@@ -64,7 +66,7 @@ def callbacks(store):
                 settings.update(json.loads(snapshot['assets'][ref]))
                 events.append({'event_id': 'read_' + sid, 'kind': 'action', 'text': 'Read CSV policy ' + ref,
                                'call_id': ref, 'task_revision': task_data['revision'], 'source_role': 'tool'})
-                consumption.append({'skill_id': sid, 'event_id': 'read_' + sid})
+                consumption.append({'skill_id': sid, 'event_id': 'read_' + sid, 'level': 'read'})
         transformed = []
         for row in csv.DictReader(io.StringIO(task_data['csv'])):
             converted = {}
@@ -120,12 +122,23 @@ class ScriptedTeacher:
             snapshot = inputs['target_snapshot']
             skills = snapshot['skills']
             targets = [{'skill_id': sid, 'revision': skill['revision'], 'rule_id': 'R2'} for sid, skill in skills.items()]
+            catalog = inputs['verification_catalog']
+            target_check = next((c['check_ref'] for c in catalog if c['purpose'] == 'target'), None)
+            regression_check = next((c['check_ref'] for c in catalog if c['purpose'] == 'regression'), None)
             value = {'route': 'skill_patch', 'hypotheses': [{'claim': 'The CSV policy is absent or incomplete.',
                      'supporting_refs': refs, 'counterevidence_refs': [], 'alternatives': ['An executor defect could require code changes.']}],
                      'targets': targets, 'expected_behavior': 'Preserve declared string IDs and numeric conversion.',
-                     'check_plan': [{'purpose': 'target', 'behavior': 'Repair the observed typed-row mismatch.', 'required_evidence': 'Exact output check'},
-                                    {'purpose': 'regression', 'behavior': 'Keep ordinary numeric conversion.', 'required_evidence': 'Independent numeric-row check'}],
-                     'evidence_refs': refs, 'abstain_reason': ''}
+                     'check_plan': [{'purpose': 'target', 'behavior': 'Repair the observed typed-row mismatch.', 'required_evidence': 'Exact output check', 'check_ref': target_check},
+                                    {'purpose': 'regression', 'behavior': 'Keep ordinary numeric conversion.', 'required_evidence': 'Independent numeric-row check', 'check_ref': regression_check}],
+                     'evidence_refs': refs, 'abstain_reason': '',
+                     'necessity': {'verdict': 'proceed', 'repeatable': True,
+                         'compared_skill_refs': [{'skill_id': sid, 'revision': row['revision']} for sid, row in skills.items()],
+                         'capability_gap': 'Typed-column behavior is missing or incomplete in this constructed fixture.',
+                         'behavior_delta': 'Preserve string identifiers and the declared empty numeric behavior.',
+                         'allow_add': not bool(skills), 'evidence_refs': refs, 'unknowns': ['This is a scripted behavior check.']}}
+        elif prompt_id == 'maintain_experience_v1':
+            value = {'actions': [{'op': 'NOOP', 'reason': 'The fixed teacher does not adjudicate semantic equivalence.'}],
+                     'unknowns': ['No semantic truth claim is made by the scripted teacher.']}
         elif prompt_id == 'propose_v1':
             intent = inputs['change_intent']
             refs = intent['evidence_refs']

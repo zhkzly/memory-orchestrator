@@ -6,8 +6,9 @@ import math
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from .schemas import DomainError, digest, new_id, now_iso, validate, normalize_usage_measurements
+from .schemas import DomainError, digest, new_id, now_iso, validate
 from .outcomes import parse_execution, resolve_scoring_policy
+from .telemetry import measure_stage
 
 
 BASE_GATES = {"complete_results", "target_gain", "regression_non_decrease",
@@ -61,7 +62,7 @@ def _error(exc):
 def _check_protocol(protocol, case_set, candidate_count, max_parallel):
     p, cs = _json(protocol), _json(case_set)
     _require(set(p) <= {"id", "comparison_scope", "repeat_count", "required_gates", "criteria",
-                       "selection_rule", "executor", "evaluator", "allowed_sources", "material_visibility", "note", "scoring_policy"},
+                       "selection_rule", "executor", "evaluator", "allowed_sources", "material_visibility", "note", "scoring_policy", "feedback"},
              "unsupported_protocol", "Unsupported protocol fields; no ignored policy switches")
     p["scoring_policy"] = resolve_scoring_policy(p.get("scoring_policy"), default="available_artifact")
     _require(type(max_parallel) is int and max_parallel > 0, "invalid_parallelism", "max_parallel must be positive")
@@ -119,50 +120,51 @@ def _check_protocol(protocol, case_set, candidate_count, max_parallel):
     splits = {c["split"] for c in cases}
     _require({"target", "regression"} <= splits and (not criteria["transfer_claim"] or "transfer" in splits),
              "missing_split", "Missing case split required by the comparison scope")
-    planned = candidate_count * len(cases) * 2 * p["repeat_count"]
+    planned = candidate_count * len(cases) * 2 * p["repeat_count"] * criterion_count(p)
     limit = criteria.get("maximum_evaluation_calls")
     _require(type(limit) is int and limit >= planned, "call_budget", f"Plan requires {planned} evaluation requests")
     return p, cs
 
 
-def _usage(store, project, request, stage, supplied, elapsed):
-    uid = new_id("usage")
-    known = isinstance(supplied, dict)
-    measurements = normalize_usage_measurements(supplied)
-    currency = measurements["currency"]
-    cost = measurements["monetary_cost"] if currency is not None else None
-    item = {"usage_id": uid, "project_id": project, "exclusive_stage": stage,
-            "purpose": "validation", "request_id": request["request_id"],
-            "run_or_proposal_id": request["request_id"], "price_version": None,
-            "monetary_cost": cost, "currency": currency,
-            "tokens": measurements["tokens"], "diagnostics": _raw(measurements["diagnostics"]),
-            "time": elapsed, "status": "reported" if known else "missing", "raw": _raw(supplied)}
-    store.put("usage", uid, item)
-    return uid
+def criterion_count(protocol):
+    criteria = protocol.get('feedback', {}).get('criteria', [{'criterion_id':'task_outcome'}])
+    _require(isinstance(criteria,list) and bool(criteria),'feedback_protocol','At least one frozen criterion required')
+    return len(criteria)
 
 
-def _invoke(store, project, request, stage, callback, args):
-    copied = copy.deepcopy(args)
-    before = _json(list(copied))
-    start = time.monotonic()
-    returned, error = None, None
-    try:
-        returned = callback(*copied)
-        _require(_raw(list(copied)) == before, "callback_mutated_input", "Callback changed the evaluated input")
-        _json(returned)
-        _require(isinstance(returned, dict), "invalid_return", "Callback must return an object")
-        for field in ("request_id", "case_ref", "snapshot_digest"):
-            if field in returned:
-                _require(returned[field] == request[field], "return_binding_mismatch", f"Wrong returned {field}")
-    except Exception as exc:
-        error = _error(exc)
-    elapsed = time.monotonic() - start
-    supplied = returned.get("usage") if isinstance(returned, dict) else None
-    usage_id = _usage(store, project, request, stage, supplied, elapsed)
-    rid = new_id("callback")
+def comparison_call_budget(store, frozen, resolutions=None):
+    """Every criterion attempt counts, including interrupted and superseded ones."""
+    refs={r['request_id'] for ref in frozen['feedback_plan_refs'].values()
+          for r in store.get('feedback_plans',ref)['requests']}
+    attempts={ref:[] for ref in refs}
+    for attempt in store.list('callback_attempts',frozen['project_id']):
+        if attempt['stage']=='evaluate' and attempt['request_ref'] in attempts:
+            attempts[attempt['request_ref']].append(attempt)
+    count=len(refs)+sum(max(0,len(rows)-1) for rows in attempts.values())
+    for ref,decision in (resolutions or {}).items():
+        if ref in attempts and decision.get('action')=='confirmed_not_executed' and attempts[ref]:
+            last=max(attempts[ref],key=lambda row:(row['started_at'],row['attempt_id']))
+            if _optional(store,'callback_returns',last['attempt_id']) is None:count+=1
+    return count
+
+
+def _invoke(store, project, request, stage, callback, args, *, config, comparison_id, resolutions=None):
+    from .feedback import call_recorded
+    actual=call_recorded(store,project_id=project,batch_id=comparison_id,run_id=None,
+        request_ref=request['request_id']+':'+stage,stage=stage,config=config,purpose='validation',
+        subject_ref=request['request_id'],callback=callback,args=args,resolutions=resolutions)
+    returned,error=actual['raw_output'],actual['error']
+    if error is None:
+        try:
+            _require(isinstance(returned,dict),'invalid_return','Callback must return an object')
+            for field in ('request_id','case_ref','snapshot_digest'):
+                if field in returned:
+                    _require(returned[field]==request[field],'return_binding_mismatch',f'Wrong returned {field}')
+        except Exception as exc:error=_error(exc)
+    rid=actual['attempt_id'];usage_id=actual['usage_refs'][0]
     record = {"id": rid, "project_id": project, "request": copy.deepcopy(request), "stage": stage,
-              "inputs": before, "returned": _raw(returned), "error": error,
-              "usage_ref": usage_id, "created_at": now_iso()}
+              "inputs": _json(list(args)), "returned": _raw(returned), "error": error,
+              "usage_ref": usage_id, "created_at": actual['returned_at']}
     store.put("evaluation_returns", rid, record)
     return record
 
@@ -175,31 +177,41 @@ def _unknown(request, reason, execution_ref=None, usage_refs=None, evidence_refs
             "usage_refs": usage_refs or [], "gaps": [reason], "execution_status": execution_status}
 
 
-def _one_request(store, project, request, snapshot, case, execute_fn, evaluate_fn, sources, scoring_policy):
-    public_case = {k: copy.deepcopy(case[k]) for k in ("id", "split", "task")}
-    execution = _invoke(store, project, request, "execute", execute_fn, (request, snapshot, public_case))
-    usage = [execution["usage_ref"]]
-    terminal = parse_execution(execution["returned"], execution["error"], scoring_policy)
-    execution_status = terminal["execution_status"]
-    if not terminal["eligible"]:
-        return _unknown(request, f"Execution ineligible: {terminal['reason']}", execution["id"], usage,
-                        execution_status=execution_status)
-    feedback = _invoke(store, project, request, "evaluate", evaluate_fn,
-                       (request, execution["returned"], case))
-    usage.append(feedback["usage_ref"])
-    out = feedback["returned"]
-    evidence = [feedback["id"]]
-    if feedback["error"]:
-        return _unknown(request, f"Evaluator error: {feedback['error']}", execution["id"], usage, evidence, execution_status)
-    valid = (out.get("outcome") in {"pass", "fail"} and _number(out.get("score"))
-             and 0 <= out["score"] <= 1 and out.get("source") in sources
-             and isinstance(out.get("evidence"), list) and bool(out["evidence"]))
-    if not valid:
-        return _unknown(request, "Unknown, invalid score/source or missing evaluation evidence", execution["id"], usage, evidence, execution_status)
-    return {"request_id": request["request_id"], "case_ref": request["case_ref"],
-            "snapshot_digest": request["snapshot_digest"], "outcome": out["outcome"], "score": out["score"],
-            "evaluator_status": "ok", "source": out["source"], "evidence_refs": evidence,
-            "execution_ref": execution["id"], "usage_refs": usage, "gaps": [], "execution_status": execution_status}
+def _assessment_result(request, execution, assessed, sources, scoring_policy):
+    terminal = parse_execution(execution['returned'], execution['error'], scoring_policy)
+    aggregate = assessed['aggregate']; feedbacks = assessed['feedbacks']
+    actual_sources = {'executable' if source == 'external' else source for source in aggregate['feedback_sources']}
+    source = 'llm_proxy' if 'llm_proxy' in actual_sources else ('executable' if 'executable' in actual_sources else 'human')
+    valid_source = bool(actual_sources) and actual_sources <= set(sources)
+    known = terminal['eligible'] and valid_source and aggregate['score'] is not None
+    return {'request_id':request['request_id'],'case_ref':request['case_ref'],'snapshot_digest':request['snapshot_digest'],
+        'outcome':aggregate['outcome'] if known else 'unknown','score':aggregate['score'] if known else None,
+        'evaluator_status':'ok' if known and not aggregate['missing_criterion_ids'] else 'error',
+        'source':source,'evidence_refs':sorted({ref for f in feedbacks for ref in f['evidence_refs']}),
+        'execution_ref':execution['id'],'usage_refs':sorted(set([execution['usage_ref'], *assessed['usage_refs']])),
+        'gaps':aggregate['unknown_reasons'] + ([] if valid_source else ['Unpermitted or missing feedback source.'])
+               + ([] if terminal['eligible'] else ['Execution ineligible: ' + str(terminal['reason'])]),
+        'execution_status':terminal['execution_status'],'assessment_ref':assessed['assessment']['assessment_id']}
+
+
+def freeze_request_feedback(store, plan, case_set, protocol, comparison_id=None):
+    from .feedback import freeze_feedback_plan
+    cases = {c['id']:c for c in case_set['cases']}
+    authority = plan.get('plan_id', plan.get('contrast_plan_id'))
+    return {r['request_id']: freeze_feedback_plan(store, {'kind':'evaluation_request','ref':r['request_id'],
+        'authority_ref':authority,'execution_ref':None,'project_id':plan['project_id'],'request':r,
+        'criteria':cases[r['case_ref']]['criteria'],'batch_id':comparison_id}, protocol)['feedback_plan_id'] for r in plan['requests']}
+
+
+def _one_request(store, project, request, snapshot, case, execute_fn, evaluate_fn, sources, scoring_policy, *, feedback_plan,
+                 execution_config, comparison_id, resolutions=None):
+    from .feedback import assess
+    from .verification import public_case
+    execution = _invoke(store, project, request, "execute", execute_fn, (request, snapshot, public_case(case)),
+                        config=execution_config,comparison_id=comparison_id,resolutions=resolutions)
+    assessed = assess(store, feedback_plan, execution['returned'], case, evaluate=evaluate_fn,
+                      execution_ref=execution['id'], request=request, binding_error=execution['error'],resolutions=resolutions)
+    return _assessment_result(request, execution, assessed, sources, scoring_policy)
 
 
 def proposal_aliases(candidates):
@@ -217,7 +229,8 @@ def _summaries(plan, results, case_set):
     rows = []
     by_request = {r["request_id"]: r for r in results}
     for case in case_set["cases"]:
-        row = {"case_id": case["id"], "split": case["split"]}
+        row = {"case_id": case["id"], "split": case["split"],
+               "case_role":"quality" if case['id'] in plan.get('quality_case_refs',[c['id'] for c in case_set['cases']]) else "supplemental"}
         for arm in ("base", "candidate"):
             scores = [by_request[r["request_id"]]["score"] for r in plan["requests"]
                       if r["case_ref"] == case["id"] and r["arm"] == arm and r["request_id"] in by_request]
@@ -229,6 +242,10 @@ def _summaries(plan, results, case_set):
     return rows
 
 
+def _quality_rows(rows):
+    return [row for row in rows if row.get('case_role','quality')=='quality']
+
+
 def _cost(store, results, currency=None):
     usages = [store.get("usage", uid) for uid in sorted({uid for r in results for uid in r["usage_refs"]})]
     units = {u["currency"] for u in usages if u["monetary_cost"] is not None}
@@ -238,7 +255,7 @@ def _cost(store, results, currency=None):
     return sum(u["monetary_cost"] for u in usages) if known else None
 
 
-def _gates(store, plan, results, case_set, protocol, planned_total, round_results=None):
+def _gates(store, plan, results, case_set, protocol, planned_total, round_results=None, verification=None, auxiliary_usage=()):
     expected = {r["request_id"]: r for r in plan["requests"]}
     complete = len(results) == len(expected) and len({r["request_id"] for r in results}) == len(results)
     complete = complete and all(r["request_id"] in expected and all(r[k] == expected[r["request_id"]][k]
@@ -251,9 +268,10 @@ def _gates(store, plan, results, case_set, protocol, planned_total, round_result
     unchanged = (active["snapshot_id"] == plan["base_digest"] and active["generation"] == plan["expected_generation"])
     for sid in (plan["base_digest"], plan["candidate_digest"]):
         unchanged = unchanged and store.snapshot(sid)["project_id"] == plan["project_id"]
-    target = [r["gain"] for r in rows if r["split"] == "target"]
-    regression = [r["gain"] for r in rows if r["split"] == "regression"]
-    transfer = [r["gain"] for r in rows if r["split"] == "transfer"]
+    quality_rows=_quality_rows(rows)
+    target = [r["gain"] for r in quality_rows if r["split"] == "target"]
+    regression = [r["gain"] for r in quality_rows if r["split"] == "regression"]
+    transfer = [r["gain"] for r in quality_rows if r["split"] == "transfer"]
     all_known = complete and all(v is not None for v in target + regression + transfer)
     decisions = {"complete_results": complete,
                  "target_gain": sum(target) / len(target) > criteria["target_mean_gain_must_exceed"] if all_known else None,
@@ -269,10 +287,26 @@ def _gates(store, plan, results, case_set, protocol, planned_total, round_result
         elif name == "stability":
             decisions[name] = all(r[arm + "_range"] <= criteria["maximum_score_range"] for r in rows for arm in ("base", "candidate")) if all_known else None
         elif name == "cost":
-            cost = _cost(store, round_results if round_results is not None else results, criteria["currency"])
+            cost = _cost(store, [*(round_results if round_results is not None else results),
+                                {'usage_refs':list(auxiliary_usage)}], criteria["currency"])
+            request_ids={row['request_id'] for row in (round_results if round_results is not None else results)}
+            usage_ids={u for row in (round_results if round_results is not None else results) for u in row['usage_refs']} | set(auxiliary_usage)
+            request_ids.update(store.get('usage',uid).get('request_id') for uid in usage_ids)
+            criterion_refs={r['request_id'] for p in store.list('feedback_plans',plan['project_id'])
+                            if p['subject']['ref'] in request_ids for r in p['requests']}
+            relevant=[a for a in store.list('callback_attempts',plan['project_id'])
+                      if a['request_ref'].split(':')[0] in request_ids
+                      or a['request_ref'] in criterion_refs
+                      or a['attempt_id'] in {store.get('usage',uid).get('attempt_ref') for uid in usage_ids}]
+            if any(_optional(store,'callback_returns',a['attempt_id']) is None for a in relevant):cost=None
             decisions[name] = cost <= criteria["maximum_monetary_cost"] if cost is not None else None
     gates = [{"gate": name, "passed": decisions[name], "evidence_refs": [plan["plan_id"]],
               "detail": "Computed from the frozen plan and all recorded request results."} for name in protocol["required_gates"]]
+    if plan.get('verification_plan_ref'):
+        passed = None if verification is None or verification['status']=='unknown' else verification['status']=='pass'
+        gates.append({'gate':'verification_complete','passed':passed,
+            'evidence_refs':[verification['verification_id']] if verification else [],
+            'detail':'Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.'})
     status = "unknown" if not complete or any(g["passed"] is None for g in gates) else (
         "accepted" if all(g["passed"] is True for g in gates) else "rejected")
     return gates, status, rows
@@ -288,14 +322,15 @@ def _rank(store, validations, plans, case_set):
         if val["status"] != "accepted":
             continue
         rows = _summaries(plans[val["plan_id"]], val["results"], case_set)
-        gains = [r["gain"] for r in rows if r["split"] == "target"]
-        cost = _cost(store, val["results"]) if len(currencies) == 1 else None
+        gains = [r["gain"] for r in _quality_rows(rows) if r["split"] == "target"]
+        cost = _cost(store, [{'usage_refs':val['usage_refs']}]) if len(currencies) == 1 else None
         ranked.append((-sum(gains)/len(gains), cost is None, cost or 0.0,
                        val["candidate_digest"], val["validation_id"]))
     return sorted(ranked)
 
 
-def compare_candidates(store, project_id, candidates, case_set, protocol, execute_fn, evaluate_fn, *, max_parallel):
+def compare_candidates(store, project_id, candidates, case_set, protocol, execute_fn, evaluate_fn, *, max_parallel,
+                       verification=None, execute_view=None, asset_runner=None):
     """Compare all candidates and select; does not learn or change active state.
 
     Callers provide request-local/resettable execution environments. Copying inputs
@@ -321,12 +356,19 @@ def compare_candidates(store, project_id, candidates, case_set, protocol, execut
         snapshots[sid] = snapshot
     candidates = list(attempts.values())
     aliases = proposal_aliases(candidates)
+    protocol,quality_case_set=_check_protocol(protocol,case_set,len(aliases),max_parallel)
+    from .verification import freeze_materials, prepare_verification, finish_verification
+    from .assets import run_assets
+    from .relations import measure_contrasts
+    with measure_stage(store,project_id,'validate_overhead',purpose='validation'):
+        material_record, case_set = freeze_materials(store,project_id,quality_case_set,verification,candidates)
     protocol, case_set = _check_protocol(protocol, case_set, len(aliases), max_parallel)
     round_id = new_id("comparison")
-    protocol_id, cases_id = new_id("protocol"), new_id("cases")
+    protocol_id, cases_id, quality_cases_id = new_id("protocol"), new_id("cases"), new_id('quality_cases')
     store.put("protocols", protocol_id, {"id": protocol_id, "project_id": project_id, "value": protocol})
     store.put("case_sets", cases_id, {"id": cases_id, "project_id": project_id, "value": case_set})
-    plans = []
+    store.put('case_sets',quality_cases_id,{'id':quality_cases_id,'project_id':project_id,'value':quality_case_set})
+    plans, verification_plans, contrast_plans = [], {}, {}
     for snapshot_digest, proposal_ids in aliases.items():
         requests = [{"request_id": new_id("request"), "case_ref": case["id"], "arm": arm,
                      "snapshot_digest": active["snapshot_id"] if arm == "base" else snapshot_digest,
@@ -339,58 +381,180 @@ def compare_candidates(store, project_id, candidates, case_set, protocol, execut
                 "evaluator_config_hash": digest(protocol["evaluator"]["config"]),
                 "repeat_count": protocol["repeat_count"], "acceptance_scope": protocol["comparison_scope"], "requests": requests,
                 "proposal_ids": proposal_ids, "scoring_policy": protocol["scoring_policy"],
-                "purpose": "validation", "update_mode": "none"}
+                "quality_case_refs":[c['id'] for c in quality_case_set['cases']],
+                "purpose": "validation", "update_mode": "none", "recovery_version":1}
+        vplan, local_plans = prepare_verification(store,plan,[c for c in candidates if c['proposal_id'] in proposal_ids],
+                                                  material_record,case_set,protocol,callable(execute_view))
+        plan.update(verification_plan_ref=vplan['verification_plan_id'],verification_plan_hash=digest(vplan))
+        verification_plans[plan['plan_id']]=vplan;contrast_plans[plan['plan_id']]=local_plans
         validate("EvaluationPlan", plan)
         store.put("evaluation_plans", plan["plan_id"], plan)
         plans.append(plan)
+    total_requests = sum(len(p['requests']) for p in plans) + sum(len(p['requests']) for rows in contrast_plans.values() for p in rows)
+    planned_calls = total_requests * criterion_count(protocol)
+    _require(planned_calls <= protocol['criteria']['maximum_evaluation_calls'],'call_budget',
+             f'Protected cases and controlled contrasts require {planned_calls} criterion calls')
+    feedback_plans = {}
+    for plan in plans + [p for rows in contrast_plans.values() for p in rows]:
+        feedback_plans.update(freeze_request_feedback(store,plan,case_set,protocol,round_id))
     frozen = {"id": round_id, "project_id": project_id, "base_digest": active["snapshot_id"],
               "expected_generation": active["generation"], "candidates": candidates, "protocol_ref": protocol_id,
               "case_set_ref": cases_id, "plan_ids": [p["plan_id"] for p in plans],
+              "quality_case_set_ref":quality_cases_id,"quality_case_set_hash":digest(quality_case_set),
               "selection_rule": protocol["selection_rule"], "max_parallel": max_parallel,
+              "verification_materials_ref":material_record['materials_id'],"verification_materials_hash":digest(material_record),
+              "planned_evaluation_calls":planned_calls,"feedback_plan_refs":feedback_plans,
+              "recovery_version":1,"validation_ids":{p['plan_id']:new_id('validation') for p in plans},
+              "selection_id":new_id('selection'),
               "proposal_snapshots": [{"proposal_id": c["proposal_id"], "candidate_digest": c["candidate_digest"]} for c in candidates]}
     store.put("evaluation_inputs", round_id, frozen)
+    return resume_comparison(store,round_id,execute_fn,evaluate_fn,execute_view=execute_view,asset_runner=asset_runner)
+
+
+def _optional(store,kind,identifier):
+    try:return store.get(kind,identifier)
+    except DomainError as exc:
+        if exc.code=='NOT_FOUND':return None
+        raise
+
+
+def resume_comparison(store, comparison_id, execute_fn, evaluate_fn, *, execute_view=None,asset_runner=None,resolutions=None):
+    """Resume the frozen comparison; a started call with no return needs evidence."""
+    from .feedback import recovery_lock
+    with recovery_lock(store,'comparison:'+comparison_id):
+        frozen=store.get('evaluation_inputs',comparison_id);project=frozen['project_id']
+        _require(frozen.get('recovery_version')==1,'recovery_blocked','Legacy comparison has no proven started-call protocol')
+        identifier=new_id('comparison_segment')
+        start={'record_id':identifier+':start','segment_id':identifier,'project_id':project,'comparison_id':comparison_id,
+               'started_at':now_iso(),'finished_at':None,'elapsed_seconds':None,'status':'running',
+               'started_attempt_ids':[],'completed_attempt_ids':[]}
+        validate('ComparisonSegment',start);store.put('comparison_segments',start['record_id'],start)
+        before_attempts={r['attempt_id'] for r in store.list('callback_attempts',project) if r['batch_id']==comparison_id}
+        before_returns={r['attempt_id'] for r in store.list('callback_returns',project)}
+        started=time.monotonic();status='error'
+        try:
+            result=_resume_comparison(store,comparison_id,execute_fn,evaluate_fn,execute_view,asset_runner,resolutions)
+            status=result['status'];return result
+        finally:
+            after_attempts={r['attempt_id'] for r in store.list('callback_attempts',project) if r['batch_id']==comparison_id}
+            after_returns={r['attempt_id'] for r in store.list('callback_returns',project)}
+            end={**start,'record_id':identifier+':end','finished_at':now_iso(),
+                 'elapsed_seconds':time.monotonic()-started,'status':status,
+                 'started_attempt_ids':sorted(after_attempts-before_attempts),
+                 'completed_attempt_ids':sorted((after_returns-before_returns)&after_attempts)}
+            validate('ComparisonSegment',end);store.put('comparison_segments',end['record_id'],end)
+
+
+def _resume_comparison(store,round_id,execute_fn,evaluate_fn,execute_view,asset_runner,resolutions):
+    from .verification import finish_verification
+    from .assets import run_assets
+    from .relations import measure_contrasts
+    frozen=store.get('evaluation_inputs',round_id);project_id=frozen['project_id']
+    _require(frozen.get('recovery_version')==1,'recovery_blocked','Legacy comparison has no proven started-call protocol')
+    candidates=frozen['candidates'];aliases=proposal_aliases(candidates)
+    for candidate in candidates:
+        _require(store.get('candidates',candidate['proposal_id'])==candidate,'candidate_changed','Frozen candidate changed')
+    protocol=store.get('protocols',frozen['protocol_ref'])['value']
+    case_set=store.get('case_sets',frozen['case_set_ref'])['value']
+    plans=[store.get('evaluation_plans',ref) for ref in frozen['plan_ids']]
+    verification_plans={p['plan_id']:store.get('verification_plans',p['verification_plan_ref']) for p in plans}
+    contrast_plans={pid:[store.get('contrast_plans',ref) for ref in vp['contrast_plan_refs']] for pid,vp in verification_plans.items()}
+    material_record=store.get('verification_materials',frozen['verification_materials_ref'])
+    _require(digest(material_record)==frozen['verification_materials_hash'],'verification_materials','Frozen materials changed')
+    for plan in plans:
+        _require(plan['protocol_hash']==digest(protocol) and plan['case_set_hash']==digest(case_set),
+                 'protocol_changed','Frozen cases or protocol changed')
+    max_parallel=frozen['max_parallel'];planned_calls=frozen['planned_evaluation_calls']
+    _check_protocol(protocol,case_set,len(aliases),max_parallel)
+    feedback_plans=frozen['feedback_plan_refs']
+    counted_calls=comparison_call_budget(store,frozen,resolutions)
+    if counted_calls>protocol['criteria']['maximum_evaluation_calls']:
+        return {'comparison_id':round_id,'plan_ids':frozen['plan_ids'],'validation_ids':[],
+                'selection_id':None,'usage_ids':[], 'status':'blocked',
+                'blocked':[{'code':'call_budget','message':'Recovery would exceed frozen criterion attempt budget.'}]}
+    active={'snapshot_id':frozen['base_digest'],'generation':frozen['expected_generation']}
+    snapshots={sid:store.snapshot(sid) for p in plans for sid in (p['base_digest'],p['candidate_digest'])}
     by_case = {c["id"]: c for c in case_set["cases"]}
     requests = [r for p in plans for r in p["requests"]]
-    outcomes = {}
+    owners={r['request_id']:p for p in plans for r in p['requests']}
+    outcomes,blocked={},[]
+    for request in requests:
+        existing=_optional(store,'evaluation_results',request['request_id'])
+        if existing is not None:
+            verify_result(store,owners[request['request_id']],request,existing,protocol)
+            outcomes[request['request_id']]=existing
+    pending=[r for r in requests if r['request_id'] not in outcomes]
     try:
-        with ThreadPoolExecutor(max_workers=min(max_parallel, len(requests))) as pool:
+        with ThreadPoolExecutor(max_workers=max(1,min(max_parallel, len(pending)))) as pool:
             futures = {pool.submit(_one_request, store, project_id, r, snapshots[r["snapshot_digest"]], by_case[r["case_ref"]],
-                                   execute_fn, evaluate_fn, protocol["allowed_sources"], protocol["scoring_policy"]): r for r in requests}
+                                   execute_fn, evaluate_fn, protocol["allowed_sources"], protocol["scoring_policy"],
+                                   feedback_plan=feedback_plans[r['request_id']],execution_config=protocol['executor'],
+                                   comparison_id=round_id,resolutions=resolutions): r for r in pending}
             for future in as_completed(futures):
                 request = futures[future]
                 try:
                     outcomes[request["request_id"]] = future.result()
                 except Exception as exc:
-                    outcomes[request["request_id"]] = _unknown(request, f"Request exception: {_error(exc)}")
+                    if isinstance(exc,DomainError) and exc.code=='recovery_blocked':
+                        blocked.append({'request_id':request['request_id'],**_error(exc)})
+                    else:
+                        # Preserve an incomplete persistence boundary for resume;
+                        # do not overwrite a potentially completed callback with
+                        # a fabricated terminal unknown result.
+                        blocked.append({'request_id':request['request_id'],**_error(exc)})
     except Exception as exc:
-        for request in requests:
+        for request in pending:
             outcomes.setdefault(request["request_id"], _unknown(request, f"Scheduling exception: {_error(exc)}"))
     # Keep usage written before a later persistence/scheduling failure as well.
     request_ids = {r["request_id"] for r in requests}
     used = [u for u in store.list("usage", project_id=project_id) if u.get("request_id") in request_ids]
     for request in requests:
-        row = outcomes.setdefault(request["request_id"], _unknown(request, "Missing scheduled result"))
-        row["usage_refs"] = sorted(u["usage_id"] for u in used if u["request_id"] == request["request_id"])
-    validations = []
+        if request['request_id'] in outcomes:
+            row=outcomes[request['request_id']]
+            row["usage_refs"] = sorted(u["usage_id"] for u in used if u["request_id"] == request["request_id"])
+    validations, verification_records = [], {}
+    for row in outcomes.values():
+        validate('EvaluationResult',row);store.put('evaluation_results',row['request_id'],row)
+    if blocked:
+        return {'comparison_id':round_id,'plan_ids':frozen['plan_ids'],'validation_ids':[],
+                'selection_id':None,'usage_ids':sorted(u['usage_id'] for u in used),'status':'blocked','blocked':blocked}
+    for plan in plans:
+        vplan=verification_plans[plan['plan_id']]
+        try:
+            asset_records=run_assets(store,vplan,material_record['value'],asset_runner,resolutions=resolutions,comparison_id=round_id)
+            contrast_records=measure_contrasts(store,contrast_plans[plan['plan_id']],execute_view,evaluate_fn,feedback_plans,
+                                              comparison_id=round_id,resolutions=resolutions)
+        except Exception as exc:
+            return {'comparison_id':round_id,'plan_ids':frozen['plan_ids'],'validation_ids':[],
+                    'selection_id':None,'usage_ids':sorted(u['usage_id'] for u in used),'status':'blocked','blocked':[_error(exc)]}
+        verification_records[plan['plan_id']]=finish_verification(store,vplan,plan,
+            [outcomes[r['request_id']] for r in plan['requests']],asset_records,contrast_records)
+    auxiliary_usage=sorted({u for v in verification_records.values() for u in v['usage_refs']})
     for plan in plans:
         results = [outcomes.get(r["request_id"], _unknown(r, "Missing scheduled result")) for r in plan["requests"]]
         for result in results:
             validate("EvaluationResult", result)
             store.put("evaluation_results", result["request_id"], result)
-        gates, status, rows = _gates(store, plan, results, case_set, protocol, len(requests), list(outcomes.values()))
-        validation = {"validation_id": new_id("validation"), "project_id": project_id, "plan_id": plan["plan_id"],
+        verification_record=verification_records[plan['plan_id']]
+        with measure_stage(store,project_id,'validate_overhead',purpose='validation',subject_ref=plan['plan_id']):
+            gates, status, rows = _gates(store, plan, results, case_set, protocol, comparison_call_budget(store,frozen), list(outcomes.values()),verification_record,auxiliary_usage)
+        existing=_optional(store,'validations',frozen['validation_ids'][plan['plan_id']])
+        if existing is not None:
+            verify_validation(store,existing);validations.append(existing);continue
+        validation = {"validation_id": frozen['validation_ids'][plan['plan_id']], "project_id": project_id, "plan_id": plan["plan_id"],
                       "plan_hash": digest(plan), "protocol_hash": plan["protocol_hash"], "base_digest": plan["base_digest"],
                       "candidate_digest": plan["candidate_digest"], "expected_active_generation": plan["expected_generation"],
                       "evaluator_ref": plan["evaluator_ref"], "evaluator_config_hash": plan["evaluator_config_hash"],
                       "case_set_hash": plan["case_set_hash"], "results": results, "all_requests_accounted": True,
                       "status": status, "gate_results": gates,
-                      "usage_refs": sorted({u for r in results for u in r["usage_refs"]}),
+                      "usage_refs": sorted({u for r in results for u in r["usage_refs"]} | set(verification_record['usage_refs'])),
+                      "verification_record_ref":verification_record['verification_id'],
                       "reasons": [g["gate"] for g in gates if g["passed"] is not True], "evidence_cutoff": now_iso()}
         validate("ValidationRecord", validation)
         store.put("validations", validation["validation_id"], validation)
         validations.append(validation)
     ranked = _rank(store, validations, {p["plan_id"]:p for p in plans}, case_set)
-    selection = {"selection_id": new_id("selection"), "project_id": project_id, "base_digest": active["snapshot_id"],
+    selection = {"selection_id": frozen['selection_id'], "project_id": project_id, "base_digest": active["snapshot_id"],
                  "expected_generation": active["generation"], "selection_rule_ref": round_id,
                  "selection_rule_hash": digest(protocol["selection_rule"]),
                  "candidate_validations": [{"candidate_digest": v["candidate_digest"], "validation_ref": v["validation_id"], "status": v["status"],
@@ -403,7 +567,7 @@ def compare_candidates(store, project_id, candidates, case_set, protocol, execut
     store.put("selections", selection["selection_id"], selection)
     return {"comparison_id": round_id, "plan_ids": [p["plan_id"] for p in plans],
             "validation_ids": [v["validation_id"] for v in validations], "selection_id": selection["selection_id"],
-            "usage_ids": sorted({u for v in validations for u in v["usage_refs"]})}
+            "usage_ids": sorted({u for v in validations for u in v["usage_refs"]}),"status":"completed","blocked":[]}
 
 
 def verify_validation(store, validation):
@@ -439,26 +603,58 @@ def verify_validation(store, validation):
              and {r["request_id"] for r in results} == set(expected), "incomplete_results", "Requests missing or duplicated")
     for result in results:
         req = expected[result["request_id"]]
-        _require(result == store.get("evaluation_results", result["request_id"]), "result_changed", "Stored result changed")
-        _require(all(result[k] == req[k] for k in ("case_ref", "snapshot_digest")), "result_binding", "Result belongs to another case/version")
-        execution = store.get("evaluation_returns", result["execution_ref"]) if result["execution_ref"] else None
-        terminal = parse_execution(execution["returned"], execution["error"], scoring_policy) if execution else {
-            "execution_status": "unknown", "eligible": False}
-        _require(result.get("execution_status", terminal["execution_status"]) == terminal["execution_status"],
-                 "execution_status_binding", "Recorded terminal state differs from execution evidence")
-        if result["outcome"] == "unknown":
-            continue
-        _require(execution is not None and terminal["eligible"], "scoring_policy_binding", "Execution is ineligible under frozen scoring policy")
-        _require(execution["project_id"] == plan["project_id"] and execution["request"] == req
-                 and execution["stage"] == "execute" and execution["error"] is None,
-                 "execution_binding", "Missing/invalid actual execution")
-        _require(len(result["evidence_refs"]) == 1, "evidence_binding", "Expected actual evaluator return reference")
-        evidence = store.get("evaluation_returns", result["evidence_refs"][0])
-        out = evidence["returned"]
-        _require(evidence["project_id"] == plan["project_id"] and evidence["request"] == req
-                 and evidence["stage"] == "evaluate" and evidence["error"] is None
-                 and bool(out.get("evidence")) and out.get("source") in protocol["allowed_sources"]
-                 and all(result[k] == out.get(k) for k in ("score", "outcome", "source")),
-                 "evidence_binding", "Actual evaluator return does not support result")
-        _require(set(result["usage_refs"]) == {execution["usage_ref"], evidence["usage_ref"]}, "usage_binding", "Invocation usage missing or wrong")
+        verify_result(store,plan,req,result,protocol)
+    # New publication requires the complete obligation/asset consumer. Old
+    # archived comparisons remain readable but cannot bypass a new validation.
+    _require(bool(plan.get('verification_plan_ref')) and bool(validation.get('verification_record_ref')),
+             'verification_missing','Publication requires explicit obligation and asset verification')
+    from .verification import verify_verification
+    verification = verify_verification(store,plan,store.get('verification_records',validation['verification_record_ref']))
+    _require(set(validation['usage_refs']) == {u for r in results for u in r['usage_refs']} | set(verification['usage_refs']),
+             'usage_binding','Validation must include all case, script and combination usage')
     return plan, protocol, cases
+
+
+def verify_result(store, plan, req, result, protocol):
+    """The same evidence validation serves ordinary and controlled-view runs."""
+    _require(result == store.get('evaluation_results',result['request_id']),'result_changed','Stored result changed')
+    _require(all(result[k]==req[k] for k in ('request_id','case_ref','snapshot_digest')),
+             'result_binding','Result belongs to another case/version')
+    execution=store.get('evaluation_returns',result['execution_ref']) if result['execution_ref'] else None
+    scoring=resolve_scoring_policy(protocol.get('scoring_policy'),default='available_artifact')
+    terminal=parse_execution(execution['returned'],execution['error'],scoring) if execution else {'execution_status':'unknown','eligible':False}
+    _require(result.get('execution_status',terminal['execution_status'])==terminal['execution_status'],
+             'execution_status_binding','Recorded terminal state differs from execution evidence')
+    if execution:
+        _require(execution['project_id']==plan['project_id'] and execution['request']==req and execution['stage']=='execute',
+                 'execution_binding','Execution does not belong to this exact planned slot')
+        expected_input=(store.snapshot(req['snapshot_digest']) if 'plan_id' in plan
+                        else store.get('execution_views',req['snapshot_digest']))
+        cases=store.get('case_sets',plan['case_set_ref'])['value']['cases']
+        case=next(c for c in cases if c['id']==req['case_ref'])
+        from .verification import public_case
+        _require(execution.get('inputs')==[req,expected_input,public_case(case)],
+                 'execution_input_binding','Callback inputs differ from the exact frozen view and public case')
+    if result.get('assessment_ref'):
+        from .feedback import verify_assessment, _assessment_usage
+        subject={'kind':'evaluation_request','ref':req['request_id'],
+                 'authority_ref':plan.get('plan_id',plan.get('contrast_plan_id')),'execution_ref':None}
+        verified=verify_assessment(store,result['assessment_ref'],expected_subject=subject,expected_protocol=digest(protocol))
+        _require(verified['assessment'].get('execution_ref')==result['execution_ref'],
+                 'assessment_binding','Assessment describes a different execution')
+        verified['usage_refs']=_assessment_usage(store,verified['feedbacks'])
+        actual=_assessment_result(req,execution,verified,protocol['allowed_sources'],scoring)
+        actual['usage_refs']=sorted(u['usage_id'] for u in store.list('usage',plan['project_id']) if u.get('request_id')==req['request_id'])
+        _require(result==actual,'assessment_result','Recorded result differs from original criterion aggregation')
+        return
+    if result['outcome']=='unknown':return
+    _require(execution is not None and terminal['eligible'] and execution['error'] is None,
+             'scoring_policy_binding','Execution is ineligible under frozen policy')
+    _require(len(result['evidence_refs'])==1,'evidence_binding','Expected original evaluator return')
+    evidence=store.get('evaluation_returns',result['evidence_refs'][0]);out=evidence['returned']
+    _require(evidence['project_id']==plan['project_id'] and evidence['request']==req
+             and evidence['stage']=='evaluate' and evidence['error'] is None and bool(out.get('evidence'))
+             and out.get('source') in protocol['allowed_sources']
+             and all(result[k]==out.get(k) for k in ('score','outcome','source')),
+             'evidence_binding','Evaluator return does not support this result')
+    _require(set(result['usage_refs'])=={execution['usage_ref'],evidence['usage_ref']},'usage_binding','Invocation usage incomplete')

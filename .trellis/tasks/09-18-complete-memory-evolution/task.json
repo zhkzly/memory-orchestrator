@@ -1,0 +1,30 @@
+{
+  "id": "complete-memory-evolution",
+  "name": "complete-memory-evolution",
+  "title": "按完整文档补齐记忆演化能力",
+  "description": "遵循用户不接受MVP的明确要求，补齐总纲v1.6仍未接通的核心演化、轨迹、反馈、维护与报告能力，以逐义务的真实消费者和执行证据验收。",
+  "status": "in_progress",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "kelong.zx",
+  "assignee": "kelong.zx",
+  "createdAt": "2026-09-18",
+  "completedAt": null,
+  "branch": "codex/vault-controller-maintenance",
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "09-18-experience-learning-architecture",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "dev_type": "backend",
+    "user_approved": "true",
+    "implementation_allowed": "true"
+  }
+}

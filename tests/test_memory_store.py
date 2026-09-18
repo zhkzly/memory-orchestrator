@@ -69,6 +69,44 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(code, raised.exception.code)
         return raised.exception
 
+    def test_explicit_seed_is_generation_zero_and_cannot_replace_existing_baseline(self):
+        seed = {"skills": {"csv": skill("csv", asset_refs=["csv/scripts/check.py"])},
+                "assets": {"csv/scripts/check.py": "assert '001'.startswith('0')\n"}}
+        active = self.store.initialize_project("seed-project", seed=seed, source="constructed CSV fixture")
+        self.assertEqual(active["generation"], 0)
+        self.assertIsNone(active["release_id"])
+        self.assertEqual(self.store.release_history("seed-project"), [])
+        snapshot = self.store.snapshot(active["snapshot_id"])
+        self.assertEqual(snapshot["skills"]["csv"]["project_id"], "seed-project")
+        baseline = self.store.get("baselines", active["baseline_ref"])
+        self.assertEqual(baseline["kind"], "seed")
+        self.assertEqual(self.store.ensure_project("seed-project"), active)
+        self.assertEqual(self.store.initialize_project("seed-project", seed=seed, source="constructed CSV fixture"), active)
+        self.assert_domain("BASELINE_CONFLICT", self.store.initialize_project, "seed-project")
+        other = self.store.initialize_project("other-project", seed=seed, source="constructed CSV fixture")
+        self.assertEqual(self.store.get("baselines", other["baseline_ref"])["seed_content_hash"], baseline["seed_content_hash"])
+
+    def test_fact_applicability_is_preserved_and_not_reward_managed(self):
+        applicability = {"task_ids": ["csv"], "task_families": ["tabular"], "query_terms": ["identifier"], "global": False}
+        original = self.store.remember("project", "Preserve identifiers", "user", project_id="alpha", applicability=applicability)
+        self.assertEqual(self.store.facts("alpha")["project"][0]["applicability"], applicability)
+        correction = self.store.remember("project", "Preserve all identifiers", "user correction", project_id="alpha", memory_id=original["memory_id"])
+        self.assertEqual(correction["applicability"], applicability)
+        self.assert_domain("INVALID_ARGUMENT", self.store.remember, "user", "bad", "user", applicability={"global": "yes"})
+
+    def test_unknown_external_parent_is_preserved_like_archived_parent_gap(self):
+        from memory_orchestrator.lineage import require_learning_source
+        value = episode()
+        value['events'][0].update(parent_episode_id='external-unavailable', parent_event_id='earlier-observation')
+        self.assertEqual(self.store.add_episode(value), value)
+        proof = require_learning_source(self.store, value)
+        self.assertEqual(proof['missing_parent_episode_refs'], ['external-unavailable'])
+        self.assert_domain('NOT_FOUND', self.store.get, 'episodes', 'external-unavailable')
+        self.assertEqual(self.store.get('episodes', value['episode_id']), value)
+        bad_local = episode(identifier='bad-local-parent')
+        bad_local['events'][0]['parent_event_id'] = 'does-not-exist-in-this-episode'
+        self.assert_domain('REFERENCE_MISMATCH', self.store.add_episode, bad_local)
+
     def test_packaged_contracts_exactly_match_current_source(self):
         raw = BLUEPRINT.read_bytes()
         source = json.loads(raw)

@@ -238,6 +238,12 @@ class MemoryReportTests(MemoryFixture,unittest.TestCase):
             if kind=="runs":
                 rows=copy.deepcopy(rows)
                 for row in rows:row.pop("assessment_ref",None)
+            if kind=="run_groups":
+                rows=copy.deepcopy(rows)
+                for row in rows:
+                    for slot in row['slots']:
+                        slot.pop('feedback_plan_id',None)
+                        slot.pop('assessment_id',None)
             return rows
         with patch.object(self.store,"list",side_effect=legacy_list):
             first=report(self.store,self.project)["sampling"]["groups"][0]
@@ -245,6 +251,7 @@ class MemoryReportTests(MemoryFixture,unittest.TestCase):
             self.assertEqual(first["results"][0]["assessment_source"],"unique_original_feedback")
             existing=self.store.feedback_for(sampled["episodes"][0]["episode_id"])[0]
             other=copy.deepcopy(existing);other.update(check_id=new_id("feedback"),outcome="fail",score=0)
+            for key in ('feedback_plan_ref','request_ref','attempt_ref'):other.pop(key,None)
             self.store.add_feedback(other)
             ambiguous=report(self.store,self.project)["sampling"]["groups"][0]
             self.assertEqual(ambiguous["outcomes"],{"pass":0,"fail":0,"unknown":1})
@@ -318,7 +325,7 @@ class MemoryReportTests(MemoryFixture,unittest.TestCase):
                 self.assertEqual(group["recorded_receipts"],0)
                 self.assertEqual(group["outcomes"],{"pass":1,"fail":0,"unknown":0})
                 source=group["results"][0]["assessment_source"]
-                self.assertEqual(source,"unique_original_feedback" if stop_kind=="assessments" else "recovered_assessment")
+                self.assertEqual(source,"partial_planned_feedback" if stop_kind=="assessments" else "recovered_assessment")
                 with self.assertRaises(DomainError):require_learning_source(self.store,episode)
                 original_get=self.store.get
                 def contradictory_source(kind,identifier):
@@ -332,14 +339,20 @@ class MemoryReportTests(MemoryFixture,unittest.TestCase):
                 if stop_kind=="assessments":
                     duplicate=copy.deepcopy(self.store.feedback_for(episode["episode_id"])[0])
                     duplicate.update(check_id=new_id("feedback"),outcome="fail",score=0)
+                    with self.assertRaises(DomainError):self.store.add_feedback(duplicate)
+                    for key in ('feedback_plan_ref','request_ref','attempt_ref'):duplicate.pop(key,None)
                     self.store.add_feedback(duplicate)
                 else:
                     duplicate=copy.deepcopy(self.store.list("assessments",project_id=project)[0])
                     duplicate["assessment_id"]=new_id("assessment")
+                    with self.assertRaises(DomainError):self.store.put("assessments",duplicate["assessment_id"],duplicate)
+                    duplicate.pop('feedback_plan_ref',None)
                     self.store.put("assessments",duplicate["assessment_id"],duplicate)
-                ambiguous=report(self.store,project)["sampling"]["groups"][0]
-                self.assertEqual(ambiguous["outcomes"],{"pass":0,"fail":0,"unknown":1})
-                self.assertIn("ambiguous_assessment",ambiguous["results"][0]["reason"])
+                # Frozen IDs prove which observation belongs to this request. An
+                # unrelated new ID cannot override it or invent an ambiguous winner.
+                pinned=report(self.store,project)["sampling"]["groups"][0]
+                self.assertEqual(pinned["outcomes"],{"pass":1,"fail":0,"unknown":0})
+                self.assertEqual(pinned['results'][0]['feedback_plan_ref'],group['results'][0]['feedback_plan_ref'])
                 self.assertEqual(self.store.list("runs",project_id=project),[])
                 with self.assertRaises(DomainError):require_learning_source(self.store,episode)
 

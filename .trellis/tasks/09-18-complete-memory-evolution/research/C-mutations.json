@@ -1,0 +1,128 @@
+[
+  {
+    "name": "01-diagnosis-hash",
+    "target": "src/memory_orchestrator/candidates.py",
+    "old": "or digest(diagnosis) != diagnosis_hash",
+    "replacement": "or False",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_candidates.CandidateTests.test_candidate_retains_and_checks_exact_diagnosis_obligations -v"
+  },
+  {
+    "name": "02-obligation-coverage",
+    "target": "src/memory_orchestrator/verification.py",
+    "old": "status = 'fail' if 'fail' in states else ('unknown' if not states or 'unknown' in states else 'pass')",
+    "replacement": "status = 'pass'",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_unbound_check_cannot_pass_or_publish_and_alias_obligations_union -v"
+  },
+  {
+    "name": "03-private-projection",
+    "target": "src/memory_orchestrator/verification.py",
+    "old": "if key not in ('criteria','private')",
+    "replacement": "if True",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_reused_full_task_specs_do_not_leak_private_fields -v"
+  },
+  {
+    "name": "04-diagnosis-union",
+    "target": "src/memory_orchestrator/verification.py",
+    "old": "sources.append((ref, diagnosis, diagnosis['draft']['check_plan']))",
+    "replacement": "pass",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_diagnosis_check_is_not_removed_by_empty_patch_plan -v"
+  },
+  {
+    "name": "05-functional-output",
+    "target": "src/memory_orchestrator/assets.py",
+    "old": "passed = passed and raw.get('stdout') == test['expected_stdout']",
+    "replacement": "passed = True",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected -v"
+  },
+  {
+    "name": "06-compilation",
+    "target": "src/memory_orchestrator/assets.py",
+    "old": "compile(snapshot['assets'][job['asset_path']], job['asset_path'], 'exec')",
+    "replacement": "pass",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected -v"
+  },
+  {
+    "name": "07-release-recheck",
+    "target": "src/memory_orchestrator/release.py",
+    "old": "    _verify_selection(store, selection)\n",
+    "replacement": "    pass\n",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_release.MemoryReleaseTests.test_missing_or_duplicate_gates_cannot_be_forged_into_a_release -v"
+  },
+  {
+    "name": "08-execution-input",
+    "target": "src/memory_orchestrator/evaluation.py",
+    "old": "execution.get('inputs')==[req,expected_input,public_case(case)]",
+    "replacement": "True",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_release.MemoryReleaseTests.test_publication_checks_actual_snapshot_and_public_case_inputs -v"
+  },
+  {
+    "name": "09-required-verification-gate",
+    "target": "src/memory_orchestrator/evaluation.py",
+    "old": "passed = None if verification is None or verification['status']=='unknown' else verification['status']=='pass'",
+    "replacement": "passed = True",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_unbound_check_cannot_pass_or_publish_and_alias_obligations_union -v"
+  },
+  {
+    "name": "10-stable-callback-request",
+    "target": "src/memory_orchestrator/evaluation.py",
+    "old": "request_ref=request['request_id']+':'+stage,stage=stage",
+    "replacement": "request_ref=new_id('unfrozen_request'),stage=stage",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_comparison_recovery.ComparisonRecoveryTests.test_feedback_and_assessment_interruption_reuses_original_returns -v"
+  },
+  {
+    "name": "11-dependency-closure",
+    "target": "src/memory_orchestrator/relations.py",
+    "old": "for dependency in skills[sid]['content']['depends_on']: visit(dependency)",
+    "replacement": "for dependency in []: visit(dependency)",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_required_combination_with_identical_dependency_closures_is_unknown -v"
+  },
+  {
+    "name": "12-unknown-contrast",
+    "target": "src/memory_orchestrator/relations.py",
+    "old": "        return 'unknown', None\n",
+    "replacement": "        return 'measured', 0.0\n",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_uncompleted_contrast_does_not_produce_a_numeric_relation -v"
+  },
+  {
+    "name": "13-directional-gain",
+    "target": "src/memory_orchestrator/relations.py",
+    "old": "gains.append(means['with'] - means['without'])",
+    "replacement": "gains.append(means['without'] - means['with'])",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_contrast_executes_distinct_dependency_complete_views -v"
+  },
+  {
+    "name": "14-engine-materials",
+    "target": "src/memory_orchestrator/engine.py",
+    "old": "verification=verification, execute_view=execute_view",
+    "replacement": "verification=None, execute_view=execute_view",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_engine_forwards_materials_through_default_verification -v"
+  },
+  {
+    "name": "15-raw-asset-evidence",
+    "target": "src/memory_orchestrator/assets.py",
+    "old": "record['raw']!={**expected_raw,'attempt_ref':original['attempt_id']}",
+    "replacement": "False",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_asset_revision_and_function_result_cannot_be_substituted -v"
+  },
+  {
+    "name": "16-alias-order",
+    "target": "src/memory_orchestrator/verification.py",
+    "old": "return sorted(rows,key=lambda row:row['requirement_id'])",
+    "replacement": "return rows",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_alias_obligation_order_is_stable_for_publication -v"
+  },
+  {
+    "name": "17-fixed-quality-objective",
+    "target": "src/memory_orchestrator/evaluation.py",
+    "old": "return [row for row in rows if row.get('case_role','quality')=='quality']",
+    "replacement": "return rows",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_verification.VerificationTests.test_optional_checks_cannot_dilute_the_original_quality_objective -v"
+  },
+  {
+    "name": "18-publish-quality-scope",
+    "target": "src/memory_orchestrator/release.py",
+    "old": "_require(plan.get('quality_case_refs')==quality_refs,'quality_scope','Candidate changed the frozen admission objective')",
+    "replacement": "_require(True,'quality_scope','Candidate changed the frozen admission objective')",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_release.MemoryReleaseTests.test_publication_rechecks_original_quality_scope -v"
+  }
+]

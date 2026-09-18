@@ -1,0 +1,16 @@
+test_co_use_from_another_task_or_revision_does_not_change_selection (test_memory_completion.CompletionConsumers.test_co_use_from_another_task_or_revision_does_not_change_selection) ... ok
+test_current_task_filters_unrelated_project_facts_before_budget (test_memory_completion.CompletionConsumers.test_current_task_filters_unrelated_project_facts_before_budget) ... ok
+test_selection_has_actual_maintenance_time_in_report (test_memory_completion.CompletionConsumers.test_selection_has_actual_maintenance_time_in_report) ... ok
+test_budget_does_not_partially_truncate_dependency_group (test_memory_context.ContextTests.test_budget_does_not_partially_truncate_dependency_group) ... ok
+test_declared_conflicts_do_not_coexist (test_memory_context.ContextTests.test_declared_conflicts_do_not_coexist) ... ok
+test_default_uses_active_not_unpublished_candidate (test_memory_context.ContextTests.test_default_uses_active_not_unpublished_candidate) ... ok
+test_dependencies_whole_and_snapshot_is_frozen (test_memory_context.ContextTests.test_dependencies_whole_and_snapshot_is_frozen) ... ok
+test_natural_language_scope_and_triggers_are_not_opaque_ids (test_memory_context.ContextTests.test_natural_language_scope_and_triggers_are_not_opaque_ids) ... ok
+test_project_binding_and_policy_validation (test_memory_context.ContextTests.test_project_binding_and_policy_validation) ... ok
+test_trace_backed_co_use_can_affect_selection_but_delivery_alone_cannot (test_memory_context.ContextTests.test_trace_backed_co_use_can_affect_selection_but_delivery_alone_cannot) ... ok
+test_user_facts_are_read_only_and_provided_is_not_consumed (test_memory_context.ContextTests.test_user_facts_are_read_only_and_provided_is_not_consumed) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.164s
+
+OK

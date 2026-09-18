@@ -1,0 +1,47 @@
+[
+  {
+    "materials_id": "materials_8ef24f4af4a149a5a9a8a75d60d99e2c",
+    "project_id": "csv-demo",
+    "value": {
+      "asset_runner": {
+        "config": {},
+        "id": "python-process/v1",
+        "isolation": "process"
+      },
+      "asset_tests": [],
+      "bindings": {},
+      "cases": [],
+      "checks": [
+        {
+          "asset_test_ids": [],
+          "case_ids": [
+            "leading-zeros"
+          ],
+          "check_ref": "case:leading-zeros",
+          "description": "Check the public task: {\"column_types\":{\"amount\":\"number\",\"id\":\"string\"},\"csv\":\"id,amount\\n001,10\\n\",\"description\":\"Transform CSV using declared column types. String IDs retain leading zeros; empty numeric cells become null. The local executor reads selected Skills asset references/csv-policy.json with preserve_string_columns and empty_numeric_as_null booleans.\",\"project_id\":\"csv-demo\",\"revision\":\"v1\",\"task_family\":\"csv\",\"task_id\":\"leading-zeros\"}",
+          "evidence_kind": "task",
+          "purpose": "target"
+        },
+        {
+          "asset_test_ids": [],
+          "case_ids": [
+            "numeric-regression"
+          ],
+          "check_ref": "case:numeric-regression",
+          "description": "Check the public task: {\"column_types\":{\"amount\":\"number\",\"id\":\"string\"},\"csv\":\"id,amount\\na,2.5\\n\",\"description\":\"Transform CSV using declared column types. String IDs retain leading zeros; empty numeric cells become null. The local executor reads selected Skills asset references/csv-policy.json with preserve_string_columns and empty_numeric_as_null booleans.\",\"project_id\":\"csv-demo\",\"revision\":\"v1\",\"task_family\":\"csv\",\"task_id\":\"numeric-regression\"}",
+          "evidence_kind": "task",
+          "purpose": "regression"
+        }
+      ],
+      "id": "csv-cases-0:verification",
+      "relation_case_ids": [],
+      "relation_pairs": [],
+      "relation_policy": {
+        "background_skill_ids": [],
+        "max_pairs": 8,
+        "task_family": null
+      },
+      "version": "1"
+    }
+  }
+]

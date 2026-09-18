@@ -1,0 +1,30 @@
+test_unbound_check_cannot_pass_or_publish_and_alias_obligations_union (test_memory_verification.VerificationTests.test_unbound_check_cannot_pass_or_publish_and_alias_obligations_union) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.388s
+
+OK
+test_unbound_check_cannot_pass_or_publish_and_alias_obligations_union (test_memory_verification.VerificationTests.test_unbound_check_cannot_pass_or_publish_and_alias_obligations_union) ... FAIL
+
+======================================================================
+FAIL: test_unbound_check_cannot_pass_or_publish_and_alias_obligations_union (test_memory_verification.VerificationTests.test_unbound_check_cannot_pass_or_publish_and_alias_obligations_union)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_verification.py", line 38, in test_unbound_check_cannot_pass_or_publish_and_alias_obligations_union
+    self.assertEqual(val['status'], 'unknown')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'accepted' != 'unknown'
+- accepted
++ unknown
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.389s
+
+FAILED (failures=1)
+test_unbound_check_cannot_pass_or_publish_and_alias_obligations_union (test_memory_verification.VerificationTests.test_unbound_check_cannot_pass_or_publish_and_alias_obligations_union) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.402s
+
+OK

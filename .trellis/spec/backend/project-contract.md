@@ -26,6 +26,8 @@ v1.4 要求 current_delivery 及 implementation_allowed 显示在 HTML、context
 
 v1.6 在每个 Q/N 上分别记录已实现机制、剩余义务、外部职责、行为检查引用和效果证据。节点与 implementation.state 必须一致；仍有待实现项不能标 implemented；旧任务暂停文案不能替代当前机制覆盖。HTML 与简短摘要直接展示这份清单，不用 implemented 数量推导项目完成率。检查器验证声明自洽，不能自动证明其语义真实。
 
+v1.7补齐缺标目标、磁盘轨迹、反馈聚合/代理、语义维护/必要性、可信检查计划、脚本/局部组合、seed/恢复和计量/三臂实验的实际消费者。所有原义务保留；正式效果实验移入明确的effect_evidence边界，不能因机制完成而宣称效果已证。独立Draft在宿主Schema的本地$defs中必须完整，独立/内嵌记录同步检查。
+
 `render` 写 `index.html` 和 `context.md`；两者包含源 SHA-256，不能分别手改。`node Nxx` 默认输出节点、提示词和相关结构索引，供任务按需读取；`node Nxx --full` 才包含完整 schema/示例。避免每次恢复都灌入大量重复结构。
 
 ## 4. Validation & Error Matrix

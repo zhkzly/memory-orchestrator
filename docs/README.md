@@ -2,11 +2,12 @@
 
 日常只从这里进入，避免在旧方案之间来回切换。
 
-当前总纲为 v1.6.0：Python 记忆核心的学习/比较/发布主线已实现；每个节点与问题分别列出已实现机制、待完成项、行为证据及效果边界。具体 CLI/MCP/客户端适配暂缓。实际运行记录见当前检查点，不能从历史暂停状态或旧的全部完成标注推断当前进度。
+当前总纲为 v1.7.0：既定Python记忆演化机制已逐义务接通；每个节点与问题分别列出实际消费者、行为证据及效果边界。具体 CLI/MCP/客户端适配暂缓。实际运行记录见当前检查点，不能从历史暂停状态或旧的全部完成标注推断当前进度。
 
 | 用途 | 入口 |
 | --- | --- |
 | 使用 Python 核心 | [调用方式与本地闭环示例](../examples/memory_evolution/README.md) |
+| 核对完整交付 | [16项实现与证据](blueprint/implementation-evidence.md) |
 | 人读宏观设计 | [项目总纲 HTML](blueprint/index.html) |
 | 核对之前的关键思考 | [28 项问题与实现决定](blueprint/index.html#questions) |
 | 看并行、reward、提取和发布 | [执行与评价](blueprint/index.html#runtime) |

@@ -1,0 +1,43 @@
+test_alias_obligation_order_is_stable_for_publication (test_memory_verification.VerificationTests.test_alias_obligation_order_is_stable_for_publication) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.479s
+
+OK
+test_alias_obligation_order_is_stable_for_publication (test_memory_verification.VerificationTests.test_alias_obligation_order_is_stable_for_publication) ... ERROR
+
+======================================================================
+ERROR: test_alias_obligation_order_is_stable_for_publication (test_memory_verification.VerificationTests.test_alias_obligation_order_is_stable_for_publication)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_verification.py", line 52, in test_alias_obligation_order_is_stable_for_publication
+    self.assertEqual(self.promote(result)['status'],'published')
+                     ~~~~~~~~~~~~^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_verification.py", line 12, in promote
+    return publish(self.store,self.project,self.candidate['proposal_id'],result['validation_ids'][0],
+        result['selection_id'],expected_active_digest=self.active['snapshot_id'],expected_generation=self.active['generation'])
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/release.py", line 112, in publish
+    return _publish(store,project_id,candidate_id,validation_id,selection_id,
+                    expected_active_digest=expected_active_digest,expected_generation=expected_generation)
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/release.py", line 144, in _publish
+    _verify_selection(store, selection)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/release.py", line 52, in _verify_selection
+    plan, _, _ = verify_validation(store, val)
+                 ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py", line 612, in verify_validation
+    verification = verify_verification(store,plan,store.get('verification_records',validation['verification_record_ref']))
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/verification.py", line 207, in verify_verification
+    raise DomainError('verification_obligations','Diagnosis or proposal requirements were omitted')
+memory_orchestrator.schemas.DomainError: Diagnosis or proposal requirements were omitted
+
+----------------------------------------------------------------------
+Ran 1 test in 0.477s
+
+FAILED (errors=1)
+test_alias_obligation_order_is_stable_for_publication (test_memory_verification.VerificationTests.test_alias_obligation_order_is_stable_for_publication) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.503s
+
+OK

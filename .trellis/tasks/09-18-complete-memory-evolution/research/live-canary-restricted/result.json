@@ -1,0 +1,434 @@
+{
+  "evidence_kind": "constructed local integration; not a benchmark or generalization claim",
+  "teacher_mode": "provided",
+  "learning_statuses": [
+    "error"
+  ],
+  "release_count": 0,
+  "after_release": [],
+  "rollback": null,
+  "report": {
+    "report_id": "report_65f377571c9a47c1b00c4c0b8edf06f1",
+    "project_id": "csv-demo",
+    "created_at": "2026-09-18T18:08:09.036834Z",
+    "evidence_kind": "caller execution/evaluation records; not automatic independent truth",
+    "evaluation_requests": 0,
+    "outcomes": {
+      "pass": 0,
+      "fail": 0,
+      "unknown": 0
+    },
+    "execution_status_counts": {
+      "completed": 0,
+      "cancelled": 0,
+      "timeout": 0,
+      "budget_exhausted": 0,
+      "adapter_error": 0,
+      "unknown": 0
+    },
+    "observed_success_rate": null,
+    "coverage": null,
+    "identification_bounds": null,
+    "any_success": false,
+    "all_success": null,
+    "comparisons": [],
+    "comparison_summary": {
+      "planned_requests": 0,
+      "by_mode": [],
+      "outcomes": {
+        "pass": 0,
+        "fail": 0,
+        "unknown": 0
+      },
+      "execution_status_counts": {
+        "completed": 0,
+        "cancelled": 0,
+        "timeout": 0,
+        "budget_exhausted": 0,
+        "adapter_error": 0,
+        "unknown": 0
+      },
+      "observed_success_rate": null,
+      "coverage": null,
+      "identification_bounds": null,
+      "any_success": false,
+      "all_success": null
+    },
+    "pooled_rate_note": "Overall success rate mixes base and candidate requests; it is not an improvement estimate.",
+    "sampling_slots": 2,
+    "sampling": {
+      "groups": [
+        {
+          "group_id": "group_1f5f2c34f6fe44f4814b8e9dc1b51da5",
+          "purpose": "learning",
+          "update_mode": "task_barrier",
+          "scoring_policy": "completed_only",
+          "snapshot_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+          "task_revision": "v1",
+          "planned_slots": 2,
+          "recorded_runs": 2,
+          "missing_run_ids": [],
+          "recorded_receipts": 1,
+          "receipt_refs": [
+            "group_1f5f2c34f6fe44f4814b8e9dc1b51da5:receipt"
+          ],
+          "results": [
+            {
+              "run_id": "run_e81fd3ba50c64c7d995d1faefcfe837a",
+              "outcome": "fail",
+              "score": 0.0,
+              "assessment_ref": "assessment_6486e02fed454120bda1eac0bb0e96fb",
+              "feedback_plan_ref": "feedback_plan_84c460d915534bc29f9ed325c05d93d5",
+              "assessment_source": "referenced",
+              "criterion_ids": [
+                "task_outcome"
+              ],
+              "missing_criterion_ids": [],
+              "criterion_coverage": 1.0,
+              "score_bounds": [
+                0.0,
+                0.0
+              ],
+              "feedback_sources": [
+                "external"
+              ],
+              "feedback_refs": [
+                "feedback_plan_84c460d915534bc29f9ed325c05d93d5:feedback:task_outcome"
+              ],
+              "execution_status": "completed"
+            },
+            {
+              "run_id": "run_e34765490ff543b8a9aa27ab376b0ca7",
+              "outcome": "fail",
+              "score": 0.0,
+              "assessment_ref": "assessment_ff977cc56ad743b9bf9d8065df4e92ad",
+              "feedback_plan_ref": "feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e",
+              "assessment_source": "referenced",
+              "criterion_ids": [
+                "task_outcome"
+              ],
+              "missing_criterion_ids": [],
+              "criterion_coverage": 1.0,
+              "score_bounds": [
+                0.0,
+                0.0
+              ],
+              "feedback_sources": [
+                "external"
+              ],
+              "feedback_refs": [
+                "feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e:feedback:task_outcome"
+              ],
+              "execution_status": "completed"
+            }
+          ],
+          "outcomes": {
+            "pass": 0,
+            "fail": 2,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 2,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 0.0,
+          "coverage": 1.0,
+          "identification_bounds": [
+            0.0,
+            0.0
+          ],
+          "any_success": false,
+          "all_success": false
+        }
+      ],
+      "by_mode": [
+        {
+          "purpose": "learning",
+          "update_mode": "task_barrier",
+          "scoring_policy": "completed_only",
+          "group_unit": "same_task_run_group",
+          "group_count": 1,
+          "planned_requests": 2,
+          "outcomes": {
+            "pass": 0,
+            "fail": 2,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 2,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 0.0,
+          "coverage": 1.0,
+          "identification_bounds": [
+            0.0,
+            0.0
+          ],
+          "any_success": false,
+          "all_success": false,
+          "any_success_groups": {
+            "true": 0,
+            "false": 1,
+            "unknown": 0
+          },
+          "all_success_groups": {
+            "true": 0,
+            "false": 1,
+            "unknown": 0
+          }
+        }
+      ]
+    },
+    "maintenance": {
+      "by_stage": {
+        "evaluate": {
+          "measurements": 8,
+          "local_seconds": 0.0861586190003436,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 8,
+          "errors": 0
+        },
+        "prepare": {
+          "measurements": 1,
+          "local_seconds": 0.013645017999806441,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 1,
+          "errors": 0
+        },
+        "execute": {
+          "measurements": 8,
+          "local_seconds": 0.07171813398599625,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 8,
+          "errors": 0
+        },
+        "select": {
+          "measurements": 2,
+          "local_seconds": 0.003937871006201021,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 2,
+          "errors": 0
+        },
+        "recover": {
+          "measurements": 5,
+          "local_seconds": 0.009031484994920902,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 5,
+          "errors": 0
+        },
+        "extract": {
+          "measurements": 1,
+          "local_seconds": 0.003886526988935657,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 1,
+          "errors": 1
+        },
+        "index": {
+          "measurements": 3,
+          "local_seconds": 0.020440291002159938,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 3,
+          "errors": 0
+        }
+      },
+      "measurement_ids": [
+        "stage_07be849b10ba4672b67e904c3fcba483",
+        "stage_1052058ea3cb44e3b19cd43276956407",
+        "stage_1325b0f7e43f4fb6864acff3e58c6626",
+        "stage_190109f4fd9645d19cae43d8e431fb1f",
+        "stage_2d205b9dd82d40fcb84e0b5c788b07d8",
+        "stage_4a5a90e5a20b433287488e93f9a2d8fc",
+        "stage_4b1331599bc849ba90e6a6a28b86c6eb",
+        "stage_4e756daf43be4e17b15c7dba727c39bb",
+        "stage_544788a89c89439588a73b77e2c76ded",
+        "stage_5b6b6b67f2854a10a6245b0db29110b2",
+        "stage_5dc3266d3d964eaf881e1d08b2db7684",
+        "stage_6f7d396953c7424ab5a0972fee7ad913",
+        "stage_74b073262ee44fca9fafe61be9f5313c",
+        "stage_8c8cd3f8349a4918b83567da6a1e9083",
+        "stage_8e6ec5cf27bc444d99f3ea38c18102b4",
+        "stage_9baeb8eb829c4bc1b23bb29c0fcc0cb7",
+        "stage_9bda7d1b40a24a77ad8061f6c9aa0887",
+        "stage_a4554f8b9af34f7c8562759d9317a784",
+        "stage_a52a7641e1cf4d4b9071e6ff8536a9d2",
+        "stage_b51b52c7d5714cfaa89def26f901c3be",
+        "stage_b8c8684f7c71422e85557611bf08e0d1",
+        "stage_c126bee2931449b8b9285c5b768c05b1",
+        "stage_c57a6546bd50427f9e5a420d9e3d8cac",
+        "stage_d5a841f6e3254906a5c6941cd83fb0fb",
+        "stage_f598c36df82a4dd38c3f78b181ccd90a",
+        "stage_f8b221fdb5704df2b7e22fae9b3dd351",
+        "stage_fc539ff24f3c476ba219604936dce397",
+        "stage_fe010da1012048bda2de611a32ae89fe"
+      ],
+      "known_cost_subtotals": {},
+      "complete_cost_totals": null,
+      "note": "Local maintenance measurements exclude declared delegated calls; provider usage is reported separately. Missing prices are unknown."
+    },
+    "report_measurement_ref": "stage_f4f1d81f2ee440ec9004657dd1c624d8",
+    "measurement_scope": "Cost totals cover listed completed records; this report's own timing is appended on return and addressed by report_measurement_ref.",
+    "batch_wall_time": {
+      "sampling": [
+        {
+          "batch_id": "sampling_batch_e77c650cf14c42469fdff54c5c5a72e2",
+          "segment_ids": [
+            "sampling_segment_e84ae5c812e743f1bb080024f3bdb425"
+          ],
+          "known_active_wall_seconds": 0.15326174300571438,
+          "missing_segments": 0,
+          "complete_active_wall_seconds": 0.15326174300571438,
+          "statuses": {
+            "completed": 1
+          }
+        }
+      ],
+      "comparison": [],
+      "sampling_receipts": [
+        {
+          "batch_id": "sampling_batch_e77c650cf14c42469fdff54c5c5a72e2",
+          "end_to_end_seconds": 0.15558,
+          "finished_at": "2026-09-18T18:08:08.819263Z",
+          "first_started_at": "2026-09-18T18:08:08.663683Z",
+          "group_ids": [
+            "group_1f5f2c34f6fe44f4814b8e9dc1b51da5"
+          ],
+          "known_segment_seconds": 0.15326174300571438,
+          "missing_segment_count": 0,
+          "project_id": "csv-demo",
+          "receipt_id": "sampling_batch_e77c650cf14c42469fdff54c5c5a72e2:receipt",
+          "receipt_refs": [
+            "group_1f5f2c34f6fe44f4814b8e9dc1b51da5:receipt"
+          ],
+          "segment_ids": [
+            "sampling_segment_e84ae5c812e743f1bb080024f3bdb425"
+          ]
+        }
+      ]
+    },
+    "library_history": [
+      {
+        "generation": 0,
+        "snapshot_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+        "kind": "baseline",
+        "release_ref": null,
+        "skill_count": 0,
+        "rule_count": 0,
+        "asset_bytes": 0,
+        "added_skill_ids": [],
+        "removed_skill_ids": []
+      }
+    ],
+    "memory_progress": {
+      "maintenance": {
+        "review_counts": {},
+        "origin": "model_proxy",
+        "applied_revocations": 0,
+        "active_duplicate_groups": [],
+        "unresolved_conflict_groups": []
+      },
+      "goal_binding_statuses": {},
+      "derived_goal_bindings": 0,
+      "trace_count": 0,
+      "archived_trace_bytes": 0,
+      "indexed_events": 0,
+      "incomplete_traces": [],
+      "signature_retrieval_hits": 0,
+      "range_reads": 0,
+      "decoded_body_bytes_read": 0,
+      "necessity_verdicts": {},
+      "judgment_origin": "Model judgments are not semantic accuracy measurements; unlabeled accuracy remains unknown."
+    },
+    "consumption_layers": {
+      "provided_manifest_counts": {},
+      "observed_events": [],
+      "observed_level_counts": {},
+      "effect_records": [],
+      "note": "Provided, reported read, reported behavior and measured conditional effects are distinct; absent level is unclassified, not inferred use."
+    },
+    "unique_case_identity_count": 0,
+    "known_task_ids": [
+      "leading-zeros"
+    ],
+    "episodes_with_unknown_task_id": 0,
+    "distinct_known_task_count": 1,
+    "episode_count": 2,
+    "candidate_counts": {
+      "unique_snapshots": 0,
+      "proposal_records": 0,
+      "compared_snapshots": 0
+    },
+    "proposal_attempts": {
+      "planned_slots": 1,
+      "slot_status_counts": {
+        "not_started": 1
+      },
+      "finished_slots": 0,
+      "note": "Proposal slots are not unique snapshots or model repair calls; usage records count physical calls."
+    },
+    "proposal_snapshots": [],
+    "validation_attempt_counts": {
+      "accepted": 0,
+      "rejected": 0,
+      "unknown": 0
+    },
+    "snapshot_validation_statuses": {},
+    "usage": {
+      "unique_calls": 5,
+      "by_stage": {
+        "evaluate": 2,
+        "execute": 2,
+        "extract": 1
+      },
+      "known_cost_subtotals": {},
+      "missing_cost_calls": 5,
+      "complete_cost_totals": null,
+      "sum_run_time": 0.15287922701099887,
+      "known_run_time_subtotal": 0.15287922701099887,
+      "missing_time_calls": 0,
+      "tokens": {
+        "known_subtotals": {
+          "input_tokens": null,
+          "output_tokens": null,
+          "total_tokens": null
+        },
+        "known_calls": {
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "total_tokens": 0
+        },
+        "missing_calls": {
+          "input_tokens": 5,
+          "output_tokens": 5,
+          "total_tokens": 5
+        },
+        "complete_totals": {
+          "input_tokens": null,
+          "output_tokens": null,
+          "total_tokens": null
+        }
+      },
+      "usage_ids": [
+        "attempt_45676937d7c622090315915f201f47954e55118e1dee3e57f9542208078c0801:usage:0",
+        "attempt_6b50c1d281e2e950cb84fa5ad79918580cb165f1220c4f65951128c8e9e72ffd:usage:0",
+        "attempt_96df53e6acb2a35b00152958f5bdf94e0b8f38a71beb5a670b25686bc12872f4:usage:0",
+        "attempt_fc793a6992abce5605a47724ce574276523e2f2c38e66a0233fde30e1072bdbd:usage:0",
+        "modelcall_f405be7f9532407eb0f71e1e20ee23fc"
+      ],
+      "callback_attempts": 4,
+      "unreturned_attempt_ids": [],
+      "unfinished_learning_cycle_ids": [],
+      "unaccounted_evaluation_requests": 0,
+      "unaccounted_sampling_slots": 0,
+      "incomplete_sampling_slots": 0
+    },
+    "committed_release_ids": []
+  }
+}

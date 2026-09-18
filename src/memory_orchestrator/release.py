@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 from .schemas import digest, now_iso, validate
-from .evaluation import _require, _check_protocol, _gates, _rank, verify_validation, proposal_aliases
+from .evaluation import _require, _check_protocol, _gates, _rank, verify_validation, proposal_aliases, criterion_count, comparison_call_budget
+from .telemetry import measure_stage
 
 
 def _frozen_aliases(store, selection):
@@ -35,11 +36,21 @@ def _verify_selection(store, selection):
     validations, plans = [], {}
     protocol = store.get("protocols", frozen["protocol_ref"])["value"]
     cases = store.get("case_sets", frozen["case_set_ref"])["value"]
+    _require(bool(frozen.get('quality_case_set_ref')),'quality_scope','Comparison requires its original frozen quality cases')
+    quality_record=store.get('case_sets',frozen['quality_case_set_ref']);quality_cases=quality_record['value']
+    _require(quality_record['project_id']==frozen['project_id'] and digest(quality_cases)==frozen['quality_case_set_hash'],
+             'quality_scope','Original quality case set changed')
+    quality_refs=[c['id'] for c in quality_cases['cases']]
+    by_case={c['id']:c for c in cases['cases']}
+    _require(all(ref in by_case for ref in quality_refs) and [by_case[ref] for ref in quality_refs]==quality_cases['cases'],
+             'quality_scope','Supplemental checks cannot replace original quality cases')
+    _check_protocol(protocol,quality_cases,len(candidates),frozen['max_parallel'])
     _check_protocol(protocol, cases, len(candidates), frozen["max_parallel"])
     _require(protocol["selection_rule"] == frozen["selection_rule"], "selection_binding", "Selection rule changed")
     for entry in entries:
         val = store.get("validations", entry["validation_ref"])
         plan, _, _ = verify_validation(store, val)
+        _require(plan.get('quality_case_refs')==quality_refs,'quality_scope','Candidate changed the frozen admission objective')
         expected_aliases = aliases[entry["candidate_digest"]]
         actual_aliases = plan.get("proposal_ids") if "proposal_snapshots" in frozen else plan.get("proposal_ids", expected_aliases)
         _require(actual_aliases == expected_aliases, "plan_aliases", "Comparison plan lost or changed proposal aliases")
@@ -54,13 +65,25 @@ def _verify_selection(store, selection):
     _require(len(plans) == len(frozen["plan_ids"]) and set(plans) == set(frozen["plan_ids"]),
              "selection_coverage", "Comparison plans missing or repeated")
     all_results = [r for v in validations for r in v["results"]]
+    verification_records={v['plan_id']:store.get('verification_records',v['verification_record_ref']) for v in validations}
+    auxiliary_usage=sorted({uid for v in verification_records.values() for uid in v['usage_refs']})
     planned = sum(len(p["requests"]) for p in plans.values())
+    for plan in plans.values():
+        vp=store.get('verification_plans',plan['verification_plan_ref'])
+        _require(vp['materials_ref']==frozen['verification_materials_ref'] and vp['materials_hash']==frozen['verification_materials_hash'],
+                 'verification_binding','Comparison changed its trusted material catalog')
+        planned += sum(len(store.get('contrast_plans',ref)['requests']) for ref in vp['contrast_plan_refs'])
+    planned *= criterion_count(protocol)
+    _require(planned==frozen['planned_evaluation_calls'],'call_budget','Frozen evaluation call count changed')
+    planned=comparison_call_budget(store,frozen)
     for val in validations:
         actual = val["gate_results"]
-        _require(len(actual) == len(protocol["required_gates"])
-                 and {g["gate"] for g in actual} == set(protocol["required_gates"]),
+        required=set(protocol['required_gates']) | {'verification_complete'}
+        _require(len(actual) == len(required)
+                 and {g["gate"] for g in actual} == required,
                  "gate_coverage", "Required gates missing or duplicated")
-        gates, status, _ = _gates(store, plans[val["plan_id"]], val["results"], cases, protocol, planned, all_results)
+        gates, status, _ = _gates(store, plans[val["plan_id"]], val["results"], cases, protocol, planned, all_results,
+                                   verification_records[val['plan_id']],auxiliary_usage)
         _require(val["status"] == status and {g["gate"]:g["passed"] for g in actual} == {g["gate"]:g["passed"] for g in gates},
                  "gate_result", "Recorded gates do not match stored evidence")
     ranked = _rank(store, validations, plans, cases)
@@ -85,6 +108,12 @@ def _record(store, identity):
 
 
 def publish(store, project_id, candidate_id, validation_id, selection_id, *, expected_active_digest, expected_generation):
+    with measure_stage(store,project_id,'publish',purpose='maintenance',subject_ref=selection_id):
+        return _publish(store,project_id,candidate_id,validation_id,selection_id,
+                        expected_active_digest=expected_active_digest,expected_generation=expected_generation)
+
+
+def _publish(store, project_id, candidate_id, validation_id, selection_id, *, expected_active_digest, expected_generation):
     candidate = store.get("candidates", candidate_id)
     validation = store.get("validations", validation_id)
     selection = store.get("selections", selection_id)
@@ -120,6 +149,12 @@ def publish(store, project_id, candidate_id, validation_id, selection_id, *, exp
 
 
 def rollback(store, project_id, target_release_id, *, expected_active_digest, expected_generation, reason):
+    with measure_stage(store,project_id,'recover',purpose='maintenance',subject_ref=target_release_id):
+        return _rollback(store,project_id,target_release_id,expected_active_digest=expected_active_digest,
+                         expected_generation=expected_generation,reason=reason)
+
+
+def _rollback(store, project_id, target_release_id, *, expected_active_digest, expected_generation, reason):
     _require(isinstance(reason, str) and bool(reason.strip()), "rollback_reason", "Rollback requires a reason")
     history = store.release_history(project_id)
     target = next((r for r in history if r["release_id"] == target_release_id), None)

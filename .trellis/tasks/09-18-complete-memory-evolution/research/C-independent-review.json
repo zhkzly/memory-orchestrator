@@ -1,0 +1,182 @@
+{
+  "source_sha256": {
+    "src/memory_orchestrator/verification.py": "da174a3cbcbb0ffe84679d43902bf767ce6e25d799452b1b9eefc4bc5ab6aea4",
+    "src/memory_orchestrator/evaluation.py": "0815e6eb4c8ff46fc6ef38e6722bb78337a4b8e6796c98a89993b4f479bfb8e3",
+    "src/memory_orchestrator/release.py": "c1886aae589a2ae0e7deec39b8b96bbcd57d686ce3abf49c52c0be468f1c4e39",
+    "src/memory_orchestrator/assets.py": "c115c581d94c19cbf3312ad211bd28eebc0aebfb31bd9f590e3d217a918fd9e0",
+    "src/memory_orchestrator/relations.py": "97fc3d526089f62a0d46faac361a42c974055bf0f86219d0eb3c6eab631d797f"
+  },
+  "selection": [
+    {
+      "selected_check": "check:left",
+      "material_hash": "e96e333b53a680282e9bc152b4b97cc0997ce7d8be2bd6bd3ba16392c3406e82",
+      "base_digest": "6d7d4c72040973665edbbc44a46ca37a24801f62b0a2e033b0ca1b045413e6b8",
+      "candidate_digest": "92867ab7cf8cc0d0faaadfc00c339e18095ed9ebc80459f632cd8febceae2f82",
+      "requested_count": 12,
+      "actual_requests": [
+        {
+          "request_id": "request_65ba66017d904c828b9bce0211245be5",
+          "case_id": "identifiers",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_c91129d7715b46c29c4436656fec1120",
+          "case_id": "identifiers",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_463cc3884778426cb852f65850bd77f0",
+          "case_id": "identifiers",
+          "arm": "candidate"
+        },
+        {
+          "request_id": "request_b4070141123f41c1b533f583e80989c3",
+          "case_id": "identifiers",
+          "arm": "candidate"
+        },
+        {
+          "request_id": "request_dede21827d7a4ed3a5ed2d085224d423",
+          "case_id": "sum",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_8e85dc9d95564722a4d042f108a60a53",
+          "case_id": "sum",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_2832f301a5f34ee79403458e057db995",
+          "case_id": "sum",
+          "arm": "candidate"
+        },
+        {
+          "request_id": "request_94144582fe26439bbf638c9ea4abd1d1",
+          "case_id": "sum",
+          "arm": "candidate"
+        },
+        {
+          "request_id": "request_a579eb3e4ca7423599b148abb79b74f1",
+          "case_id": "optional-left",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_bdd1bcd9b7f341618360b134bde9aeb7",
+          "case_id": "optional-left",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_ec270672addb4322a55e0bb18aed88a5",
+          "case_id": "optional-left",
+          "arm": "candidate"
+        },
+        {
+          "request_id": "request_90626b9ac7114a1ab9739f48e5f7211a",
+          "case_id": "optional-left",
+          "arm": "candidate"
+        }
+      ],
+      "case_ids": [
+        "identifiers",
+        "optional-left",
+        "sum"
+      ],
+      "validation": "accepted"
+    },
+    {
+      "selected_check": "check:right",
+      "material_hash": "e96e333b53a680282e9bc152b4b97cc0997ce7d8be2bd6bd3ba16392c3406e82",
+      "base_digest": "6d7d4c72040973665edbbc44a46ca37a24801f62b0a2e033b0ca1b045413e6b8",
+      "candidate_digest": "92867ab7cf8cc0d0faaadfc00c339e18095ed9ebc80459f632cd8febceae2f82",
+      "requested_count": 12,
+      "actual_requests": [
+        {
+          "request_id": "request_c24ae4d9420b4728b38c9b3129aa17c3",
+          "case_id": "identifiers",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_8493be3d86ba4b9abb43ad07240cacd1",
+          "case_id": "identifiers",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_1c1063cfdf4d4727b3dc2e02e99102ad",
+          "case_id": "identifiers",
+          "arm": "candidate"
+        },
+        {
+          "request_id": "request_e6a1e2edcd0d4bd6a9b20424de264665",
+          "case_id": "identifiers",
+          "arm": "candidate"
+        },
+        {
+          "request_id": "request_3175c1d61daf48f4b2b292463f960254",
+          "case_id": "sum",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_d4aa971047914f6b989e3757ae1e16b8",
+          "case_id": "sum",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_be50fa6c36384d9d9109ac1163c22e11",
+          "case_id": "sum",
+          "arm": "candidate"
+        },
+        {
+          "request_id": "request_5c667cdd78c145c88b5ac0bcbde010c4",
+          "case_id": "sum",
+          "arm": "candidate"
+        },
+        {
+          "request_id": "request_4f60fd192eb341b891992b6cbfcf17de",
+          "case_id": "optional-right",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_ec29f75ce1fa4d77b86f81a96bdf1e9d",
+          "case_id": "optional-right",
+          "arm": "base"
+        },
+        {
+          "request_id": "request_35e5f8c64854473199e927ee4a2a1b04",
+          "case_id": "optional-right",
+          "arm": "candidate"
+        },
+        {
+          "request_id": "request_de1523186bb345e2a97ef65f39908ca0",
+          "case_id": "optional-right",
+          "arm": "candidate"
+        }
+      ],
+      "case_ids": [
+        "identifiers",
+        "optional-right",
+        "sum"
+      ],
+      "validation": "accepted"
+    }
+  ],
+  "publication": [
+    {
+      "probe": "changed_asset_raw",
+      "rejected": true,
+      "code": "asset_binding",
+      "message": "Asset result differs from exact bundle, fixture or observed output"
+    },
+    {
+      "probe": "unvalidated_candidate",
+      "rejected": true,
+      "code": "selection_mismatch",
+      "message": "Only the selected accepted candidate can publish"
+    },
+    {
+      "probe": "changed_contrast_value",
+      "rejected": true,
+      "code": "contrast_result",
+      "message": "Contrast conclusion differs from observed results"
+    }
+  ],
+  "status": "all_probes_passed"
+}

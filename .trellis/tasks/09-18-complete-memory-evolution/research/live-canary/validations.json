@@ -1,0 +1,260 @@
+[
+  {
+    "all_requests_accounted": true,
+    "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+    "candidate_digest": "5f97bd834064cb53a4f7b8136ccd0fe1d580022a9f790d37ef682136e789893a",
+    "case_set_hash": "b39d9f8d880ec833aa363bd4c1c8820be79f2b62c457d471558a0409ff780fdb",
+    "evaluator_config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "evaluator_ref": "typed-row-check/v1",
+    "evidence_cutoff": "2026-09-18T18:10:36.147769Z",
+    "expected_active_generation": 0,
+    "gate_results": [
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_96072134375146cfbe470ee6000544ff"
+        ],
+        "gate": "complete_results",
+        "passed": true
+      },
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_96072134375146cfbe470ee6000544ff"
+        ],
+        "gate": "target_gain",
+        "passed": true
+      },
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_96072134375146cfbe470ee6000544ff"
+        ],
+        "gate": "regression_non_decrease",
+        "passed": true
+      },
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_96072134375146cfbe470ee6000544ff"
+        ],
+        "gate": "call_budget",
+        "passed": true
+      },
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_96072134375146cfbe470ee6000544ff"
+        ],
+        "gate": "scope_bound",
+        "passed": true
+      },
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_96072134375146cfbe470ee6000544ff"
+        ],
+        "gate": "versions_unchanged",
+        "passed": true
+      },
+      {
+        "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+        "evidence_refs": [
+          "verification_11ddf344595f3cd0e13bcc5e427c5da8282389a8ea3010365ac0e0d4533aa289"
+        ],
+        "gate": "verification_complete",
+        "passed": null
+      }
+    ],
+    "plan_hash": "f71da46ddafd0f9c01e4e4730cd34093739f6def5b8431c6a3d39e54f2cced2b",
+    "plan_id": "plan_96072134375146cfbe470ee6000544ff",
+    "project_id": "csv-demo",
+    "protocol_hash": "087a4d5725d32f9fb7c1d9bc145f927c47b6319d16d654c47c3f7e21ec04d5ad",
+    "reasons": [
+      "verification_complete"
+    ],
+    "results": [
+      {
+        "assessment_ref": "feedback_plan_94054816ef7242a0b713901af88d42c6:assessment",
+        "case_ref": "leading-zeros",
+        "evaluator_status": "ok",
+        "evidence_refs": [
+          "attempt_2fbfe4a4d1f0b780d68ec3a473f78b707beda5faa6533e7c40559a1e5721a97b"
+        ],
+        "execution_ref": "attempt_c90d35e08a5c55cd3edfa6e2453e09ccc97331e9171a473e5d591cc450454620",
+        "execution_status": "completed",
+        "gaps": [],
+        "outcome": "fail",
+        "request_id": "request_fe9fafe4377f4f1491ef00c13e2cc6b7",
+        "score": 0.0,
+        "snapshot_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+        "source": "executable",
+        "usage_refs": [
+          "attempt_2fbfe4a4d1f0b780d68ec3a473f78b707beda5faa6533e7c40559a1e5721a97b:usage:0",
+          "attempt_c90d35e08a5c55cd3edfa6e2453e09ccc97331e9171a473e5d591cc450454620:usage:0"
+        ]
+      },
+      {
+        "assessment_ref": "feedback_plan_86afb42691cf483b8cfd48455ac7b74c:assessment",
+        "case_ref": "leading-zeros",
+        "evaluator_status": "ok",
+        "evidence_refs": [
+          "attempt_8d36677b7a6e78ebfcd478144b9a68e7d0ff732a96295742fc094ce7109654b7"
+        ],
+        "execution_ref": "attempt_50637801539a5dcf99fc1a8a8d587bdf61110d327588d976a6325ad50caab9d5",
+        "execution_status": "completed",
+        "gaps": [],
+        "outcome": "fail",
+        "request_id": "request_fa26661928af4701922854a6e5362886",
+        "score": 0.0,
+        "snapshot_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+        "source": "executable",
+        "usage_refs": [
+          "attempt_50637801539a5dcf99fc1a8a8d587bdf61110d327588d976a6325ad50caab9d5:usage:0",
+          "attempt_8d36677b7a6e78ebfcd478144b9a68e7d0ff732a96295742fc094ce7109654b7:usage:0"
+        ]
+      },
+      {
+        "assessment_ref": "feedback_plan_e84b8567f74f44c689f6345b04b8c64b:assessment",
+        "case_ref": "leading-zeros",
+        "evaluator_status": "ok",
+        "evidence_refs": [
+          "attempt_bb3af75ce579dea91a236504c03c4942f5f7323db215b86e230b379136a2ac00"
+        ],
+        "execution_ref": "attempt_32215c492e51863ec575a3a8f5ead6ca9e9f277ef3d8f1ed3ee6f5227ac84ab0",
+        "execution_status": "completed",
+        "gaps": [],
+        "outcome": "pass",
+        "request_id": "request_e09609c3206b4b57945ac9921edbaa11",
+        "score": 1.0,
+        "snapshot_digest": "5f97bd834064cb53a4f7b8136ccd0fe1d580022a9f790d37ef682136e789893a",
+        "source": "executable",
+        "usage_refs": [
+          "attempt_32215c492e51863ec575a3a8f5ead6ca9e9f277ef3d8f1ed3ee6f5227ac84ab0:usage:0",
+          "attempt_bb3af75ce579dea91a236504c03c4942f5f7323db215b86e230b379136a2ac00:usage:0"
+        ]
+      },
+      {
+        "assessment_ref": "feedback_plan_48769ffd029742b495cf360032d72b9c:assessment",
+        "case_ref": "leading-zeros",
+        "evaluator_status": "ok",
+        "evidence_refs": [
+          "attempt_d2057810f17645336c79305e31a8992e0dc0df675b8fcfd5f83adbb115d26ff3"
+        ],
+        "execution_ref": "attempt_79fd4352af4b5846eeed8cd480cdedbab6a0cc7570f299314c8e52c428bd6907",
+        "execution_status": "completed",
+        "gaps": [],
+        "outcome": "pass",
+        "request_id": "request_6a2d66a7d09c412b8ca53cda943d6cb8",
+        "score": 1.0,
+        "snapshot_digest": "5f97bd834064cb53a4f7b8136ccd0fe1d580022a9f790d37ef682136e789893a",
+        "source": "executable",
+        "usage_refs": [
+          "attempt_79fd4352af4b5846eeed8cd480cdedbab6a0cc7570f299314c8e52c428bd6907:usage:0",
+          "attempt_d2057810f17645336c79305e31a8992e0dc0df675b8fcfd5f83adbb115d26ff3:usage:0"
+        ]
+      },
+      {
+        "assessment_ref": "feedback_plan_ec31eca3e9f84c3c8ac17b390b87e04e:assessment",
+        "case_ref": "numeric-regression",
+        "evaluator_status": "ok",
+        "evidence_refs": [
+          "attempt_2a47bff3f244256e201c5b6cc328f6275eecafa0b7948a407d1f802306af2f17"
+        ],
+        "execution_ref": "attempt_8025e4059d0cbd4db7323f878e4efc7adc32847cf497e0f051ce4335a6fc0692",
+        "execution_status": "completed",
+        "gaps": [],
+        "outcome": "pass",
+        "request_id": "request_30d303202ab54a69b29f9f396bb8fc1f",
+        "score": 1.0,
+        "snapshot_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+        "source": "executable",
+        "usage_refs": [
+          "attempt_2a47bff3f244256e201c5b6cc328f6275eecafa0b7948a407d1f802306af2f17:usage:0",
+          "attempt_8025e4059d0cbd4db7323f878e4efc7adc32847cf497e0f051ce4335a6fc0692:usage:0"
+        ]
+      },
+      {
+        "assessment_ref": "feedback_plan_978174b1b8ea4ed08afd54474036c934:assessment",
+        "case_ref": "numeric-regression",
+        "evaluator_status": "ok",
+        "evidence_refs": [
+          "attempt_468d88425aa16f0347db5fc01b04488bb117a8c0e54b9cb798be9aa3a28f5349"
+        ],
+        "execution_ref": "attempt_59d08378589dd9de548120a2dd4357f70319a14fb2caad3aef74a1debdcfade5",
+        "execution_status": "completed",
+        "gaps": [],
+        "outcome": "pass",
+        "request_id": "request_a51316a6c631430f98cf2e9937d15aa4",
+        "score": 1.0,
+        "snapshot_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+        "source": "executable",
+        "usage_refs": [
+          "attempt_468d88425aa16f0347db5fc01b04488bb117a8c0e54b9cb798be9aa3a28f5349:usage:0",
+          "attempt_59d08378589dd9de548120a2dd4357f70319a14fb2caad3aef74a1debdcfade5:usage:0"
+        ]
+      },
+      {
+        "assessment_ref": "feedback_plan_13643d33398647f98c7298cf1b482edd:assessment",
+        "case_ref": "numeric-regression",
+        "evaluator_status": "ok",
+        "evidence_refs": [
+          "attempt_1c29392973abf010db60a5f8747a4358fbb7d60fd1d734d633e0a49f1e2a5b7f"
+        ],
+        "execution_ref": "attempt_aeb0f000afa531df2afd0c0309c59c17aa177205df72b94d38cddfeaf042328c",
+        "execution_status": "completed",
+        "gaps": [],
+        "outcome": "pass",
+        "request_id": "request_7e1cae2c261e4f628adf3a82fa4b682f",
+        "score": 1.0,
+        "snapshot_digest": "5f97bd834064cb53a4f7b8136ccd0fe1d580022a9f790d37ef682136e789893a",
+        "source": "executable",
+        "usage_refs": [
+          "attempt_1c29392973abf010db60a5f8747a4358fbb7d60fd1d734d633e0a49f1e2a5b7f:usage:0",
+          "attempt_aeb0f000afa531df2afd0c0309c59c17aa177205df72b94d38cddfeaf042328c:usage:0"
+        ]
+      },
+      {
+        "assessment_ref": "feedback_plan_78a51024e59f453b90ab93fbb8b645e5:assessment",
+        "case_ref": "numeric-regression",
+        "evaluator_status": "ok",
+        "evidence_refs": [
+          "attempt_f42e9cd070b5e0e32f4b8abc921e4320b3f7fda5f5e8d33e807337ff78653601"
+        ],
+        "execution_ref": "attempt_65897668eea4086e14639720d0ffa8954cc8d6a8d909646e231b3452ad94238c",
+        "execution_status": "completed",
+        "gaps": [],
+        "outcome": "pass",
+        "request_id": "request_c1b8c0048a28455f882e271254452292",
+        "score": 1.0,
+        "snapshot_digest": "5f97bd834064cb53a4f7b8136ccd0fe1d580022a9f790d37ef682136e789893a",
+        "source": "executable",
+        "usage_refs": [
+          "attempt_65897668eea4086e14639720d0ffa8954cc8d6a8d909646e231b3452ad94238c:usage:0",
+          "attempt_f42e9cd070b5e0e32f4b8abc921e4320b3f7fda5f5e8d33e807337ff78653601:usage:0"
+        ]
+      }
+    ],
+    "status": "unknown",
+    "usage_refs": [
+      "attempt_1c29392973abf010db60a5f8747a4358fbb7d60fd1d734d633e0a49f1e2a5b7f:usage:0",
+      "attempt_2a47bff3f244256e201c5b6cc328f6275eecafa0b7948a407d1f802306af2f17:usage:0",
+      "attempt_2fbfe4a4d1f0b780d68ec3a473f78b707beda5faa6533e7c40559a1e5721a97b:usage:0",
+      "attempt_32215c492e51863ec575a3a8f5ead6ca9e9f277ef3d8f1ed3ee6f5227ac84ab0:usage:0",
+      "attempt_468d88425aa16f0347db5fc01b04488bb117a8c0e54b9cb798be9aa3a28f5349:usage:0",
+      "attempt_50637801539a5dcf99fc1a8a8d587bdf61110d327588d976a6325ad50caab9d5:usage:0",
+      "attempt_59d08378589dd9de548120a2dd4357f70319a14fb2caad3aef74a1debdcfade5:usage:0",
+      "attempt_65897668eea4086e14639720d0ffa8954cc8d6a8d909646e231b3452ad94238c:usage:0",
+      "attempt_79fd4352af4b5846eeed8cd480cdedbab6a0cc7570f299314c8e52c428bd6907:usage:0",
+      "attempt_8025e4059d0cbd4db7323f878e4efc7adc32847cf497e0f051ce4335a6fc0692:usage:0",
+      "attempt_8d36677b7a6e78ebfcd478144b9a68e7d0ff732a96295742fc094ce7109654b7:usage:0",
+      "attempt_aeb0f000afa531df2afd0c0309c59c17aa177205df72b94d38cddfeaf042328c:usage:0",
+      "attempt_bb3af75ce579dea91a236504c03c4942f5f7323db215b86e230b379136a2ac00:usage:0",
+      "attempt_c90d35e08a5c55cd3edfa6e2453e09ccc97331e9171a473e5d591cc450454620:usage:0",
+      "attempt_d2057810f17645336c79305e31a8992e0dc0df675b8fcfd5f83adbb115d26ff3:usage:0",
+      "attempt_f42e9cd070b5e0e32f4b8abc921e4320b3f7fda5f5e8d33e807337ff78653601:usage:0"
+    ],
+    "validation_id": "validation_7a915a79f8fe4dffa98730c8d9cf4546",
+    "verification_record_ref": "verification_11ddf344595f3cd0e13bcc5e427c5da8282389a8ea3010365ac0e0d4533aa289"
+  }
+]

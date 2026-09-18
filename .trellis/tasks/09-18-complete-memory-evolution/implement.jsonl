@@ -1,0 +1,8 @@
+{"file": "docs/blueprint/context.md", "reason": "Current canonical obligations"}
+{"file": ".trellis/spec/backend/index.md", "reason": "Backend scope"}
+{"file": ".trellis/spec/backend/python-learning.md", "reason": "Runtime invariants"}
+{"file": ".trellis/spec/backend/project-contract.md", "reason": "Canonical source and generated consumers"}
+{"file": ".trellis/spec/backend/validation.md", "reason": "Evidence boundaries"}
+{"file": ".trellis/tasks/09-18-complete-memory-evolution/prd.md", "reason": "Full user-authorized scope"}
+{"file": ".trellis/tasks/09-18-complete-memory-evolution/design.md", "reason": "Implementation ownership"}
+{"file": ".trellis/tasks/09-18-complete-memory-evolution/implement.md", "reason": "Execution order"}

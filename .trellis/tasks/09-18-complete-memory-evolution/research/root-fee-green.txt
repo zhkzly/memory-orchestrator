@@ -1,0 +1,20 @@
+test_cumulative_budget_and_missing_fields_fail_before_network (test_memory_model.ModelTests.test_cumulative_budget_and_missing_fields_fail_before_network) ... ok
+test_error_record_keeps_only_bounded_text_and_public_envelope (test_memory_model.ModelTests.test_error_record_keeps_only_bounded_text_and_public_envelope) ... ok
+test_format_repair_retains_original_input_rejected_output_and_usage (test_memory_model.ModelTests.test_format_repair_retains_original_input_rejected_output_and_usage) ... ok
+test_no_implicit_format_retry (test_memory_model.ModelTests.test_no_implicit_format_retry) ... ok
+test_only_nonnegative_integer_token_counts_enter_usage (test_memory_model.ModelTests.test_only_nonnegative_integer_token_counts_enter_usage) ... ok
+test_openai_sdk_callable_disables_retry_and_excludes_hidden_reasoning (test_memory_model.ModelTests.test_openai_sdk_callable_disables_retry_and_excludes_hidden_reasoning) ... ok
+test_packaged_prompts_match_source_exactly (test_memory_model.ModelTests.test_packaged_prompts_match_source_exactly) ... ok
+test_reported_output_token_overrun_is_not_success (test_memory_model.ModelTests.test_reported_output_token_overrun_is_not_success) ... ok
+test_runtime_extraction_limit_enforced_and_not_hidden (test_memory_model.ModelTests.test_runtime_extraction_limit_enforced_and_not_hidden) ... ok
+test_sdk_preserves_explicit_fee_without_pricing_by_guess (test_memory_model.ModelTests.test_sdk_preserves_explicit_fee_without_pricing_by_guess) ... ok
+test_semantic_check_shares_format_repair_and_call_budgets (test_memory_model.ModelTests.test_semantic_check_shares_format_repair_and_call_budgets) ... ok
+test_total_call_budget_counts_repair_and_no_credential_exception_dump (test_memory_model.ModelTests.test_total_call_budget_counts_repair_and_no_credential_exception_dump) ... ok
+test_transport_fee_metadata_survives_the_structured_call (test_memory_model.ModelTests.test_transport_fee_metadata_survives_the_structured_call) ... ok
+test_truncation_and_output_budget_keep_reported_usage (test_memory_model.ModelTests.test_truncation_and_output_budget_keep_reported_usage) ... ok
+test_valid_output_uses_exact_prompt_and_visible_actual_limits (test_memory_model.ModelTests.test_valid_output_uses_exact_prompt_and_visible_actual_limits) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.068s
+
+OK

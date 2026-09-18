@@ -8,7 +8,7 @@ import os
 import re
 import time
 
-from .schemas import DomainError, digest, load_contracts, new_id, validate
+from .schemas import DomainError, digest, load_contracts, new_id, normalize_usage_measurements, validate
 
 
 def _json(value):
@@ -104,6 +104,7 @@ class StructuredModel:
             entry = {"usage_id": new_id("modelcall"), "prompt_id": prompt_id,
                      "attempt": repair + 1, "input_chars": count, "output_chars": None,
                      "input_tokens": None, "output_tokens": None, "total_tokens": None,
+                     "monetary_cost": None, "currency": None, "price_version": None,
                      "measurement": "missing", "model": None, "request_id": None,
                      "elapsed_seconds": None, "status": "attempted"}
             usage.append(entry)
@@ -131,9 +132,26 @@ class StructuredModel:
                         diagnostics.append({"path": "usage." + key, "expected": "nonnegative integer or null",
                             "reported_type": type(original).__name__,
                             "reported_value": repr(original) if type(original) in (int, float, bool) else "<non-numeric value>"})
+                # Fees belong to the transport envelope, never the model's JSON draft.
+                # Missing prices stay unknown; token counts are not an implicit quote.
+                fee = normalize_usage_measurements({key: reported.get(key) for key in ("monetary_cost", "currency")})
+                for key in ("monetary_cost", "currency"):
+                    entry[key] = fee[key]
+                for diagnostic in fee["diagnostics"]:
+                    original = diagnostic["received"]
+                    diagnostics.append({"path": diagnostic["path"], "expected": diagnostic["reason"],
+                        "reported_type": type(original).__name__,
+                        "reported_value": repr(original) if type(original) in (int, float, bool) else "<invalid value>"})
+                version = reported.get("price_version")
+                if version is None or (isinstance(version, str) and version.strip()):
+                    entry["price_version"] = version
+                else:
+                    diagnostics.append({"path": "usage.price_version", "expected": "nonempty string or null",
+                                        "reported_type": type(version).__name__, "reported_value": "<invalid value>"})
                 # Retain a JSON-safe diagnostic instead of poisoning the shared ledger
                 # (NaN is not JSON, and fractional/bool token counts are not counts).
-                response["usage"] = {key: entry[key] for key in ("input_tokens", "output_tokens", "total_tokens")}
+                response["usage"] = {key: entry[key] for key in ("input_tokens", "output_tokens", "total_tokens",
+                                                               "monetary_cost", "currency", "price_version")}
                 if diagnostics:
                     entry["usage_diagnostics"] = diagnostics
                 if any(entry[key] is not None for key in ("input_tokens", "output_tokens", "total_tokens")):
@@ -228,5 +246,6 @@ def make_openai_call(*, timeout, model="gpt-5.6-terra", base_url=None, api_key=N
                 "model": raw.get("model", model), "request_id": raw.get("id"),
                 "usage": None if not isinstance(usage, dict) else {
                     "input_tokens": usage.get("prompt_tokens"), "output_tokens": usage.get("completion_tokens"),
-                    "total_tokens": usage.get("total_tokens")}}
+                    "total_tokens": usage.get("total_tokens"),
+                    **{key: usage[key] for key in ("monetary_cost", "currency", "price_version") if key in usage}}}
     return invoke

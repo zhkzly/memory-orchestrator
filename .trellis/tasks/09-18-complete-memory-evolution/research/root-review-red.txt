@@ -1,0 +1,35 @@
+test_interrupted_model_learning_keeps_reported_costs_incomplete (test_memory_completion.CompletionConsumers.test_interrupted_model_learning_keeps_reported_costs_incomplete) ... FAIL
+test_retained_caller_config_cannot_change_frozen_arm_execution (test_memory_experiments.ExperimentTests.test_retained_caller_config_cannot_change_frozen_arm_execution) ... ERROR
+
+======================================================================
+ERROR: test_retained_caller_config_cannot_change_frozen_arm_execution (test_memory_experiments.ExperimentTests.test_retained_caller_config_cannot_change_frozen_arm_execution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_experiments.py", line 32, in test_retained_caller_config_cannot_change_frozen_arm_execution
+    result = run_experiment(root, dataset(), runtime, lambda _: self.fail('No learning budget'),
+        protocol=config, sampling_policy=sampling, context_policy=context, learning_policy=LEARNING,
+        comparison_protocol=compare_protocol('fixed'), seed=seed)
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/experiments.py", line 123, in run_experiment
+    store.initialize_project(project, seed=deepcopy(seed), source={'experiment_id': identifier, 'seed_hash': plan['seed_hash']})
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/store.py", line 635, in initialize_project
+    self._check_snapshot(payload)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/store.py", line 530, in _check_snapshot
+    raise DomainError("ASSET_MISMATCH", "Snapshot asset inventory is incomplete",
+                      {"missing": sorted(set(references) - set(assets)), "unowned": sorted(set(assets) - set(references))})
+memory_orchestrator.schemas.DomainError: Snapshot asset inventory is incomplete
+
+======================================================================
+FAIL: test_interrupted_model_learning_keeps_reported_costs_incomplete (test_memory_completion.CompletionConsumers.test_interrupted_model_learning_keeps_reported_costs_incomplete)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_completion.py", line 156, in test_interrupted_model_learning_keeps_reported_costs_incomplete
+    self.assertIsNone(observed['complete_cost_totals'])
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {} is not None
+
+----------------------------------------------------------------------
+Ran 2 tests in 1.077s
+
+FAILED (failures=1, errors=1)

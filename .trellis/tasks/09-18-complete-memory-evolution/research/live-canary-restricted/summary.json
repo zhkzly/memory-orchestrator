@@ -1,0 +1,110 @@
+{
+  "kind": "bounded real SDK wiring with synthetic CSV tasks; not benchmark evidence",
+  "config": {
+    "model": "gpt-5.6-terra",
+    "base_url": "http://localhost:8317/v1",
+    "timeout": 30,
+    "max_calls": 8,
+    "max_input_chars": 120000,
+    "max_total_input_chars": 480000,
+    "max_output_chars": 20000,
+    "max_output_tokens": 4000,
+    "max_format_repairs": 1
+  },
+  "contract_source": {
+    "path": "docs/blueprint/project-contract.json",
+    "version": "1.7.0",
+    "sha256": "db003379537219487c24bda14880f08f6c55601c8775b220977cf0199b3c6b14"
+  },
+  "source_hashes": {
+    "src/memory_orchestrator/__init__.py": "34411261695cb1c20da720b9c792ae0bc4a8a7ff8278ce364cb24701221485d1",
+    "src/memory_orchestrator/assets.py": "c115c581d94c19cbf3312ad211bd28eebc0aebfb31bd9f590e3d217a918fd9e0",
+    "src/memory_orchestrator/candidates.py": "27da3454d4dbb37dce775ce3b09e93650e13e910fa3374ad7375f68c527fc249",
+    "src/memory_orchestrator/context.py": "32727e79508f6aaedd0081bfda0220e0b525a321b326227bb68a386ab4e6246d",
+    "src/memory_orchestrator/engine.py": "c292af9a0dd4cf740bbabd0564989bc9bc2d461aea7fc06e4d22c944a470dfff",
+    "src/memory_orchestrator/evaluation.py": "5a108e13768fc2436102b09fc0c5c886b282ccb802f7dfc639f09d582e77b43e",
+    "src/memory_orchestrator/evidence.py": "217ed01eacfc1b3667eeacdff08918af262a93b332c9d69649841bd99d58888d",
+    "src/memory_orchestrator/experiments.py": "bdbad3b5d605e4d20b19b682aae0f411ac532068d5f370774d77c5494b96a7d5",
+    "src/memory_orchestrator/feedback.py": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "src/memory_orchestrator/goals.py": "3f243124894a800a00f8c2c70b0b720aa32bffaf2786f94660d575babad1cd27",
+    "src/memory_orchestrator/learning.py": "2f2ce0f844b680ea6a1d2e6d61dffc39bf0b6872a5a16e8f717e453e808f6eca",
+    "src/memory_orchestrator/lineage.py": "be7f7dfe5b0f92fa8b60e4282e0d3f80529f89c6830dcbffbed05b9f6eb28b40",
+    "src/memory_orchestrator/maintenance.py": "e3c5e86af3d72c1689fa849d4afd757ebcd410730e67a99e3dad0296a5dd3b80",
+    "src/memory_orchestrator/model.py": "d3b8184116485e541c8a6cf85005426aafd1c3cde6742a37ea6723904927aef0",
+    "src/memory_orchestrator/outcomes.py": "db4b1c5f368d758b726c17d6f6a63e7d982a4689fb7fb924cee6a625ac89ec37",
+    "src/memory_orchestrator/prompts.json": "3e4d51945dbe8792a12f5680154eaa1dff194a02a8ed0c273db34ec702d77101",
+    "src/memory_orchestrator/relations.py": "97fc3d526089f62a0d46faac361a42c974055bf0f86219d0eb3c6eab631d797f",
+    "src/memory_orchestrator/release.py": "1f931ebb93c81ec7e6bf95f8d44403961fc4e755512d6d8e26faf647ed2b6461",
+    "src/memory_orchestrator/report.py": "cf482e5be5f4cf2f59195123b782ce5a72211ba8f651ef99cad05aa2c68fba6d",
+    "src/memory_orchestrator/sampling.py": "79bd1e5f23947a3ff45dc6ebee48b18c047d0e9f7bf8f7c498e2e99178043a58",
+    "src/memory_orchestrator/schemas.json": "504768f4ab3558b2793d6d7acb9de73d0a861d2e6b4a1360f034c2d2e9d40ded",
+    "src/memory_orchestrator/schemas.py": "ba1a4ccde874e80e1c1f4b80d1333913a75e5cfdb8bd485ff273d0d6246ebf1e",
+    "src/memory_orchestrator/store.py": "9017becd6982df2f92a6bffd56c5c5aed2edc640a45465ae3df700333470c325",
+    "src/memory_orchestrator/telemetry.py": "e21de9b9eeac619251f03957bbe59f555df3e4ae8085a8d797d211c91c6417c4",
+    "src/memory_orchestrator/trace.py": "89f439904756081ce57f4ed6faf5be05fe3564ca8c30be9c4e129f9906435975",
+    "src/memory_orchestrator/verification.py": "da174a3cbcbb0ffe84679d43902bf767ce6e25d799452b1b9eefc4bc5ab6aea4"
+  },
+  "store_root": "/tmp/memory-full-live-zm00im66",
+  "status": "returned",
+  "rounds": 1,
+  "learning_statuses": [
+    "error"
+  ],
+  "release_count": 0,
+  "usage": {
+    "unique_calls": 5,
+    "by_stage": {
+      "evaluate": 2,
+      "execute": 2,
+      "extract": 1
+    },
+    "known_cost_subtotals": {},
+    "missing_cost_calls": 5,
+    "complete_cost_totals": null,
+    "sum_run_time": 0.15287922701099887,
+    "known_run_time_subtotal": 0.15287922701099887,
+    "missing_time_calls": 0,
+    "tokens": {
+      "known_subtotals": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "total_tokens": null
+      },
+      "known_calls": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "total_tokens": 0
+      },
+      "missing_calls": {
+        "input_tokens": 5,
+        "output_tokens": 5,
+        "total_tokens": 5
+      },
+      "complete_totals": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "total_tokens": null
+      }
+    },
+    "usage_ids": [
+      "attempt_45676937d7c622090315915f201f47954e55118e1dee3e57f9542208078c0801:usage:0",
+      "attempt_6b50c1d281e2e950cb84fa5ad79918580cb165f1220c4f65951128c8e9e72ffd:usage:0",
+      "attempt_96df53e6acb2a35b00152958f5bdf94e0b8f38a71beb5a670b25686bc12872f4:usage:0",
+      "attempt_fc793a6992abce5605a47724ce574276523e2f2c38e66a0233fde30e1072bdbd:usage:0",
+      "modelcall_f405be7f9532407eb0f71e1e20ee23fc"
+    ],
+    "callback_attempts": 4,
+    "unreturned_attempt_ids": [],
+    "unfinished_learning_cycle_ids": [],
+    "unaccounted_evaluation_requests": 0,
+    "unaccounted_sampling_slots": 0,
+    "incomplete_sampling_slots": 0
+  },
+  "validation_attempt_counts": {
+    "accepted": 0,
+    "rejected": 0,
+    "unknown": 0
+  },
+  "elapsed_seconds": 0.723939841001993,
+  "model_calls": 1
+}

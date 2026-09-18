@@ -6,13 +6,15 @@ from .schemas import DomainError, new_id
 
 
 def evolve(store, episode_ids, model, *, learning_policy, case_set, protocol,
-           execute, evaluate, max_parallel):
+           execute, evaluate, max_parallel, verification=None, execute_view=None, asset_runner=None):
     """Learn, compare and publish exactly the selected accepted candidate.
 
     Use learn() alone when evaluation inputs are not available. This function
     performs no native Agent integration, autonomous polling or background work.
     """
-    learning = learn(store, episode_ids, model, policy=learning_policy)
+    from .verification import verification_catalog
+    learning = learn(store, episode_ids, model, policy=learning_policy,
+                     verification_catalog=verification_catalog(case_set,verification))
     result = {'learning': learning, 'comparison': None, 'release': None, 'status': learning['status']}
     if not learning['candidate_ids']:
         return result
@@ -21,8 +23,11 @@ def evolve(store, episode_ids, model, *, learning_policy, case_set, protocol,
     stage = 'compare'
     try:
         comparison = compare_candidates(store, project, candidates, case_set, protocol,
-                                        execute, evaluate, max_parallel=max_parallel)
+                                        execute, evaluate, max_parallel=max_parallel,
+                                        verification=verification, execute_view=execute_view,asset_runner=asset_runner)
         result['comparison'] = comparison
+        if comparison.get('status')=='blocked':
+            result['status']='blocked';return result
         selection = store.get('selections', comparison['selection_id'])
         if selection['decision'] != 'selected':
             result['status'] = 'not_selected'

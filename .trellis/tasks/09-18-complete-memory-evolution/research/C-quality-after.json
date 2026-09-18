@@ -1,0 +1,113 @@
+{
+  "status": "rejected",
+  "rows": [
+    {
+      "case_id": "identifiers",
+      "split": "target",
+      "case_role": "quality",
+      "base": 1.0,
+      "base_range": 0,
+      "candidate": 0.0,
+      "candidate_range": 0,
+      "gain": -1.0
+    },
+    {
+      "case_id": "sum",
+      "split": "regression",
+      "case_role": "quality",
+      "base": 1.0,
+      "base_range": 0,
+      "candidate": 1.0,
+      "candidate_range": 0,
+      "gain": 0.0
+    },
+    {
+      "case_id": "optional-preserve-0",
+      "split": "target",
+      "case_role": "supplemental",
+      "base": 0.0,
+      "base_range": 0,
+      "candidate": 1.0,
+      "candidate_range": 0,
+      "gain": 1.0
+    },
+    {
+      "case_id": "optional-preserve-1",
+      "split": "target",
+      "case_role": "supplemental",
+      "base": 0.0,
+      "base_range": 0,
+      "candidate": 1.0,
+      "candidate_range": 0,
+      "gain": 1.0
+    }
+  ],
+  "required_gates": [
+    {
+      "detail": "Computed from the frozen plan and all recorded request results.",
+      "evidence_refs": [
+        "plan_10ecf1cd1eb84a478ddfd0b168be0f7a"
+      ],
+      "gate": "complete_results",
+      "passed": true
+    },
+    {
+      "detail": "Computed from the frozen plan and all recorded request results.",
+      "evidence_refs": [
+        "plan_10ecf1cd1eb84a478ddfd0b168be0f7a"
+      ],
+      "gate": "target_gain",
+      "passed": false
+    },
+    {
+      "detail": "Computed from the frozen plan and all recorded request results.",
+      "evidence_refs": [
+        "plan_10ecf1cd1eb84a478ddfd0b168be0f7a"
+      ],
+      "gate": "regression_non_decrease",
+      "passed": true
+    },
+    {
+      "detail": "Computed from the frozen plan and all recorded request results.",
+      "evidence_refs": [
+        "plan_10ecf1cd1eb84a478ddfd0b168be0f7a"
+      ],
+      "gate": "call_budget",
+      "passed": true
+    },
+    {
+      "detail": "Computed from the frozen plan and all recorded request results.",
+      "evidence_refs": [
+        "plan_10ecf1cd1eb84a478ddfd0b168be0f7a"
+      ],
+      "gate": "scope_bound",
+      "passed": true
+    },
+    {
+      "detail": "Computed from the frozen plan and all recorded request results.",
+      "evidence_refs": [
+        "plan_10ecf1cd1eb84a478ddfd0b168be0f7a"
+      ],
+      "gate": "versions_unchanged",
+      "passed": true
+    },
+    {
+      "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+      "evidence_refs": [
+        "verification_ee1bcf8e8b4bda144642369245c761c2fbbdc30359e25ce851d68b01373ee358"
+      ],
+      "gate": "verification_complete",
+      "passed": true
+    }
+  ],
+  "original_quality_case_ids": [
+    "identifiers",
+    "sum"
+  ],
+  "actual_case_ids": [
+    "identifiers",
+    "sum",
+    "optional-preserve-0",
+    "optional-preserve-1"
+  ]
+}

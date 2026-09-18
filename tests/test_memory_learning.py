@@ -6,6 +6,7 @@ import threading
 import time
 import unittest
 from concurrent.futures import ThreadPoolExecutor
+from unittest.mock import patch
 
 from memory_orchestrator.store import Store
 from memory_orchestrator.schemas import DomainError
@@ -24,6 +25,10 @@ def policy(**changes):
               "max_related_experiences": 4, "max_related_episodes": 8, "max_related_chars": 16000,
               "candidate_count": 1, "max_operations": 3, "max_skills": 20,
               "max_asset_bytes": 20000, "evaluation_scope": "local repair, target and regression"}
+    result.update(necessity={"max_compared_skills": 20},
+                  maintenance={"max_chars": 20000, "max_pairs": 6, "max_actions": 3},
+                  goal_binding={"max_events": 4, "max_bindings": 4, "max_read_requests": 2,
+                                "max_expansions": 1, "max_catalog_goals": 12, "packet": packet_limits()})
     result.update(changes)
     return result
 
@@ -37,6 +42,10 @@ def drafts(source):
         return mapping.get(value, value) if isinstance(value, str) else value
     extraction = replace(EXAMPLES["extraction"])
     diagnosis = replace(EXAMPLES["diagnosis"]); diagnosis["targets"] = []
+    diagnosis["necessity"] = {"verdict": "proceed", "repeatable": True, "compared_skill_refs": [],
+        "capability_gap": "No CSV schema-preserving procedure in the empty library",
+        "behavior_delta": "Preserve explicit string identifiers before CSV conversion", "allow_add": True,
+        "evidence_refs": extraction["experiences"][0]["supporting_refs"], "unknowns": ["Reuse remains unverified"]}
     exp = extraction["experiences"][0]
     content = {"title": exp["title"], "scope": exp["scope"], "triggers": ["CSV"],
                "preconditions": [], "steps": exp["guidance"]["steps"], "exceptions": [],
@@ -44,6 +53,8 @@ def drafts(source):
                "evidence_refs": exp["supporting_refs"]}
     patch = replace(EXAMPLES["patch"])
     patch["operations"] = [{"op": "ADD", "proposed_slug": "csv-schema", "content": content}]
+    for draft in (diagnosis, patch):
+        for check in draft["check_plan"]: check["check_ref"] = None
     return extraction, diagnosis, patch
 
 
@@ -160,6 +171,104 @@ class LearningTests(unittest.TestCase):
         self.assertEqual(len(result["usage_ids"]), 3)
         self.assertEqual(len(self.store.list("reports", "demo-project")), 3)
 
+    def test_necessity_noop_stops_proposal_and_persists_decision(self):
+        extraction, diagnosis, patch = drafts(self.source)
+        diagnosis["necessity"].update(verdict="noop", allow_add=False, behavior_delta="")
+        model, call = self.model([extraction, diagnosis, patch])
+        result = learn(self.store, self.ids, model, policy=policy())
+        self.assertEqual(result["status"], "noop")
+        self.assertEqual([c["prompt_id"] for c in call.calls], ["extract_v1", "diagnose_v1"])
+        self.assertEqual(self.store.get("diagnoses", result["diagnosis_id"])["draft"]["necessity"]["verdict"], "noop")
+
+    def test_add_denied_by_necessity_is_repaired_before_candidate_application(self):
+        extraction, diagnosis, patch = drafts(self.source)
+        diagnosis["necessity"]["allow_add"] = False
+        noop = copy.deepcopy(patch); noop["operations"] = [{"op": "NOOP", "reason": "No permitted behavior change"}]
+        model, call = self.model([extraction, diagnosis, patch, noop])
+        result = learn(self.store, self.ids, model, policy=policy())
+        self.assertEqual(result["status"], "noop")
+        self.assertEqual(result["candidate_ids"], [])
+        self.assertEqual(len(call.calls), 4)
+        self.assertIn("allow_add", str(call.calls[-1]["messages"]))
+
+    def test_invented_check_reference_is_repaired_at_diagnosis_before_proposal(self):
+        extraction, diagnosis, patch = drafts(self.source)
+        bad = copy.deepcopy(diagnosis); bad["check_plan"][0]["check_ref"] = "invented-check"
+        model, call = self.model([extraction, bad, diagnosis, patch])
+        result = learn(self.store, self.ids, model, policy=policy(), verification_catalog=[])
+        self.assertEqual(result["status"], "proposed")
+        self.assertEqual([c["prompt_id"] for c in call.calls], ["extract_v1", "diagnose_v1", "diagnose_v1", "propose_v1"])
+        saved = self.store.get("diagnoses", result["diagnosis_id"])
+        self.assertIsNone(saved["draft"]["check_plan"][0]["check_ref"])
+
+    def test_missing_goals_reach_real_extraction_as_sidecar_not_observed_identity(self):
+        ep = episode(); ep["events"] = [event("request", "Review CSV identifier handling", "instruction", source_role="user")]
+        ep["episode_id"] = "missing-goal"
+        self.store.add_episode(ep)
+        packet = build_packet(index_episodes([ep]), limits=policy()["packet"])
+        ref = next(f["ref_id"] for f in packet["fragments"] if f["event_id"] == "request")
+        binding = {"status": "completed", "bindings": [{"event_refs": [ref], "goal_id": "new:csv",
+            "revision": "new:initial", "relation": "continues", "anchor_user_ref": ref,
+            "evidence_refs": [ref], "reason": "Explicit user CSV review request"}],
+            "read_requests": [], "reason": "Anchored request", "unknowns": []}
+        model, call = self.model([binding, EXAMPLES["abstain"]])
+        result = learn(self.store, [ep["episode_id"]], model, policy=policy())
+        self.assertEqual(result["status"], "abstained")
+        self.assertEqual([c["prompt_id"] for c in call.calls], ["goal_binding_v1", "extract_v1"])
+        body = call.calls[-1]["messages"][1]["content"]
+        observed, _ = json.JSONDecoder().raw_decode(body.split("证据包及缺口：", 1)[1].lstrip())
+        self.assertEqual(observed["goal_annotations"][0]["origin"], "model_proxy")
+        self.assertTrue(observed["goal_annotations"][0]["goal_id"].startswith("derived-goal:"))
+        self.assertIsNone(next(f for f in observed["fragments"] if f["event_id"] == "request")["structure"]["goal_id"])
+        self.assertEqual(self.store.get("episodes", ep["episode_id"]), ep)
+
+    def test_semantic_maintenance_runs_in_learn_and_next_retrieval_folds_real_records(self):
+        extraction, diagnosis, _ = drafts(self.source)
+        old_draft = copy.deepcopy(extraction["experiences"][0]); old_draft["title"] = "Older equivalent CSV procedure"
+        old_draft["guidance"]["steps"].append("Retain identifiers as strings")
+        old = {"record_id": "prior-equivalent", "project_id": "demo-project", "canonical_key": "separate-wording",
+            "draft": old_draft, "packet_id": "prior-packet", "source_episode_ids": self.ids,
+            "created_at": "2026-09-18T00:00:00Z"}
+        self.store.put("experiences", old["record_id"], old)
+        calls = []
+        def teacher(request):
+            calls.append(copy.deepcopy(request))
+            if request["prompt_id"] == "extract_v1": return response(extraction)
+            if request["prompt_id"] == "maintain_experience_v1":
+                text = request["messages"][1]["content"]
+                fresh, _ = json.JSONDecoder().raw_decode(text.split("新经验：", 1)[1])
+                ids = [fresh[0]["record_id"], old["record_id"]]
+                return response({"actions": [{"op": "LINK_DUPLICATE", "record_ids": ids,
+                    "preferred_record_id": ids[0], "reason": "same scoped CSV method in different wording",
+                    "evidence_refs": ["experience:" + ref for ref in ids]}], "unknowns": []})
+            value = copy.deepcopy(diagnosis); value["necessity"].update(verdict="noop", allow_add=False)
+            return response(value)
+        result = learn(self.store, self.ids, StructuredModel(teacher, limits=model_limits(max_calls=6)), policy=policy())
+        self.assertEqual(result["status"], "noop")
+        self.assertEqual([c["prompt_id"] for c in calls], ["extract_v1", "maintain_experience_v1", "diagnose_v1"])
+        self.assertIn("LINK_DUPLICATE", str(calls[-1]["messages"]))
+        self.assertEqual(len(result["maintenance_review_ids"]), 1)
+        from memory_orchestrator.maintenance import active_memory_relations
+        selected = find_related(self.store.list("experiences"), "CSV", "demo-project", limit=4, max_chars=16000,
+                                relations=active_memory_relations(self.store, "demo-project"))
+        self.assertEqual(len(selected), 1)
+        self.assertEqual(set(selected[0]["maintenance_member_ids"]), {old["record_id"], result["experience_ids"][0]})
+        self.assertEqual(self.store.get("experiences", old["record_id"]), old)
+        self.assertEqual(len(result["usage_ids"]), 3)
+
+    def test_failure_signature_beats_unrelated_lexical_match(self):
+        extraction, _, _ = drafts(self.source)
+        records = []
+        for identifier, title, signature in [("failure-match", "Preserve identifiers", {"criterion_ids": ["identifier-preservation"]}),
+                                               ("a-lexical", "CSV transform parse export", {})]:
+            draft = copy.deepcopy(extraction["experiences"][0]); draft["title"] = title
+            records.append({"record_id": identifier, "project_id": "demo-project", "canonical_key": identifier,
+                "draft": draft, "packet_id": "p", "created_at": "2026-09-18", "failure_signature": signature})
+        result = find_related(records, "CSV", "demo-project", limit=1, max_chars=16000,
+                              failure_signature={"criterion_ids": ["identifier-preservation"]})
+        self.assertEqual(result[0]["record_id"], "failure-match")
+        self.assertGreater(result[0]["retrieval_score"]["failure_signature"], 0)
+
     def test_non_skill_diagnosis_keeps_experience_without_proposal_or_fact_edit(self):
         fact = self.store.remember("user", "Chinese replies", "explicit user input")
         extraction, diagnosis, _ = drafts(self.source)
@@ -222,6 +331,12 @@ class LearningTests(unittest.TestCase):
         self.store.add_episode(other)
         with self.assertRaises(DomainError): learn(self.store, [self.ids[0], "foreign"], model, policy=policy())
         self.assertEqual(call.calls, [])
+
+    def test_disabling_related_lookup_does_not_disable_current_source_learning(self):
+        model, call = self.model([EXAMPLES["abstain"]])
+        result = learn(self.store, self.ids, model, policy=policy(max_related_chars=0, max_related_experiences=0))
+        self.assertEqual(result["status"], "abstained")
+        self.assertEqual(len(call.calls), 1)
 
     def test_diagnosis_cannot_target_absent_base_skill(self):
         extraction, diagnosis, _ = drafts(self.source)
@@ -500,6 +615,71 @@ class LearningTests(unittest.TestCase):
         aggregate = report(self.store, "demo-project")["usage"]["tokens"]
         self.assertEqual(aggregate["missing_calls"]["input_tokens"], 1)
         self.assertEqual(aggregate["known_subtotals"]["output_tokens"], 7)
+
+    def test_outer_transport_price_survives_actual_learn_and_call_usage_report(self):
+        empty = copy.deepcopy(EXAMPLES["extraction"]); empty["experiences"] = []
+        priced = response(empty)
+        priced["usage"].update(monetary_cost=0.125, currency="USD", price_version="provider-test-v1")
+        model = StructuredModel(FakeCall([priced]), limits=model_limits())
+        result = learn(self.store, self.ids, model, policy=policy())
+        self.assertEqual(result["status"], "noop")
+        usage = self.store.get("usage", result["usage_ids"][0])
+        self.assertEqual(usage["monetary_cost"], 0.125)
+        self.assertEqual(usage["currency"], "USD")
+        self.assertEqual(usage["price_version"], "provider-test-v1")
+        self.assertEqual(usage["raw"]["monetary_cost"], 0.125)
+        aggregate = report(self.store, "demo-project")["usage"]
+        self.assertEqual(aggregate["known_cost_subtotals"], {"USD": 0.125})
+        self.assertEqual(aggregate["missing_cost_calls"], 0)
+
+    def test_unpriced_transport_stays_unknown_despite_a_model_body_price_claim(self):
+        untrusted = {**copy.deepcopy(EXAMPLES["abstain"]), "monetary_cost": 99.0,
+                     "currency": "USD", "price_version": "model-invented"}
+        model = StructuredModel(FakeCall([response(untrusted)]), limits=model_limits(max_format_repairs=0))
+        result = learn(self.store, self.ids, model, policy=policy())
+        self.assertEqual(result["status"], "error")
+        usage = self.store.get("usage", result["usage_ids"][0])
+        for field in ("monetary_cost", "currency", "price_version"):
+            self.assertIsNone(usage[field])
+        aggregate = report(self.store, "demo-project")["usage"]
+        self.assertIsNone(aggregate["complete_cost_totals"])
+        self.assertEqual(aggregate["missing_cost_calls"], 1)
+
+    def test_rejected_model_attempt_cost_is_preserved_and_zero_is_reported(self):
+        empty = copy.deepcopy(EXAMPLES["extraction"]); empty["experiences"] = []
+        replies = [response("not JSON"), response(empty)]
+        for reply, cost in zip(replies, (0.125, 0.0)):
+            reply["usage"].update(monetary_cost=cost, currency="USD", price_version="provider-test-v1")
+        result = learn(self.store, self.ids, StructuredModel(FakeCall(replies), limits=model_limits()), policy=policy())
+        self.assertEqual(result["status"], "noop")
+        rows = [self.store.get("usage", ref) for ref in result["usage_ids"]]
+        self.assertEqual([row["monetary_cost"] for row in rows], [0.125, 0.0])
+        self.assertEqual(rows[0]["raw"]["status"], "invalid_output")
+        aggregate = report(self.store, "demo-project")["usage"]
+        self.assertEqual(aggregate["unique_calls"], 2)
+        self.assertEqual(aggregate["complete_cost_totals"], {"USD": 0.125})
+
+    def test_interrupted_provider_wait_is_not_charged_as_local_maintenance(self):
+        clock = [10.0]
+        interrupted = KeyboardInterrupt("provider operation interrupted")
+        def invoke(_):
+            clock[0] += 30.0
+            raise interrupted
+        model = StructuredModel(invoke, limits=model_limits())
+        with patch("memory_orchestrator.telemetry.time.monotonic", side_effect=lambda: clock[0]):
+            with self.assertRaises(KeyboardInterrupt) as caught:
+                learn(self.store, self.ids, model, policy=policy())
+        self.assertIs(caught.exception, interrupted)
+        rows = [row for row in self.store.list("stage_measurements", "demo-project") if row["stage"] == "extract"]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["elapsed_seconds"], 30.0)
+        self.assertEqual(rows[0]["delegated_seconds"], 30.0)
+        self.assertEqual(rows[0]["local_seconds"], 0.0)
+        self.assertEqual(rows[0]["status"], "error")
+        self.assertIsNone(rows[0]["monetary_cost"])
+        self.assertEqual(self.store.list("usage", "demo-project"), [])
+        self.assertEqual({r["status"] for r in self.store.list("learning_cycles", "demo-project")}, {"planned"})
+        self.assertIsNone(report(self.store, "demo-project")["usage"]["complete_cost_totals"])
 
 
 if __name__ == "__main__": unittest.main()

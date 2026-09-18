@@ -1,0 +1,25 @@
+test_transport_fee_metadata_survives_the_structured_call (test_memory_model.ModelTests.test_transport_fee_metadata_survives_the_structured_call) ... FAIL
+test_sdk_preserves_explicit_fee_without_pricing_by_guess (test_memory_model.ModelTests.test_sdk_preserves_explicit_fee_without_pricing_by_guess) ... FAIL
+
+======================================================================
+FAIL: test_transport_fee_metadata_survives_the_structured_call (test_memory_model.ModelTests.test_transport_fee_metadata_survives_the_structured_call)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model.py", line 170, in test_transport_fee_metadata_survives_the_structured_call
+    self.assertEqual(record.get("monetary_cost"), 0.125)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None != 0.125
+
+======================================================================
+FAIL: test_sdk_preserves_explicit_fee_without_pricing_by_guess (test_memory_model.ModelTests.test_sdk_preserves_explicit_fee_without_pricing_by_guess)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model.py", line 190, in test_sdk_preserves_explicit_fee_without_pricing_by_guess
+    self.assertEqual(result["usage"].get("monetary_cost"), 0.02)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None != 0.02
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.004s
+
+FAILED (failures=2)

@@ -5,7 +5,8 @@ import json
 import math
 import re
 
-from .schemas import DomainError, digest, new_id
+from .schemas import DomainError, digest, new_id, validate
+from .telemetry import measure_stage
 
 
 def terms(text):
@@ -17,7 +18,92 @@ def terms(text):
     return result
 
 
-def select_context(store, task, policy, *, explicit_snapshot=None):
+def select_context(store, task, policy, *, explicit_snapshot=None, purpose='learning'):
+    with measure_stage(store, task['project_id'], 'select', purpose=purpose,
+                       subject_ref=task.get('task_id')):
+        return _select_context(store, task, policy, explicit_snapshot=explicit_snapshot)
+
+
+def _fact_score(fact, task, query):
+    declared = fact.get('applicability')
+    if declared is not None:
+        if declared.get('global') is True:
+            return 1.0, 'declared_global'
+        if declared.get('task_ids') and task.get('task_id') not in declared['task_ids']:
+            return None, 'task_relevance'
+        if declared.get('task_families') and task.get('task_family') not in declared['task_families']:
+            return None, 'task_relevance'
+        keywords = terms(' '.join(declared.get('query_terms', [])))
+        if keywords and not keywords & query:
+            return None, 'task_relevance'
+        if not any(declared.get(key) for key in ('task_ids', 'task_families', 'query_terms')):
+            overlap = len(query & terms(fact['content']))
+            return (float(overlap), 'lexical_task_overlap') if overlap else (None, 'task_relevance')
+        return 1.0 + len(query & terms(fact['content'])), 'declared_applicability'
+    # Legacy global user preferences remain usable; new scoped facts can declare applicability.
+    if fact['kind'] == 'user':
+        return 1.0 + len(query & terms(fact['content'])), 'legacy_user_unspecified_applicability'
+    overlap = len(query & terms(fact['content']))
+    return (float(overlap), 'lexical_task_overlap') if overlap else (None, 'task_relevance')
+
+
+def relation_applicability(store, relation, task, snapshot):
+    """Check the measured/observed scope without upgrading it to causal truth."""
+    if relation.get('project_id') != task['project_id'] or relation.get('kind') not in ('co_used', 'measured_effect'):
+        return False, 'relation_kind_or_project'
+    if not relation.get('supporting_refs') or type(relation.get('value')) not in (int, float) or not math.isfinite(relation['value']):
+        return False, 'relation_evidence'
+    scope = relation.get('applicable_context')
+    if isinstance(scope, str):
+        if scope != task.get('task_id'):
+            return False, 'task_scope'
+    elif isinstance(scope, dict):
+        if scope.get('task_family') is not None and scope['task_family'] != task.get('task_family'):
+            return False, 'task_family'
+        if scope.get('task_ids') and task.get('task_id') not in scope['task_ids']:
+            return False, 'task_scope'
+        if not scope.get('task_family') and not scope.get('task_ids'):
+            return False, 'unknown_scope'
+    else:
+        return False, 'unknown_scope'
+    try:
+        source = store.snapshot(relation.get('source_snapshot_digest') or relation.get('snapshot_digest'))
+        if source['project_id'] != task['project_id']:
+            return False, 'source_project'
+        pair = (relation['from'], relation['to'])
+        if any(key not in source['skills'] for key in pair):
+            return False, 'source_skill'
+        revisions = relation.get('skill_revisions')
+        if relation['kind'] == 'measured_effect':
+            validate('MeasuredEffect', relation)
+            plan = store.get('contrast_plans', relation['contrast_plan_ref'])
+            if plan['source_snapshot_digest'] != source['snapshot_id'] or any(plan[key] != relation[key] for key in ('from', 'to')):
+                return False, 'contrast_binding'
+            witnesses = [r for r in store.list('contrast_results', project_id=task['project_id'])
+                         if r.get('plan_ref') == plan['contrast_plan_id'] and r.get('plan_hash') == digest(plan)
+                         and r.get('relation_ref') == relation['relation_id'] and r.get('value') == relation['value']]
+            if len(witnesses) != 1:
+                return False, 'contrast_evidence'
+        if revisions is None:
+            revisions = {key: source['skills'][key]['revision'] for key in pair}
+        checks = dict(revisions)
+        checks.update(relation.get('dependency_revisions', {}))
+        checks.update({r['skill_id']: r['revision'] for r in relation.get('background_skill_refs', [])})
+        if any(key not in snapshot['skills'] or snapshot['skills'][key]['revision'] != revision
+               or key not in source['skills'] or source['skills'][key]['revision'] != revision for key, revision in checks.items()):
+            return False, 'skill_revision'
+        if source['snapshot_id'] != snapshot['snapshot_id']:
+            committed = store.release_history(task['project_id'])
+            published = {row['new_digest'] for row in committed} | {row['expected_active_digest'] for row in committed}
+            published.add(store.active(task['project_id'])['snapshot_id'])
+            if source['snapshot_id'] not in published:
+                return False, 'unpublished_source'
+    except (DomainError, KeyError, TypeError):
+        return False, 'unverifiable_relation'
+    return True, 'matching_scope_and_revisions'
+
+
+def _select_context(store, task, policy, *, explicit_snapshot=None):
     """Select by task family/trigger text; prose conditions remain advisory.
 
     Budget units are Unicode characters, not a claim about model tokenization.
@@ -39,14 +125,22 @@ def select_context(store, task, policy, *, explicit_snapshot=None):
     budget = policy['max_context_chars']
     used = 0
     facts = store.facts(project)
-    fact_refs = []
+    fact_refs, fact_selection, ranked_facts = [], [], []
+    query = terms(task['description'])
     for fact in facts['user'] + facts['project']:
+        score, reason = _fact_score(fact, task, query)
+        if score is None:
+            exclusions.append({'memory_id': fact['memory_id'], 'record_id': fact['record_id'], 'reason': reason})
+            continue
+        ranked_facts.append((score, fact['record_id'], fact, reason))
+    for score, _, fact, reason in sorted(ranked_facts, key=lambda row: (-row[0], row[1])):
         text = fact['content']
         cost = len(text) + (1 if chunks else 0)
         if used + cost <= budget:
             chunks.append(text)
             used += cost
             fact_refs.append(fact['record_id'])
+            fact_selection.append({'record_id': fact['record_id'], 'score': score, 'reason': reason})
         else:
             exclusions.append({'memory_id': fact['memory_id'], 'reason': 'budget'})
 
@@ -69,7 +163,6 @@ def select_context(store, task, policy, *, explicit_snapshot=None):
         values = set(ids)
         return any(values.intersection(skills[s]['content']['declared_conflicts']) for s in values)
 
-    query = terms(task['description'])
     requested_family = terms(task.get('task_family') or '')
     scores = {}
     for sid, skill in skills.items():
@@ -80,24 +173,33 @@ def select_context(store, task, policy, *, explicit_snapshot=None):
             exclusions.append({'skill_id': sid, 'reason': 'scope_or_trigger'})
         else:
             scores[sid] = float(trigger_matches + family_match)
-    relations = store.list('relations', project_id=project)
+    relations, relation_filters = [], []
+    for relation in store.list('relations', project_id=project):
+        eligible, reason = relation_applicability(store, relation, task, snapshot)
+        relation_filters.append({'relation_id': relation['relation_id'], 'eligible': eligible, 'reason': reason})
+        if eligible:
+            relations.append(relation)
 
     def score(sid):
-        related = 0.0
+        related, references = 0.0, []
         for relation in relations:
             forward = relation.get('from') == sid and relation.get('to') in selected
             reverse_co_use = relation.get('kind') == 'co_used' and relation.get('to') == sid and relation.get('from') in selected
             if not (forward or reverse_co_use):
                 continue
+            needed_background = {r['skill_id'] for r in relation.get('background_skill_refs', [])}
+            if not needed_background <= set(selected) | set(closure(sid)):
+                continue
             value = relation.get('value')
             if relation.get('kind') in ('co_used', 'measured_effect') and relation.get('supporting_refs'):
                 if type(value) in (int, float) and math.isfinite(value):
                     related += value
-        return scores[sid] + weight * related
+                    references.append(relation['relation_id'])
+        return scores[sid] + weight * related, references
 
     while scores and len(roots) < policy['max_roots']:
-        sid = min(scores, key=lambda s: (-score(s), s))
-        ranking = score(sid)
+        sid = min(scores, key=lambda s: (-score(s)[0], s))
+        ranking, relation_refs = score(sid)
         del scores[sid]
         if sid in selected:
             continue
@@ -120,7 +222,7 @@ def select_context(store, task, policy, *, explicit_snapshot=None):
         selected.extend(additional)
         chunks.extend(disclosures)
         used += cost
-        roots.append({'skill_id': sid, 'score': ranking})
+        roots.append({'skill_id': sid, 'score': ranking, 'relation_refs': relation_refs})
     exclusions.extend({'skill_id': sid, 'reason': 'root_limit'} for sid in scores if sid not in selected)
     supplied = '\n'.join(chunks)
     manifest = {'manifest_id': new_id('context'), 'project_id': project,
@@ -129,7 +231,8 @@ def select_context(store, task, policy, *, explicit_snapshot=None):
                 'selected_skills': [{'skill_id': s, 'revision': skills[s]['revision']} for s in selected],
                 'dependency_closure': selected, 'roots': roots, 'supplied_text': supplied,
                 'supplied_hash': digest(supplied), 'exclusions': exclusions,
-                'fact_refs': fact_refs, 'fact_read_errors': facts['errors'],
+                'fact_refs': fact_refs, 'fact_read_errors': facts['errors'], 'fact_selection': fact_selection,
+                'relation_filters': relation_filters,
                 'selection_method': 'lexical family/trigger overlap; prose conditions remain advisory',
                 'budget': {'unit': 'characters', 'limit': budget, 'used': len(supplied),
                            'token_measurement': 'not_measured'},

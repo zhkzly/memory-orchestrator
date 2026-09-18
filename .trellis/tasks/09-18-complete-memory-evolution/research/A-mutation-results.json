@@ -1,0 +1,200 @@
+[
+  {
+    "id": "seed_replacement",
+    "target": "src/memory_orchestrator/store.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_store.StoreTests.test_explicit_seed_is_generation_zero_and_cannot_replace_existing_baseline -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/store.py\"); s=p.read_text(); before=\"if self._baseline_digest(project_id, current) != digest(payload):\"; after=\"if False:\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "9017becd6982df2f92a6bffd56c5c5aed2edc640a45465ae3df700333470c325",
+    "after_sha256": "9017becd6982df2f92a6bffd56c5c5aed2edc640a45465ae3df700333470c325",
+    "output": "✅ 执照发放:src/memory_orchestrator/store.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "fact_applicability",
+    "target": "src/memory_orchestrator/store.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_store.StoreTests.test_fact_applicability_is_preserved_and_not_reward_managed -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/store.py\"); s=p.read_text(); before=\"fact[\\\"applicability\\\"] = deepcopy(applicability if applicability is not None else previous[\\\"applicability\\\"])\"; after=\"pass\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "9017becd6982df2f92a6bffd56c5c5aed2edc640a45465ae3df700333470c325",
+    "after_sha256": "9017becd6982df2f92a6bffd56c5c5aed2edc640a45465ae3df700333470c325",
+    "output": "✅ 执照发放:src/memory_orchestrator/store.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "binary_decisive_failure",
+    "target": "src/memory_orchestrator/feedback.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_feedback.FeedbackTests.test_binary_failure_does_not_hide_missing_criteria_and_unknown_is_not_pass -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/feedback.py\"); s=p.read_text(); before=\"if any(item['\\''outcome'\\''] == '\\''fail'\\'' for item in known.values()):\"; after=\"if not missing and any(item['\\''outcome'\\''] == '\\''fail'\\'' for item in known.values()):\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "after_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "output": "✅ 执照发放:src/memory_orchestrator/feedback.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "weighted_denominator",
+    "target": "src/memory_orchestrator/feedback.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_feedback.FeedbackTests.test_weighted_unknown_retains_original_denominator_and_mixed_sources -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/feedback.py\"); s=p.read_text(); before=\"total = sum(c['\\''weight'\\''] for c in plan['\\''criteria'\\''])\"; after=\"total = sum(c['\\''weight'\\''] for c in plan['\\''criteria'\\''] if c['\\''criterion_id'\\''] in known)\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "after_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "output": "✅ 执照发放:src/memory_orchestrator/feedback.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "duplicate_criteria",
+    "target": "src/memory_orchestrator/feedback.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_feedback.FeedbackTests.test_duplicate_unknown_criterion_and_unbound_success_never_become_best_score -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/feedback.py\"); s=p.read_text(); before=\"cid in ids and cid not in found\"; after=\"cid in ids\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "after_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "output": "✅ 执照发放:src/memory_orchestrator/feedback.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "artifact_binding",
+    "target": "src/memory_orchestrator/feedback.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_sampling.SamplingTests.test_assessment_recomputation_rejects_score_and_raw_identity_changes -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/feedback.py\"); s=p.read_text(); before=\"and digest(output['\\''artifact'\\'']) == item['\\''evaluated_state_digest'\\'']\"; after=\"and True\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "after_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "output": "✅ 执照发放:src/memory_orchestrator/feedback.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "proxy_source",
+    "target": "src/memory_orchestrator/feedback.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_sampling.SamplingTests.test_proxy_uses_structured_model_budget_and_cannot_be_relabelled_external -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/feedback.py\"); s=p.read_text(); before=\"_require(item['\\''source'\\''] == '\\''llm_proxy'\\'',\"; after=\"_require(True,\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "after_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "output": "✅ 执照发放:src/memory_orchestrator/feedback.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "implicit_unknown_retry",
+    "target": "src/memory_orchestrator/feedback.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_sampling.SamplingTests.test_started_without_return_blocks_until_explicit_original_result -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/feedback.py\"); s=p.read_text(); before=\"decision = (resolutions or {}).get(request_ref)\"; after=\"decision = (resolutions or {}).get(request_ref) or {'\\''action'\\'': '\\''confirmed_not_executed'\\'', '\\''source'\\'': '\\''mutant'\\'', '\\''evidence'\\'': ['\\''fabricated permission'\\'']}\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "after_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "output": "✅ 执照发放:src/memory_orchestrator/feedback.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "usage_reuse",
+    "target": "src/memory_orchestrator/feedback.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_sampling.SamplingTests.test_resume_rebuilds_from_saved_return_without_reexecution_or_double_usage -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/feedback.py\"); s=p.read_text(); before=\"uid = attempt['\\''attempt_id'\\''] + '\\'':usage:'\\'' + str(i)\"; after=\"uid = new_id('\\''duplicate_usage'\\'')\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "after_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "output": "✅ 执照发放:src/memory_orchestrator/feedback.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "complete_inventory",
+    "target": "src/memory_orchestrator/sampling.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_sampling.SamplingTests.test_completed_recovery_rechecks_inventory_and_retains_resource_dependencies -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/sampling.py\"); s=p.read_text(); before=\"if not blocked:\\n        for plan in plans:\\n            verify_group_completion(store, plan)\"; after=\"if False:\\n        for plan in plans:\\n            verify_group_completion(store, plan)\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "79bd1e5f23947a3ff45dc6ebee48b18c047d0e9f7bf8f7c498e2e99178043a58",
+    "after_sha256": "79bd1e5f23947a3ff45dc6ebee48b18c047d0e9f7bf8f7c498e2e99178043a58",
+    "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "prepared_source",
+    "target": "src/memory_orchestrator/lineage.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_sampling.SamplingTests.test_prepared_local_run_cannot_be_disguised_as_unknown_import -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); before=\"known = run is not None or execution is not None or planned_group is not None or attempt is not None\"; after=\"known = run is not None or execution is not None or attempt is not None\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "be7f7dfe5b0f92fa8b60e4282e0d3f80529f89c6830dcbffbed05b9f6eb28b40",
+    "after_sha256": "be7f7dfe5b0f92fa8b60e4282e0d3f80529f89c6830dcbffbed05b9f6eb28b40",
+    "output": "✅ 执照发放:src/memory_orchestrator/lineage.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "comparison_source",
+    "target": "src/memory_orchestrator/lineage.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_sampling.SamplingTests.test_known_comparison_request_and_return_cannot_reenter_as_unknown_training -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); before=\"for kind in ('\\''evaluation_plans'\\'', '\\''contrast_plans'\\''):\"; after=\"for kind in ():\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "be7f7dfe5b0f92fa8b60e4282e0d3f80529f89c6830dcbffbed05b9f6eb28b40",
+    "after_sha256": "be7f7dfe5b0f92fa8b60e4282e0d3f80529f89c6830dcbffbed05b9f6eb28b40",
+    "output": "✅ 执照发放:src/memory_orchestrator/lineage.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "streamed_parent",
+    "target": "src/memory_orchestrator/lineage.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_sampling.SamplingTests.test_streamed_parent_source_is_checked_after_index_without_fabricating_missing_parent -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); before=\"if current.get('\\''trace_ref'\\''):\"; after=\"if False:\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "be7f7dfe5b0f92fa8b60e4282e0d3f80529f89c6830dcbffbed05b9f6eb28b40",
+    "after_sha256": "be7f7dfe5b0f92fa8b60e4282e0d3f80529f89c6830dcbffbed05b9f6eb28b40",
+    "output": "✅ 执照发放:src/memory_orchestrator/lineage.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "proxy_trace_index",
+    "target": "src/memory_orchestrator/feedback.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_sampling.SamplingTests.test_trace_path_is_frozen_and_proxy_resumes_bounded_index_before_model -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/feedback.py\"); s=p.read_text(); before=\"trace_limits=cfg.get('\\''trace_limits'\\'')\"; after=\"trace_limits=None\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "after_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "output": "✅ 执照发放:src/memory_orchestrator/feedback.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "callback_source",
+    "target": "src/memory_orchestrator/lineage.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_sampling.SamplingTests.test_known_comparison_request_and_return_cannot_reenter_as_unknown_training -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); before=\"known = run is not None or execution is not None or planned_group is not None or attempt is not None\"; after=\"known = run is not None or execution is not None or planned_group is not None\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "be7f7dfe5b0f92fa8b60e4282e0d3f80529f89c6830dcbffbed05b9f6eb28b40",
+    "after_sha256": "be7f7dfe5b0f92fa8b60e4282e0d3f80529f89c6830dcbffbed05b9f6eb28b40",
+    "output": "✅ 执照发放:src/memory_orchestrator/lineage.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "unindexed_parent_chain",
+    "target": "src/memory_orchestrator/lineage.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_zero_dependency_body_budget_still_indexes_transitive_source_eligibility -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); before=\"result['\\''unindexed_trace_refs'\\''] = sorted(unindexed_traces)\"; after=\"result['\\''unindexed_trace_refs'\\''] = []\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "be7f7dfe5b0f92fa8b60e4282e0d3f80529f89c6830dcbffbed05b9f6eb28b40",
+    "after_sha256": "be7f7dfe5b0f92fa8b60e4282e0d3f80529f89c6830dcbffbed05b9f6eb28b40",
+    "output": "✅ 执照发放:src/memory_orchestrator/lineage.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "unknown_external_parent",
+    "target": "src/memory_orchestrator/store.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest tests.test_memory_store.StoreTests.test_unknown_external_parent_is_preserved_like_archived_parent_gap -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/store.py\"); s=p.read_text(); before=\"if parent is None:\\n                    parent_events = None\"; after=\"if parent is None:\\n                    parent_events = []\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "9017becd6982df2f92a6bffd56c5c5aed2edc640a45465ae3df700333470c325",
+    "after_sha256": "9017becd6982df2f92a6bffd56c5c5aed2edc640a45465ae3df700333470c325",
+    "output": "✅ 执照发放:src/memory_orchestrator/store.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "id": "proxy_transport_cost",
+    "target": "src/memory_orchestrator/feedback.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest tests.test_memory_sampling.SamplingTests.test_proxy_costs_follow_transport_usage_in_success_failure_and_missing_cases -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/feedback.py\"); s=p.read_text(); before=\"**{key: entry.get(key) for key in ('\\''monetary_cost'\\'', '\\''currency'\\'', '\\''price_version'\\'')}\"; after=\"**{}\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "passed_and_restored",
+    "exit_code": 0,
+    "before_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "after_sha256": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "output": "✅ 执照发放:src/memory_orchestrator/feedback.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  }
+]

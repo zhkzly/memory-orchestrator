@@ -2,12 +2,15 @@
 from __future__ import annotations
 
 import math
+import re
 from collections import Counter
 
 from .schemas import DomainError, digest, new_id, now_iso, validate
 from .evaluation import _summaries
 from .outcomes import parse_execution
-from .lineage import check_feedback_binding
+from .lineage import check_feedback_binding, resolve_episode_source
+from .feedback import verify_assessment, aggregate, check_planned_feedback
+from .telemetry import summarize_stages, measure_stage
 
 
 def aggregate_usage(records):
@@ -165,6 +168,7 @@ def _comparisons(store, plans, validations, observations):
             "protocol_ref": plan["protocol_ref"], "protocol_hash": plan["protocol_hash"],
             "purpose": purpose, "update_mode": mode, "scoring_policy": plan.get("scoring_policy", "unknown"),
             "proposal_ids": plan.get("proposal_ids", []), "acceptance_scope": plan["acceptance_scope"],
+            "quality_case_refs": plan.get('quality_case_refs', [c['id'] for c in case_set['cases']]),
             "repeat_count": plan["repeat_count"], "planned_requests": len(plan["requests"]),
             "recorded_results": len(observed), "missing_request_ids": facts["missing"],
             "mismatched_request_ids": facts["mismatched"], "by_split": grouped})
@@ -196,6 +200,46 @@ def _feedback_fact(store, feedback, run_id, group, run=None):
 
 def _sampling_outcome(store, run_id, run, group, feedback_records):
     try:
+        slot = next(item for item in group['slots'] if item['run_id'] == run_id)
+        plan_ref = slot.get('feedback_plan_id')
+        linked = _optional(store, 'assessments', run.get('assessment_ref')) if run else None
+        if linked is not None and linked.get('feedback_plan_ref'):
+            plan_ref = linked['feedback_plan_ref']
+        if plan_ref:
+            plan = _optional(store, 'feedback_plans', plan_ref)
+            if plan is None:
+                return {**_unknown('Frozen feedback has not been prepared'), 'assessment_source': 'planned_pending'}
+            if (plan['project_id'] != group['project_id'] or plan['run_id'] != run_id
+                    or plan['protocol_id'] != group['protocol_id'] or plan['subject']['kind'] != 'episode'
+                    or plan['task_revision'] != group['task_revision']):
+                raise DomainError('assessment_binding', 'Feedback plan does not bind the frozen sampling slot.')
+            episode = store.get('episodes', plan['subject']['ref'])
+            source = resolve_episode_source(store, episode)
+            if (not source['known'] or source['run_id'] != run_id or source['group'] is None
+                    or source['group']['group_id'] != group['group_id']
+                    or source['snapshot_digest'] != group['snapshot_digest']):
+                raise DomainError('assessment_binding', 'Saved source does not belong to the sampling group.')
+            assessment = linked or _optional(store, 'assessments', plan['assessment_id'])
+            if assessment is not None:
+                verified = verify_assessment(store, assessment, expected_subject=plan['subject'],
+                                             expected_protocol=group['protocol_id'])
+                values, feedbacks = verified['aggregate'], verified['feedbacks']
+                origin = 'referenced' if linked is not None else 'recovered_assessment'
+            else:
+                feedbacks = [item for request in plan['requests']
+                             if (item := _optional(store, 'feedback', request['feedback_id'])) is not None]
+                for item in feedbacks:
+                    check_planned_feedback(store, plan, item)
+                values, origin = aggregate(plan, feedbacks), 'partial_planned_feedback'
+            raw = source.get('execution')
+            terminal = parse_execution(raw['output'], source.get('binding_error'), plan['scoring_policy']) if raw else None
+            return {'outcome': values['outcome'], 'score': values['score'],
+                    'assessment_ref': assessment['assessment_id'] if assessment else None,
+                    'feedback_plan_ref': plan_ref, 'assessment_source': origin,
+                    'criterion_ids': values['expected_criterion_ids'], 'missing_criterion_ids': values['missing_criterion_ids'],
+                    'criterion_coverage': values['criterion_coverage'], 'score_bounds': values['score_bounds'],
+                    'feedback_sources': values['feedback_sources'], 'feedback_refs': [f['check_id'] for f in feedbacks],
+                    'execution_status': run['execution_status'] if run else terminal['execution_status'] if terminal else 'unknown'}
         episodes = {e["episode_id"] for e in store.list("episodes", project_id=group["project_id"])
                     if e["source"]["reference"] == run_id}
         matches = [f for f in feedback_records if f["criterion_id"] == "task_outcome"
@@ -270,19 +314,126 @@ def _sampling(store, groups, runs, feedback_records):
     return {"groups": details, "by_mode": _mode_groups(mode_rows, "same_task_run_group")}, missing, incomplete
 
 
-def _proposal_attempts(store, project_id):
+def _learning_cycles(store, project_id):
     cycles = {}
     for record in store.list("learning_cycles", project_id=project_id):
         key = record["cycle_id"]
         if key not in cycles or record["status"] != "planned":
             cycles[key] = record
-    slots = [slot for cycle in cycles.values() for slot in cycle["candidate_slots"]]
+    return list(cycles.values())
+
+
+def _proposal_attempts(store, project_id):
+    slots = [slot for cycle in _learning_cycles(store, project_id) for slot in cycle["candidate_slots"]]
     return {"planned_slots": len(slots), "slot_status_counts": dict(Counter(s["status"] for s in slots)),
             "finished_slots": sum(s["status"] in ("candidate", "error", "noop") for s in slots),
             "note": "Proposal slots are not unique snapshots or model repair calls; usage records count physical calls."}
 
 
+def sampling_quality(store, project_id, plan_ids):
+    """Read just these frozen groups; experiment scoring does not write a full project report."""
+    groups = [store.get('run_groups', identifier) for identifier in plan_ids]
+    if any(group['project_id'] != project_id for group in groups):
+        raise DomainError('project_mismatch', 'Sampling report belongs to another project.')
+    runs = {slot['run_id']: row for group in groups for slot in group['slots']
+            if (row := _optional(store, 'runs', slot['run_id'])) is not None}
+    legacy = any(not slot.get('feedback_plan_id') for group in groups for slot in group['slots'])
+    return _sampling(store, groups, runs, store.list('feedback', project_id=project_id) if legacy else [])[0]
+
+
+def _wall_segments(store, project_id, kind, group_key):
+    groups = {}
+    for row in store.list(kind, project_id=project_id):
+        segments = groups.setdefault(row[group_key], {})
+        current = segments.get(row['segment_id'])
+        if current is None or row.get('finished_at') is not None:
+            segments[row['segment_id']] = row
+    results = []
+    for identifier, segments in sorted(groups.items()):
+        rows = list(segments.values())
+        known = [r['elapsed_seconds'] for r in rows if r.get('finished_at') is not None
+                 and type(r.get('elapsed_seconds')) in (int, float) and math.isfinite(r['elapsed_seconds'])]
+        results.append({group_key: identifier, 'segment_ids': sorted(segments),
+                        'known_active_wall_seconds': sum(known), 'missing_segments': len(rows) - len(known),
+                        'complete_active_wall_seconds': sum(known) if len(known) == len(rows) else None,
+                        'statuses': dict(Counter(r['status'] for r in rows))})
+    return results
+
+
+def _library_history(store, project_id):
+    active = store.active(project_id)
+    releases = [r for r in store.release_history(project_id) if r['new_generation'] <= active['generation']]
+    baseline = releases[0]['expected_active_digest'] if releases else active['snapshot_id']
+    points = [(0, baseline, 'baseline', None)] + [(r['new_generation'], r['new_digest'], r['kind'], r['release_id']) for r in releases]
+    rows, previous = [], set()
+    for generation, sid, kind, release_ref in points:
+        snapshot = store.snapshot(sid)
+        current = set(snapshot['skills'])
+        rows.append({'generation': generation, 'snapshot_digest': sid, 'kind': kind, 'release_ref': release_ref,
+                     'skill_count': len(current), 'rule_count': sum(len(s['content']['steps']) for s in snapshot['skills'].values()),
+                     'asset_bytes': sum(len(text.encode('utf-8')) for text in snapshot['assets'].values()),
+                     'added_skill_ids': sorted(current - previous), 'removed_skill_ids': sorted(previous - current)})
+        previous = current
+    return rows
+
+
+def _consumption_layers(store, project_id, runs):
+    provided, observed = {}, []
+    for context in store.list('contexts', project_id=project_id):
+        for skill in context['selected_skills']:
+            key = skill['skill_id'] + '@' + skill['revision']
+            provided.setdefault(key, set()).add(context['manifest_id'])
+    for run in runs.values():
+        raw = _optional(store, 'executions', run['raw_events_ref'])
+        output = raw.get('output') if raw else None
+        declarations = output.get('consumption_events', []) if isinstance(output, dict) else []
+        for ref in run['consumption_events']:
+            match = re.fullmatch(re.escape(run['run_id']) + r'#/output/consumption_events/(\d+)', ref)
+            if match is None or not isinstance(declarations, list) or int(match[1]) >= len(declarations):
+                continue
+            item = declarations[int(match[1])]
+            level = item.get('level', item.get('evidence_kind', 'unclassified'))
+            level = level if level in ('read', 'behavior') else 'unclassified'
+            observed.append({'run_id': run['run_id'], 'skill_id': item['skill_id'], 'level': level,
+                             'source_ref': ref, 'authority': 'execution_provider_report'})
+    effects = store.list('contrast_results', project_id=project_id)
+    return {'provided_manifest_counts': {key: len(values) for key, values in provided.items()},
+            'observed_events': observed, 'observed_level_counts': dict(Counter(r['level'] for r in observed)),
+            'effect_records': [{'contrast_result_id': r['contrast_result_id'], 'status': r['status'],
+                                'value': r['value'], 'relation_ref': r['relation_ref']} for r in effects],
+            'note': 'Provided, reported read, reported behavior and measured conditional effects are distinct; absent level is unclassified, not inferred use.'}
+
+
+def _memory_progress(store, project_id):
+    from .maintenance import maintenance_summary
+    cycles = _learning_cycles(store, project_id)
+    bindings = store.list('goal_bindings', project_id=project_id)
+    manifests = store.list('trace_manifests', project_id=project_id)
+    checkpoints = {}
+    for row in store.list('trace_index_checkpoints', project_id=project_id):
+        prior = checkpoints.get(row['trace_id'])
+        if prior is None or (row['next_raw_byte'], row['created_at']) > (prior['next_raw_byte'], prior['created_at']):
+            checkpoints[row['trace_id']] = row
+    return {'maintenance': maintenance_summary(store, project_id),
+            'goal_binding_statuses': dict(Counter(row['status'] for row in bindings)),
+            'derived_goal_bindings': sum(len(row['resolved_bindings']) for row in bindings),
+            'trace_count': len(manifests), 'archived_trace_bytes': sum(row['byte_length'] for row in manifests),
+            'indexed_events': sum(row['event_count'] for row in checkpoints.values()),
+            'incomplete_traces': [row['trace_id'] for row in manifests if not checkpoints.get(row['trace_id'], {}).get('index_complete')],
+            'signature_retrieval_hits': sum(row.get('retrieval', {}).get('signature_hits', 0) for row in cycles),
+            'range_reads': sum(row.get('read_stats', {}).get('range_reads', 0) for row in cycles),
+            'decoded_body_bytes_read': sum(row.get('read_stats', {}).get('body_bytes', 0) for row in cycles),
+            'necessity_verdicts': dict(Counter(row['draft'].get('necessity', {}).get('verdict', 'legacy_unrecorded')
+                                                for row in store.list('diagnoses', project_id=project_id))),
+            'judgment_origin': 'Model judgments are not semantic accuracy measurements; unlabeled accuracy remains unknown.'}
+
+
 def report(store, project_id):
+    with measure_stage(store, project_id, 'report', purpose='maintenance') as meter:
+        return _report(store, project_id, meter.measurement_id)
+
+
+def _report(store, project_id, report_measurement_ref):
     plans = sorted(store.list("evaluation_plans", project_id=project_id), key=lambda p: p["plan_id"])
     validations = store.list("validations", project_id=project_id)
     observations = {p["plan_id"]: _read_comparison(store, p) for p in plans}
@@ -302,6 +453,14 @@ def report(store, project_id):
     unknown_tasks = sum(e["task"].get("task_id") is None for e in episodes)
     usages = store.list("usage", project_id=project_id)
     usage_summary = aggregate_usage(usages)
+    maintenance = summarize_stages(store.list('stage_measurements', project_id=project_id))
+    attempts = store.list('callback_attempts', project_id=project_id)
+    returned_attempts = {row['attempt_id'] for row in store.list('callback_returns', project_id=project_id)}
+    unreturned_attempts = [row['attempt_id'] for row in attempts if row['attempt_id'] not in returned_attempts]
+    usage_summary['callback_attempts'] = len(attempts)
+    usage_summary['unreturned_attempt_ids'] = unreturned_attempts
+    unfinished_learning = [row['cycle_id'] for row in _learning_cycles(store, project_id) if row['status'] == 'planned']
+    usage_summary['unfinished_learning_cycle_ids'] = unfinished_learning
     unfinished = sum(rid not in result_records or result_records[rid].get("execution_ref") is None for rid in requests)
     usage_summary["unaccounted_evaluation_requests"] = unfinished
     groups = store.list("run_groups", project_id=project_id)
@@ -310,7 +469,7 @@ def report(store, project_id):
     sampling_slots = sum(len(group["slots"]) for group in groups)
     usage_summary["unaccounted_sampling_slots"] = missing_slots
     usage_summary["incomplete_sampling_slots"] = incomplete_slots
-    if unfinished or missing_slots:
+    if unfinished or missing_slots or unreturned_attempts or unfinished_learning:
         usage_summary["complete_cost_totals"] = None
         usage_summary["tokens"]["complete_totals"] = {field: None for field in usage_summary["tokens"]["complete_totals"]}
     comparisons, comparison_modes = _comparisons(store, plans, validations, observations)
@@ -325,6 +484,15 @@ def report(store, project_id):
                "comparison_summary": {"planned_requests": planned, "by_mode": comparison_modes, **quality},
                "pooled_rate_note": "Overall success rate mixes base and candidate requests; it is not an improvement estimate.",
                "sampling_slots": sampling_slots, "sampling": sampling,
+               "maintenance": maintenance,
+               "report_measurement_ref": report_measurement_ref,
+               "measurement_scope": "Cost totals cover listed completed records; this report's own timing is appended on return and addressed by report_measurement_ref.",
+               "batch_wall_time": {'sampling': _wall_segments(store, project_id, 'sampling_segments', 'batch_id'),
+                                   'comparison': _wall_segments(store, project_id, 'comparison_segments', 'comparison_id'),
+                                   'sampling_receipts': store.list('sampling_batch_receipts', project_id=project_id)},
+               "library_history": _library_history(store, project_id),
+               "memory_progress": _memory_progress(store, project_id),
+               "consumption_layers": _consumption_layers(store, project_id, runs),
                "unique_case_identity_count": len({(p["case_set_hash"], r["case_ref"]) for p in plans for r in p["requests"]}),
                "known_task_ids": sorted(task_ids), "episodes_with_unknown_task_id": unknown_tasks,
                "distinct_known_task_count": len(task_ids), "episode_count": len(episodes),

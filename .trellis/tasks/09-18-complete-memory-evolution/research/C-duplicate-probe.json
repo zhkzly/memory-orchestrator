@@ -1,0 +1,1150 @@
+[
+  {
+    "iteration": 0,
+    "release_count": 0,
+    "errors": [
+      {
+        "code": "verification_obligations",
+        "comparison": {
+          "blocked": [],
+          "comparison_id": "comparison_1fdd99b9aad846dfbf664823c7949070",
+          "plan_ids": [
+            "plan_2900043bb0f540c9aa548f2a68197abd"
+          ],
+          "selection_id": "selection_c7462ef73ef84f46b5df242847391951",
+          "status": "completed",
+          "usage_ids": [
+            "attempt_0668271941f6c71a0a2122fff4e071f3a62c7dbe30fc87aebc529ea3130269bc:usage:0",
+            "attempt_3bbaff4381b762973b6b0cc670d9d73428065b13b1ba2a2fe43a066cdfa8e740:usage:0",
+            "attempt_4e8e3ab46b04a9c810fb4a52b326ad0bf3afca433dbbe556cb77cdef64ce29c6:usage:0",
+            "attempt_559fd33e02fa7e97530ce75dd2459f6afac4e1dbd4a5c53ffc593b1300d7b660:usage:0",
+            "attempt_72bc7275140c19891b19a7c8393da9442c9f05958aa8add65b66e1b8d66771d4:usage:0",
+            "attempt_7c04da2351edee7c543dfd02ce8277fb7ce2fd7ca6647d26713aa06cc8f0333f:usage:0",
+            "attempt_84f37b75a96a2035803c73b5a222a21c37deb3fc16611493836437ec9b6e9800:usage:0",
+            "attempt_8c4a21750fa979dc74bf11170c408e6c897421c4fcb527d29c796b8c77d9ca7a:usage:0",
+            "attempt_a5726de18e48df4aab6acc4f262c4f97966b424af9eafc4677fe0e4d709486cd:usage:0",
+            "attempt_b3be3803dee02f0b516c66ea1563f194571f4db51e5b885096eaade8be526459:usage:0",
+            "attempt_bcb47e731d3b78dd6634b081a0146c0c02180f6a48a5b0cf233d9787e8151d60:usage:0",
+            "attempt_c0ca62def9230289d266ae62245e8c137e4d305552051a63f9ff6d58638adb27:usage:0",
+            "attempt_c2f05297dfca62cceb75f112bbe617b63d3d502b040101cbcf59d07975613d3d:usage:0",
+            "attempt_cb37e0b0d01c8dd6459f2345c807a959979bdd5098bb3f103424cda3fb191fc4:usage:0",
+            "attempt_d43124b8175ea94ec848af3c15554fa66123f64941aabbe6593a1ebaaa9121d4:usage:0",
+            "attempt_f0137650442945f921ba286124ab28d5c48e03aadb316cbdd993fe8bb39efcb6:usage:0"
+          ],
+          "validation_ids": [
+            "validation_b82fae7206c54504aa4b7f22d67560ea"
+          ]
+        },
+        "cycle_id": "learning_183f9768675c4cf299d989227f25bdd8",
+        "details": {},
+        "error_id": "evolution_error_887f6b1d06ae42efa5241fdecc604a09",
+        "message": "Diagnosis or proposal requirements were omitted",
+        "project_id": "csv-demo",
+        "stage": "publish"
+      }
+    ],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_2900043bb0f540c9aa548f2a68197abd"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_2900043bb0f540c9aa548f2a68197abd"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_2900043bb0f540c9aa548f2a68197abd"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_2900043bb0f540c9aa548f2a68197abd"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_2900043bb0f540c9aa548f2a68197abd"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_2900043bb0f540c9aa548f2a68197abd"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_5129a3f3999510c43330fe2032745d3f4bad4e8e494034e729951a5663d85632"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "iteration": 1,
+    "release_count": 0,
+    "errors": [
+      {
+        "code": "verification_obligations",
+        "comparison": {
+          "blocked": [],
+          "comparison_id": "comparison_fb8990fcf0d64fb4be386b8c19033ae5",
+          "plan_ids": [
+            "plan_97f2b79c190541338911471ac6487f62"
+          ],
+          "selection_id": "selection_cd34112aa6f548b58e795e5eb140d43c",
+          "status": "completed",
+          "usage_ids": [
+            "attempt_08f86be530bebd98378b27d2f2eb6964288cf3c792496c65885c2851999b90bd:usage:0",
+            "attempt_147695efedc9afd236440a2b9022349d2618ea2bf5fd5ef1b9eaf861f3211976:usage:0",
+            "attempt_4134afe99b1bf549744790214e1208952eda0d484a04b9a8223363421cdecffd:usage:0",
+            "attempt_5fbe165337b058b4bf48bf87201d675a844d8020c622dc86fe73b70c27af8082:usage:0",
+            "attempt_637a9931802b9d213efd562ec995986565632c74a7e535d4f99ad77a45dbd3fb:usage:0",
+            "attempt_6e180700fc2624faab0afdeea16cd990983440835dfcbb46035d10e2552796eb:usage:0",
+            "attempt_76e27c97332c3353d713a4206d66a13aeb9732b41792486a5b7bd8c61c930bdb:usage:0",
+            "attempt_80e902eaba2c028d459a899979650113c8ce43dc4e9e1b43665169bbc438024a:usage:0",
+            "attempt_81bf79ebb603f9eb5edb7b3ecd096fb53a11c5724ca0b60289689b3a32dcf877:usage:0",
+            "attempt_9fee1634145e437f47d539860385a22b239ac70fc49a1a7a58ff2cd9f8664332:usage:0",
+            "attempt_a4c3dc7c8d3e723e270b72fa765e7f90138d9fde8e6818432798cd3cd8f3946f:usage:0",
+            "attempt_b4630057a86b001103753d7d5920a6421dc4dc65a0af574edbf4599362f5e2f9:usage:0",
+            "attempt_b469e67052aba7c306416a9d3f3fdd265f3e37f7156028710ebb7c61a3cc505e:usage:0",
+            "attempt_b48f23cd9104fbddd069f2f7729a1872e110cec57924eca530f4a7c64eb90cd7:usage:0",
+            "attempt_b633cd1503342b68daeb291b1b67be33548bf71337d622ae24798e8c139d27d3:usage:0",
+            "attempt_ebc5da0a11b87eedf1c469125bf8cc4ebb85df343e74e4ef80bd0485047abe9b:usage:0"
+          ],
+          "validation_ids": [
+            "validation_0df78af888064b91ab103691966d3d34"
+          ]
+        },
+        "cycle_id": "learning_eda2347a68b243068dc8d08da28c258b",
+        "details": {},
+        "error_id": "evolution_error_b995b688bf38407783d06b4ee883e66e",
+        "message": "Diagnosis or proposal requirements were omitted",
+        "project_id": "csv-demo",
+        "stage": "publish"
+      }
+    ],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_97f2b79c190541338911471ac6487f62"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_97f2b79c190541338911471ac6487f62"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_97f2b79c190541338911471ac6487f62"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_97f2b79c190541338911471ac6487f62"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_97f2b79c190541338911471ac6487f62"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_97f2b79c190541338911471ac6487f62"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_234b373dfddeda104bbdbf0ee5f0fbd08494ec5a0af41087aa747cf4c3cdeda5"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "iteration": 2,
+    "release_count": 0,
+    "errors": [
+      {
+        "code": "verification_obligations",
+        "comparison": {
+          "blocked": [],
+          "comparison_id": "comparison_55ac6418655c4da09d6b1522b46c3bee",
+          "plan_ids": [
+            "plan_c4c16b92fd164084ab660eaeac6d7c49"
+          ],
+          "selection_id": "selection_444d45a8624d4aa3b7eb443dd7f2ffbb",
+          "status": "completed",
+          "usage_ids": [
+            "attempt_02d7419830613cdf10c45d1f075bb8b9989486ac0c190befd5dcf5d2377cd417:usage:0",
+            "attempt_05526ec21ebf77302d95083e4795b60773911434261aad47b45d7b716f180e9a:usage:0",
+            "attempt_1637f41345fe389a8b22bf1a9f78d33053b0887543cf35b09f9b88db6656daf2:usage:0",
+            "attempt_360b5f6f3fc30c118b96d4f752e68a4048a22c6c41cb792fd91c4f3fef197a05:usage:0",
+            "attempt_44b7ec5a282bce673649d224e54a0a07fba870ed47b991218d1746bee3387589:usage:0",
+            "attempt_5202542642050b7fac8dd905c13b56df091d2dfe4521419727c163423e2da64f:usage:0",
+            "attempt_57bbcc4866375320f44afe094b616cbea6f8c2b902a059366919fb30f72330d0:usage:0",
+            "attempt_60f35991e50be0e73a9e6f102b7e15778c93bde6680c2bb4dcf885b8dbe047ad:usage:0",
+            "attempt_6b88044be64708b01fc1ee50beb82ae748f8d7f03e2e590b20b298641d5b26b9:usage:0",
+            "attempt_864462608f29748225124937f820fd4f4784995de8f93df6776766620876a5f1:usage:0",
+            "attempt_9791825eed0180c807ebb4cd3f7d409dfe22bee352562de2053c58e275d88223:usage:0",
+            "attempt_991eea5226d76cd9bf9a3342252ab1762f3c75d6187326583099666a904da499:usage:0",
+            "attempt_a049c135c31e7c86e974ed0a9837417068c93c9b71723afbc04d5f147231456e:usage:0",
+            "attempt_bff5018dad561743bbc1484cadde710ffe63ecbdc37836ba6723629639450a9d:usage:0",
+            "attempt_cf95dbde84f8ab883c3dab81d01cb445625df82b0de30d23557cb221e0c06ca7:usage:0",
+            "attempt_f5be692c447074353ff8636f931789c85a2398b4ac07b352debea04f09e11db2:usage:0"
+          ],
+          "validation_ids": [
+            "validation_d3600a7994594184a3605a37c91a9894"
+          ]
+        },
+        "cycle_id": "learning_a386b57ecc254c609a84037f6f94fcb1",
+        "details": {},
+        "error_id": "evolution_error_b54585647b914a4a948f083f5a755b52",
+        "message": "Diagnosis or proposal requirements were omitted",
+        "project_id": "csv-demo",
+        "stage": "publish"
+      }
+    ],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_c4c16b92fd164084ab660eaeac6d7c49"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_c4c16b92fd164084ab660eaeac6d7c49"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_c4c16b92fd164084ab660eaeac6d7c49"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_c4c16b92fd164084ab660eaeac6d7c49"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_c4c16b92fd164084ab660eaeac6d7c49"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_c4c16b92fd164084ab660eaeac6d7c49"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_d91494c0d9bdae366b3bc342641389537ab34831dce7dbf059af85adc76060be"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "iteration": 3,
+    "release_count": 0,
+    "errors": [
+      {
+        "code": "verification_obligations",
+        "comparison": {
+          "blocked": [],
+          "comparison_id": "comparison_6eabffad10d64470b8237bb89010e1b3",
+          "plan_ids": [
+            "plan_d6e20d04860f405496b9aa2897d61f35"
+          ],
+          "selection_id": "selection_b67e4e41491f43ca9bac53cf1aed486f",
+          "status": "completed",
+          "usage_ids": [
+            "attempt_0816e0e4fe1e550f70a4edbb1ccf8f00fa99aa1b352fffce7bcd79847e9a673a:usage:0",
+            "attempt_48e0445779c775912179c00e412f6a87bbe20b1076a57cd1bf2e81c13c403b1c:usage:0",
+            "attempt_91c403fd4999040b71a6d26dd26e57933d412ebf98589dfb99a58237c8898333:usage:0",
+            "attempt_92644cd99176056c52672bf6a74da7a534ee311413dcedb98220f29717fa4716:usage:0",
+            "attempt_9db6b85bfbf18c9a0c956da39971bc72c77de14d632b4485fc08ac32af93cdc9:usage:0",
+            "attempt_b0b832ec26cec4a12bc76a6d6349792903ca525da0eb08c085e139b2db497d80:usage:0",
+            "attempt_be10f012c1e4639544ef7eac130f058f3559d75229166cc6d7c44b4be986d161:usage:0",
+            "attempt_be9590f847c39d0c74cbea62988660978ef64610a12eddc5e4071401a2868600:usage:0",
+            "attempt_cb3bf09cf7ba21317fb99f0f8437c0efdc2563658eec17bbbebb9b4c7f4161b6:usage:0",
+            "attempt_cb5e4bcebc9692d407631bd6f9e356aedfdf00daee5ce905661ae1f6482bed59:usage:0",
+            "attempt_d6cff192781c37d4817c9b9f558e375ecb7b9addb077f28cba4c2dedeb4d8904:usage:0",
+            "attempt_ddd6e4ff1f5378ed6be5f038714b6444bf1ea8ec50bd107f4bb42e65447c61e9:usage:0",
+            "attempt_e613dcdd02c53cfb855a1294780db4fbbebfade0ad1325d23a71f59bac3dc9d0:usage:0",
+            "attempt_f3f4cac23df3d0ddd25dbd50c6ec09d6b81c1df5c745e0f85e1a2494771d0939:usage:0",
+            "attempt_f7679de5494e0494ba4ae6641d6b43138d171a9aa3b04ade0613d87bee052d84:usage:0",
+            "attempt_fcc7916352016da5b21c72d79433a601468d881d12ac599372607687e85a4843:usage:0"
+          ],
+          "validation_ids": [
+            "validation_a8acfb034cfd4a8a88e7cd912caa7a23"
+          ]
+        },
+        "cycle_id": "learning_3c47a02915434107884cd9c675888b46",
+        "details": {},
+        "error_id": "evolution_error_db61923a2975435586b446c5dc02fe69",
+        "message": "Diagnosis or proposal requirements were omitted",
+        "project_id": "csv-demo",
+        "stage": "publish"
+      }
+    ],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_d6e20d04860f405496b9aa2897d61f35"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_d6e20d04860f405496b9aa2897d61f35"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_d6e20d04860f405496b9aa2897d61f35"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_d6e20d04860f405496b9aa2897d61f35"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_d6e20d04860f405496b9aa2897d61f35"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_d6e20d04860f405496b9aa2897d61f35"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_331615d1e7e28eacfcdd00b6a68b9a18fa614ca739a8ea5c208a47bbfb6c43be"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "iteration": 4,
+    "release_count": 0,
+    "errors": [
+      {
+        "code": "verification_obligations",
+        "comparison": {
+          "blocked": [],
+          "comparison_id": "comparison_1e636bd01af84e6594143beb8d09a79c",
+          "plan_ids": [
+            "plan_f75cc035da9c4e6ebc708571f7aaba66"
+          ],
+          "selection_id": "selection_0103828e9b50480d9dcfb4a36275750a",
+          "status": "completed",
+          "usage_ids": [
+            "attempt_0675f412e9f0d99bfbe7730e93e8cc6ea1032b07c0a4742b4ceb3082cc2fa210:usage:0",
+            "attempt_0a66691d520729c9bc69e578b8abfb1f30a4885eaea4dc3047acfa05546d5970:usage:0",
+            "attempt_41709ebb937792f2875e546a1f40fbdfef918244c7a9fdbc46d7e42c4b4ffd4e:usage:0",
+            "attempt_5cca4c6355f2893f9bff2d3ed97dc11e2ffda9a730d79613bc4b4f0769959e43:usage:0",
+            "attempt_5e3bb2faa1836d532184c0247c90ff51b6f5069bf48fac55569622193b64976e:usage:0",
+            "attempt_61b00c186753876297b91bc8a14a2a8432693ff30bf0c0b697911a48006f3d14:usage:0",
+            "attempt_7b8b81ed44e2dbb9ee7b13529b355ad009a6de449e7278ba46f8757d1dbc9fb0:usage:0",
+            "attempt_991dc748a980d68f0da67efdb32b3803faa341f277ebc9e30898a8f312e0187b:usage:0",
+            "attempt_a0a774a481ede102f04e4602fa98d2aa4845b823ec82fd11f2b9997055c4f492:usage:0",
+            "attempt_ae04f60a37e73daaeca024cc8bf99df11e9ac431b7a7ca4f5d0b91d5585cf6ef:usage:0",
+            "attempt_b613b1ef777de1440118b88fb44648273fc56b54b9a46530cd893d26850da81c:usage:0",
+            "attempt_d135ee3aceb133cec82eedf791c5e203c811bf17c0743ac5302ca2b51af01367:usage:0",
+            "attempt_dd85dacdd9fb8818e760b8f5ef5f16c58982f48d8f9be97965884c89dc6283d6:usage:0",
+            "attempt_e7dd809be3a2fb2c38ec45d96cdd510f78e3a0c65bb3380497337ea6dffc9405:usage:0",
+            "attempt_ecfbbd08edd2e4ac4b841632a5f9e9395ac98fced8c42a9ef62c4d914281cecd:usage:0",
+            "attempt_ff7707977b6aeff03ed1415db783d29b738099b145cff6c92183196206faa9a0:usage:0"
+          ],
+          "validation_ids": [
+            "validation_a1d070fdcf54414db59692c1c3841861"
+          ]
+        },
+        "cycle_id": "learning_45b514b03d96488aa59ae4cb357d8c30",
+        "details": {},
+        "error_id": "evolution_error_5fe0703451c54cb6802c04fbc98dce94",
+        "message": "Diagnosis or proposal requirements were omitted",
+        "project_id": "csv-demo",
+        "stage": "publish"
+      }
+    ],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f75cc035da9c4e6ebc708571f7aaba66"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f75cc035da9c4e6ebc708571f7aaba66"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f75cc035da9c4e6ebc708571f7aaba66"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f75cc035da9c4e6ebc708571f7aaba66"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f75cc035da9c4e6ebc708571f7aaba66"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f75cc035da9c4e6ebc708571f7aaba66"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_4cdeb2d59b1c604ba8dc3b34979d4419eb9faea67bf122cc43e45f968a43b365"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "iteration": 5,
+    "release_count": 1,
+    "errors": [],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_cb07d549acbf4c8d806ad4539dc66440"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_cb07d549acbf4c8d806ad4539dc66440"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_cb07d549acbf4c8d806ad4539dc66440"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_cb07d549acbf4c8d806ad4539dc66440"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_cb07d549acbf4c8d806ad4539dc66440"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_cb07d549acbf4c8d806ad4539dc66440"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_fd06f63fa2e32128ee46e631752dd6db5a2de2be973e4606e33bfd1a8eaa9f73"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "iteration": 6,
+    "release_count": 0,
+    "errors": [
+      {
+        "code": "verification_obligations",
+        "comparison": {
+          "blocked": [],
+          "comparison_id": "comparison_399d1c47309d4f5bb3d7f159396cc18e",
+          "plan_ids": [
+            "plan_85a9f1ca19134011a8817f9ed171ad5f"
+          ],
+          "selection_id": "selection_e1a7d836b0024d059bbdbc2aed8e8da4",
+          "status": "completed",
+          "usage_ids": [
+            "attempt_00bc0643d87d8e19ffa346866d82c198f5caf62e336019360fdfef38851a317e:usage:0",
+            "attempt_0b6633dfff472b28faf74f7351aa87a38fa5d7e0a8bde281f25ec433c6c8b9dc:usage:0",
+            "attempt_0ef820d9c0c7dd20fca1cb65e843d860a4522e7ab2b8fc4eda9e25ccf85fc186:usage:0",
+            "attempt_394bb6bd47cd1e6202d304f068fb48ef3765ce64511f66a764a0245788badaac:usage:0",
+            "attempt_43fc1b7dc047b793f908566c51e4315e0131bb56c6dd7976e60277f2f8761464:usage:0",
+            "attempt_63e8b526f236d0c4b789cab1df65b509d8e3e47409952f16953e8595550a576d:usage:0",
+            "attempt_a0ff2d5701a2696a77b867edf51b6ecdf00b53067c1e63980082c86987a897f6:usage:0",
+            "attempt_a866e70938be0964d5d63f36f9c475a329e7751817f7c0a98ed0f960b6820e11:usage:0",
+            "attempt_accbdb61b58df34cc5f6069aa2046bddfbf6f0e564bb5fecc9ff104b57e61c90:usage:0",
+            "attempt_c7dee8b8641abfb8ff1e75b882727243a786218045f1d4df0b9b5061acdfc50a:usage:0",
+            "attempt_d98e2aca2f6f80877f9e63af323a3eb2d1791f069e26f84ff6ac1b5c23fcdeb6:usage:0",
+            "attempt_eaa1789921a3d829d3c378357651e10d6a71331007c83a3a58254547f6407baa:usage:0",
+            "attempt_f11761e12c6b229ffd046bd0a0c950a8f4944d1a5080ad602015f096b72037e3:usage:0",
+            "attempt_fbd1f6c04e938e82d3d7efd87d051f5adaac115da7ac75f36cd4a735278ec2e9:usage:0",
+            "attempt_fc5c8adee2b4f16ef7e6877ed9ae12a50d9b04b2bf0aa1e227dc38a29cc82ad1:usage:0",
+            "attempt_ff36b84f3568cf4d1dad9eff4b94052ea7edac2ef677aaacfccbf75208bb9a34:usage:0"
+          ],
+          "validation_ids": [
+            "validation_546890f6207f4684a8c15f2453107201"
+          ]
+        },
+        "cycle_id": "learning_bbfdb1dfd2b14207b69908d28e94677e",
+        "details": {},
+        "error_id": "evolution_error_713f380d370b49179c05aab1ce2e7c6d",
+        "message": "Diagnosis or proposal requirements were omitted",
+        "project_id": "csv-demo",
+        "stage": "publish"
+      }
+    ],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_85a9f1ca19134011a8817f9ed171ad5f"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_85a9f1ca19134011a8817f9ed171ad5f"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_85a9f1ca19134011a8817f9ed171ad5f"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_85a9f1ca19134011a8817f9ed171ad5f"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_85a9f1ca19134011a8817f9ed171ad5f"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_85a9f1ca19134011a8817f9ed171ad5f"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_cf89e2c68ec75b8dccd006d9508b67509edda3541ce769a018bbecba52f8faed"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "iteration": 7,
+    "release_count": 1,
+    "errors": [],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ad522513267e42539dad3389bb72bdf9"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ad522513267e42539dad3389bb72bdf9"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ad522513267e42539dad3389bb72bdf9"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ad522513267e42539dad3389bb72bdf9"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ad522513267e42539dad3389bb72bdf9"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ad522513267e42539dad3389bb72bdf9"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_5262321a31515168bd481eb63b78a77bcfc69a11d6d04952fd03320c871e3f17"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "iteration": 8,
+    "release_count": 0,
+    "errors": [
+      {
+        "code": "verification_obligations",
+        "comparison": {
+          "blocked": [],
+          "comparison_id": "comparison_a4d651616e0a409fad801c890cb0757c",
+          "plan_ids": [
+            "plan_6734fd99bf284fd1ae8692b757fe18b3"
+          ],
+          "selection_id": "selection_c862d40b21de4c93ba0f59fe799d81c4",
+          "status": "completed",
+          "usage_ids": [
+            "attempt_046bd8ef5bb8571b767b4301cc812ea6be80b6a1d76fb6107c0a5795b5a0479f:usage:0",
+            "attempt_1036df457552cc41256b268ca7b220ea21a6ad8e6d878cb7cb2aa17c7c74b2c2:usage:0",
+            "attempt_2854c364ddd004eb29a5408cdad27b33c4e5c80eb2bcb2314a402507ad25635e:usage:0",
+            "attempt_47f8daaef3f6719566d74c6f48d03ebf7b08b59eae64272b4dcda87e9e71ace1:usage:0",
+            "attempt_5c036d5106d909c3ec955b841a5d04aa10c20db5cbf16beec3086c8acd3f9141:usage:0",
+            "attempt_63fc77962b4b8fcaa87de5c9b7cd0cc1d2fca55b66903d4cd9afa8ab9383174d:usage:0",
+            "attempt_7db641435999263f11da7a67452f884bf1ba72abceb4222895e17dcac041fd48:usage:0",
+            "attempt_8025ff165d0a7f3732907111f78a8809889874f1b8d804cbf6631694416197de:usage:0",
+            "attempt_8976cfeed8a2a5765558d013ebd7239b5f53bdd645e423218ad87fc8454b5adc:usage:0",
+            "attempt_a0ada21cff084ab1fbb2afa7bde602c94733f0ee6793bbec0fd3bcc1db9ef322:usage:0",
+            "attempt_a591301cbc07c04962517672eb3a7e4c8cbb832815bfde8a404c25bfec282357:usage:0",
+            "attempt_bf7499b5e166205886e6f18c8e3d572880dcfd42275c6416c1bc611e7434baab:usage:0",
+            "attempt_c6e9af34f91bfc7838baa4ca3f9c78a01d77b74f7f8587fd666cc82f52276986:usage:0",
+            "attempt_c92fc9340a2fe996da0847983a28ee610747e380598babf63bd6edb60975833b:usage:0",
+            "attempt_d8619ed4855bb53a01fc92239995d8fc9591959154d6dbb8463ca2ecd117e1c6:usage:0",
+            "attempt_e044d4e94ce116678c27aef40359906f42c53431af6c4d3be9b28a8ac7255397:usage:0"
+          ],
+          "validation_ids": [
+            "validation_df89d66631154efb90c2dd64866e6478"
+          ]
+        },
+        "cycle_id": "learning_8912853ffdef427d88c69a54f4123243",
+        "details": {},
+        "error_id": "evolution_error_3b8abb6a7768461e86e131a6c19aad9d",
+        "message": "Diagnosis or proposal requirements were omitted",
+        "project_id": "csv-demo",
+        "stage": "publish"
+      }
+    ],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_6734fd99bf284fd1ae8692b757fe18b3"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_6734fd99bf284fd1ae8692b757fe18b3"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_6734fd99bf284fd1ae8692b757fe18b3"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_6734fd99bf284fd1ae8692b757fe18b3"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_6734fd99bf284fd1ae8692b757fe18b3"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_6734fd99bf284fd1ae8692b757fe18b3"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_6ac4a4e4f671ba551b0d14771777de0af546f821db9ff7d40bd251bab2d09a02"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "iteration": 9,
+    "release_count": 1,
+    "errors": [],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ae3a02abf85f4502a0a2a5eb5b6693ee"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ae3a02abf85f4502a0a2a5eb5b6693ee"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ae3a02abf85f4502a0a2a5eb5b6693ee"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ae3a02abf85f4502a0a2a5eb5b6693ee"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ae3a02abf85f4502a0a2a5eb5b6693ee"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_ae3a02abf85f4502a0a2a5eb5b6693ee"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_233559bed90a2febfe478190b4c41e4200191dae5aa6e771eb9342e80c8b64ec"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "iteration": 10,
+    "release_count": 0,
+    "errors": [
+      {
+        "code": "verification_obligations",
+        "comparison": {
+          "blocked": [],
+          "comparison_id": "comparison_075b06c091fa4210844855157f7bea0c",
+          "plan_ids": [
+            "plan_f958a2ade7144649bd0d2993b4d0f110"
+          ],
+          "selection_id": "selection_f90af6ed5f814da49a839ef00813eee3",
+          "status": "completed",
+          "usage_ids": [
+            "attempt_1361cf2c5e89fe8b95588b9f3d535626a5863895bd0c6604533bc10409b0e807:usage:0",
+            "attempt_2e5eeae2ab11f6cd7e5e13a7cf5f8ba3fe158d01c0268c2aa4944d4087a429ef:usage:0",
+            "attempt_37c14023c0dbc3363e07a4ffa0e4b214c75b1461fdd4c5d4a1c354b7fcc8db72:usage:0",
+            "attempt_3ab7095644894f22fae3f5e011f5b963b723505fe3c4a83a787f309efcab075b:usage:0",
+            "attempt_41f72729ac70015a4d9c84bb97b690e6073579e7e0e9ccc51b8a77b2ee56810e:usage:0",
+            "attempt_56db883a6391b059130b84deac9e5cdefa7a7da0a850f868f3ee7b436e928bdd:usage:0",
+            "attempt_571016d04bcd0a9073ef1320ba629517fa54f453cb1a74a5c6f390fb26fb60fa:usage:0",
+            "attempt_5efb449df8039a21866c39d0fd326f5997e046aebfed54443fdd65bed21aaa32:usage:0",
+            "attempt_67d75f4cba717db971c8a9a90fa83c2e9a4f94a6c1db06a17b53976b7897008e:usage:0",
+            "attempt_6fdb6bf2769e94d047f7a6caa7222cec0024478a8b4855777255aa3d4d6d9d69:usage:0",
+            "attempt_9e75c49fe63d189b72af6f5aa3ee212a2e30e48949198588f4c57db355f4c46d:usage:0",
+            "attempt_b2d6048295839f4dc6aa1cfb129dd6d6bcd27c9a80b79275b7f824ab8790b82d:usage:0",
+            "attempt_c4a2b9b1f9db1736cd2c646180ff6fa69fd138aa3c4e68767b7fa901b6da7f19:usage:0",
+            "attempt_dd2ed98cca200362e9a64d1c30a1fcdf49acac2a201a882436be2f4209a9ed80:usage:0",
+            "attempt_eb4b84488649750ef2d571b3584ccb4f42d1ce19225ebad74aa2ff9709cf02e5:usage:0",
+            "attempt_f680c16f80646e5c5e160c46debb9074c356a34439e211a176fb3462e209d3bf:usage:0"
+          ],
+          "validation_ids": [
+            "validation_e4e8ad801afd4490a98f684b6a9f9fbe"
+          ]
+        },
+        "cycle_id": "learning_8d8272b329e74c39b6d6876c7a577681",
+        "details": {},
+        "error_id": "evolution_error_c5ed6b77249e4474abd207a8bcc2a319",
+        "message": "Diagnosis or proposal requirements were omitted",
+        "project_id": "csv-demo",
+        "stage": "publish"
+      }
+    ],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f958a2ade7144649bd0d2993b4d0f110"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f958a2ade7144649bd0d2993b4d0f110"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f958a2ade7144649bd0d2993b4d0f110"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f958a2ade7144649bd0d2993b4d0f110"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f958a2ade7144649bd0d2993b4d0f110"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f958a2ade7144649bd0d2993b4d0f110"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_1a934dde8975161803c0e370668b92220de4004c102edb762894bc948e9b5a3e"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "iteration": 11,
+    "release_count": 1,
+    "errors": [],
+    "validations": [
+      {
+        "status": "accepted",
+        "reasons": [],
+        "gate_results": [
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f0a3115db6114989ab0189d05b56db10"
+            ],
+            "gate": "complete_results",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f0a3115db6114989ab0189d05b56db10"
+            ],
+            "gate": "target_gain",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f0a3115db6114989ab0189d05b56db10"
+            ],
+            "gate": "regression_non_decrease",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f0a3115db6114989ab0189d05b56db10"
+            ],
+            "gate": "call_budget",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f0a3115db6114989ab0189d05b56db10"
+            ],
+            "gate": "scope_bound",
+            "passed": true
+          },
+          {
+            "detail": "Computed from the frozen plan and all recorded request results.",
+            "evidence_refs": [
+              "plan_f0a3115db6114989ab0189d05b56db10"
+            ],
+            "gate": "versions_unchanged",
+            "passed": true
+          },
+          {
+            "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+            "evidence_refs": [
+              "verification_d1047a50f0993e038837e36ccb35c6ed1516dbf2c6244d750e0507416685e098"
+            ],
+            "gate": "verification_complete",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  }
+]

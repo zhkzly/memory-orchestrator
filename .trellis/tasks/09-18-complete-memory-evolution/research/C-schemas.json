@@ -1,0 +1,1256 @@
+{
+  "ComparisonSegment": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "record_id": {"type": "string", "minLength": 1},
+      "segment_id": {"type": "string", "minLength": 1},
+      "project_id": {"type": "string", "minLength": 1},
+      "comparison_id": {"type": "string", "minLength": 1},
+      "started_at": {"type": "string", "minLength": 1},
+      "finished_at": {"type": ["string", "null"]},
+      "elapsed_seconds": {"type": ["number", "null"], "minimum": 0},
+      "status": {"enum": ["running", "completed", "blocked", "error"]},
+      "started_attempt_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+      "completed_attempt_ids": {"type": "array", "items": {"type": "string", "minLength": 1}}
+    },
+    "required": ["record_id", "segment_id", "project_id", "comparison_id", "started_at", "finished_at", "elapsed_seconds", "status", "started_attempt_ids", "completed_attempt_ids"],
+    "additionalProperties": false
+  },
+  "VerificationMaterials": {
+    "type": "object",
+    "properties": {
+      "materials_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "project_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "value": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "check_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "purpose": {
+                  "enum": [
+                    "target",
+                    "regression",
+                    "transfer",
+                    "distinguish"
+                  ]
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "evidence_kind": {
+                  "enum": [
+                    "task",
+                    "asset",
+                    "combination"
+                  ]
+                },
+                "case_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "asset_test_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "check_ref",
+                "purpose",
+                "description",
+                "evidence_kind",
+                "case_ids",
+                "asset_test_ids"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "cases": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "asset_tests": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "test_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "owner_skill_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "entrypoint": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "args": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "stdin": {
+                  "type": "string"
+                },
+                "input_files": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "expected_stdout": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "expected_files": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "timeout_seconds": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "max_output_bytes": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "required_isolation": {
+                  "enum": [
+                    "process",
+                    "sandbox"
+                  ]
+                }
+              },
+              "required": [
+                "test_id",
+                "owner_skill_ref",
+                "entrypoint",
+                "args",
+                "stdin",
+                "input_files",
+                "expected_stdout",
+                "expected_files",
+                "timeout_seconds",
+                "max_output_bytes",
+                "required_isolation"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "bindings": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "relation_case_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "relation_pairs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "to": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "required": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "from",
+                "to",
+                "required"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "relation_policy": {
+            "type": "object",
+            "properties": {
+              "max_pairs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "background_skill_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "task_family": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "max_pairs",
+              "background_skill_ids",
+              "task_family"
+            ],
+            "additionalProperties": false
+          },
+          "asset_runner": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "config": {
+                "type": "object"
+              },
+              "isolation": {
+                "enum": [
+                  "process",
+                  "sandbox"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "config",
+              "isolation"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "checks",
+          "cases",
+          "asset_tests",
+          "bindings",
+          "relation_case_ids",
+          "relation_pairs",
+          "relation_policy",
+          "asset_runner"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "materials_id",
+      "project_id",
+      "value"
+    ],
+    "additionalProperties": false,
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+  },
+  "VerificationPlan": {
+    "type": "object",
+    "properties": {
+      "verification_plan_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "project_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "evaluation_plan_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "base_digest": {
+        "type": "string",
+        "minLength": 1
+      },
+      "candidate_digest": {
+        "type": "string",
+        "minLength": 1
+      },
+      "expected_generation": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "proposal_hashes": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "materials_ref": {
+        "type": "string",
+        "minLength": 1
+      },
+      "materials_hash": {
+        "type": "string",
+        "minLength": 1
+      },
+      "requirements": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "requirement_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "source_hash": {
+              "type": "string",
+              "minLength": 1
+            },
+            "check": {
+              "type": "object"
+            },
+            "check_ref": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "case_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "asset_test_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "status": {
+              "enum": [
+                "bound",
+                "missing"
+              ]
+            },
+            "gaps": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "requirement_id",
+            "source_ref",
+            "source_hash",
+            "check",
+            "check_ref",
+            "case_ids",
+            "asset_test_ids",
+            "status",
+            "gaps"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "asset_jobs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "kind": {
+              "enum": [
+                "compile",
+                "function"
+              ]
+            },
+            "asset_path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "test_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "job_id",
+            "kind",
+            "asset_path",
+            "test_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "recovery_version": {"const": 1},
+      "relation_source_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+      "contrast_plan_refs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "required": [
+      "verification_plan_id",
+      "project_id",
+      "evaluation_plan_id",
+      "base_digest",
+      "candidate_digest",
+      "expected_generation",
+      "proposal_hashes",
+      "materials_ref",
+      "materials_hash",
+      "requirements",
+      "asset_jobs",
+      "contrast_plan_refs"
+    ],
+    "additionalProperties": false,
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+  },
+  "VerificationRecord": {
+    "type": "object",
+    "properties": {
+      "verification_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "project_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "plan_ref": {
+        "type": "string",
+        "minLength": 1
+      },
+      "plan_hash": {
+        "type": "string",
+        "minLength": 1
+      },
+      "requirements": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "requirement_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "status": {
+              "enum": [
+                "pass",
+                "fail",
+                "unknown"
+              ]
+            },
+            "evidence_refs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "gaps": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "requirement_id",
+            "status",
+            "evidence_refs",
+            "gaps"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "asset_check_refs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "contrast_result_refs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "status": {
+        "enum": [
+          "pass",
+          "fail",
+          "unknown"
+        ]
+      },
+      "usage_refs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "gaps": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "required": [
+      "verification_id",
+      "project_id",
+      "plan_ref",
+      "plan_hash",
+      "requirements",
+      "asset_check_refs",
+      "contrast_result_refs",
+      "status",
+      "usage_refs",
+      "gaps"
+    ],
+    "additionalProperties": false,
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+  },
+  "ExecutionView": {
+    "type": "object",
+    "properties": {
+      "view_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "project_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "source_snapshot_digest": {
+        "type": "string",
+        "minLength": 1
+      },
+      "selected_skill_refs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "skill_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "skill_id",
+            "revision"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "skills": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object"
+        }
+      },
+      "assets": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "dependency_closure": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "background_skill_refs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "skill_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "skill_id",
+            "revision"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "view_id",
+      "project_id",
+      "source_snapshot_digest",
+      "selected_skill_refs",
+      "skills",
+      "assets",
+      "dependency_closure",
+      "background_skill_refs"
+    ],
+    "additionalProperties": false,
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+  },
+  "AssetCheckRecord": {
+    "type": "object",
+    "properties": {
+      "asset_check_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "project_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "verification_plan_ref": {
+        "type": "string",
+        "minLength": 1
+      },
+      "job_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "candidate_digest": {
+        "type": "string",
+        "minLength": 1
+      },
+      "bundle_hash": {
+        "type": "string",
+        "minLength": 1
+      },
+      "asset_path": {
+        "type": "string",
+        "minLength": 1
+      },
+      "asset_hash": {
+        "type": "string",
+        "minLength": 1
+      },
+      "kind": {
+        "enum": [
+          "compile",
+          "function"
+        ]
+      },
+      "test_id": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "test_hash": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "runner": {
+        "type": "object"
+      },
+      "request": {
+        "type": "object"
+      },
+      "raw": {},
+      "status": {
+        "enum": [
+          "pass",
+          "fail",
+          "unknown"
+        ]
+      },
+      "gaps": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "usage_refs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "required": [
+      "asset_check_id",
+      "project_id",
+      "verification_plan_ref",
+      "job_id",
+      "candidate_digest",
+      "bundle_hash",
+      "asset_path",
+      "asset_hash",
+      "kind",
+      "test_id",
+      "test_hash",
+      "runner",
+      "request",
+      "raw",
+      "status",
+      "gaps",
+      "usage_refs"
+    ],
+    "additionalProperties": false,
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+  },
+  "ContrastPlan": {
+    "type": "object",
+    "properties": {
+      "contrast_plan_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "project_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "verification_plan_ref": {
+        "type": "string",
+        "minLength": 1
+      },
+      "source_snapshot_digest": {
+        "type": "string",
+        "minLength": 1
+      },
+      "from": {
+        "type": "string",
+        "minLength": 1
+      },
+      "to": {
+        "type": "string",
+        "minLength": 1
+      },
+      "required": {
+        "type": "boolean"
+      },
+      "case_set_ref": {
+        "type": "string",
+        "minLength": 1
+      },
+      "case_set_hash": {
+        "type": "string",
+        "minLength": 1
+      },
+      "protocol_ref": {
+        "type": "string",
+        "minLength": 1
+      },
+      "protocol_hash": {
+        "type": "string",
+        "minLength": 1
+      },
+      "repeat_count": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "arms": {
+        "type": "object",
+        "properties": {
+          "without": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "with": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "without",
+          "with"
+        ],
+        "additionalProperties": false
+      },
+      "requests": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "request_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "case_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "arm": {
+              "enum": [
+                "without",
+                "with"
+              ]
+            },
+            "snapshot_digest": {
+              "type": "string",
+              "minLength": 1
+            },
+            "repeat_index": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "request_id",
+            "case_ref",
+            "arm",
+            "snapshot_digest",
+            "repeat_index"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "state": {
+        "enum": [
+          "ready",
+          "not_identifiable",
+          "invalid",
+          "missing_capability"
+        ]
+      },
+      "gaps": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "skill_revisions": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "dependency_revisions": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "background_skill_refs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "skill_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "skill_id",
+            "revision"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "applicable_context": {
+        "type": "object",
+        "properties": {
+          "task_family": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "task_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "case_set_hash": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "task_family",
+          "task_ids",
+          "case_set_hash"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "contrast_plan_id",
+      "project_id",
+      "verification_plan_ref",
+      "source_snapshot_digest",
+      "from",
+      "to",
+      "required",
+      "case_set_ref",
+      "case_set_hash",
+      "protocol_ref",
+      "protocol_hash",
+      "repeat_count",
+      "arms",
+      "requests",
+      "state",
+      "gaps",
+      "skill_revisions",
+      "dependency_revisions",
+      "background_skill_refs",
+      "applicable_context"
+    ],
+    "additionalProperties": false,
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+  },
+  "ContrastResult": {
+    "type": "object",
+    "properties": {
+      "contrast_result_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "project_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "plan_ref": {
+        "type": "string",
+        "minLength": 1
+      },
+      "plan_hash": {
+        "type": "string",
+        "minLength": 1
+      },
+      "status": {
+        "enum": [
+          "measured",
+          "unknown",
+          "not_identifiable",
+          "invalid"
+        ]
+      },
+      "result_refs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "value": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "relation_ref": {
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "usage_refs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "gaps": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "required": [
+      "contrast_result_id",
+      "project_id",
+      "plan_ref",
+      "plan_hash",
+      "status",
+      "result_refs",
+      "value",
+      "relation_ref",
+      "usage_refs",
+      "gaps"
+    ],
+    "additionalProperties": false,
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+  },
+  "MeasuredEffect": {
+    "type": "object",
+    "properties": {
+      "relation_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "project_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "kind": {
+        "const": "measured_effect"
+      },
+      "from": {
+        "type": "string",
+        "minLength": 1
+      },
+      "to": {
+        "type": "string",
+        "minLength": 1
+      },
+      "metric": {
+        "const": "conditional_marginal_gain"
+      },
+      "value": {
+        "type": "number"
+      },
+      "skill_revisions": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "dependency_revisions": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "background_skill_refs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "skill_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "skill_id",
+            "revision"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "applicable_context": {
+        "type": "object",
+        "properties": {
+          "task_family": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "task_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "case_set_hash": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "task_family",
+          "task_ids",
+          "case_set_hash"
+        ],
+        "additionalProperties": false
+      },
+      "source_snapshot_digest": {
+        "type": "string",
+        "minLength": 1
+      },
+      "contrast_plan_ref": {
+        "type": "string",
+        "minLength": 1
+      },
+      "supporting_refs": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "known_task_count": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "repeats": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "evidence_level": {
+        "const": "executed_local_contrast"
+      }
+    },
+    "required": [
+      "relation_id",
+      "project_id",
+      "kind",
+      "from",
+      "to",
+      "metric",
+      "value",
+      "skill_revisions",
+      "dependency_revisions",
+      "background_skill_refs",
+      "applicable_context",
+      "source_snapshot_digest",
+      "contrast_plan_ref",
+      "supporting_refs",
+      "known_task_count",
+      "repeats",
+      "evidence_level"
+    ],
+    "additionalProperties": false,
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+  }
+}

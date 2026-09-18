@@ -1,0 +1,33 @@
+test_compile_and_function_are_both_executed_and_wrong_function_rejected (test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.615s
+
+OK
+test_compile_and_function_are_both_executed_and_wrong_function_rejected (test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected) ... 
+  test_compile_and_function_are_both_executed_and_wrong_function_rejected (test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected) (script='if ???') ... FAIL
+
+======================================================================
+FAIL: test_compile_and_function_are_both_executed_and_wrong_function_rejected (test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected) (script='if ???')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_verification.py", line 132, in test_compile_and_function_are_both_executed_and_wrong_function_rejected
+    self.assertEqual(next(c['status'] for c in checks if c['kind']=='compile'),
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                     'fail' if script=='if ???' else 'pass')
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'pass' != 'fail'
+- pass
++ fail
+
+
+----------------------------------------------------------------------
+Ran 1 test in 1.638s
+
+FAILED (failures=1)
+test_compile_and_function_are_both_executed_and_wrong_function_rejected (test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.580s
+
+OK

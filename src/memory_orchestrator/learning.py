@@ -4,12 +4,18 @@ from __future__ import annotations
 import copy
 import json
 import re
+import time
 
 from .candidates import apply_candidate, skill_view
 from .context import terms as _terms
 from .evidence import build_packet, expand_packet, feedback_view, index_episodes, validate_citations
 from .lineage import require_learning_source
+from .goals import associate_goals, missing_user_goals
+from .maintenance import (eligible_experience as _eligible_experience, retained_evidence as _retained_evidence,
+    latest_experiences, failure_signature, signature_score, fold_related,
+    active_memory_relations, maintenance_inputs, check_maintenance, apply_maintenance)
 from .schemas import DomainError, digest, load_contracts, new_id, now_iso, validate
+from .telemetry import measure_stage
 
 
 def _json(value):
@@ -37,32 +43,6 @@ def _policy(policy):
     return copy.deepcopy(policy)
 
 
-def _eligible_experience(store, memory):
-    """Retrieval and canonical-history merging share the source admission rule."""
-    try:
-        for eid in memory.get("source_episode_ids", []):
-            require_learning_source(store, store.get("episodes", eid))
-    except DomainError as exc:
-        if exc.code != "learning_not_permitted":
-            raise
-        return False
-    return True
-
-
-def _retained_evidence(records):
-    """Keep adverse references with their original packet/revision, not as new facts."""
-    retained = {}
-    for record in sorted(records, key=lambda r: (r.get("created_at", ""), r["record_id"])):
-        for item in record.get("retained_evidence", []):
-            retained.setdefault((item["role"], item["ref_id"]), copy.deepcopy(item))
-        for role in ("boundary_refs", "counterevidence_refs"):
-            for ref in record["draft"][role]:
-                retained.setdefault((role, ref), {"role": role, "ref_id": ref,
-                    "packet_id": record["packet_id"], "record_id": record["record_id"],
-                    "status": "historical_reference_not_retracted"})
-    return list(retained.values())
-
-
 def _visible_related(records, packet):
     provided = {fragment["ref_id"] for fragment in packet["fragments"]}
     result = copy.deepcopy(records)
@@ -85,33 +65,30 @@ def _source_provenance(store, episode, contexts):
             'consumption_evidence_level': None if run is None else 'reported_by_execution_function'}
 
 
-def find_related(experiences, task, project_id, *, limit, max_chars):
-    """Simple deterministic lookup, retaining distinct boundary/contrary examples."""
-    latest, histories = {}, {}
-    for record in experiences:
-        if record.get("project_id") != project_id or "draft" not in record or "canonical_key" not in record:
-            continue
-        key = record["canonical_key"]
-        histories.setdefault(key, []).append(record)
-        if key not in latest or (record.get("created_at", ""), record["record_id"]) > (latest[key].get("created_at", ""), latest[key]["record_id"]):
-            latest[key] = copy.deepcopy(record)
-    for key, record in latest.items():
-        record["retained_evidence"] = _retained_evidence(histories[key])
+def find_related(experiences, task, project_id, *, limit, max_chars, failure_signature=None, relations=()):
+    """Rank scoped terms and failures; contradictions enter together or not at all."""
+    latest = latest_experiences([r for r in experiences if r.get("project_id") == project_id
+                                and "draft" in r and "canonical_key" in r])
+    folded = fold_related(latest, relations) if relations else latest
+    by_id = {r["record_id"]: r for r in folded}
     query = _terms(task)
     ranked = []
-    for record in latest.values():
+    for record in folded:
         draft = record["draft"]
         terms = _terms(_json([draft["title"], draft["scope"], draft["conditions"], draft["guidance"]]))
-        score = len(query & terms)
+        lexical = len(query & terms)
+        failure = signature_score(failure_signature, record.get("failure_signature"))
+        score = lexical + failure
+        record["retrieval_score"] = {"lexical": lexical, "failure_signature": failure, "total": score}
         if score:
             ranked.append((score, bool(record["retained_evidence"]), record))
     ranked.sort(key=lambda item: (-item[0], -item[1], item[2]["record_id"]))
     chosen = []
+    selected = set()
     for _, _, record in ranked:
-        if len(chosen) >= limit:
-            break
-        if len(_json(chosen + [record])) <= max_chars:
-            chosen.append(copy.deepcopy(record))
+        group = [by_id[rid] for rid in record.get("conflict_record_ids", [record["record_id"]]) if rid not in selected]
+        if len(chosen) + len(group) <= limit and len(_json(chosen + group)) <= max_chars:
+            chosen.extend(copy.deepcopy(group)); selected.update(r["record_id"] for r in group)
     return chosen
 
 
@@ -125,6 +102,7 @@ def _save_experience(store, draft, packet, index, cycle_id):
         references.update(fact["evidence_refs"])
     fragments = {f["ref_id"]: f for f in packet["fragments"]}
     sources = {fragments[ref]["episode_id"] for ref in references}
+    signature = failure_signature(index, episode_ids=sources, max_chars=index.get("signature_max_chars"))
     tasks, unknown_episodes, support_tasks = set(), set(), set()
     for ref in references:
         base = ref.rsplit(":", 2)[0]
@@ -135,7 +113,8 @@ def _save_experience(store, draft, packet, index, cycle_id):
             tasks.add(source["task_id"])
             if ref in draft["supporting_refs"]:
                 support_tasks.add(source["task_id"])
-    if newest and newest["draft"] == draft and sources.issubset(newest["source_episode_ids"]) and _retained_evidence(previous) == newest.get("retained_evidence", []):
+    if (newest and newest["draft"] == draft and sources.issubset(newest["source_episode_ids"])
+            and signature == newest.get("failure_signature") and _retained_evidence(previous) == newest.get("retained_evidence", [])):
         return newest["record_id"]
     for record in previous:
         sources.update(record["source_episode_ids"])
@@ -153,6 +132,7 @@ def _save_experience(store, draft, packet, index, cycle_id):
               "supersedes": newest["record_id"] if newest else None,
               "status": "unverified_experience", "created_at": now_iso()}
     record["retained_evidence"] = _retained_evidence([*previous, record])
+    record["failure_signature"] = signature
     store.put("experiences", record_id, record)
     return record_id
 
@@ -180,13 +160,106 @@ def _diagnosis_targets(diagnosis, view):
     return _unique(targets)
 
 
-def learn(store, episode_ids, model, *, policy):
+def _check_necessity(diagnosis, view, packet, limits):
+    decision = diagnosis.get("necessity")
+    if decision is None:
+        raise DomainError("necessity_missing", "New diagnoses require an explicit necessity decision.")
+    compared = decision["compared_skill_refs"]
+    expected = {(sid, row["revision"]) for sid, row in view.items()}
+    actual = {(row["skill_id"], row["revision"]) for row in compared}
+    errors = []
+    if len(compared) != len(actual) or actual - expected or len(actual) > limits["max_compared_skills"]:
+        errors.append({"path": "$.necessity.compared_skill_refs", "allowed": sorted(expected)})
+    targets = {(t["skill_id"], t["revision"]) for t in diagnosis["targets"]}
+    if targets - actual:
+        errors.append({"path": "$.necessity.compared_skill_refs", "message": "Every proposed existing target must be compared", "required": sorted(targets)})
+    if decision["verdict"] == "proceed":
+        if decision["repeatable"] is not True or not decision["behavior_delta"].strip() or not decision["evidence_refs"]:
+            errors.append({"path": "$.necessity", "message": "Proceed needs grounded reusable behavior difference; it is still a hypothesis."})
+        if decision["allow_add"] and (not decision["capability_gap"].strip() or actual != expected):
+            errors.append({"path": "$.necessity.allow_add", "message": "ADD requires a stated gap and comparison of every provided existing capability."})
+    for i, check in enumerate(diagnosis["check_plan"]):
+        if "check_ref" not in check:
+            errors.append({"path": f"$.check_plan[{i}].check_ref", "message": "Use a supplied public check reference or explicit null."})
+    validate_citations(decision, packet)
+    if errors:
+        raise DomainError("necessity_invalid", "Necessity judgment exceeds the supplied comparison.", {"errors": errors})
+
+
+def _check_verification_refs(value, catalog):
+    available = {row["check_ref"]: row for row in catalog}
+    errors = []
+    for i, item in enumerate(value["check_plan"]):
+        ref = item.get("check_ref")
+        if "check_ref" not in item or ref is not None and (ref not in available or available[ref]["purpose"] != item["purpose"]):
+            errors.append({"path": f"$.check_plan[{i}].check_ref", "actual": ref,
+                "allowed_refs": [key for key, row in available.items() if row["purpose"] == item["purpose"]],
+                "correction": "Use a supplied check with the same purpose, or null when required material is unavailable."})
+    if errors:
+        raise DomainError("verification_reference", "Check obligations must bind to the public supplied directory.", {"errors": errors})
+
+
+def _learning_index(store, episodes, policy, contexts=None):
+    """Resolve declared archived parents before any body can reach a model."""
+    # Admission follows all known ancestors independently of the optional body
+    # neighborhood budget. An unindexed ancestor cannot masquerade as harmless
+    # merely because this packet is configured not to read dependency bodies.
+    while True:
+        unresolved = _unique(ref for ep in episodes for ref in
+                             require_learning_source(store, ep).get("unindexed_trace_refs", []))
+        if not unresolved: break
+        from .trace import ensure_trace_index
+        for ref in unresolved:
+            _, checkpoint = ensure_trace_index(store, ref, policy.get("trace_index") or {})
+            if not checkpoint["index_complete"]:
+                raise DomainError("needs_index", "Source ancestry needs another bounded indexing step before learning",
+                                  {"trace_ref": ref, "checkpoint": checkpoint})
+    caps = policy.get("dependency_lookup")
+    if caps is not None and any(type(caps.get(k)) is not int or caps[k] < 0 for k in ("max_hops", "max_events")):
+        raise DomainError("dependency_budget", "Explicit nonnegative dependency limits are required")
+    contexts = {} if contexts is None else contexts
+    loaded, extras, depth = {ep["episode_id"] for ep in episodes}, 0, 0
+    while True:
+        for ep in episodes:
+            if ep["context_ref"] and ep["context_ref"] not in contexts:
+                contexts[ep["context_ref"]] = store.get("contexts", ep["context_ref"])
+        index = index_episodes(episodes, feedback=[f for ep in episodes for f in store.feedback_for(ep["episode_id"])],
+                               contexts=contexts, store=store, trace_limits=policy.get("trace_index"))
+        refs = _unique([ref for checkpoint in index["trace_progress"] for ref in checkpoint["parent_episode_refs"]]
+            + [event["parent_episode_id"] for ep in episodes for event in ep["events"] if event.get("parent_episode_id")])
+        pending = []
+        for identifier in refs:
+            if identifier in loaded: continue
+            try: parent = store.get("episodes", identifier)
+            except DomainError as exc:
+                if exc.code != "NOT_FOUND": raise
+                index["gaps"].append(f"Parent episode {identifier} is unavailable; no identity or body inferred")
+                continue
+            if parent["project_id"] != index["project_id"]:
+                raise DomainError("project_mismatch", "Parent belongs to a different project")
+            require_learning_source(store, parent)
+            if caps and depth < caps["max_hops"] and extras < caps["max_events"]:
+                pending.append(parent); loaded.add(identifier); extras += 1
+            else:
+                index["gaps"].append(f"Parent episode {identifier} admitted but not read under this dependency budget")
+        if not pending: return index
+        episodes.extend(pending); depth += 1
+
+
+def learn(store, episode_ids, model, *, policy, verification_catalog=None):
     """Extract, diagnose and attempt each candidate against one fixed base.
 
     Model and task feedback remain explicitly reported evidence. This function
     checks source availability and identities, not truth of natural-language claims.
     """
     policy = _policy(policy)
+    public_checks = [] if verification_catalog is None else copy.deepcopy(verification_catalog)
+    if (not isinstance(public_checks, list) or any(not isinstance(row, dict)
+            or set(row) - {"check_ref", "purpose", "description", "evidence_kind", "case_ids", "asset_test_ids"}
+            or not isinstance(row.get("check_ref"), str) or not isinstance(row.get("purpose"), str)
+            for row in public_checks)
+            or len({row["check_ref"] for row in public_checks}) != len(public_checks)):
+        raise DomainError("verification_catalog", "Supply a unique public check directory without private grading material.")
     requested_ids = _unique(episode_ids)
     if not requested_ids:
         raise DomainError("empty_evidence", "At least one episode identity is required.")
@@ -207,6 +280,7 @@ def learn(store, episode_ids, model, *, policy):
               "expected_generation": active["generation"], "requested_episode_ids": requested_ids,
               "source_episode_ids": requested_ids[:], "experience_ids": [], "candidate_ids": [],
               "diagnosis_id": None, "usage_ids": [], "report_ids": [], "errors": [],
+              "goal_binding_ids": [], "maintenance_review_ids": [],
               "candidate_slots": [{"slot": i, "status": "not_started", "candidate_id": None}
                                   for i in range(policy["candidate_count"])],
               "status": "planned", "policy": policy, "created_at": now_iso()}
@@ -230,12 +304,14 @@ def learn(store, episode_ids, model, *, policy):
             if not usage_id or usage_id in result["usage_ids"]:
                 raise DomainError("duplicate_model_usage", "Each attempted call needs a unique usage identity.")
             stored = {"usage_id": usage_id, "project_id": project,
-                      "exclusive_stage": {"extract_v1": "extract", "diagnose_v1": "diagnose", "propose_v1": "propose"}[prompt_id],
+                      "exclusive_stage": {"extract_v1": "extract", "diagnose_v1": "diagnose", "propose_v1": "propose",
+                                          "goal_binding_v1": "index", "maintain_experience_v1": "extract"}[prompt_id],
                       "purpose": "learning", "run_or_proposal_id": cycle_id,
                       "tokens": {key: entry.get(key) for key in ("input_tokens", "output_tokens", "total_tokens")},
-                      "time": entry.get("elapsed_seconds"), "monetary_cost": None, "currency": None,
+                      "time": entry.get("elapsed_seconds"), "monetary_cost": entry.get("monetary_cost"),
+                      "currency": entry.get("currency"),
                       "status": "reported" if entry.get("measurement") == "provider_reported" else "missing",
-                      "price_version": None, "raw": copy.deepcopy(entry)}
+                      "price_version": entry.get("price_version"), "raw": copy.deepcopy(entry)}
             store.put("usage", usage_id, stored)
             result["usage_ids"].append(usage_id)
         report = {"report_id": report_id, "project_id": project, "cycle_id": cycle_id,
@@ -247,12 +323,27 @@ def learn(store, episode_ids, model, *, policy):
         result["report_ids"].append(report_id)
 
     def call(prompt_id, inputs, *, check=None):
-        try:
-            response = model.generate(prompt_id, inputs, check=check)
-        except DomainError as exc:
-            persist_call(prompt_id, inputs, exc=exc)
-            raise
-        persist_call(prompt_id, inputs, response=response)
+        stage_name = {"extract_v1": "extract", "diagnose_v1": "diagnose", "propose_v1": "propose",
+                      "goal_binding_v1": "index", "maintain_experience_v1": "extract"}[prompt_id]
+        with measure_stage(store, project, stage_name, subject_ref=cycle_id) as meter:
+            call_started = time.monotonic()
+            try:
+                response = model.generate(prompt_id, inputs, check=check)
+            except DomainError as exc:
+                for entry in exc.details.get("usage", []):
+                    if isinstance(entry.get("elapsed_seconds"), (float, int)):
+                        meter.exclude(entry["elapsed_seconds"])
+                persist_call(prompt_id, inputs, exc=exc)
+                raise
+            except BaseException:
+                # No returned usage exists for this interrupted operation. Keep
+                # its billing unknown, and do not rename provider wait as local work.
+                meter.exclude(time.monotonic() - call_started)
+                raise
+            for entry in response.get("usage", []):
+                if isinstance(entry.get("elapsed_seconds"), (float, int)):
+                    meter.exclude(entry["elapsed_seconds"])
+            persist_call(prompt_id, inputs, response=response)
         schema_id = load_contracts()["prompts"][prompt_id]["output_schema"]
         return validate(schema_id, response["value"])
 
@@ -260,21 +351,33 @@ def learn(store, episode_ids, model, *, policy):
         result["status"] = status
         result["reason"] = reason
         result["completed_at"] = now_iso()
+        if "index" in work:
+            result["read_stats"] = {key: sum(r.stats[key] for r in work["index"].get("trace_readers", []))
+                                    for key in ("body_bytes", "range_reads", "metadata_rows")}
         store.put("learning_cycles", cycle_id, result)
         return copy.deepcopy(result)
 
     stage = "evidence"
+    work = {}
     try:
         task_text = "\n".join(ep["task"]["description"] + "\n" + "\n".join(e["text"][:1000] for e in ep["events"][:3]) for ep in episodes)
+        with measure_stage(store, project, "index", subject_ref=cycle_id):
+            source_index = _learning_index(store, episodes, policy)
+            signature = failure_signature(source_index, max_chars=policy["packet"]["max_chars"])
         eligible_memories, excluded_memories = [], []
         for memory in store.list("experiences", project):
             if not _eligible_experience(store, memory):
                 excluded_memories.append(memory["record_id"])
             else:
                 eligible_memories.append(memory)
-        related = find_related(eligible_memories, task_text, project,
-                               limit=policy["max_related_experiences"], max_chars=policy["max_related_chars"])
-        related_ids = _unique(eid for record in related for eid in record["source_episode_ids"] if eid not in requested_ids)
+        with measure_stage(store, project, "select", subject_ref=cycle_id):
+            related = find_related(eligible_memories, task_text, project,
+                                   limit=policy["max_related_experiences"], max_chars=policy["max_related_chars"],
+                                   failure_signature=signature, relations=active_memory_relations(store, project))
+        result["retrieval"] = {"failure_signature": signature, "selected_record_ids": [r["record_id"] for r in related],
+                               "signature_hits": sum(r["retrieval_score"]["failure_signature"] > 0 for r in related)}
+        known_episode_ids = {ep["episode_id"] for ep in episodes}
+        related_ids = _unique(eid for record in related for eid in record["source_episode_ids"] if eid not in known_episode_ids)
         for eid in related_ids[:policy["max_related_episodes"]]:
             ep = store.get("episodes", eid)
             if ep["project_id"] != project:
@@ -284,14 +387,24 @@ def learn(store, episode_ids, model, *, policy):
         result["source_episode_ids"] = [ep["episode_id"] for ep in episodes]
         contexts = {ep["context_ref"]: store.get("contexts", ep["context_ref"]) for ep in episodes if ep["context_ref"]}
         feedback = [fb for ep in episodes for fb in store.feedback_for(ep["episode_id"])]
-        index = index_episodes(episodes, feedback=feedback, contexts=contexts)
+        with measure_stage(store, project, "index", subject_ref=cycle_id):
+            index = _learning_index(store, episodes, policy, contexts)
+        result["source_episode_ids"] = [ep["episode_id"] for ep in episodes]
+        work["index"] = index
+        index["signature_max_chars"] = policy["packet"]["max_chars"]
+        result["trace_checkpoint_ids"] = [row["checkpoint_id"] for row in index["trace_progress"]]
+        if any(missing_user_goals(index)):
+            stage = "goal_binding_v1"
+            index, result["goal_binding_ids"] = associate_goals(store, index, call,
+                limits=policy.get("goal_binding", {}), cycle_id=cycle_id, model_report_ref=lambda: result["report_ids"][-1])
         if not related:
             index["gaps"].insert(0, "Related-memory lookup found no in-budget matches; this does not establish absence of counterexamples.")
         if excluded_memories:
             index["gaps"].insert(0, "Prior memories with frozen or learning-disabled execution sources were excluded from this learning input.")
         if len(related_ids) > policy["max_related_episodes"]:
             index["gaps"].insert(0, "Additional related source episodes omitted by explicit retrieval budget.")
-        packet = build_packet(index, limits=policy["packet"])
+        with measure_stage(store, project, "index", subject_ref=cycle_id):
+            packet = build_packet(index, limits=policy["packet"], dependency_limits=policy.get("dependency_lookup"))
         expansions = 0
         while True:
             store.put("evidence_packets", packet["packet_id"], packet)
@@ -316,7 +429,8 @@ def learn(store, episode_ids, model, *, policy):
             if expansions >= policy["max_expansions"]:
                 return finish("abstained", "Explicit evidence-expansion budget exhausted.")
             try:
-                packet = expand_packet(index, packet, extraction["read_requests"], limits=policy["expanded_packet"])
+                with measure_stage(store, project, "index", subject_ref=cycle_id):
+                    packet = expand_packet(index, packet, extraction["read_requests"], limits=policy["expanded_packet"])
             except DomainError as exc:
                 if exc.code == "evidence_budget_exhausted":
                     error_record(exc, "expand_evidence")
@@ -325,13 +439,60 @@ def learn(store, episode_ids, model, *, policy):
             expansions += 1
         if not extraction["experiences"]:
             return finish("noop", "No reusable experience was extracted.")
-        for draft in extraction["experiences"]:
-            result["experience_ids"].append(_save_experience(store, draft, packet, index, cycle_id))
+        with measure_stage(store, project, "extract", subject_ref=cycle_id):
+            for draft in extraction["experiences"]:
+                result["experience_ids"].append(_save_experience(store, draft, packet, index, cycle_id))
         result["experience_ids"] = _unique(result["experience_ids"])
+        new_records = [store.get("experiences", ref) for ref in result["experience_ids"]]
+        # Exact canonical revisions already have a host consolidation rule; the
+        # semantic model compares different experiences, not an item with itself.
+        comparison_records = [store.get("experiences", r["record_id"]) for r in
+                              latest_experiences([*related, *new_records])]
+        live_relations = active_memory_relations(store, project)
+        if len(comparison_records) > 1 or live_relations:
+            stage = "maintain_experience_v1"
+            caps = policy.get("maintenance", {})
+            if any(type(caps.get(k)) is not int or caps[k] < 1 for k in ("max_chars", "max_pairs", "max_actions")):
+                raise DomainError("maintenance_budget", "Explicit positive maintenance limits are required.")
+            with measure_stage(store, project, "extract", subject_ref=cycle_id):
+                comparison = maintenance_inputs(comparison_records, live_relations,
+                                                max_chars=caps["max_chars"], max_pairs=caps["max_pairs"])
+            if comparison["pairs"] or comparison["existing_relations"]:
+                ids = set(result["experience_ids"])
+                try:
+                    maintenance = call(stage, {"new_experiences": [r for r in comparison["records"] if r["record_id"] in ids],
+                        "related_experiences": [r for r in comparison["records"] if r["record_id"] not in ids],
+                        "comparison_evidence": {k: v for k, v in comparison.items() if k != "records"},
+                        "existing_relations": comparison["existing_relations"], "maintenance_limits": caps},
+                        check=lambda draft: check_maintenance(draft, comparison, max_actions=caps["max_actions"]))
+                    with measure_stage(store, project, "extract", subject_ref=cycle_id):
+                        review = apply_maintenance(store, project, maintenance, comparison, cycle_id=cycle_id,
+                            model_report_ref=result["report_ids"][-1], max_actions=caps["max_actions"])
+                except DomainError as exc:
+                    review = {"review_id": new_id("maintenance"), "project_id": project, "cycle_id": cycle_id,
+                        "model_report_ref": result["report_ids"][-1] if result["report_ids"] else None,
+                        "status": "error", "origin": "model_proxy", "record_ids": list(comparison["record_hashes"]),
+                        "relation_ids": [], "error_code": exc.code, "created_at": now_iso()}
+                    review = validate("MaintenanceReview", review)
+                    store.put("maintenance_reviews", review["review_id"], review)
+                    result["maintenance_review_ids"].append(review["review_id"])
+                    raise
+                result["maintenance_review_ids"].append(review["review_id"])
+                live_relations = active_memory_relations(store, project)
+                related = find_related([*eligible_memories, *new_records], task_text, project,
+                    limit=policy["max_related_experiences"], max_chars=policy["max_related_chars"],
+                    failure_signature=signature, relations=live_relations)
         stage = "diagnose_v1"
+        necessity_limits = policy.get("necessity", {})
+        if type(necessity_limits.get("max_compared_skills")) is not int or necessity_limits["max_compared_skills"] < 0:
+            raise DomainError("necessity_budget", "Explicit max_compared_skills is required.")
+        if len(view) > necessity_limits["max_compared_skills"]:
+            return finish("abstained", "Existing capability comparison exceeds its declared budget; no unexamined ADD.")
         def check_diagnosis(value):
             validate_citations(value, packet)
             _diagnosis_targets(value, view)
+            _check_necessity(value, view, packet, necessity_limits)
+            _check_verification_refs(value, public_checks)
 
         diagnosis = call(stage, {
             "experiences": extraction["experiences"], "evidence_packets": [packet],
@@ -340,19 +501,38 @@ def learn(store, episode_ids, model, *, policy):
             "related_skills_and_relations": {"skills": view, "relations": store.list("relations", project),
                 "related_experiences": _visible_related(related, packet), "relation_warning": "Observed co-use is not causal influence."},
             "available_feedback": feedback_view(index, packet), "learning_limits": model.limits,
+            "verification_catalog": public_checks,
+            "existing_capability_catalog": {"skills": view, "all_bodies_provided": True,
+                "memory_relations": live_relations, "judgment_origin": "model_proxy"},
+            "necessity_limits": necessity_limits,
         }, check=check_diagnosis)
         validate_citations(diagnosis, packet)
         allowed_targets = _diagnosis_targets(diagnosis, view)
+        _check_necessity(diagnosis, view, packet, necessity_limits)
+        _check_verification_refs(diagnosis, public_checks)
         diagnosis_id = new_id("diagnosis")
-        store.put("diagnoses", diagnosis_id, {"diagnosis_id": diagnosis_id, "project_id": project,
+        diagnosis_record = {"diagnosis_id": diagnosis_id, "project_id": project,
             "cycle_id": cycle_id, "base_digest": base["snapshot_id"], "packet_id": packet["packet_id"],
-            "draft": diagnosis, "allowed_skill_ids": allowed_targets, "created_at": now_iso()})
+            "draft": diagnosis, "decision_origin": "model_proxy", "allowed_skill_ids": allowed_targets, "created_at": now_iso()}
+        store.put("diagnoses", diagnosis_id, diagnosis_record)
         result["diagnosis_id"] = diagnosis_id
+        if diagnosis["necessity"]["verdict"] != "proceed":
+            for slot in result["candidate_slots"]: slot["status"] = "noop"
+            return finish("noop" if diagnosis["necessity"]["verdict"] == "noop" else "abstained",
+                          "Necessity judgment: " + diagnosis["necessity"]["verdict"])
         if diagnosis["route"] != "skill_patch":
             for slot in result["candidate_slots"]:
                 slot["status"] = "noop"
             return finish("abstained" if diagnosis["route"] == "abstain" else "noop", diagnosis["abstain_reason"] or diagnosis["route"])
         allowed_refs = [f["ref_id"] for f in packet["fragments"]]
+        operations = ["ADD", "PATCH", "RETIRE", "NOOP"] if diagnosis["necessity"]["allow_add"] else ["PATCH", "RETIRE", "NOOP"]
+        def check_patch(value):
+            validate_citations(value, packet)
+            _check_verification_refs(value, public_checks)
+            if any(op["op"] not in operations for op in value["operations"]):
+                raise DomainError("necessity_operation", "necessity.allow_add=false excludes ADD from this proposal.")
+            if any("check_ref" not in c for c in value["check_plan"]):
+                raise DomainError("verification_reference", "Each generated check needs check_ref or explicit null.")
         for slot in result["candidate_slots"]:
             stage = f"propose_v1:{slot['slot']}"
             try:
@@ -363,19 +543,21 @@ def learn(store, episode_ids, model, *, policy):
                         "rule_ids": {key: [rule["rule_id"] for rule in view[key]["rules"]] for key in allowed_targets},
                         "asset_roots": ["scripts", "references", "templates"],
                         "current_assets": {path: body for path, body in base["assets"].items() if path.split("/", 1)[0] in allowed_targets}},
-                    "operation_constraints": {"allowed_operations": ["ADD", "PATCH", "RETIRE", "NOOP"],
+                    "operation_constraints": {"allowed_operations": operations,
                         "allowed_evidence_refs": allowed_refs, "known_readonly_skill_ids": list(view),
                         "max_operations": policy["max_operations"], "max_skills": policy["max_skills"],
                         "max_asset_bytes": policy["max_asset_bytes"], "project_id": project,
                         "atomic_operation_count": "Each PATCH edit, ADD, RETIRE and asset edit counts once.",
                         "rule_anchors": "Rule IDs refer to the original expected_revision; newly added rules cannot be targeted in this patch."},
                     "evaluation_scope": policy["evaluation_scope"], "learning_limits": model.limits,
-                }, check=lambda value: validate_citations(value, packet))
-                validate_citations(patch, packet)
+                    "verification_catalog": public_checks,
+                }, check=check_patch)
+                check_patch(patch)
                 candidate = apply_candidate(store, project, patch, base_digest=base["snapshot_id"],
                     expected_generation=active["generation"], allowed_evidence_refs=allowed_refs,
                     allowed_skill_ids=allowed_targets, max_operations=policy["max_operations"],
-                    max_skills=policy["max_skills"], max_asset_bytes=policy["max_asset_bytes"])
+                    max_skills=policy["max_skills"], max_asset_bytes=policy["max_asset_bytes"],
+                    diagnosis_ref=diagnosis_id, diagnosis_hash=digest(diagnosis_record))
                 if candidate is None:
                     slot["status"] = "noop"
                 else:
@@ -389,4 +571,5 @@ def learn(store, episode_ids, model, *, policy):
         return finish("error" if result["errors"] else "noop")
     except DomainError as exc:
         error_record(exc, stage)
+        if exc.code == "needs_index": return finish("needs_index", exc.message)
         return finish("abstained" if exc.code in ("evidence_budget_exhausted", "model_budget_exhausted") else "error", exc.message)

@@ -1,0 +1,98 @@
+{
+  "source_sha256": {
+    "src/memory_orchestrator/learning.py": "b76b90b8c73ca4d6d4f1f615d98e78cedb9bea4ceabfb792b31a13fb93405e70",
+    "src/memory_orchestrator/evidence.py": "217ed01eacfc1b3667eeacdff08918af262a93b332c9d69649841bd99d58888d",
+    "src/memory_orchestrator/goals.py": "8310bdf36953a467bd9781b125f3d940d587ecd6f49005dd9090f7a55a71cc20",
+    "src/memory_orchestrator/trace.py": "c8fbdc546cb62145ac7c3568998c5c70ac7132577e331aa67d3770efccf4ff94",
+    "src/memory_orchestrator/maintenance.py": "0b6060f67f3de2621b3a2dbfe80deea1b7d471c34cec7806ea1e04126f775030",
+    "src/memory_orchestrator/lineage.py": "7b2ee32a271469c32849ae34d077cecf30f3e7fe1ad4d090a2af4b2a6b30d734"
+  },
+  "probes": [
+    {
+      "kind": "trace_to_learn_and_goal_windows",
+      "statuses": [
+        "needs_index",
+        "needs_index",
+        "abstained"
+      ],
+      "calls": [
+        "goal_binding_v1",
+        "goal_binding_v1",
+        "goal_binding_v1",
+        "extract_v1"
+      ],
+      "event_count": 12,
+      "trace_ref": "trace_fe71d5641114c4480d8c8f46297dd054f6c85a32371fd0a3524a20f3b704e9e9",
+      "read_stats": {
+        "body_bytes": 36799,
+        "range_reads": 375,
+        "metadata_rows": 21184
+      },
+      "goal_annotations": [
+        {
+          "anchor_user_ref": "ev:23db762ea62cbc8aba06c3c0:0:19",
+          "binding_ref": "goal_binding_1a14b51cbf534accb49c449729b22b18",
+          "event_ref": "ev:23db762ea62cbc8aba06c3c0:0:19",
+          "evidence_refs": [
+            "ev:23db762ea62cbc8aba06c3c0:0:19"
+          ],
+          "goal_id": "derived-goal:6a50248f92dd2da10337ba9e",
+          "origin": "model_proxy",
+          "relation": "continues",
+          "revision": "derived-revision:4b91da0e2169a9e780871a4b"
+        },
+        {
+          "anchor_user_ref": "ev:0839ba71aa9cd021aa52bb55:0:18",
+          "binding_ref": "goal_binding_09ee180899ca450d965a074ee9c05010",
+          "event_ref": "ev:0839ba71aa9cd021aa52bb55:0:18",
+          "evidence_refs": [
+            "ev:0839ba71aa9cd021aa52bb55:0:18"
+          ],
+          "goal_id": "derived-goal:1c8d02fa3b696ef0c74eef7a",
+          "origin": "model_proxy",
+          "relation": "switches",
+          "revision": "derived-revision:98d614899c9fe1472ab8b212"
+        },
+        {
+          "anchor_user_ref": "ev:ea5bb77c7286c9f2b26997f2:0:21",
+          "binding_ref": "goal_binding_dd9d9d04ed9344e6ba55b0a3eca518a5",
+          "event_ref": "ev:ea5bb77c7286c9f2b26997f2:0:21",
+          "evidence_refs": [
+            "ev:ea5bb77c7286c9f2b26997f2:0:21"
+          ],
+          "goal_id": "derived-goal:6a50248f92dd2da10337ba9e",
+          "origin": "model_proxy",
+          "relation": "resumes",
+          "revision": "derived-revision:4b91da0e2169a9e780871a4b"
+        }
+      ],
+      "raw_unchanged": true
+    },
+    {
+      "kind": "hidden_frozen_parent",
+      "status": "error",
+      "error_code": "learning_not_permitted",
+      "model_calls": 0,
+      "experience_count": 0
+    },
+    {
+      "kind": "semantic_maintenance_to_next_learn",
+      "first_prompts": [
+        "extract_v1",
+        "maintain_experience_v1",
+        "diagnose_v1"
+      ],
+      "second_prompts": [
+        "extract_v1"
+      ],
+      "related_count": 1,
+      "member_ids": [
+        "experience_92bc782eefb14a6c9d6dd5a2a35eb2e8",
+        "prior-equivalent"
+      ],
+      "retained_boundary": "historical:boundary",
+      "raw_experience_unchanged": true
+    }
+  ],
+  "status": "all_probes_passed"
+}

@@ -25,7 +25,13 @@ KINDS = frozenset({
     "experiences", "diagnoses", "learning_cycles", "evaluation_plans",
     "evaluation_inputs", "evaluation_returns", "evaluation_results", "validations",
     "selections", "releases", "usage", "reports", "candidates", "protocols",
-    "case_sets", "evaluator_configs",
+    "case_sets", "evaluator_configs", "stage_measurements", "feedback_plans", "baselines",
+    "callback_attempts", "callback_returns", "recovery_resolutions", "sampling_segments", "sampling_batch_receipts",
+    "trace_manifests", "trace_index_checkpoints", "goal_bindings", "memory_relations", "maintenance_reviews",
+    "verification_materials", "verification_plans", "verification_records", "asset_checks", "execution_views",
+    "contrast_plans", "contrast_results",
+    "experiment_plans", "experiment_steps", "experiment_results",
+    "comparison_segments",
 })
 SCHEMA_KINDS = {
     "episodes": ("EpisodeRecord", "episode_id"),
@@ -40,6 +46,13 @@ SCHEMA_KINDS = {
     "validations": ("ValidationRecord", "validation_id"),
     "selections": ("SelectionRecord", "selection_id"),
     "releases": ("ReleaseRecord", "release_id"),
+    "baselines": ("BaselineRecord", "baseline_id"),
+    "feedback_plans": ("FeedbackPlan", "feedback_plan_id"),
+    "callback_attempts": ("CallbackAttempt", "attempt_id"),
+    "callback_returns": ("CallbackReturn", "attempt_id"),
+    "recovery_resolutions": ("RecoveryResolution", "resolution_id"),
+    "sampling_segments": ("SamplingSegment", "record_id"),
+    "sampling_batch_receipts": ("SamplingBatchReceipt", "receipt_id"),
 }
 
 
@@ -236,7 +249,7 @@ class Store:
                 self._check_assessment(record)
             return self._put_unlocked(kind, record_id, record)
 
-    def remember(self, kind, content, source, project_id=None, memory_id=None):
+    def remember(self, kind, content, source, project_id=None, memory_id=None, applicability=None):
         if kind not in {"user", "project"}:
             raise DomainError("INVALID_ARGUMENT", "Fact kind must be user or project")
         _string(content, "content")
@@ -246,6 +259,13 @@ class Store:
             raise DomainError("INVALID_ARGUMENT", "User facts have global scope; omit project_id")
         if kind == "project":
             _string(project_id, "project_id")
+        if applicability is not None:
+            if (not isinstance(applicability, dict)
+                    or set(applicability) - {"task_ids", "task_families", "query_terms", "global"}
+                    or ("global" in applicability and type(applicability["global"]) is not bool)
+                    or any(not isinstance(value, list) or any(not isinstance(item, str) or not item for item in value)
+                           for key, value in applicability.items() if key != "global")):
+                raise DomainError("INVALID_ARGUMENT", "Invalid explicit fact applicability")
         with self._write_lock():
             previous = None
             if memory_id is not None:
@@ -262,6 +282,8 @@ class Store:
             fact = {"memory_id": memory_id, "revision": revision, "record_id": f"{memory_id}:r{revision}",
                     "kind": kind, "project_id": project_id, "content": content, "source": source,
                     "supersedes": None if previous is None else previous["record_id"], "created_at": now_iso()}
+            if applicability is not None or previous and "applicability" in previous:
+                fact["applicability"] = deepcopy(applicability if applicability is not None else previous["applicability"])
             fact = json.loads(json_bytes(fact))
             return self._put_unlocked("facts", fact["record_id"], fact)
 
@@ -373,11 +395,19 @@ class Store:
             parent_episode = event.get("parent_episode_id")
             parent_events = event_ids
             if parent_episode is not None and parent_episode != record["episode_id"]:
-                parent = self.get("episodes", parent_episode)
-                _same_project(parent, project)
-                parent_events = [x["event_id"] for x in parent["events"]]
+                try:
+                    parent = self.get("episodes", parent_episode)
+                except DomainError as exc:
+                    if exc.code != 'NOT_FOUND':
+                        raise
+                    parent = None
+                if parent is None:
+                    parent_events = None
+                else:
+                    _same_project(parent, project)
+                    parent_events = None if parent.get('trace_ref') else [x["event_id"] for x in parent["events"]]
             parent_event = event.get("parent_event_id")
-            if parent_event is not None and parent_event not in parent_events:
+            if parent_event is not None and parent_events is not None and parent_event not in parent_events:
                 raise DomainError("REFERENCE_MISMATCH", "Parent event is absent from referenced episode")
         for ref in record["feedback_refs"]:
             feedback = (pending_feedback or {}).get(ref)
@@ -415,12 +445,19 @@ class Store:
             return deepcopy(episode)
 
     def _check_feedback(self, feedback, episode=None):
+        if feedback.get('feedback_plan_ref') is not None:
+            from .feedback import check_planned_feedback
+            return check_planned_feedback(self, self.get('feedback_plans', feedback['feedback_plan_ref']), feedback)
         if episode is None:
             episode = self.get("episodes", feedback["subject_ref"])
         return check_feedback_binding(self, feedback, episode)
 
     def _check_assessment(self, assessment):
-        """The current producer supports exactly one linked task_outcome, not a rubric DSL."""
+        if assessment.get('feedback_plan_ref') is not None:
+            from .feedback import verify_assessment
+            verify_assessment(self, assessment)
+            return
+        # Historical records retain the original exact single-feedback rule.
         if assessment.get('aggregation_rule') != 'single_task_outcome' or len(assessment['criterion_feedback_ids']) != 1:
             raise DomainError('UNSUPPORTED_AGGREGATION', 'Current assessments link one task_outcome feedback.')
         episode = self.get('episodes', assessment['subject_ref'])
@@ -561,20 +598,75 @@ class Store:
                     or commit["new_digest"] != value["snapshot_id"] or commit["new_generation"] != value["generation"]):
                 raise DomainError("CORRUPT_RECORD", "Active pointer and commit differ")
         elif (value.get("release_id") is not None or value.get("commit") is not None
-              or value["snapshot_id"] != digest({"project_id": project_id, "parent": None, "skills": {}, "assets": {}})):
-            raise DomainError("CORRUPT_RECORD", "Bootstrap may only activate an empty library")
+              or value["snapshot_id"] != self._baseline_digest(project_id, value)):
+            raise DomainError("CORRUPT_RECORD", "Bootstrap must match the immutable initial baseline")
+        if value.get("baseline_ref") is not None:
+            self._baseline_digest(project_id, value)
         return value
 
-    def ensure_project(self, project_id):
+    def _baseline_digest(self, project_id, active):
+        if active.get("baseline_ref") is None:
+            return digest({"project_id": project_id, "parent": None, "skills": {}, "assets": {}})
+        baseline = validate("BaselineRecord", self.get("baselines", active["baseline_ref"]))
+        _same_project(baseline, project_id)
+        snapshot = self.snapshot(baseline["snapshot_digest"])
+        _same_project(snapshot, project_id)
+        normalized = {"skills": {key: {k: v for k, v in value.items() if k != "project_id"}
+                                  for key, value in snapshot["skills"].items()}, "assets": snapshot["assets"]}
+        if (baseline["baseline_id"] != active["baseline_ref"] or snapshot["parent"] is not None
+                or baseline["seed_content_hash"] != digest(normalized)
+                or baseline["kind"] == "empty" and (snapshot["skills"] or snapshot["assets"])):
+            raise DomainError("CORRUPT_RECORD", "Initial baseline identity/content mismatch")
+        return snapshot["snapshot_id"]
+
+    def initialize_project(self, project_id, *, seed=None, source=None):
+        """Create an explicit generation-zero baseline; never replace an existing one."""
+        _string(project_id, "project_id")
+        if seed is not None and (not isinstance(seed, dict) or set(seed) != {"skills", "assets"} or not source):
+            raise DomainError("INVALID_ARGUMENT", "A seed requires skills/assets and explicit provenance")
+        value = deepcopy(seed) if seed is not None else {"skills": {}, "assets": {}}
+        if not isinstance(value["skills"], dict):
+            raise DomainError("INVALID_SNAPSHOT", "Seed Skills must be an object")
+        for skill in value["skills"].values():
+            if not isinstance(skill, dict):
+                raise DomainError("INVALID_SNAPSHOT", "Seed Skill must be an object")
+            skill["project_id"] = project_id
+        payload = {"project_id": project_id, "parent": None, **value}
+        self._check_snapshot(payload)
+        normalized = {"skills": {key: {k: v for k, v in skill.items() if k != "project_id"}
+                                  for key, skill in value["skills"].items()}, "assets": value["assets"]}
         with self._write_lock():
             path = self._active_path(project_id)
             if path.exists() or path.is_symlink():
-                return self._read_active(project_id)
-            empty = self._save_snapshot_unlocked({"project_id": project_id, "parent": None, "skills": {}, "assets": {}})
-            value = {"project_id": project_id, "snapshot_id": empty["snapshot_id"], "generation": 0,
-                     "release_id": None, "commit": None, "committed_release_ids": [], "bootstrap": "empty_unmeasured"}
-            self._atomic_write(path, value)
-            return deepcopy(value)
+                current = self._read_active(project_id)
+                if self._baseline_digest(project_id, current) != digest(payload):
+                    raise DomainError("BASELINE_CONFLICT", "Existing project baseline cannot be replaced")
+                return current
+            snapshot = self._save_snapshot_unlocked(payload)
+            baseline_id = "baseline_" + digest([project_id, snapshot["snapshot_id"]])
+            baseline = validate("BaselineRecord", {"baseline_id": baseline_id, "project_id": project_id,
+                "kind": "seed" if seed is not None else "empty", "snapshot_digest": snapshot["snapshot_id"],
+                "seed_content_hash": digest(normalized), "source": source if seed is not None else "explicit empty initialization",
+                "created_at": now_iso()})
+            baseline_path = self._record_path("baselines", baseline_id)
+            if not baseline_path.exists():
+                self._put_unlocked("baselines", baseline_id, baseline)
+            pointer = {"project_id": project_id, "snapshot_id": snapshot["snapshot_id"], "generation": 0,
+                "release_id": None, "commit": None, "committed_release_ids": [], "baseline_ref": baseline_id,
+                "bootstrap": baseline["kind"] + "_unmeasured"}
+            self._atomic_write(path, pointer)
+            return deepcopy(pointer)
+
+    def ensure_project(self, project_id):
+        path = self._active_path(project_id)
+        if path.exists() or path.is_symlink():
+            return self._read_active(project_id)
+        try:
+            return self.initialize_project(project_id)
+        except DomainError as exc:
+            if exc.code != "BASELINE_CONFLICT":
+                raise
+            return self._read_active(project_id)
 
     def active(self, project_id):
         return self.ensure_project(project_id)
@@ -582,7 +674,7 @@ class Store:
     def release_history(self, project_id):
         active = self.active(project_id)
         records = [self.get("releases", ref) for ref in active["committed_release_ids"]]
-        prior = digest({"project_id": project_id, "parent": None, "skills": {}, "assets": {}})
+        prior = self._baseline_digest(project_id, active)
         for index, release in enumerate(records):
             _same_project(release, project_id)
             if (release["status"] != "published" or release["expected_active_digest"] != prior
@@ -614,5 +706,7 @@ class Store:
             pointer = {"project_id": project_id, "snapshot_id": candidate["snapshot_id"],
                        "generation": expected_generation + 1, "release_id": release["release_id"],
                        "commit": release, "committed_release_ids": [*active["committed_release_ids"], release["release_id"]]}
+            if "baseline_ref" in active:
+                pointer["baseline_ref"] = active["baseline_ref"]
             self._atomic_write(self._active_path(project_id), pointer)
             return deepcopy(release)

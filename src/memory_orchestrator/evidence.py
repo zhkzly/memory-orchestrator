@@ -49,7 +49,7 @@ def _structure(record):
                                             "parent_event_id", "parent_episode_id")}}
 
 
-def index_episodes(episodes, *, feedback=(), contexts=None):
+def index_episodes(episodes, *, feedback=(), contexts=None, store=None, trace_limits=None):
     """Index explicit identities; do not inherit the final goal onto old events.
 
     ``records`` is an internal read registry. Its text is never itself a model
@@ -66,6 +66,19 @@ def index_episodes(episodes, *, feedback=(), contexts=None):
         raise DomainError("duplicate_episode", "Repeated episode identities must be resolved before indexing.")
     records, transitions, pairs, gaps, allowed_feedback = {}, [], [], [], []
     episode_map = {ep["episode_id"]: ep for ep in episodes}
+    readers, progress = [], []
+    for ep in episodes:
+        if not ep.get("trace_ref"): continue
+        if store is None or trace_limits is None or ep["events"]:
+            raise DomainError("trace_source", "A trace episode needs its Store, explicit index limits, and one event source")
+        from .trace import ensure_trace_index
+        reader, checkpoint = ensure_trace_index(store, ep["trace_ref"], trace_limits)
+        if reader.manifest["episode_id"] != ep["episode_id"] or reader.manifest["project_id"] != project:
+            raise DomainError("trace_mismatch", "Trace manifest does not belong to this episode/project")
+        if not checkpoint["index_complete"]:
+            raise DomainError("needs_index", "Another bounded indexing step is required before using this source",
+                              {"trace_ref": ep["trace_ref"], "checkpoint": checkpoint})
+        readers.append(reader); progress.append(checkpoint)
 
     def add(ep, event, position, *, namespace="event", kind=None):
         base = "ev:" + digest([project, ep["episode_id"], namespace, event["event_id"]])[:24]
@@ -82,6 +95,7 @@ def index_episodes(episodes, *, feedback=(), contexts=None):
             "position": position, "source_event": namespace == "event",
             "call_id": event.get("call_id"), "parent_event_id": event.get("parent_event_id"),
             "parent_episode_id": event.get("parent_episode_id"),
+            "resources": copy.deepcopy(event.get("resources", [])),
         }
         return records[base]
 
@@ -173,9 +187,13 @@ def index_episodes(episodes, *, feedback=(), contexts=None):
     for ep in episodes:
         if not any(f["subject_ref"] == ep["episode_id"] for f in allowed_feedback):
             gaps.append(f"{ep['episode_id']}: no separately supplied adaptation feedback; outcome unknown")
+    if readers:
+        from .trace import TraceRecords
+        records = TraceRecords(records, readers)
     return {"project_id": project, "episodes": episodes, "records": records,
             "feedback": allowed_feedback, "goal_transitions": transitions,
-            "call_pairs": pairs, "gaps": _unique(gaps)}
+            "call_pairs": pairs, "gaps": _unique(gaps), "trace_progress": progress,
+            "trace_readers": readers, "read_stats": {"body_bytes": 0, "range_reads": 0}}
 
 
 def _limits(limits):
@@ -186,16 +204,36 @@ def _limits(limits):
     return limits
 
 
-def _piece(record, start, end):
-    raw = record["text"].encode("utf-8")
-    return {"ref_id": f"{record['base_ref']}:{start}:{end}", "episode_id": record["episode_id"],
+def _byte_length(record):
+    return record["text_bytes"] if "_reader" in record else len(record["text"].encode("utf-8"))
+
+
+def _bytes(record, start, end):
+    return record["_reader"].read_range(record, start, end) if "_reader" in record else record["text"].encode("utf-8")[start:end]
+
+
+def _piece(record, start, end, *, body=True):
+    item = {"ref_id": f"{record['base_ref']}:{start}:{end}", "episode_id": record["episode_id"],
             "event_id": record["event_id"], "kind": record["kind"], "raw_ref": record["raw_ref"],
-            "raw_hash": record["raw_hash"], "text": raw[start:end].decode("utf-8"),
+            "raw_hash": record["raw_hash"],
             "range": {"start_byte": start, "end_byte_exclusive": end},
             "task_revision": record["task_revision"], "structure": _structure(record)}
+    if body: item["text"] = _bytes(record, start, end).decode("utf-8")
+    if "source_record" in record: item["source_record"] = copy.deepcopy(record["source_record"])
+    return item
 
 
 def _pieces(record, width, extra):
+    if "_reader" in record:
+        length = _byte_length(record)
+        starts = ([max(0, record["failure_byte"] - width // 4)] if record["failure_byte"] is not None else [])
+        starts += [0, max(0, length-width), *[i*width for i in range(1, min(extra+1, math.ceil(length/width)))]]
+        for start in _unique(starts):
+            raw = _bytes(record, start, min(length, start + width*4 + 4))
+            while raw and raw[0] & 0xC0 == 0x80: start += 1; raw = raw[1:]
+            text = raw.decode("utf-8", errors="ignore")[:width]
+            yield {**_piece(record, start, start + len(text.encode()), body=False), "text": text}
+        return
     text = record["text"]
     match = _FAILURE.search(text) or _RECOVERY.search(text)
     starts = ([max(0, match.start() - width // 4)] if match else []) + [0, max(0, len(text) - width)]
@@ -207,24 +245,25 @@ def _pieces(record, width, extra):
 
 def _catalog(fragment):
     return {**{k: fragment[k] for k in ("ref_id", "episode_id", "task_revision", "raw_ref", "raw_hash", "range", "structure")},
+            **({"source_record": fragment["source_record"]} if "source_record" in fragment else {}),
             "available": True}
 
 
-def _resolve(index, ref):
+def _resolve(index, ref, *, body=True):
     if ref in index["records"]:
         record = index["records"][ref]
-        if digest(record["text"]) != record["raw_hash"]:
+        if "_reader" not in record and digest(record["text"]) != record["raw_hash"]:
             raise DomainError("evidence_mismatch", "Indexed original text no longer matches its source hash.")
-        return record, _piece(record, 0, len(record["text"].encode("utf-8")))
+        return record, _piece(record, 0, _byte_length(record), body=body)
     try:
         base, start, end = ref.rsplit(":", 2)
         record = index["records"][base]
-        if digest(record["text"]) != record["raw_hash"]:
+        if "_reader" not in record and digest(record["text"]) != record["raw_hash"]:
             raise DomainError("evidence_mismatch", "Indexed original text no longer matches its source hash.")
         start, end = int(start), int(end)
-        if not 0 <= start <= end <= len(record["text"].encode("utf-8")):
+        if not 0 <= start <= end <= _byte_length(record):
             raise ValueError("out of range")
-        return record, _piece(record, start, end)
+        return record, _piece(record, start, end, body=body)
     except (KeyError, ValueError, UnicodeError, AttributeError) as exc:
         raise DomainError("unsupported_evidence", "Reference is not a valid original range.", {"ref_id": ref}) from exc
 
@@ -234,6 +273,8 @@ def _bindings(index):
     for ep in index["episodes"]:
         pairs = [(ep["task"]["task_id"], ep["task"]["revision"])]
         pairs += [(e.get("task_id"), e["task_revision"]) for e in ep["events"]]
+        if ep.get("trace_ref"):
+            pairs += _unique((r["task_id"], r["task_revision"]) for r in index["records"].matching(episode_id=ep["episode_id"]))
         for task, revision in _unique(pairs):
             bindings.append({"episode_id": ep["episode_id"], "task_ref": task,
                              "task_revision": revision, "relation": "unknown" if task is None or revision is None else "related_task"})
@@ -243,6 +284,41 @@ def _bindings(index):
             if binding["relation"] != "unknown":
                 binding["relation"] = "same_task"
     return bindings
+
+
+def _matching(index, *, episode_id=None, call_id=None, resource=None, user_goals=False):
+    records = index["records"]
+    if hasattr(records, "matching"):
+        yield from records.matching(episode_id=episode_id, call_id=call_id, resource=resource, user_goals=user_goals)
+        return
+    for row in records.values():
+        if (row["source_event"] and (episode_id is None or row["episode_id"] == episode_id)
+                and (call_id is None or row["call_id"] == call_id)
+                and (not user_goals or row["source_role"] == "user" and row["source_kind"] == "instruction")
+                and (resource is None or any(r["ref"] == resource for r in row.get("resources", [])))):
+            yield row
+
+
+def _parent_base(index, record):
+    return "ev:" + digest([index["project_id"], record["parent_episode_id"] or record["episode_id"],
+                            "event", record["parent_event_id"]])[:24]
+
+
+def _trace_transition(index, record):
+    key = (record["goal_id"] or record["task_id"], record["task_revision"])
+    previous, seen = None, None
+    for row in _matching(index, episode_id=record["episode_id"], user_goals=True):
+        if row["position"] >= record["position"]: break
+        identity = (row["goal_id"] or row["task_id"], row["task_revision"])
+        if None not in identity:
+            previous = row
+            if identity == key and seen is None: seen = row["base_ref"]
+    old = None if previous is None else (previous["goal_id"] or previous["task_id"], previous["task_revision"])
+    relation = ("ambiguous" if None in key else "continues" if old is None or old == key else
+                "revises" if old[0] == key[0] else "resumes" if seen else "switches")
+    basis = [] if previous is None else [previous["base_ref"]]
+    if relation == "resumes": basis.append(seen)
+    return {"event_ref": record["base_ref"], "goal_id": key[0], "revision": key[1], "relation": relation, "basis_refs": _unique(basis)}
 
 
 def _relations(packet, index):
@@ -257,20 +333,27 @@ def _relations(packet, index):
             (item, item["available"]) for item in packet["readable_ref_catalog"]]:
         if not available:
             continue
-        record, _ = _resolve(index, item["ref_id"])
+        record, _ = _resolve(index, item["ref_id"], body=False)
         visible.setdefault(record["base_ref"], item["ref_id"])
-    event_bases = {(r["episode_id"], r["event_id"]): ref for ref, r in index["records"].items() if r["source_event"]}
     calls, goals, parents = [], [], []
-    for pair in index["call_pairs"]:
-        action_bases = [event_bases[(pair["episode_id"], eid)] for eid in pair["action_event_ids"]]
-        result_bases = [event_bases[(pair["episode_id"], eid)] for eid in pair["result_event_ids"]]
-        action_refs = [visible[ref] for ref in action_bases if ref in visible]
-        result_refs = [visible[ref] for ref in result_bases if ref in visible]
-        if action_refs or result_refs:
-            calls.append({"episode_id": pair["episode_id"], "call_id": pair["call_id"],
-                          "action_refs": action_refs, "result_refs": result_refs, "status": pair["status"],
-                          "coverage": "complete" if all(ref in visible for ref in action_bases + result_bases) else "partial"})
-    for transition in index["goal_transitions"]:
+    visible_records = [index["records"][ref] for ref in visible]
+    for eid, call_id in sorted({(r["episode_id"], r["call_id"]) for r in visible_records if r["call_id"] is not None}):
+        action_refs, result_refs, actions, results, complete = [], [], 0, 0, True
+        for record in _matching(index, episode_id=eid, call_id=call_id):
+            if record["source_kind"] == "action":
+                actions += 1
+                if record["base_ref"] in visible: action_refs.append(visible[record["base_ref"]])
+                else: complete = False
+            elif record["source_kind"] in ("observation", "result"):
+                results += 1
+                if record["base_ref"] in visible: result_refs.append(visible[record["base_ref"]])
+                else: complete = False
+        calls.append({"episode_id": eid, "call_id": call_id, "action_refs": action_refs, "result_refs": result_refs,
+                      "status": "paired" if actions == 1 and results else "ambiguous", "coverage": "complete" if complete else "partial"})
+    transitions = [t for t in index["goal_transitions"] if t["event_ref"] in visible]
+    transitions += [_trace_transition(index, r) for r in visible_records if "_reader" in r
+                    and r["source_role"] == "user" and r["source_kind"] == "instruction"]
+    for transition in transitions:
         if transition["event_ref"] not in visible:
             continue
         complete = all(ref in visible for ref in transition["basis_refs"])
@@ -282,8 +365,8 @@ def _relations(packet, index):
         record = index["records"][base]
         if record["parent_event_id"] is None:
             continue
-        identity = (record["parent_episode_id"] or record["episode_id"], record["parent_event_id"])
-        parent_base = event_bases.get(identity)
+        parent_base = _parent_base(index, record)
+        if parent_base not in index["records"]: parent_base = None
         parent_ref = visible.get(parent_base)
         status = ("missing" if parent_base is None else "outside_packet" if parent_ref is None
                   else "provided" if parent_ref in provided else "readable")
@@ -291,22 +374,88 @@ def _relations(packet, index):
     return {"calls": calls, "goals": goals, "parents": parents}
 
 
+def _resource_relations(packet, index):
+    visible = {}
+    for item in packet["fragments"] + packet["readable_ref_catalog"]:
+        record, _ = _resolve(index, item["ref_id"], body=False)
+        visible.setdefault(record["base_ref"], (item["ref_id"], record))
+    links = []
+    rows = list(visible.values())
+    for i, (left_ref, left) in enumerate(rows):
+        for right_ref, right in rows[i+1:]:
+            for a in left.get("resources", []):
+                for b in right.get("resources", []):
+                    if a["ref"] != b["ref"]: continue
+                    version = None if a["version_ref"] is None or b["version_ref"] is None else a["version_ref"] == b["version_ref"]
+                    if left["episode_id"] != right["episode_id"] and version is not True: continue
+                    parent = (_parent_base(index, left) == right["base_ref"] if left["parent_event_id"] else False)
+                    parent |= (_parent_base(index, right) == left["base_ref"] if right["parent_event_id"] else False)
+                    links.append({"from_ref": left_ref, "to_ref": right_ref, "resource_ref": a["ref"],
+                        "relation": "declared_parent" if parent else "same_resource_candidate", "version_match": version,
+                        "coverage": "complete" if left["episode_id"] == right["episode_id"] else "partial"})
+    return links
+
+
+def _dependencies(index, focus, limits):
+    if limits is None: return set()
+    if any(type(limits.get(k)) is not int or limits[k] < 0 for k in ("max_hops", "max_events")):
+        raise DomainError("dependency_budget", "Explicit nonnegative hop/event limits required")
+    found, frontier = set(), list(focus)
+    for _ in range(limits["max_hops"]):
+        next_frontier = []
+        for ref in frontier:
+            record = index["records"][ref]
+            neighbors = []
+            if record["parent_event_id"]:
+                parent = _parent_base(index, record)
+                if parent in index["records"]: neighbors.append(index["records"][parent])
+            if record["call_id"] is not None:
+                from itertools import islice
+                neighbors.extend(islice(_matching(index, episode_id=record["episode_id"], call_id=record["call_id"]), limits["max_events"]))
+            for resource in record.get("resources", []):
+                for candidate in _matching(index, resource=resource["ref"]):
+                    if (candidate["episode_id"] == record["episode_id"] or resource["version_ref"] is not None
+                            and any(r["ref"] == resource["ref"] and r["version_ref"] == resource["version_ref"] for r in candidate.get("resources", []))):
+                        neighbors.append(candidate)
+                    if len(neighbors) >= limits["max_events"]: break
+            for candidate in neighbors:
+                key = candidate["base_ref"]
+                if key in found or key in focus: continue
+                if len(found) >= limits["max_events"]: return found
+                found.add(key); next_frontier.append(key)
+        frontier = next_frontier
+    return found
+
+
 def _refresh(packet, index):
-    selected = {_resolve(index, f["ref_id"])[0]["base_ref"] for f in packet["fragments"]}
+    packet.pop("goal_annotations", None)
+    packet.pop("resource_relations", None)
+    selected = {_resolve(index, f["ref_id"], body=False)[0]["base_ref"] for f in packet["fragments"]}
     catalog_refs = [c["ref_id"] for c in packet["readable_ref_catalog"]]
     provided = {f["ref_id"] for f in packet["fragments"]}
     packet["omitted_refs"] = [ref for ref in catalog_refs if ref not in provided]
     packet["coverage"] = {
         "selected_event_count": sum(index["records"][ref]["source_event"] for ref in selected),
-        "total_event_count": sum(len(ep["events"]) for ep in index["episodes"]),
+        "total_event_count": sum(len(ep["events"]) for ep in index["episodes"]) + sum(p["event_count"] for p in index.get("trace_progress", [])),
         "mandatory_roles_present": sorted({f["kind"] for f in packet["fragments"]}),
         "incomplete_reasons": ["Catalog and original ranges are bounded; unlisted material remains in the source index."]
-            if len(selected) < len(index["records"]) or any(len(f["text"].encode("utf-8")) < len(_resolve(index, f["ref_id"])[0]["text"].encode("utf-8")) for f in packet["fragments"]) else [],
+            if len(selected) < len(index["records"]) or any(len(f["text"].encode("utf-8")) < _byte_length(_resolve(index, f["ref_id"], body=False)[0]) for f in packet["fragments"]) else [],
         "omitted_episode_refs": [ep["episode_id"] for ep in index["episodes"]
                                  if ep["episode_id"] not in {f["episode_id"] for f in packet["fragments"]}],
     }
     if packet.get("projection_version") == 2:
         packet["relations"] = _relations(packet, index)
+        if "goal_annotations" in index:
+            visible = {}
+            for item in packet["fragments"] + packet["readable_ref_catalog"]:
+                visible.setdefault(_resolve(index, item["ref_id"], body=False)[0]["base_ref"], item["ref_id"])
+            packet["goal_annotations"] = [
+                {**row, "event_ref": visible[row["event_ref"]], "anchor_user_ref": visible[row["anchor_user_ref"]],
+                 "evidence_refs": [visible[ref] for ref in row["evidence_refs"]]}
+                for row in index["goal_annotations"]
+                if all(ref in visible for ref in [row["event_ref"], row["anchor_user_ref"], *row["evidence_refs"]])]
+        if any(index["records"][ref].get("resources") for ref in selected):
+            packet["resource_relations"] = _resource_relations(packet, index)
         relations = packet["relations"]
         if (any(row["coverage"] == "partial" for row in relations["calls"] + relations["goals"])
                 or any(row["status"] in ("missing", "outside_packet") for row in relations["parents"])):
@@ -321,10 +470,16 @@ def _fits(packet, limits, reserve=0):
     return len(serialized) <= limits["max_chars"] - reserve and estimate <= limits["token_budget"]
 
 
-def build_packet(index, *, limits, focus_refs=()):
+def build_packet(index, *, limits, focus_refs=(), dependency_limits=None):
     """Select exact snippets; metadata and the read catalog count toward the budget."""
     _limits(limits)
-    focus = {_resolve(index, ref)[0]["base_ref"] for ref in focus_refs}
+    for reader in index.get("trace_readers", []): reader.set_read_budget(limits["max_chars"] * 4)
+    focus = {_resolve(index, ref, body=False)[0]["base_ref"] for ref in focus_refs}
+    if dependency_limits and not focus:
+        from itertools import islice
+        focus = {row["base_ref"] for row in islice((r for r in index["records"].values()
+                 if r["parent_event_id"] or r.get("resources") or r.get("failure_terms")), dependency_limits.get("max_events", 0))}
+    focus |= _dependencies(index, focus, dependency_limits)
     bindings = _bindings(index)
     revisions = {b["task_revision"] for b in bindings}
     gaps = index["gaps"][:16]
@@ -345,16 +500,26 @@ def build_packet(index, *, limits, focus_refs=()):
     def rank(record):
         if record["base_ref"] in focus:
             return -1
-        if record["kind"] in ("task", "feedback", "recovery", "counterexample") or _FAILURE.search(record["text"]):
+        if (record["kind"] in ("task", "feedback", "recovery", "counterexample")
+                or record.get("failure_byte") is not None or _FAILURE.search(record.get("text", ""))):
             return 0
         if record["kind"] == "action":
             return 1
         return 2
-    ordered = sorted(index["records"].values(), key=lambda r: (rank(r), r["position"], r["base_ref"]))
-    pieces = {r["base_ref"]: list(_pieces(r, limits["max_fragment_chars"], limits["max_catalog_refs"])) for r in ordered}
+    registry = index["records"]
+    metadata_cap = max(1, limits["max_chars"] // 350 + limits["max_catalog_refs"])
+    if hasattr(registry, "select_metadata"):
+        candidates = registry.select_metadata({"focus": focus}, metadata_cap)
+    else:
+        from heapq import nsmallest
+        candidates = nsmallest(metadata_cap, registry.values(), key=lambda r: (rank(r), r["position"], r["base_ref"]))
+    ordered = sorted(candidates, key=lambda r: (rank(r), r["position"], r["base_ref"]))
+    # Only bounded metadata candidates have bodies read. Additional body ranges
+    # are fetched lazily while filling the bounded read catalog.
+    pieces = {r["base_ref"]: next(_pieces(r, limits["max_fragment_chars"], 0)) for r in ordered}
     reserve = min(limits["max_chars"] // 4, limits["max_catalog_refs"] * 450)
     for record in ordered:
-        fragment = pieces[record["base_ref"]][0]
+        fragment = pieces[record["base_ref"]]
         proposed = copy.deepcopy(packet)
         proposed["fragments"].append(fragment)
         _refresh(proposed, index)
@@ -363,7 +528,7 @@ def build_packet(index, *, limits, focus_refs=()):
     if not packet["fragments"]:
         for record in ordered:
             candidate = copy.deepcopy(packet)
-            candidate["fragments"] = [pieces[record["base_ref"]][0]]
+            candidate["fragments"] = [pieces[record["base_ref"]]]
             _refresh(candidate, index)
             if _fits(candidate, limits):
                 packet = candidate
@@ -372,8 +537,12 @@ def build_packet(index, *, limits, focus_refs=()):
         raise DomainError("evidence_budget_exhausted", "No source fragment fits with its required provenance.")
     # First expose omitted events, then additional ranges of already-read events.
     supplied = {f["ref_id"] for f in packet["fragments"]}
-    candidates = [parts[0] for parts in pieces.values()] + [f for parts in pieces.values() for f in parts[1:]]
-    for fragment in candidates:
+    def catalog_candidates():
+        yield from pieces.values()
+        for row in ordered:
+            yield from _pieces(row, limits["max_fragment_chars"], limits["max_catalog_refs"])
+    for fragment in catalog_candidates():
+        if len(packet["readable_ref_catalog"]) >= limits["max_catalog_refs"]: break
         if fragment["ref_id"] in supplied or len(packet["readable_ref_catalog"]) >= limits["max_catalog_refs"]:
             continue
         proposed = copy.deepcopy(packet)
@@ -381,7 +550,10 @@ def build_packet(index, *, limits, focus_refs=()):
         _refresh(proposed, index)
         if _fits(proposed, limits):
             packet = proposed
-    return validate_packet(packet, index)
+    packet = validate_packet(packet, index)
+    index["read_stats"] = {key: sum(r.stats[key] for r in index.get("trace_readers", []))
+                           for key in ("body_bytes", "range_reads")}
+    return packet
 
 
 def validate_packet(packet, index):
@@ -410,7 +582,7 @@ def validate_packet(packet, index):
         if len(refs) != len(set(refs)):
             raise DomainError("duplicate_reference", "Repeated fragment or catalog references.")
         for item in packet[field]:
-            _, expected = _resolve(index, item["ref_id"])
+            _, expected = _resolve(index, item["ref_id"], body=field == "fragments")
             for key in ("episode_id", "raw_ref", "raw_hash", "range", "task_revision"):
                 if item[key] != expected[key]:
                     raise DomainError("evidence_mismatch", f"Original evidence field changed: {key}", {"ref_id": item["ref_id"]})
@@ -418,12 +590,18 @@ def validate_packet(packet, index):
                 raise DomainError("evidence_mismatch", "Provided text is not the exact original byte range.")
             if structured and item.get("structure") != expected["structure"]:
                 raise DomainError("evidence_mismatch", "Observed event structure changed.", {"ref_id": item["ref_id"]})
+            if item.get("source_record") != expected.get("source_record"):
+                raise DomainError("evidence_mismatch", "Serialized source locator changed.")
     refreshed = copy.deepcopy(packet)
     _refresh(refreshed, index)
     if packet["coverage"] != refreshed["coverage"] or packet["omitted_refs"] != refreshed["omitted_refs"]:
         raise DomainError("evidence_mismatch", "Packet coverage or unread references changed.")
     if structured and packet.get("relations") != refreshed["relations"]:
         raise DomainError("evidence_mismatch", "Packet relationships differ from the visible source projection.")
+    if packet.get("goal_annotations") != refreshed.get("goal_annotations"):
+        raise DomainError("evidence_mismatch", "Derived goal annotations changed their source projection.")
+    if packet.get("resource_relations") != refreshed.get("resource_relations"):
+        raise DomainError("evidence_mismatch", "Resource neighborhood changed its source projection.")
     if math.ceil(len(_json(packet).encode("utf-8")) / 3) > packet["token_budget"]:
         raise DomainError("evidence_budget_exhausted", "Packet exceeds its explicitly estimated token budget.")
     return packet
@@ -432,6 +610,7 @@ def validate_packet(packet, index):
 def expand_packet(index, packet, requests, *, limits):
     """Read only advertised ranges, retaining all previously supplied evidence."""
     _limits(limits)
+    for reader in index.get("trace_readers", []): reader.set_read_budget(limits["max_chars"] * 4)
     result = validate_packet(packet, index)
     catalog = {entry["ref_id"]: entry for entry in result["readable_ref_catalog"]}
     refs = [request.get("ref_id") for request in requests]
@@ -454,7 +633,9 @@ def expand_packet(index, packet, requests, *, limits):
     _refresh(result, index)
     if not _fits(result, limits):
         raise DomainError("evidence_budget_exhausted", "Requested original ranges exceed the declared packet budget.")
-    return validate_packet(result, index)
+    result = validate_packet(result, index)
+    index["read_stats"] = {key: sum(r.stats[key] for r in index.get("trace_readers", [])) for key in ("body_bytes", "range_reads")}
+    return result
 
 
 def validate_citations(draft, packet):
@@ -497,7 +678,7 @@ def feedback_view(index, packet):
     visible = []
     for feedback in index["feedback"]:
         def belongs(item):
-            record, _ = _resolve(index, item["ref_id"])
+            record, _ = _resolve(index, item["ref_id"], body=False)
             return (not record["source_event"] and record["kind"] == "feedback"
                     and record["event_id"] == feedback["check_id"]
                     and record["episode_id"] == feedback["subject_ref"])

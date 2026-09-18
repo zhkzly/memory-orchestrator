@@ -1,0 +1,233 @@
+[
+  {
+    "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+    "candidate_ids": [],
+    "candidate_slots": [
+      {
+        "candidate_id": null,
+        "slot": 0,
+        "status": "not_started"
+      }
+    ],
+    "completed_at": "2026-09-18T18:08:09.019404Z",
+    "contract_source": {
+      "path": "docs/blueprint/project-contract.json",
+      "sha256": "db003379537219487c24bda14880f08f6c55601c8775b220977cf0199b3c6b14",
+      "version": "1.7.0"
+    },
+    "created_at": "2026-09-18T18:08:08.834207Z",
+    "cycle_id": "learning_33e5f259ab9046e28901b0611446a20b",
+    "diagnosis_id": null,
+    "errors": [
+      {
+        "code": "model_transport_error",
+        "cycle_id": "learning_33e5f259ab9046e28901b0611446a20b",
+        "details": {
+          "attempts": [
+            {
+              "attempt": 1,
+              "error_type": "APIConnectionError",
+              "status": "transport_error"
+            }
+          ],
+          "calls_consumed": 1,
+          "error_type": "APIConnectionError",
+          "input_chars_consumed": 21378,
+          "prompt_id": "extract_v1",
+          "usage": [
+            {
+              "attempt": 1,
+              "currency": null,
+              "elapsed_seconds": 0.15248990400868934,
+              "input_chars": 21378,
+              "input_tokens": null,
+              "measurement": "missing",
+              "model": null,
+              "monetary_cost": null,
+              "output_chars": null,
+              "output_tokens": null,
+              "price_version": null,
+              "prompt_id": "extract_v1",
+              "request_id": null,
+              "status": "transport_error",
+              "total_tokens": null,
+              "usage_id": "modelcall_f405be7f9532407eb0f71e1e20ee23fc"
+            }
+          ]
+        },
+        "error_id": "error_1d8096820cb94e9fb199b672796783e3",
+        "message": "Model callable failed; actual token usage is unknown.",
+        "project_id": "csv-demo",
+        "stage": "extract_v1"
+      }
+    ],
+    "expected_generation": 0,
+    "experience_ids": [],
+    "goal_binding_ids": [],
+    "maintenance_review_ids": [],
+    "model_limits": {
+      "max_calls": 8,
+      "max_format_repairs": 1,
+      "max_input_chars": 120000,
+      "max_output_chars": 20000,
+      "max_output_tokens": 4000,
+      "max_total_input_chars": 480000
+    },
+    "policy": {
+      "candidate_count": 1,
+      "evaluation_scope": "local CSV repair; target and regression, no transfer claim",
+      "expanded_packet": {
+        "max_catalog_refs": 8,
+        "max_chars": 38000,
+        "max_fragment_chars": 1200,
+        "token_budget": 24000
+      },
+      "maintenance": {
+        "max_actions": 4,
+        "max_chars": 20000,
+        "max_pairs": 6
+      },
+      "max_asset_bytes": 20000,
+      "max_expansions": 2,
+      "max_experiences": 3,
+      "max_operations": 3,
+      "max_read_requests": 4,
+      "max_related_chars": 16000,
+      "max_related_episodes": 8,
+      "max_related_experiences": 4,
+      "max_skills": 20,
+      "necessity": {
+        "max_compared_skills": 20
+      },
+      "packet": {
+        "max_catalog_refs": 8,
+        "max_chars": 28000,
+        "max_fragment_chars": 1200,
+        "token_budget": 16000
+      }
+    },
+    "project_id": "csv-demo",
+    "read_stats": {
+      "body_bytes": 0,
+      "metadata_rows": 0,
+      "range_reads": 0
+    },
+    "reason": "Model callable failed; actual token usage is unknown.",
+    "report_ids": [
+      "modelreport_df78114051354501869ee6b706e37083"
+    ],
+    "requested_episode_ids": [
+      "episode_735835096c55403599b514d965a3f83c",
+      "episode_febccdf016524799bfb5c5ab566fb641"
+    ],
+    "retrieval": {
+      "failure_signature": {
+        "coverage": {
+          "complete": true,
+          "omitted_evidence_occurrences": 0,
+          "omitted_feature_occurrences": 0
+        },
+        "criterion_ids": [
+          "task_outcome"
+        ],
+        "error_codes": [],
+        "evidence_refs": [
+          "ev:432839be5f6e0d4cc24da9c6",
+          "ev:c081dd2447340c9dd6af7cec"
+        ],
+        "operation": null,
+        "origin": "observed_fields",
+        "resource_kinds": [],
+        "symptom_terms": []
+      },
+      "selected_record_ids": [],
+      "signature_hits": 0
+    },
+    "source_episode_ids": [
+      "episode_735835096c55403599b514d965a3f83c",
+      "episode_febccdf016524799bfb5c5ab566fb641"
+    ],
+    "status": "error",
+    "trace_checkpoint_ids": [],
+    "usage_ids": [
+      "modelcall_f405be7f9532407eb0f71e1e20ee23fc"
+    ]
+  },
+  {
+    "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+    "candidate_ids": [],
+    "candidate_slots": [
+      {
+        "candidate_id": null,
+        "slot": 0,
+        "status": "not_started"
+      }
+    ],
+    "contract_source": {
+      "path": "docs/blueprint/project-contract.json",
+      "sha256": "db003379537219487c24bda14880f08f6c55601c8775b220977cf0199b3c6b14",
+      "version": "1.7.0"
+    },
+    "created_at": "2026-09-18T18:08:08.834207Z",
+    "cycle_id": "learning_33e5f259ab9046e28901b0611446a20b",
+    "diagnosis_id": null,
+    "errors": [],
+    "expected_generation": 0,
+    "experience_ids": [],
+    "goal_binding_ids": [],
+    "maintenance_review_ids": [],
+    "model_limits": {
+      "max_calls": 8,
+      "max_format_repairs": 1,
+      "max_input_chars": 120000,
+      "max_output_chars": 20000,
+      "max_output_tokens": 4000,
+      "max_total_input_chars": 480000
+    },
+    "policy": {
+      "candidate_count": 1,
+      "evaluation_scope": "local CSV repair; target and regression, no transfer claim",
+      "expanded_packet": {
+        "max_catalog_refs": 8,
+        "max_chars": 38000,
+        "max_fragment_chars": 1200,
+        "token_budget": 24000
+      },
+      "maintenance": {
+        "max_actions": 4,
+        "max_chars": 20000,
+        "max_pairs": 6
+      },
+      "max_asset_bytes": 20000,
+      "max_expansions": 2,
+      "max_experiences": 3,
+      "max_operations": 3,
+      "max_read_requests": 4,
+      "max_related_chars": 16000,
+      "max_related_episodes": 8,
+      "max_related_experiences": 4,
+      "max_skills": 20,
+      "necessity": {
+        "max_compared_skills": 20
+      },
+      "packet": {
+        "max_catalog_refs": 8,
+        "max_chars": 28000,
+        "max_fragment_chars": 1200,
+        "token_budget": 16000
+      }
+    },
+    "project_id": "csv-demo",
+    "report_ids": [],
+    "requested_episode_ids": [
+      "episode_735835096c55403599b514d965a3f83c",
+      "episode_febccdf016524799bfb5c5ab566fb641"
+    ],
+    "source_episode_ids": [
+      "episode_735835096c55403599b514d965a3f83c",
+      "episode_febccdf016524799bfb5c5ab566fb641"
+    ],
+    "status": "planned",
+    "usage_ids": []
+  }
+]

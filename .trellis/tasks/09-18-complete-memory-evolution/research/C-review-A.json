@@ -1,0 +1,92 @@
+{
+  "seed_chain": {
+    "baseline": {
+      "project_id": "p",
+      "snapshot_id": "e7608ea940eb9678b8340404df58248d61c5edf8a1947fa47603ab4dcdbae74f",
+      "generation": 0,
+      "release_id": null,
+      "commit": null,
+      "committed_release_ids": [],
+      "baseline_ref": "baseline_d0e6323e5c179973c0fa7a1994ec422b1b039a29b6ef47a9553db0470815e269",
+      "bootstrap": "seed_unmeasured"
+    },
+    "actual_release": {
+      "expected_active_digest": "e7608ea940eb9678b8340404df58248d61c5edf8a1947fa47603ab4dcdbae74f",
+      "expected_generation": 0,
+      "kind": "promote",
+      "new_digest": "31999e29f8b72d05c7faca493c0a50d7d6abdd3abcb53ce3efb695a8dd4a3089",
+      "new_generation": 1,
+      "project_id": "p",
+      "reason": "Publish the candidate chosen by the frozen comparison rule.",
+      "release_id": "release_5060de90fe178d9bd7dd2278c7ea269c61f76da79fc607981500c749d4d7f327",
+      "rollback_target_release_ref": null,
+      "selection_ref": "selection_44548eb21f614bde954825774e28195e",
+      "status": "published",
+      "timestamp": "2026-09-18T17:06:59.275618Z",
+      "validation_ref": "validation_ddeaebaf7467400a97464ce8447fa5d6"
+    },
+    "history_count": 1
+  },
+  "legacy_empty_chain": {
+    "baseline": {
+      "commit": null,
+      "committed_release_ids": [],
+      "generation": 0,
+      "project_id": "p",
+      "release_id": null,
+      "snapshot_id": "69afd0336b25f0c665e8b3ecae80711cb98a915347d5a28de2601de885df330e"
+    },
+    "actual_release": {
+      "expected_active_digest": "69afd0336b25f0c665e8b3ecae80711cb98a915347d5a28de2601de885df330e",
+      "expected_generation": 0,
+      "kind": "promote",
+      "new_digest": "fa1612c5ab83a6a4bfcdad1eda585ddeb566d9dad5f41b753ba09ce895cf77e7",
+      "new_generation": 1,
+      "project_id": "p",
+      "reason": "Publish the candidate chosen by the frozen comparison rule.",
+      "release_id": "release_eac3a2bc43f0078bd075fadae99baec62b2f1d659a2ae9644a66df90db70b5da",
+      "rollback_target_release_ref": null,
+      "selection_ref": "selection_e8cca9fe4a1f4268822ade778f767564",
+      "status": "published",
+      "timestamp": "2026-09-18T17:06:59.683229Z",
+      "validation_ref": "validation_2ab1897b6aec413682c609420234cf29"
+    },
+    "history_count": 1
+  },
+  "mixed_sources": {
+    "assessment_sources": [
+      "external",
+      "llm_proxy"
+    ],
+    "validation_status": "unknown",
+    "result_count": 8
+  },
+  "proxy": {
+    "scripted_provider_calls": 1,
+    "source": [
+      "llm_proxy"
+    ],
+    "forgery_rejected": "feedback_source"
+  },
+  "after_return": {
+    "child_exit": 29,
+    "physical_execution_calls": 1,
+    "status": "completed",
+    "missing_wall_segments": 1,
+    "attempts": 1,
+    "returns": 1
+  },
+  "inside_execution": {
+    "child_exit": 31,
+    "physical_execution_calls": 1,
+    "status": "completed",
+    "missing_wall_segments": 1,
+    "attempts": 1,
+    "returns": 1
+  },
+  "source_sha256": {
+    "src/memory_orchestrator/feedback.py": "64fb01b227f2dc1e8b71a07108fa2658a924a22077cb98a68f193ec3a0efb01d",
+    "src/memory_orchestrator/sampling.py": "79bd1e5f23947a3ff45dc6ebee48b18c047d0e9f7bf8f7c498e2e99178043a58",
+    "src/memory_orchestrator/store.py": "8dbc117389ca20d21b5ff5d1a94991d7763d1790c80250ed1c02423f48ebb603"
+  }
+}

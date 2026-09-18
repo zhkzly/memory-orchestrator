@@ -1,0 +1,939 @@
+[
+  {
+    "created_at": "2026-09-18T18:08:09.018413Z",
+    "cycle_id": "learning_33e5f259ab9046e28901b0611446a20b",
+    "error_code": "model_transport_error",
+    "inputs": {
+      "available_feedback": [
+        {
+          "binding_status": "bound",
+          "check_id": "feedback_plan_84c460d915534bc29f9ed325c05d93d5:feedback:task_outcome",
+          "checked_at": "2026-09-18T18:08:08.715261Z",
+          "criterion_id": "task_outcome",
+          "evaluated_state_digest": "38394cd7ad734043b0902221429b004d2dd74b82ef2216b4983f363fb3998c4b",
+          "evaluator_status": "ok",
+          "outcome": "fail",
+          "project_id": "csv-demo",
+          "provided_refs": [
+            "ev:432839be5f6e0d4cc24da9c6:314:1181"
+          ],
+          "read_status": "provided_ranges_only",
+          "readable_refs": [
+            "ev:432839be5f6e0d4cc24da9c6:0:1181"
+          ],
+          "received_at": "2026-09-18T18:08:08.715261Z",
+          "score": 0.0,
+          "source": "external",
+          "subject_ref": "episode_735835096c55403599b514d965a3f83c",
+          "task_revision": "v1",
+          "visibility": "adaptation"
+        },
+        {
+          "binding_status": "bound",
+          "check_id": "feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e:feedback:task_outcome",
+          "checked_at": "2026-09-18T18:08:08.721983Z",
+          "criterion_id": "task_outcome",
+          "evaluated_state_digest": "38394cd7ad734043b0902221429b004d2dd74b82ef2216b4983f363fb3998c4b",
+          "evaluator_status": "ok",
+          "outcome": "fail",
+          "project_id": "csv-demo",
+          "provided_refs": [
+            "ev:c081dd2447340c9dd6af7cec:314:1181"
+          ],
+          "read_status": "provided_ranges_only",
+          "readable_refs": [
+            "ev:c081dd2447340c9dd6af7cec:0:1181"
+          ],
+          "received_at": "2026-09-18T18:08:08.721983Z",
+          "score": 0.0,
+          "source": "external",
+          "subject_ref": "episode_febccdf016524799bfb5c5ab566fb641",
+          "task_revision": "v1",
+          "visibility": "adaptation"
+        }
+      ],
+      "evidence_packet": {
+        "context_refs": [
+          "context_81235460d5fc49dbbe95f87e4f7f6e71"
+        ],
+        "coverage": {
+          "incomplete_reasons": [
+            "Catalog and original ranges are bounded; unlisted material remains in the source index."
+          ],
+          "mandatory_roles_present": [
+            "feedback",
+            "observation",
+            "task"
+          ],
+          "omitted_episode_refs": [],
+          "selected_event_count": 4,
+          "total_event_count": 4
+        },
+        "episode_bindings": [
+          {
+            "episode_id": "episode_735835096c55403599b514d965a3f83c",
+            "relation": "same_task",
+            "task_ref": "leading-zeros",
+            "task_revision": "v1"
+          },
+          {
+            "episode_id": "episode_735835096c55403599b514d965a3f83c",
+            "relation": "unknown",
+            "task_ref": null,
+            "task_revision": "v1"
+          },
+          {
+            "episode_id": "episode_febccdf016524799bfb5c5ab566fb641",
+            "relation": "same_task",
+            "task_ref": "leading-zeros",
+            "task_revision": "v1"
+          },
+          {
+            "episode_id": "episode_febccdf016524799bfb5c5ab566fb641",
+            "relation": "unknown",
+            "task_ref": null,
+            "task_revision": "v1"
+          }
+        ],
+        "episode_refs": [
+          "episode_735835096c55403599b514d965a3f83c",
+          "episode_febccdf016524799bfb5c5ab566fb641"
+        ],
+        "feedback_ids": [
+          "feedback_plan_84c460d915534bc29f9ed325c05d93d5:feedback:task_outcome",
+          "feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e:feedback:task_outcome"
+        ],
+        "fragments": [
+          {
+            "episode_id": "episode_735835096c55403599b514d965a3f83c",
+            "event_id": "task",
+            "kind": "task",
+            "range": {
+              "end_byte_exclusive": 247,
+              "start_byte": 0
+            },
+            "raw_hash": "b256c25e63c91e760d6bfc3776d8c37d636f6054e6449141998dc8cb9985dee8",
+            "raw_ref": "episode:episode_735835096c55403599b514d965a3f83c/requirement:task",
+            "ref_id": "ev:43e65da455cdea1928dbdc65:0:247",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "requirement",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "instruction",
+              "source_position": -1,
+              "source_role": null,
+              "task_id": "leading-zeros"
+            },
+            "task_revision": "v1",
+            "text": "Transform CSV using declared column types. String IDs retain leading zeros; empty numeric cells become null. The local executor reads selected Skills asset references/csv-policy.json with preserve_string_columns and empty_numeric_as_null booleans."
+          },
+          {
+            "episode_id": "episode_febccdf016524799bfb5c5ab566fb641",
+            "event_id": "task",
+            "kind": "task",
+            "range": {
+              "end_byte_exclusive": 247,
+              "start_byte": 0
+            },
+            "raw_hash": "b256c25e63c91e760d6bfc3776d8c37d636f6054e6449141998dc8cb9985dee8",
+            "raw_ref": "episode:episode_febccdf016524799bfb5c5ab566fb641/requirement:task",
+            "ref_id": "ev:b1d92f54067cd679c469f1de:0:247",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "requirement",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "instruction",
+              "source_position": -1,
+              "source_role": null,
+              "task_id": "leading-zeros"
+            },
+            "task_revision": "v1",
+            "text": "Transform CSV using declared column types. String IDs retain leading zeros; empty numeric cells become null. The local executor reads selected Skills asset references/csv-policy.json with preserve_string_columns and empty_numeric_as_null booleans."
+          },
+          {
+            "episode_id": "episode_735835096c55403599b514d965a3f83c",
+            "event_id": "instruction",
+            "kind": "task",
+            "range": {
+              "end_byte_exclusive": 428,
+              "start_byte": 0
+            },
+            "raw_hash": "1e8ed711c2fcbd1a6aa8c92dd24282643842da7b30729bb6c3658e1736315780",
+            "raw_ref": "sampling_input_09e17e41dbd746aba6c872ec7e0c5412#/public_case/task",
+            "ref_id": "ev:00b6b7a6666500511a428530:0:428",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "instruction",
+              "source_position": 0,
+              "source_role": "user",
+              "task_id": "leading-zeros"
+            },
+            "task_revision": "v1",
+            "text": "{\"column_types\":{\"amount\":\"number\",\"id\":\"string\"},\"csv\":\"id,amount\\n001,10\\n\",\"description\":\"Transform CSV using declared column types. String IDs retain leading zeros; empty numeric cells become null. The local executor reads selected Skills asset references/csv-policy.json with preserve_string_columns and empty_numeric_as_null booleans.\",\"project_id\":\"csv-demo\",\"revision\":\"v1\",\"task_family\":\"csv\",\"task_id\":\"leading-zeros\"}"
+          },
+          {
+            "episode_id": "episode_febccdf016524799bfb5c5ab566fb641",
+            "event_id": "instruction",
+            "kind": "task",
+            "range": {
+              "end_byte_exclusive": 428,
+              "start_byte": 0
+            },
+            "raw_hash": "1e8ed711c2fcbd1a6aa8c92dd24282643842da7b30729bb6c3658e1736315780",
+            "raw_ref": "sampling_input_09e17e41dbd746aba6c872ec7e0c5412#/public_case/task",
+            "ref_id": "ev:d984d4d19501e170662574bb:0:428",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "instruction",
+              "source_position": 0,
+              "source_role": "user",
+              "task_id": "leading-zeros"
+            },
+            "task_revision": "v1",
+            "text": "{\"column_types\":{\"amount\":\"number\",\"id\":\"string\"},\"csv\":\"id,amount\\n001,10\\n\",\"description\":\"Transform CSV using declared column types. String IDs retain leading zeros; empty numeric cells become null. The local executor reads selected Skills asset references/csv-policy.json with preserve_string_columns and empty_numeric_as_null booleans.\",\"project_id\":\"csv-demo\",\"revision\":\"v1\",\"task_family\":\"csv\",\"task_id\":\"leading-zeros\"}"
+          },
+          {
+            "episode_id": "episode_735835096c55403599b514d965a3f83c",
+            "event_id": "result",
+            "kind": "observation",
+            "range": {
+              "end_byte_exclusive": 58,
+              "start_byte": 0
+            },
+            "raw_hash": "ecd85d7a3862fb8991e9b8fa5cd5d7dd1ce22fe0c89a2902ee42319797a6661d",
+            "raw_ref": "run_e81fd3ba50c64c7d995d1faefcfe837a",
+            "ref_id": "ev:08678d4822595ce769e64554:0:58",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "result",
+              "source_position": 1,
+              "source_role": "environment",
+              "task_id": null
+            },
+            "task_revision": "v1",
+            "text": "{\"artifact\": [{\"amount\": 10.0, \"id\": 1.0}], \"error\": null}"
+          },
+          {
+            "episode_id": "episode_febccdf016524799bfb5c5ab566fb641",
+            "event_id": "result",
+            "kind": "observation",
+            "range": {
+              "end_byte_exclusive": 58,
+              "start_byte": 0
+            },
+            "raw_hash": "ecd85d7a3862fb8991e9b8fa5cd5d7dd1ce22fe0c89a2902ee42319797a6661d",
+            "raw_ref": "run_e34765490ff543b8a9aa27ab376b0ca7",
+            "ref_id": "ev:7be6a2de6e088346a4eaa415:0:58",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "result",
+              "source_position": 1,
+              "source_role": "environment",
+              "task_id": null
+            },
+            "task_revision": "v1",
+            "text": "{\"artifact\": [{\"amount\": 10.0, \"id\": 1.0}], \"error\": null}"
+          },
+          {
+            "episode_id": "episode_735835096c55403599b514d965a3f83c",
+            "event_id": "feedback_plan_84c460d915534bc29f9ed325c05d93d5:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 1181,
+              "start_byte": 314
+            },
+            "raw_hash": "d895e549aa952f9fed4347d0154cf28f5d222c64cb3130bd2d7abde9086def97",
+            "raw_ref": "feedback:feedback_plan_84c460d915534bc29f9ed325c05d93d5:feedback:task_outcome",
+            "ref_id": "ev:432839be5f6e0d4cc24da9c6:314:1181",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 2,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "v1",
+            "text": "902221429b004d2dd74b82ef2216b4983f363fb3998c4b\",\"evaluator_status\":\"ok\",\"evidence_refs\":[\"attempt_fc793a6992abce5605a47724ce574276523e2f2c38e66a0233fde30e1072bdbd\"],\"execution_ref\":\"run_e81fd3ba50c64c7d995d1faefcfe837a\",\"feedback_plan_ref\":\"feedback_plan_84c460d915534bc29f9ed325c05d93d5\",\"outcome\":\"fail\",\"project_id\":\"csv-demo\",\"reason\":\"{\\\"evidence\\\":[{\\\"actual_rows\\\":[{\\\"amount\\\":10.0,\\\"id\\\":1.0}],\\\"equal\\\":false,\\\"expected_rows\\\":[{\\\"amount\\\":10.0,\\\"id\\\":\\\"001\\\"}]}],\\\"message\\\":\\\"Independent exact comparison against the declared typed-row criterion.\\\"}\",\"received_at\":\"2026-09-18T18:08:08.715261Z\",\"request_ref\":\"feedback_plan_84c460d915534bc29f9ed325c05d93d5:task_outcome\",\"run_id\":\"run_e81fd3ba50c64c7d995d1faefcfe837a\",\"score\":0.0,\"source\":\"external\",\"subject_ref\":\"episode_735835096c55403599b514d965a3f83c\",\"task_revision\":\"v1\",\"visibility\":\"adaptation\"}"
+          },
+          {
+            "episode_id": "episode_febccdf016524799bfb5c5ab566fb641",
+            "event_id": "feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 1181,
+              "start_byte": 314
+            },
+            "raw_hash": "4752f0009be301835bff074e5fe415c024a4f4db1233916c7047ba6566f9033f",
+            "raw_ref": "feedback:feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e:feedback:task_outcome",
+            "ref_id": "ev:c081dd2447340c9dd6af7cec:314:1181",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 2,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "v1",
+            "text": "902221429b004d2dd74b82ef2216b4983f363fb3998c4b\",\"evaluator_status\":\"ok\",\"evidence_refs\":[\"attempt_96df53e6acb2a35b00152958f5bdf94e0b8f38a71beb5a670b25686bc12872f4\"],\"execution_ref\":\"run_e34765490ff543b8a9aa27ab376b0ca7\",\"feedback_plan_ref\":\"feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e\",\"outcome\":\"fail\",\"project_id\":\"csv-demo\",\"reason\":\"{\\\"evidence\\\":[{\\\"actual_rows\\\":[{\\\"amount\\\":10.0,\\\"id\\\":1.0}],\\\"equal\\\":false,\\\"expected_rows\\\":[{\\\"amount\\\":10.0,\\\"id\\\":\\\"001\\\"}]}],\\\"message\\\":\\\"Independent exact comparison against the declared typed-row criterion.\\\"}\",\"received_at\":\"2026-09-18T18:08:08.721983Z\",\"request_ref\":\"feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e:task_outcome\",\"run_id\":\"run_e34765490ff543b8a9aa27ab376b0ca7\",\"score\":0.0,\"source\":\"external\",\"subject_ref\":\"episode_febccdf016524799bfb5c5ab566fb641\",\"task_revision\":\"v1\",\"visibility\":\"adaptation\"}"
+          }
+        ],
+        "gaps": [
+          "Related-memory lookup found no in-budget matches; this does not establish absence of counterexamples.",
+          "episode_735835096c55403599b514d965a3f83c: Execution did not report both reset-state and environment identity; independent comparability unknown.",
+          "episode_735835096c55403599b514d965a3f83c: source=execution_function; reported material is not independent verification.",
+          "episode_febccdf016524799bfb5c5ab566fb641: Execution did not report both reset-state and environment identity; independent comparability unknown.",
+          "episode_febccdf016524799bfb5c5ab566fb641: source=execution_function; reported material is not independent verification.",
+          "Token estimate = ceil(UTF-8 JSON bytes / 3); not a tokenizer measurement."
+        ],
+        "omitted_refs": [
+          "ev:432839be5f6e0d4cc24da9c6:0:1181",
+          "ev:c081dd2447340c9dd6af7cec:0:1181"
+        ],
+        "packet_id": "packet_082b0c6539004bfdbed6b8866a87f9da",
+        "project_id": "csv-demo",
+        "projection_version": 2,
+        "readable_ref_catalog": [
+          {
+            "available": true,
+            "episode_id": "episode_735835096c55403599b514d965a3f83c",
+            "range": {
+              "end_byte_exclusive": 1181,
+              "start_byte": 0
+            },
+            "raw_hash": "d895e549aa952f9fed4347d0154cf28f5d222c64cb3130bd2d7abde9086def97",
+            "raw_ref": "feedback:feedback_plan_84c460d915534bc29f9ed325c05d93d5:feedback:task_outcome",
+            "ref_id": "ev:432839be5f6e0d4cc24da9c6:0:1181",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 2,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "v1"
+          },
+          {
+            "available": true,
+            "episode_id": "episode_febccdf016524799bfb5c5ab566fb641",
+            "range": {
+              "end_byte_exclusive": 1181,
+              "start_byte": 0
+            },
+            "raw_hash": "4752f0009be301835bff074e5fe415c024a4f4db1233916c7047ba6566f9033f",
+            "raw_ref": "feedback:feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e:feedback:task_outcome",
+            "ref_id": "ev:c081dd2447340c9dd6af7cec:0:1181",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 2,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "v1"
+          }
+        ],
+        "relations": {
+          "calls": [],
+          "goals": [
+            {
+              "basis_refs": [],
+              "coverage": "complete",
+              "event_ref": "ev:00b6b7a6666500511a428530:0:428",
+              "goal_id": "leading-zeros",
+              "relation": "continues",
+              "revision": "v1"
+            },
+            {
+              "basis_refs": [],
+              "coverage": "complete",
+              "event_ref": "ev:d984d4d19501e170662574bb:0:428",
+              "goal_id": "leading-zeros",
+              "relation": "continues",
+              "revision": "v1"
+            }
+          ],
+          "parents": []
+        },
+        "source_snapshot_refs": [
+          "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580"
+        ],
+        "task_revision": "v1",
+        "token_budget": 16000,
+        "token_count_source": "estimated"
+      },
+      "extraction_limits": {
+        "max_evidence_expansions": 2,
+        "max_experiences": 3,
+        "max_read_requests": 4,
+        "remaining_evidence_expansions": 2
+      },
+      "readable_ref_catalog": [
+        {
+          "available": true,
+          "episode_id": "episode_735835096c55403599b514d965a3f83c",
+          "range": {
+            "end_byte_exclusive": 1181,
+            "start_byte": 0
+          },
+          "raw_hash": "d895e549aa952f9fed4347d0154cf28f5d222c64cb3130bd2d7abde9086def97",
+          "raw_ref": "feedback:feedback_plan_84c460d915534bc29f9ed325c05d93d5:feedback:task_outcome",
+          "ref_id": "ev:432839be5f6e0d4cc24da9c6:0:1181",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 2,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "v1"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_febccdf016524799bfb5c5ab566fb641",
+          "range": {
+            "end_byte_exclusive": 1181,
+            "start_byte": 0
+          },
+          "raw_hash": "4752f0009be301835bff074e5fe415c024a4f4db1233916c7047ba6566f9033f",
+          "raw_ref": "feedback:feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e:feedback:task_outcome",
+          "ref_id": "ev:c081dd2447340c9dd6af7cec:0:1181",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 2,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "v1"
+        }
+      ],
+      "related_experiences": [],
+      "task_requirements": [
+        {
+          "episode_id": "episode_735835096c55403599b514d965a3f83c",
+          "provided_requirement_refs": [
+            "ev:43e65da455cdea1928dbdc65:0:247",
+            "ev:00b6b7a6666500511a428530:0:428"
+          ],
+          "revision": "v1",
+          "task_id": "leading-zeros"
+        },
+        {
+          "episode_id": "episode_febccdf016524799bfb5c5ab566fb641",
+          "provided_requirement_refs": [
+            "ev:b1d92f54067cd679c469f1de:0:247",
+            "ev:d984d4d19501e170662574bb:0:428"
+          ],
+          "revision": "v1",
+          "task_id": "leading-zeros"
+        }
+      ]
+    },
+    "project_id": "csv-demo",
+    "prompt_digest": "a6b5c38e95602384941327e8f04c74796de32751a36ca1e7908f0b0a768a9056",
+    "prompt_id": "extract_v1",
+    "report_id": "modelreport_df78114051354501869ee6b706e37083",
+    "result": {
+      "attempts": [
+        {
+          "attempt": 1,
+          "error_type": "APIConnectionError",
+          "status": "transport_error"
+        }
+      ],
+      "calls_consumed": 1,
+      "error_type": "APIConnectionError",
+      "input_chars_consumed": 21378,
+      "prompt_id": "extract_v1",
+      "usage": [
+        {
+          "attempt": 1,
+          "currency": null,
+          "elapsed_seconds": 0.15248990400868934,
+          "input_chars": 21378,
+          "input_tokens": null,
+          "measurement": "missing",
+          "model": null,
+          "monetary_cost": null,
+          "output_chars": null,
+          "output_tokens": null,
+          "price_version": null,
+          "prompt_id": "extract_v1",
+          "request_id": null,
+          "status": "transport_error",
+          "total_tokens": null,
+          "usage_id": "modelcall_f405be7f9532407eb0f71e1e20ee23fc"
+        }
+      ]
+    },
+    "status": "error"
+  },
+  {
+    "all_success": null,
+    "any_success": false,
+    "batch_wall_time": {
+      "comparison": [],
+      "sampling": [
+        {
+          "batch_id": "sampling_batch_e77c650cf14c42469fdff54c5c5a72e2",
+          "complete_active_wall_seconds": 0.15326174300571438,
+          "known_active_wall_seconds": 0.15326174300571438,
+          "missing_segments": 0,
+          "segment_ids": [
+            "sampling_segment_e84ae5c812e743f1bb080024f3bdb425"
+          ],
+          "statuses": {
+            "completed": 1
+          }
+        }
+      ],
+      "sampling_receipts": [
+        {
+          "batch_id": "sampling_batch_e77c650cf14c42469fdff54c5c5a72e2",
+          "end_to_end_seconds": 0.15558,
+          "finished_at": "2026-09-18T18:08:08.819263Z",
+          "first_started_at": "2026-09-18T18:08:08.663683Z",
+          "group_ids": [
+            "group_1f5f2c34f6fe44f4814b8e9dc1b51da5"
+          ],
+          "known_segment_seconds": 0.15326174300571438,
+          "missing_segment_count": 0,
+          "project_id": "csv-demo",
+          "receipt_id": "sampling_batch_e77c650cf14c42469fdff54c5c5a72e2:receipt",
+          "receipt_refs": [
+            "group_1f5f2c34f6fe44f4814b8e9dc1b51da5:receipt"
+          ],
+          "segment_ids": [
+            "sampling_segment_e84ae5c812e743f1bb080024f3bdb425"
+          ]
+        }
+      ]
+    },
+    "candidate_counts": {
+      "compared_snapshots": 0,
+      "proposal_records": 0,
+      "unique_snapshots": 0
+    },
+    "committed_release_ids": [],
+    "comparison_summary": {
+      "all_success": null,
+      "any_success": false,
+      "by_mode": [],
+      "coverage": null,
+      "execution_status_counts": {
+        "adapter_error": 0,
+        "budget_exhausted": 0,
+        "cancelled": 0,
+        "completed": 0,
+        "timeout": 0,
+        "unknown": 0
+      },
+      "identification_bounds": null,
+      "observed_success_rate": null,
+      "outcomes": {
+        "fail": 0,
+        "pass": 0,
+        "unknown": 0
+      },
+      "planned_requests": 0
+    },
+    "comparisons": [],
+    "consumption_layers": {
+      "effect_records": [],
+      "note": "Provided, reported read, reported behavior and measured conditional effects are distinct; absent level is unclassified, not inferred use.",
+      "observed_events": [],
+      "observed_level_counts": {},
+      "provided_manifest_counts": {}
+    },
+    "coverage": null,
+    "created_at": "2026-09-18T18:08:09.036834Z",
+    "distinct_known_task_count": 1,
+    "episode_count": 2,
+    "episodes_with_unknown_task_id": 0,
+    "evaluation_requests": 0,
+    "evidence_kind": "caller execution/evaluation records; not automatic independent truth",
+    "execution_status_counts": {
+      "adapter_error": 0,
+      "budget_exhausted": 0,
+      "cancelled": 0,
+      "completed": 0,
+      "timeout": 0,
+      "unknown": 0
+    },
+    "identification_bounds": null,
+    "known_task_ids": [
+      "leading-zeros"
+    ],
+    "library_history": [
+      {
+        "added_skill_ids": [],
+        "asset_bytes": 0,
+        "generation": 0,
+        "kind": "baseline",
+        "release_ref": null,
+        "removed_skill_ids": [],
+        "rule_count": 0,
+        "skill_count": 0,
+        "snapshot_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580"
+      }
+    ],
+    "maintenance": {
+      "by_stage": {
+        "evaluate": {
+          "errors": 0,
+          "local_seconds": 0.0861586190003436,
+          "measurements": 8,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 8
+        },
+        "execute": {
+          "errors": 0,
+          "local_seconds": 0.07171813398599625,
+          "measurements": 8,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 8
+        },
+        "extract": {
+          "errors": 1,
+          "local_seconds": 0.003886526988935657,
+          "measurements": 1,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 1
+        },
+        "index": {
+          "errors": 0,
+          "local_seconds": 0.020440291002159938,
+          "measurements": 3,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 3
+        },
+        "prepare": {
+          "errors": 0,
+          "local_seconds": 0.013645017999806441,
+          "measurements": 1,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 1
+        },
+        "recover": {
+          "errors": 0,
+          "local_seconds": 0.009031484994920902,
+          "measurements": 5,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 5
+        },
+        "select": {
+          "errors": 0,
+          "local_seconds": 0.003937871006201021,
+          "measurements": 2,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 2
+        }
+      },
+      "complete_cost_totals": null,
+      "known_cost_subtotals": {},
+      "measurement_ids": [
+        "stage_07be849b10ba4672b67e904c3fcba483",
+        "stage_1052058ea3cb44e3b19cd43276956407",
+        "stage_1325b0f7e43f4fb6864acff3e58c6626",
+        "stage_190109f4fd9645d19cae43d8e431fb1f",
+        "stage_2d205b9dd82d40fcb84e0b5c788b07d8",
+        "stage_4a5a90e5a20b433287488e93f9a2d8fc",
+        "stage_4b1331599bc849ba90e6a6a28b86c6eb",
+        "stage_4e756daf43be4e17b15c7dba727c39bb",
+        "stage_544788a89c89439588a73b77e2c76ded",
+        "stage_5b6b6b67f2854a10a6245b0db29110b2",
+        "stage_5dc3266d3d964eaf881e1d08b2db7684",
+        "stage_6f7d396953c7424ab5a0972fee7ad913",
+        "stage_74b073262ee44fca9fafe61be9f5313c",
+        "stage_8c8cd3f8349a4918b83567da6a1e9083",
+        "stage_8e6ec5cf27bc444d99f3ea38c18102b4",
+        "stage_9baeb8eb829c4bc1b23bb29c0fcc0cb7",
+        "stage_9bda7d1b40a24a77ad8061f6c9aa0887",
+        "stage_a4554f8b9af34f7c8562759d9317a784",
+        "stage_a52a7641e1cf4d4b9071e6ff8536a9d2",
+        "stage_b51b52c7d5714cfaa89def26f901c3be",
+        "stage_b8c8684f7c71422e85557611bf08e0d1",
+        "stage_c126bee2931449b8b9285c5b768c05b1",
+        "stage_c57a6546bd50427f9e5a420d9e3d8cac",
+        "stage_d5a841f6e3254906a5c6941cd83fb0fb",
+        "stage_f598c36df82a4dd38c3f78b181ccd90a",
+        "stage_f8b221fdb5704df2b7e22fae9b3dd351",
+        "stage_fc539ff24f3c476ba219604936dce397",
+        "stage_fe010da1012048bda2de611a32ae89fe"
+      ],
+      "note": "Local maintenance measurements exclude declared delegated calls; provider usage is reported separately. Missing prices are unknown."
+    },
+    "measurement_scope": "Cost totals cover listed completed records; this report's own timing is appended on return and addressed by report_measurement_ref.",
+    "memory_progress": {
+      "archived_trace_bytes": 0,
+      "decoded_body_bytes_read": 0,
+      "derived_goal_bindings": 0,
+      "goal_binding_statuses": {},
+      "incomplete_traces": [],
+      "indexed_events": 0,
+      "judgment_origin": "Model judgments are not semantic accuracy measurements; unlabeled accuracy remains unknown.",
+      "maintenance": {
+        "active_duplicate_groups": [],
+        "applied_revocations": 0,
+        "origin": "model_proxy",
+        "review_counts": {},
+        "unresolved_conflict_groups": []
+      },
+      "necessity_verdicts": {},
+      "range_reads": 0,
+      "signature_retrieval_hits": 0,
+      "trace_count": 0
+    },
+    "observed_success_rate": null,
+    "outcomes": {
+      "fail": 0,
+      "pass": 0,
+      "unknown": 0
+    },
+    "pooled_rate_note": "Overall success rate mixes base and candidate requests; it is not an improvement estimate.",
+    "project_id": "csv-demo",
+    "proposal_attempts": {
+      "finished_slots": 0,
+      "note": "Proposal slots are not unique snapshots or model repair calls; usage records count physical calls.",
+      "planned_slots": 1,
+      "slot_status_counts": {
+        "not_started": 1
+      }
+    },
+    "proposal_snapshots": [],
+    "report_id": "report_65f377571c9a47c1b00c4c0b8edf06f1",
+    "report_measurement_ref": "stage_f4f1d81f2ee440ec9004657dd1c624d8",
+    "sampling": {
+      "by_mode": [
+        {
+          "all_success": false,
+          "all_success_groups": {
+            "false": 1,
+            "true": 0,
+            "unknown": 0
+          },
+          "any_success": false,
+          "any_success_groups": {
+            "false": 1,
+            "true": 0,
+            "unknown": 0
+          },
+          "coverage": 1.0,
+          "execution_status_counts": {
+            "adapter_error": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "completed": 2,
+            "timeout": 0,
+            "unknown": 0
+          },
+          "group_count": 1,
+          "group_unit": "same_task_run_group",
+          "identification_bounds": [
+            0.0,
+            0.0
+          ],
+          "observed_success_rate": 0.0,
+          "outcomes": {
+            "fail": 2,
+            "pass": 0,
+            "unknown": 0
+          },
+          "planned_requests": 2,
+          "purpose": "learning",
+          "scoring_policy": "completed_only",
+          "update_mode": "task_barrier"
+        }
+      ],
+      "groups": [
+        {
+          "all_success": false,
+          "any_success": false,
+          "coverage": 1.0,
+          "execution_status_counts": {
+            "adapter_error": 0,
+            "budget_exhausted": 0,
+            "cancelled": 0,
+            "completed": 2,
+            "timeout": 0,
+            "unknown": 0
+          },
+          "group_id": "group_1f5f2c34f6fe44f4814b8e9dc1b51da5",
+          "identification_bounds": [
+            0.0,
+            0.0
+          ],
+          "missing_run_ids": [],
+          "observed_success_rate": 0.0,
+          "outcomes": {
+            "fail": 2,
+            "pass": 0,
+            "unknown": 0
+          },
+          "planned_slots": 2,
+          "purpose": "learning",
+          "receipt_refs": [
+            "group_1f5f2c34f6fe44f4814b8e9dc1b51da5:receipt"
+          ],
+          "recorded_receipts": 1,
+          "recorded_runs": 2,
+          "results": [
+            {
+              "assessment_ref": "assessment_6486e02fed454120bda1eac0bb0e96fb",
+              "assessment_source": "referenced",
+              "criterion_coverage": 1.0,
+              "criterion_ids": [
+                "task_outcome"
+              ],
+              "execution_status": "completed",
+              "feedback_plan_ref": "feedback_plan_84c460d915534bc29f9ed325c05d93d5",
+              "feedback_refs": [
+                "feedback_plan_84c460d915534bc29f9ed325c05d93d5:feedback:task_outcome"
+              ],
+              "feedback_sources": [
+                "external"
+              ],
+              "missing_criterion_ids": [],
+              "outcome": "fail",
+              "run_id": "run_e81fd3ba50c64c7d995d1faefcfe837a",
+              "score": 0.0,
+              "score_bounds": [
+                0.0,
+                0.0
+              ]
+            },
+            {
+              "assessment_ref": "assessment_ff977cc56ad743b9bf9d8065df4e92ad",
+              "assessment_source": "referenced",
+              "criterion_coverage": 1.0,
+              "criterion_ids": [
+                "task_outcome"
+              ],
+              "execution_status": "completed",
+              "feedback_plan_ref": "feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e",
+              "feedback_refs": [
+                "feedback_plan_425f9dada7fa43a78f3fb9a3170ce17e:feedback:task_outcome"
+              ],
+              "feedback_sources": [
+                "external"
+              ],
+              "missing_criterion_ids": [],
+              "outcome": "fail",
+              "run_id": "run_e34765490ff543b8a9aa27ab376b0ca7",
+              "score": 0.0,
+              "score_bounds": [
+                0.0,
+                0.0
+              ]
+            }
+          ],
+          "scoring_policy": "completed_only",
+          "snapshot_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+          "task_revision": "v1",
+          "update_mode": "task_barrier"
+        }
+      ]
+    },
+    "sampling_slots": 2,
+    "snapshot_validation_statuses": {},
+    "unique_case_identity_count": 0,
+    "usage": {
+      "by_stage": {
+        "evaluate": 2,
+        "execute": 2,
+        "extract": 1
+      },
+      "callback_attempts": 4,
+      "complete_cost_totals": null,
+      "incomplete_sampling_slots": 0,
+      "known_cost_subtotals": {},
+      "known_run_time_subtotal": 0.15287922701099887,
+      "missing_cost_calls": 5,
+      "missing_time_calls": 0,
+      "sum_run_time": 0.15287922701099887,
+      "tokens": {
+        "complete_totals": {
+          "input_tokens": null,
+          "output_tokens": null,
+          "total_tokens": null
+        },
+        "known_calls": {
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "total_tokens": 0
+        },
+        "known_subtotals": {
+          "input_tokens": null,
+          "output_tokens": null,
+          "total_tokens": null
+        },
+        "missing_calls": {
+          "input_tokens": 5,
+          "output_tokens": 5,
+          "total_tokens": 5
+        }
+      },
+      "unaccounted_evaluation_requests": 0,
+      "unaccounted_sampling_slots": 0,
+      "unfinished_learning_cycle_ids": [],
+      "unique_calls": 5,
+      "unreturned_attempt_ids": [],
+      "usage_ids": [
+        "attempt_45676937d7c622090315915f201f47954e55118e1dee3e57f9542208078c0801:usage:0",
+        "attempt_6b50c1d281e2e950cb84fa5ad79918580cb165f1220c4f65951128c8e9e72ffd:usage:0",
+        "attempt_96df53e6acb2a35b00152958f5bdf94e0b8f38a71beb5a670b25686bc12872f4:usage:0",
+        "attempt_fc793a6992abce5605a47724ce574276523e2f2c38e66a0233fde30e1072bdbd:usage:0",
+        "modelcall_f405be7f9532407eb0f71e1e20ee23fc"
+      ]
+    },
+    "validation_attempt_counts": {
+      "accepted": 0,
+      "rejected": 0,
+      "unknown": 0
+    }
+  }
+]

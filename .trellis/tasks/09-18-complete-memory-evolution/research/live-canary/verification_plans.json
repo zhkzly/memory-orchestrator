@@ -1,0 +1,129 @@
+[
+  {
+    "asset_jobs": [],
+    "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+    "candidate_digest": "5f97bd834064cb53a4f7b8136ccd0fe1d580022a9f790d37ef682136e789893a",
+    "contrast_plan_refs": [],
+    "evaluation_plan_id": "plan_96072134375146cfbe470ee6000544ff",
+    "expected_generation": 0,
+    "materials_hash": "553c62d005f83e5c5596b1d5e6ea76d0fea0fe6949472389881b45f4d16574b4",
+    "materials_ref": "materials_8ef24f4af4a149a5a9a8a75d60d99e2c",
+    "project_id": "csv-demo",
+    "proposal_hashes": {
+      "proposal_3e8966a2890b46db8fdc566483ff321d": "1fe10e7a80b7da50ea7e99ed4850ed04342c810af85036a5c953fb2c2ee33e6e"
+    },
+    "recovery_version": 1,
+    "relation_source_refs": [],
+    "requirements": [
+      {
+        "asset_test_ids": [],
+        "case_ids": [
+          "numeric-regression"
+        ],
+        "check": {
+          "behavior": "在 numeric-regression 任务中，string 类型 id \"a\" 保持文本，number 类型 amount \"2.5\" 输出为数值 2.5。",
+          "check_ref": "case:numeric-regression",
+          "purpose": "regression",
+          "required_evidence": "使用公开回归任务检查声明类型不会阻止 number 列数值转换。"
+        },
+        "check_ref": "case:numeric-regression",
+        "gaps": [],
+        "requirement_id": "requirement_35630160ce4244d15705ad9fa32920c3d382feb755dfb66d495fade3d68dd523",
+        "source_hash": "3e0c312234a607cc77e8f4c5361ab2d85f857d778944836340d43b2b063ab993",
+        "source_ref": "diagnosis_f0dd004d731e40639edabdd8ebce0330",
+        "status": "bound"
+      },
+      {
+        "asset_test_ids": [],
+        "case_ids": [],
+        "check": {
+          "behavior": "当 number 声明列出现空单元格且任务采用 empty_numeric_as_null 时，输出应为 null。",
+          "check_ref": null,
+          "purpose": "transfer",
+          "required_evidence": "需要包含空 number 单元格的公开检查材料；当前目录未提供该材料。"
+        },
+        "check_ref": null,
+        "gaps": [
+          "No explicit trusted check material reference."
+        ],
+        "requirement_id": "requirement_7af67275855f66d8b94648bdb79b0d4e2037290e781e8dee26b40d4dd5ccf541",
+        "source_hash": "3e0c312234a607cc77e8f4c5361ab2d85f857d778944836340d43b2b063ab993",
+        "source_ref": "diagnosis_f0dd004d731e40639edabdd8ebce0330",
+        "status": "missing"
+      },
+      {
+        "asset_test_ids": [],
+        "case_ids": [],
+        "check": {
+          "behavior": "When a number column has an empty cell and the task uses empty_numeric_as_null, the output should be null.",
+          "check_ref": null,
+          "purpose": "transfer",
+          "required_evidence": "A public check containing an empty declared-number cell is required; no such material is present in the directory."
+        },
+        "check_ref": null,
+        "gaps": [
+          "No explicit trusted check material reference."
+        ],
+        "requirement_id": "requirement_8961272471b3a774faef8335d4af78c32ed8401ffc7e57de31a05143b03c60d9",
+        "source_hash": "1fe10e7a80b7da50ea7e99ed4850ed04342c810af85036a5c953fb2c2ee33e6e",
+        "source_ref": "proposal_3e8966a2890b46db8fdc566483ff321d",
+        "status": "missing"
+      },
+      {
+        "asset_test_ids": [],
+        "case_ids": [
+          "leading-zeros"
+        ],
+        "check": {
+          "behavior": "In the leading-zeros task, the output id is the string \"001\" and amount is numeric 10.0 rather than id being numeric 1.0.",
+          "check_ref": "case:leading-zeros",
+          "purpose": "target",
+          "required_evidence": "Run the public task check with exact value and type comparison."
+        },
+        "check_ref": "case:leading-zeros",
+        "gaps": [],
+        "requirement_id": "requirement_924b4d34753d755c43cdfd523e7456621192725b48cb7f95164e70060ae1c78d",
+        "source_hash": "1fe10e7a80b7da50ea7e99ed4850ed04342c810af85036a5c953fb2c2ee33e6e",
+        "source_ref": "proposal_3e8966a2890b46db8fdc566483ff321d",
+        "status": "bound"
+      },
+      {
+        "asset_test_ids": [],
+        "case_ids": [
+          "numeric-regression"
+        ],
+        "check": {
+          "behavior": "In the numeric-regression task, string id \"a\" remains text and number amount \"2.5\" is output as numeric 2.5.",
+          "check_ref": "case:numeric-regression",
+          "purpose": "regression",
+          "required_evidence": "Run the public regression task check and compare declared string and number output types."
+        },
+        "check_ref": "case:numeric-regression",
+        "gaps": [],
+        "requirement_id": "requirement_a96a1a263d0e3dac9ffe6caaf737c53253530756a03bce3527f39b0ed4816240",
+        "source_hash": "1fe10e7a80b7da50ea7e99ed4850ed04342c810af85036a5c953fb2c2ee33e6e",
+        "source_ref": "proposal_3e8966a2890b46db8fdc566483ff321d",
+        "status": "bound"
+      },
+      {
+        "asset_test_ids": [],
+        "case_ids": [
+          "leading-zeros"
+        ],
+        "check": {
+          "behavior": "在 leading-zeros 任务中，输出行的 id 必须是字符串 \"001\"，amount 必须是数值 10.0，而非将 id 输出为 1.0。",
+          "check_ref": "case:leading-zeros",
+          "purpose": "target",
+          "required_evidence": "使用公开任务检查并进行精确值与类型比较。"
+        },
+        "check_ref": "case:leading-zeros",
+        "gaps": [],
+        "requirement_id": "requirement_e713796486f443f980188346bbf7ca2a3c9d1f9d3fd32640f8f9ba898244a9c3",
+        "source_hash": "3e0c312234a607cc77e8f4c5361ab2d85f857d778944836340d43b2b063ab993",
+        "source_ref": "diagnosis_f0dd004d731e40639edabdd8ebce0330",
+        "status": "bound"
+      }
+    ],
+    "verification_plan_id": "verification_plan_058fd093c5e545288d50068af00551d0"
+  }
+]

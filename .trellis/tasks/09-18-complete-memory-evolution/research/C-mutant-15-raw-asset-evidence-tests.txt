@@ -1,0 +1,27 @@
+test_asset_revision_and_function_result_cannot_be_substituted (test_memory_verification.VerificationTests.test_asset_revision_and_function_result_cannot_be_substituted) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.612s
+
+OK
+test_asset_revision_and_function_result_cannot_be_substituted (test_memory_verification.VerificationTests.test_asset_revision_and_function_result_cannot_be_substituted) ... FAIL
+
+======================================================================
+FAIL: test_asset_revision_and_function_result_cannot_be_substituted (test_memory_verification.VerificationTests.test_asset_revision_and_function_result_cannot_be_substituted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_verification.py", line 211, in test_asset_revision_and_function_result_cannot_be_substituted
+    with patch.object(self.store,'get',side_effect=changed_original),self.assertRaises(DomainError):
+                                                                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: DomainError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.634s
+
+FAILED (failures=1)
+test_asset_revision_and_function_result_cannot_be_substituted (test_memory_verification.VerificationTests.test_asset_revision_and_function_result_cannot_be_substituted) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.608s
+
+OK

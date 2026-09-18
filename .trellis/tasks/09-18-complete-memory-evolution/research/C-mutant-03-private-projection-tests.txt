@@ -1,0 +1,27 @@
+test_reused_full_task_specs_do_not_leak_private_fields (test_memory_verification.VerificationTests.test_reused_full_task_specs_do_not_leak_private_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.388s
+
+OK
+test_reused_full_task_specs_do_not_leak_private_fields (test_memory_verification.VerificationTests.test_reused_full_task_specs_do_not_leak_private_fields) ... FAIL
+
+======================================================================
+FAIL: test_reused_full_task_specs_do_not_leak_private_fields (test_memory_verification.VerificationTests.test_reused_full_task_specs_do_not_leak_private_fields)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_verification.py", line 76, in test_reused_full_task_specs_do_not_leak_private_fields
+    self.assertNotIn('hidden answer',repr(catalog))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'hidden answer' unexpectedly found in '[{\'check_ref\': \'case:identifiers\', \'purpose\': \'target\', \'description\': \'Check the public task: {"criteria":{"secret":"hidden answer"},"csv":"code,amount\\\\n0012,3\\\\n0007,4\\\\n","private":{"secret":"private checker implementation"}}\', \'evidence_kind\': \'task\', \'case_ids\': [\'identifiers\'], \'asset_test_ids\': []}, {\'check_ref\': \'case:sum\', \'purpose\': \'regression\', \'description\': \'Check the public task: {"criteria":{"secret":"hidden answer"},"csv":"code,amount\\\\n12,3\\\\n7,4\\\\n","private":{"secret":"private checker implementation"}}\', \'evidence_kind\': \'task\', \'case_ids\': [\'sum\'], \'asset_test_ids\': []}]'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.009s
+
+FAILED (failures=1)
+test_reused_full_task_specs_do_not_leak_private_fields (test_memory_verification.VerificationTests.test_reused_full_task_specs_do_not_leak_private_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.391s
+
+OK

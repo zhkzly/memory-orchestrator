@@ -1,0 +1,371 @@
+{
+  "source_hashes": {
+    "trace.py": "89f439904756081ce57f4ed6faf5be05fe3564ca8c30be9c4e129f9906435975",
+    "goals.py": "3f243124894a800a00f8c2c70b0b720aa32bffaf2786f94660d575babad1cd27",
+    "maintenance.py": "e3c5e86af3d72c1689fa849d4afd757ebcd410730e67a99e3dad0296a5dd3b80",
+    "learning.py": "2f2ce0f844b680ea6a1d2e6d61dffc39bf0b6872a5a16e8f717e453e808f6eca",
+    "evidence.py": "217ed01eacfc1b3667eeacdff08918af262a93b332c9d69649841bd99d58888d"
+  },
+  "results": [
+    {
+      "case": "trace_cold_hash",
+      "target": "trace.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_cold_index_rejects_changed_raw_bytes_before_any_record_query -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py trace_cold_hash",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_cold_index_rejects_changed_raw_bytes_before_any_record_query -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/trace.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py trace_cold_hash"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "trace_batch_cap",
+      "target": "trace.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_resume_reopen_and_exact_multibyte_ranges_without_whole_file_text_load -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py trace_batch_cap",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_resume_reopen_and_exact_multibyte_ranges_without_whole_file_text_load -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/trace.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py trace_batch_cap"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "trace_byte_range",
+      "target": "trace.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_resume_reopen_and_exact_multibyte_ranges_without_whole_file_text_load -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py trace_byte_range",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_resume_reopen_and_exact_multibyte_ranges_without_whole_file_text_load -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/trace.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py trace_byte_range"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "trace_hot_identity",
+      "target": "trace.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_archived_source_tamper_invalidates_existing_reader -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py trace_hot_identity",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_archived_source_tamper_invalidates_existing_reader -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/trace.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py trace_hot_identity"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "goal_user_anchor",
+      "target": "goals.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_goals.GoalTests.test_agent_instruction_is_not_a_user_anchor_even_if_its_text_says_switch -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py goal_user_anchor",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_goals.GoalTests.test_agent_instruction_is_not_a_user_anchor_even_if_its_text_says_switch -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/goals.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py goal_user_anchor"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "goal_future_window",
+      "target": "goals.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_goals.GoalTests.test_switch_resume_uses_prior_grounded_catalog_and_never_rewrites_raw -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py goal_future_window",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_goals.GoalTests.test_switch_resume_uses_prior_grounded_catalog_and_never_rewrites_raw -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/goals.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py goal_future_window"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "maintenance_commit",
+      "target": "maintenance.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_maintenance.MaintenanceTests.test_uncommitted_relation_has_no_retrieval_effect -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py maintenance_commit",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_maintenance.MaintenanceTests.test_uncommitted_relation_has_no_retrieval_effect -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/maintenance.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py maintenance_commit"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "maintenance_conflict",
+      "target": "maintenance.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_maintenance.MaintenanceTests.test_transitive_duplicates_cannot_hide_an_unresolved_contradiction -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py maintenance_conflict",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_maintenance.MaintenanceTests.test_transitive_duplicates_cannot_hide_an_unresolved_contradiction -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/maintenance.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py maintenance_conflict"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "necessity_noop",
+      "target": "learning.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_necessity_noop_stops_proposal_and_persists_decision -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py necessity_noop",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_necessity_noop_stops_proposal_and_persists_decision -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/learning.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py necessity_noop"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "necessity_add",
+      "target": "learning.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_add_denied_by_necessity_is_repaired_before_candidate_application -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py necessity_add",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_add_denied_by_necessity_is_repaired_before_candidate_application -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/learning.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py necessity_add"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "failure_ranking",
+      "target": "learning.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_failure_signature_beats_unrelated_lexical_match -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py failure_ranking",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_failure_signature_beats_unrelated_lexical_match -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/learning.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py failure_ranking"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "maintenance_consumer",
+      "target": "learning.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_semantic_maintenance_runs_in_learn_and_next_retrieval_folds_real_records -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py maintenance_consumer",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_semantic_maintenance_runs_in_learn_and_next_retrieval_folds_real_records -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/learning.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py maintenance_consumer"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "archive_parent",
+      "target": "learning.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_zero_dependency_body_budget_still_indexes_transitive_source_eligibility -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py archive_parent",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_zero_dependency_body_budget_still_indexes_transitive_source_eligibility -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/learning.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py archive_parent"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "derived_projection",
+      "target": "evidence.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_missing_goals_reach_real_extraction_as_sidecar_not_observed_identity -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py derived_projection",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_missing_goals_reach_real_extraction_as_sidecar_not_observed_identity -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evidence.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py derived_projection"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "resource_candidate",
+      "target": "evidence.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_file_dependency_is_retrieved_as_candidate_not_claimed_causality -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py resource_candidate",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trace.TraceTests.test_file_dependency_is_retrieved_as_candidate_not_claimed_causality -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evidence.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py resource_candidate"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "check_reference",
+      "target": "learning.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_invented_check_reference_is_repaired_at_diagnosis_before_proposal -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py check_reference",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_invented_check_reference_is_repaired_at_diagnosis_before_proposal -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/learning.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py check_reference"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "fee_amount",
+      "target": "learning.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_outer_transport_price_survives_actual_learn_and_call_usage_report -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py fee_amount",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_outer_transport_price_survives_actual_learn_and_call_usage_report -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/learning.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py fee_amount"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "fee_currency",
+      "target": "learning.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_outer_transport_price_survives_actual_learn_and_call_usage_report -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py fee_currency",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_outer_transport_price_survives_actual_learn_and_call_usage_report -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/learning.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py fee_currency"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "fee_price_version",
+      "target": "learning.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_outer_transport_price_survives_actual_learn_and_call_usage_report -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py fee_price_version",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_outer_transport_price_survives_actual_learn_and_call_usage_report -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/learning.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py fee_price_version"
+      ],
+      "exit_code": 0,
+      "restored": true
+    },
+    {
+      "case": "interrupted_wait",
+      "target": "learning.py",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_interrupted_provider_wait_is_not_charged_as_local_maintenance -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py interrupted_wait",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_interrupted_provider_wait_is_not_charged_as_local_maintenance -v",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/learning.py",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-18-complete-memory-evolution/research/B-mutations.py interrupted_wait"
+      ],
+      "exit_code": 0,
+      "restored": true
+    }
+  ]
+}

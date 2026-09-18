@@ -1,0 +1,738 @@
+{
+  "note": "B host records. GoalBindingRecord and MaintenanceReview include the exact current canonical Draft under local $defs, matching the root-owned packaged schema. Concrete writers: trace.py/goals.py/maintenance.py. No measured semantic-effect claim.",
+  "schemas": {
+    "TraceManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "trace_id": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string"
+        },
+        "episode_id": {
+          "type": "string"
+        },
+        "format": {
+          "const": "events-jsonl-v1"
+        },
+        "raw_path": {
+          "type": "string"
+        },
+        "raw_sha256": {
+          "type": "string"
+        },
+        "byte_length": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "text_path": {
+          "type": "string"
+        },
+        "index_path": {
+          "type": "string"
+        },
+        "index_version": {
+          "const": 1
+        }
+      },
+      "required": [
+        "trace_id",
+        "project_id",
+        "episode_id",
+        "format",
+        "raw_path",
+        "raw_sha256",
+        "byte_length",
+        "text_path",
+        "index_path",
+        "index_version"
+      ]
+    },
+    "TraceIndexCheckpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "checkpoint_id": {
+          "type": "string"
+        },
+        "trace_id": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string"
+        },
+        "episode_id": {
+          "type": "string"
+        },
+        "raw_sha256": {
+          "type": "string"
+        },
+        "index_version": {
+          "const": 1
+        },
+        "next_raw_byte": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "event_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "index_complete": {
+          "type": "boolean"
+        },
+        "parent_episode_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "bytes_processed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "error": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "index_sha256": {
+          "type": "string"
+        },
+        "text_sha256": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "checkpoint_id",
+        "trace_id",
+        "project_id",
+        "episode_id",
+        "raw_sha256",
+        "index_version",
+        "next_raw_byte",
+        "event_count",
+        "index_complete",
+        "parent_episode_refs",
+        "bytes_processed",
+        "error",
+        "index_sha256",
+        "text_sha256",
+        "created_at"
+      ]
+    },
+    "GoalBindingRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string"
+        },
+        "cycle_id": {
+          "type": "string"
+        },
+        "episode_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "source_hashes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "model_report_ref": {
+          "type": "string"
+        },
+        "draft": {
+          "$ref": "#/$defs/GoalBindingDraft"
+        },
+        "resolved_bindings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "binding_ref": {
+                "type": "string"
+              },
+              "event_ref": {
+                "type": "string"
+              },
+              "goal_id": {
+                "type": "string"
+              },
+              "revision": {
+                "type": "string"
+              },
+              "relation": {
+                "enum": [
+                  "continues",
+                  "revises",
+                  "switches",
+                  "resumes",
+                  "ambiguous"
+                ]
+              },
+              "anchor_user_ref": {
+                "type": "string"
+              },
+              "evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "uniqueItems": true
+              },
+              "origin": {
+                "const": "model_proxy"
+              }
+            },
+            "required": [
+              "binding_ref",
+              "event_ref",
+              "goal_id",
+              "revision",
+              "relation",
+              "anchor_user_ref",
+              "evidence_refs",
+              "origin"
+            ]
+          }
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "needs_more_evidence",
+            "abstained"
+          ]
+        },
+        "unresolved_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "created_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "project_id",
+        "cycle_id",
+        "episode_ids",
+        "source_hashes",
+        "model_report_ref",
+        "draft",
+        "resolved_bindings",
+        "status",
+        "unresolved_refs",
+        "created_at"
+      ],
+      "$defs": {
+        "GoalBindingDraft": {
+          "type": "object",
+          "properties": {
+            "bindings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "event_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 1
+                  },
+                  "goal_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "revision": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "relation": {
+                    "enum": [
+                      "continues",
+                      "revises",
+                      "switches",
+                      "resumes",
+                      "ambiguous"
+                    ]
+                  },
+                  "evidence_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 1
+                  },
+                  "anchor_user_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "event_refs",
+                  "goal_id",
+                  "revision",
+                  "relation",
+                  "evidence_refs"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0
+            },
+            "unknowns": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0
+            },
+            "status": {
+              "enum": [
+                "completed",
+                "needs_more_evidence",
+                "abstained"
+              ]
+            },
+            "read_requests": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ref_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "ref_id",
+                  "purpose"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "bindings",
+            "unknowns"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "MemoryRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "relation_id": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string"
+        },
+        "review_ref": {
+          "type": "string"
+        },
+        "cycle_id": {
+          "type": "string"
+        },
+        "origin": {
+          "const": "model_proxy"
+        },
+        "op": {
+          "enum": [
+            "LINK_DUPLICATE",
+            "MARK_CONFLICT",
+            "REVOKE"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "record_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "preferred_record_id": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "relation_id_to_revoke": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "relation_id",
+        "project_id",
+        "review_ref",
+        "cycle_id",
+        "origin",
+        "op",
+        "reason",
+        "evidence_refs"
+      ]
+    },
+    "MaintenanceReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "review_id": {
+          "type": "string"
+        },
+        "project_id": {
+          "type": "string"
+        },
+        "cycle_id": {
+          "type": "string"
+        },
+        "model_report_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "input_hash": {
+          "type": "string"
+        },
+        "draft": {
+          "$ref": "#/$defs/ExperienceMaintenanceDraft"
+        },
+        "record_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "relation_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "status": {
+          "enum": [
+            "applied",
+            "noop",
+            "error"
+          ]
+        },
+        "origin": {
+          "const": "model_proxy"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "error_code": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "review_id",
+        "project_id",
+        "cycle_id",
+        "model_report_ref",
+        "record_ids",
+        "relation_ids",
+        "status",
+        "origin",
+        "created_at"
+      ],
+      "$defs": {
+        "ExperienceMaintenanceDraft": {
+          "type": "object",
+          "properties": {
+            "actions": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "op": {
+                        "const": "LINK_DUPLICATE"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "record_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "uniqueItems": true
+                      },
+                      "preferred_record_id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "evidence_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "required": [
+                      "op",
+                      "reason",
+                      "record_ids",
+                      "preferred_record_id",
+                      "evidence_refs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "op": {
+                        "const": "MARK_CONFLICT"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "record_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "uniqueItems": true
+                      },
+                      "scope": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "evidence_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "required": [
+                      "op",
+                      "reason",
+                      "record_ids",
+                      "scope",
+                      "evidence_refs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "op": {
+                        "const": "REVOKE"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "relation_id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "evidence_refs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 1
+                      }
+                    },
+                    "required": [
+                      "op",
+                      "reason",
+                      "relation_id",
+                      "evidence_refs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "op": {
+                        "const": "NOOP"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "op",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "minItems": 0
+            },
+            "unknowns": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0
+            }
+          },
+          "required": [
+            "actions",
+            "unknowns"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "FailureSignature": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "coverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "complete": {
+              "type": "boolean"
+            },
+            "omitted_feature_occurrences": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "omitted_evidence_occurrences": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "complete",
+            "omitted_feature_occurrences",
+            "omitted_evidence_occurrences"
+          ]
+        },
+        "criterion_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "error_codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "operation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "resource_kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "symptom_terms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "origin": {
+          "enum": [
+            "observed_fields",
+            "text_pattern",
+            "model_proxy"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "criterion_ids",
+        "error_codes",
+        "operation",
+        "resource_kinds",
+        "symptom_terms",
+        "origin",
+        "evidence_refs",
+        "coverage"
+      ]
+    }
+  }
+}

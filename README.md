@@ -1,6 +1,6 @@
 # Memory Orchestrator
 
-新的 **Python 记忆演化核心**已提供普通 Python API：事实与经历保存、经验提取、Skill 生成／修订、候选比较、发布和回退。运行方式见 [Python 核心与闭环示例](examples/memory_evolution/README.md)，设计与实现证据见 [项目总纲 HTML](docs/blueprint/index.html) 和 [文档导航](docs/README.md)。原生 Agent 接入与 benchmark 收益尚未完成。
+新的 **Python 记忆演化核心**提供普通 Python API：从长轨迹和多标准反馈提炼经验，维护可复用 Skill，执行检查、候选对照、发布和回退；支持中断恢复与冻结协议实验。运行方式见 [Python 核心与闭环示例](examples/memory_evolution/README.md)，设计与实现证据见 [项目总纲 HTML](docs/blueprint/index.html) 和 [文档导航](docs/README.md)。原生 Agent 接入与 benchmark 收益尚未完成。
 
 下文保留旧 TypeScript CLI 原型的使用说明；Python 核心不依赖该 CLI，也未自动迁移已有记忆。
 

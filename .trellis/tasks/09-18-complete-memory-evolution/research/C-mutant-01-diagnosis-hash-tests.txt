@@ -1,0 +1,27 @@
+test_candidate_retains_and_checks_exact_diagnosis_obligations (test_memory_candidates.CandidateTests.test_candidate_retains_and_checks_exact_diagnosis_obligations) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.024s
+
+OK
+test_candidate_retains_and_checks_exact_diagnosis_obligations (test_memory_candidates.CandidateTests.test_candidate_retains_and_checks_exact_diagnosis_obligations) ... FAIL
+
+======================================================================
+FAIL: test_candidate_retains_and_checks_exact_diagnosis_obligations (test_memory_candidates.CandidateTests.test_candidate_retains_and_checks_exact_diagnosis_obligations)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_candidates.py", line 58, in test_candidate_retains_and_checks_exact_diagnosis_obligations
+    with self.assertRaises(DomainError):self.apply(**overrides)
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: DomainError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.021s
+
+FAILED (failures=1)
+test_candidate_retains_and_checks_exact_diagnosis_obligations (test_memory_candidates.CandidateTests.test_candidate_retains_and_checks_exact_diagnosis_obligations) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.024s
+
+OK

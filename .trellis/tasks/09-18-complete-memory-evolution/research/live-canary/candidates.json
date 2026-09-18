@@ -1,0 +1,144 @@
+[
+  {
+    "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+    "candidate_digest": "5f97bd834064cb53a4f7b8136ccd0fe1d580022a9f790d37ef682136e789893a",
+    "changed_skill_refs": [
+      "skill_6a65284a16aac76cc5d0b1f6"
+    ],
+    "check_plan": [
+      {
+        "behavior": "In the leading-zeros task, the output id is the string \"001\" and amount is numeric 10.0 rather than id being numeric 1.0.",
+        "check_ref": "case:leading-zeros",
+        "purpose": "target",
+        "required_evidence": "Run the public task check with exact value and type comparison."
+      },
+      {
+        "behavior": "In the numeric-regression task, string id \"a\" remains text and number amount \"2.5\" is output as numeric 2.5.",
+        "check_ref": "case:numeric-regression",
+        "purpose": "regression",
+        "required_evidence": "Run the public regression task check and compare declared string and number output types."
+      },
+      {
+        "behavior": "When a number column has an empty cell and the task uses empty_numeric_as_null, the output should be null.",
+        "check_ref": null,
+        "purpose": "transfer",
+        "required_evidence": "A public check containing an empty declared-number cell is required; no such material is present in the directory."
+      }
+    ],
+    "coupled_asset_hashes": {
+      "skill_6a65284a16aac76cc5d0b1f6/references/csv-policy.json": "367a9373cf7350854afa139533b9d6dc36838ccee77211e627af11d932ba7a14"
+    },
+    "diagnosis_hash": "3e0c312234a607cc77e8f4c5361ab2d85f857d778944836340d43b2b063ab993",
+    "diagnosis_ref": "diagnosis_f0dd004d731e40639edabdd8ebce0330",
+    "evidence_refs": [
+      "ev:85d20771f29c689d298615ad:0:428",
+      "ev:46a46cb5cd7255049961c7df:0:58",
+      "ev:d0b49b3cba534bbcd648bf88:314:1181",
+      "ev:8d11b0139dcf010c28807b06:0:428",
+      "ev:bfbba4b261ed2533ac185d79:0:58",
+      "ev:ea19c871cfde9588e6ef9389:314:1181"
+    ],
+    "expected_behavior": "For local CSV tasks that provide column_types and select this Skill, declared string columns preserve CSV text such as id \"001\", while non-empty declared number cells convert to numeric values. The Skill's references/csv-policy.json supplies preserve_string_columns and empty_numeric_as_null policy settings; empty numeric cells map to null only when that policy is used. This proposal claims target and regression coverage only, not transfer verification.",
+    "expected_generation": 0,
+    "patch": {
+      "asset_edits": [
+        {
+          "content": "{\n  \"preserve_string_columns\": true,\n  \"empty_numeric_as_null\": true\n}\n",
+          "expected_hash": null,
+          "op": "UPSERT",
+          "owner_skill_ref": "new:csv-declared-column-types",
+          "relative_path": "references/csv-policy.json"
+        }
+      ],
+      "check_plan": [
+        {
+          "behavior": "In the leading-zeros task, the output id is the string \"001\" and amount is numeric 10.0 rather than id being numeric 1.0.",
+          "check_ref": "case:leading-zeros",
+          "purpose": "target",
+          "required_evidence": "Run the public task check with exact value and type comparison."
+        },
+        {
+          "behavior": "In the numeric-regression task, string id \"a\" remains text and number amount \"2.5\" is output as numeric 2.5.",
+          "check_ref": "case:numeric-regression",
+          "purpose": "regression",
+          "required_evidence": "Run the public regression task check and compare declared string and number output types."
+        },
+        {
+          "behavior": "When a number column has an empty cell and the task uses empty_numeric_as_null, the output should be null.",
+          "check_ref": null,
+          "purpose": "transfer",
+          "required_evidence": "A public check containing an empty declared-number cell is required; no such material is present in the directory."
+        }
+      ],
+      "evidence_refs": [
+        "ev:85d20771f29c689d298615ad:0:428",
+        "ev:46a46cb5cd7255049961c7df:0:58",
+        "ev:d0b49b3cba534bbcd648bf88:314:1181",
+        "ev:8d11b0139dcf010c28807b06:0:428",
+        "ev:bfbba4b261ed2533ac185d79:0:58",
+        "ev:ea19c871cfde9588e6ef9389:314:1181"
+      ],
+      "expected_behavior": "For local CSV tasks that provide column_types and select this Skill, declared string columns preserve CSV text such as id \"001\", while non-empty declared number cells convert to numeric values. The Skill's references/csv-policy.json supplies preserve_string_columns and empty_numeric_as_null policy settings; empty numeric cells map to null only when that policy is used. This proposal claims target and regression coverage only, not transfer verification.",
+      "operations": [
+        {
+          "content": {
+            "checks": [
+              "case:leading-zeros: verify id is the string \"001\" and amount is the numeric value 10.0 using exact value and type comparison.",
+              "case:numeric-regression: verify id \"a\" remains text and amount \"2.5\" is emitted as numeric 2.5.",
+              "No public check material is available for an empty number cell under empty_numeric_as_null; do not claim transfer verification until such a check is provided."
+            ],
+            "declared_conflicts": [],
+            "depends_on": [],
+            "evidence_refs": [
+              "ev:85d20771f29c689d298615ad:0:428",
+              "ev:46a46cb5cd7255049961c7df:0:58",
+              "ev:d0b49b3cba534bbcd648bf88:314:1181",
+              "ev:8d11b0139dcf010c28807b06:0:428",
+              "ev:bfbba4b261ed2533ac185d79:0:58",
+              "ev:ea19c871cfde9588e6ef9389:314:1181"
+            ],
+            "exceptions": [
+              "If a number-column non-empty cell cannot be parsed as a number, follow the task-specific invalid-value instruction; do not silently reclassify it as string.",
+              "The empty-number-to-null behavior is conditional on the task using empty_numeric_as_null."
+            ],
+            "preconditions": [
+              "Read the task column_types mapping before converting cell values.",
+              "Read references/csv-policy.json before applying CSV conversion policy."
+            ],
+            "scope": {
+              "applies_when": [
+                "The task provides a CSV input and a column_types mapping.",
+                "The selected Skill assets include references/csv-policy.json."
+              ],
+              "exclusions": [
+                "Do not infer a numeric type for a column declared as string.",
+                "Do not apply empty_numeric_as_null unless the task uses that policy."
+              ],
+              "task_family": "csv"
+            },
+            "steps": [
+              "Parse CSV cells as text initially.",
+              "For each column declared string, preserve each non-null CSV cell as text without numeric inference; retain leading zeros.",
+              "For each column declared number, convert non-empty numeric text to a numeric value.",
+              "When empty_numeric_as_null is enabled for the task, emit null for empty cells in columns declared number.",
+              "Serialize output values so declared string values remain strings and converted number values remain numeric."
+            ],
+            "title": "Convert CSV values using declared column types",
+            "triggers": [
+              "A CSV transformation task supplies declared types such as string and number.",
+              "A task requires preservation of string identifiers or conversion of number columns."
+            ]
+          },
+          "op": "ADD",
+          "proposed_slug": "csv-declared-column-types"
+        }
+      ],
+      "reason": "The current snapshot has no Skills or CSV policy asset, while observed CSV outputs converted a declared string leading-zero identifier as though it were numeric. This adds a local CSV Skill and its required policy asset for declared-type conversion. The empty-number policy is documented as conditional, but is not asserted as verified because no public transfer check is available."
+    },
+    "project_id": "csv-demo",
+    "proposal_id": "proposal_3e8966a2890b46db8fdc566483ff321d",
+    "skill_aliases": {
+      "new:csv-declared-column-types": "skill_6a65284a16aac76cc5d0b1f6"
+    }
+  }
+]

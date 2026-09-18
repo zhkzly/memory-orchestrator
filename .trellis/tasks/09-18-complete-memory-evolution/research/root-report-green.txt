@@ -1,0 +1,13 @@
+test_bad_exclusion_and_missing_prices_never_become_free_work (test_memory_telemetry.TelemetryTests.test_bad_exclusion_and_missing_prices_never_become_free_work) ... ok
+test_failed_work_is_measured_and_storage_error_cannot_hide_original (test_memory_telemetry.TelemetryTests.test_failed_work_is_measured_and_storage_error_cannot_hide_original) ... ok
+test_local_time_excludes_delegated_calls_and_deduplicates_price (test_memory_telemetry.TelemetryTests.test_local_time_excludes_delegated_calls_and_deduplicates_price) ... ok
+test_co_use_from_another_task_or_revision_does_not_change_selection (test_memory_completion.CompletionConsumers.test_co_use_from_another_task_or_revision_does_not_change_selection) ... ok
+test_current_task_filters_unrelated_project_facts_before_budget (test_memory_completion.CompletionConsumers.test_current_task_filters_unrelated_project_facts_before_budget) ... ok
+test_multi_criterion_assessment_is_consumed_by_sampling_report (test_memory_completion.CompletionConsumers.test_multi_criterion_assessment_is_consumed_by_sampling_report) ... ok
+test_selection_has_actual_maintenance_time_in_report (test_memory_completion.CompletionConsumers.test_selection_has_actual_maintenance_time_in_report) ... ok
+test_two_actual_releases_and_rollback_reach_longitudinal_report (test_memory_completion.CompletionConsumers.test_two_actual_releases_and_rollback_reach_longitudinal_report) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 2.561s
+
+OK

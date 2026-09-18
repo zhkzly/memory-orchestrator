@@ -1,0 +1,43 @@
+[
+  {
+    "code": "model_transport_error",
+    "cycle_id": "learning_33e5f259ab9046e28901b0611446a20b",
+    "details": {
+      "attempts": [
+        {
+          "attempt": 1,
+          "error_type": "APIConnectionError",
+          "status": "transport_error"
+        }
+      ],
+      "calls_consumed": 1,
+      "error_type": "APIConnectionError",
+      "input_chars_consumed": 21378,
+      "prompt_id": "extract_v1",
+      "usage": [
+        {
+          "attempt": 1,
+          "currency": null,
+          "elapsed_seconds": 0.15248990400868934,
+          "input_chars": 21378,
+          "input_tokens": null,
+          "measurement": "missing",
+          "model": null,
+          "monetary_cost": null,
+          "output_chars": null,
+          "output_tokens": null,
+          "price_version": null,
+          "prompt_id": "extract_v1",
+          "request_id": null,
+          "status": "transport_error",
+          "total_tokens": null,
+          "usage_id": "modelcall_f405be7f9532407eb0f71e1e20ee23fc"
+        }
+      ]
+    },
+    "error_id": "error_1d8096820cb94e9fb199b672796783e3",
+    "message": "Model callable failed; actual token usage is unknown.",
+    "project_id": "csv-demo",
+    "stage": "extract_v1"
+  }
+]

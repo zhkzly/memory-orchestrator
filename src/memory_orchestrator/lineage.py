@@ -28,24 +28,30 @@ def _agree(name, values):
 
 def resolve_episode_source(store, episode):
     """Read and compare known facts, without requiring a lifecycle receipt."""
-    reference = episode['source']['reference']
+    source_reference = episode['source']['reference']
+    attempt = _optional(store, 'callback_attempts', source_reference)
+    reference = (attempt or {}).get('run_id') or source_reference
     run = _optional(store, 'runs', reference)
     execution = _optional(store, 'executions', reference)
     if execution is None and run is not None:
         execution = _optional(store, 'executions', run.get('raw_events_ref'))
-    known = run is not None or execution is not None
+    planned = [g for g in store.list('run_groups') if any(slot.get('run_id') == reference for slot in g.get('slots', []))]
+    if len(planned) > 1:
+        raise DomainError('REFERENCE_MISMATCH', 'A run belongs to multiple stored plans.')
+    planned_group = planned[0] if planned else None
+    known = run is not None or execution is not None or planned_group is not None or attempt is not None
     run_data, execution_data = run or {}, execution or {}
     request = execution_data.get('request') or {}
     if not isinstance(request, dict):
         raise DomainError('REFERENCE_MISMATCH', 'Known execution request is malformed.')
-    sampling_input = _optional(store, 'sampling_inputs', request.get('input_ref'))
+    sampling_input = _optional(store, 'sampling_inputs', request.get('input_ref') or (planned_group or {}).get('input_ref'))
     input_data = sampling_input or {}
-    group_id = _agree('group_id', [run_data.get('group_id'), input_data.get('group_id')])
+    group_id = _agree('group_id', [run_data.get('group_id'), input_data.get('group_id'), (planned_group or {}).get('group_id')])
     group = _optional(store, 'run_groups', group_id)
     group_data = group or {}
     if known:
         _agree('project_id', [episode['project_id'], run_data.get('project_id'), execution_data.get('project_id'),
-                             input_data.get('project_id'), group_data.get('project_id')])
+                             input_data.get('project_id'), group_data.get('project_id'), (attempt or {}).get('project_id')])
     run_id = _agree('run_id', [reference if known else None, run_data.get('run_id'),
                               execution_data.get('run_id'), request.get('request_id')])
     revision = _agree('task_revision', [run_data.get('task_revision'), request.get('task_revision'), group_data.get('task_revision')])
@@ -71,7 +77,7 @@ def resolve_episode_source(store, episode):
     return {'known': known, 'run_id': run_id, 'project_id': episode['project_id'],
             'task_revision': revision, 'snapshot_digest': snapshot, 'artifact_digest': artifact,
             'run': run, 'group': group, 'execution': execution, 'batch': batch,
-            'binding_error': binding_error}
+            'binding_error': binding_error, 'callback_attempt': attempt, 'source_reference': source_reference}
 
 
 def check_feedback_binding(store, feedback, episode):
@@ -117,6 +123,12 @@ def _closed_group(store, group):
     _require(group.get('purpose') == 'learning' and group.get('learning_enabled') is True
              and group.get('update_mode') != 'none', 'Frozen or learning-disabled groups cannot train memory.',
              group_id=group.get('group_id'))
+    return verify_group_completion(store, group)
+
+
+def verify_group_completion(store, group):
+    """Physical closure shared by recovery and learning, independent of permission."""
+    _require(group is not None, 'Known local source has no group plan.')
     slots = group.get('slots', [])
     run_ids = [slot.get('run_id') for slot in slots]
     slot_ids = [slot.get('slot_id') for slot in slots]
@@ -151,12 +163,27 @@ def _closed_group(store, group):
 
 def require_learning_source(store, episode):
     """Require actual local lifecycle closure; unknown external imports stay legal."""
-    visited, checked_groups = set(), {}
+    visited, checked_groups, unindexed_traces = set(), {}, set()
 
     def check(current):
         if current['episode_id'] in visited:
             return resolve_episode_source(store, current)
         visited.add(current['episode_id'])
+        reference = current['source']['reference']
+        # Comparison returns have a real validation purpose without pretending
+        # to be sampling runs. Importing the exact known ID cannot erase it.
+        for kind in ('evaluation_plans', 'contrast_plans'):
+            for plan in store.list(kind):
+                if reference in {plan.get('plan_id'), plan.get('contrast_plan_id'),
+                                 *(request.get('request_id') for request in plan.get('requests', []))}:
+                    _agree('project_id', [current['project_id'], plan.get('project_id')])
+                    _require(False, 'Known comparison or contrast material is selection-only and cannot train memory.',
+                             episode_id=current['episode_id'], source_ref=reference)
+        evaluation_return = _optional(store, 'evaluation_returns', reference)
+        if evaluation_return is not None and evaluation_return.get('stage') in ('execute', 'evaluate'):
+            _agree('project_id', [current['project_id'], evaluation_return.get('project_id')])
+            _require(False, 'Known comparison return cannot be relabelled as an unknown external learning source.',
+                     episode_id=current['episode_id'], source_ref=reference)
         source = resolve_episode_source(store, current)
         if source['known']:
             _require(source['run'] is not None, 'Local execution has no terminal RunBundle.', episode_id=current['episode_id'])
@@ -181,9 +208,37 @@ def require_learning_source(store, episode):
             source['receipt'] = checked_groups[group['group_id']]
         for parent_id in dict.fromkeys(e.get('parent_episode_id') for e in current['events']
                                        if e.get('parent_episode_id') and e['parent_episode_id'] != current['episode_id']):
-            parent = store.get('episodes', parent_id)
-            _agree('project_id', [current['project_id'], parent['project_id']])
-            check(parent)
+            parent = _optional(store, 'episodes', parent_id)
+            if parent is None:
+                source.setdefault('missing_parent_episode_refs', []).append(parent_id)
+            else:
+                _agree('project_id', [current['project_id'], parent['project_id']])
+                check(parent)
+        if current.get('trace_ref'):
+            manifest = store.get('trace_manifests', current['trace_ref'])
+            _agree('project_id', [current['project_id'], manifest['project_id']])
+            _agree('episode_id', [current['episode_id'], manifest['episode_id']])
+            checkpoints = [row for row in store.list('trace_index_checkpoints', current['project_id'])
+                           if row['trace_id'] == current['trace_ref'] and row['index_complete']]
+            for checkpoint in checkpoints:
+                _agree('episode_id', [current['episode_id'], checkpoint['episode_id']])
+                _agree('raw_sha256', [manifest['raw_sha256'], checkpoint['raw_sha256']])
+                for parent_id in checkpoint['parent_episode_refs']:
+                    if parent_id == current['episode_id']:
+                        continue
+                    parent = _optional(store, 'episodes', parent_id)
+                    if parent is not None:
+                        _agree('project_id', [current['project_id'], parent['project_id']])
+                        check(parent)
+                    else:
+                        source.setdefault('missing_parent_episode_refs', []).append(parent_id)
+            source['trace_index_complete'] = bool(checkpoints)
+            if not checkpoints:
+                unindexed_traces.add(current['trace_ref'])
+            if 'missing_parent_episode_refs' in source:
+                source['missing_parent_episode_refs'] = sorted(set(source['missing_parent_episode_refs']))
         return source
 
-    return check(episode)
+    result = check(episode)
+    result['unindexed_trace_refs'] = sorted(unindexed_traces)
+    return result

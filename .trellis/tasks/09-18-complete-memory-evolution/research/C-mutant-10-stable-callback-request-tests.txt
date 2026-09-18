@@ -1,0 +1,66 @@
+test_feedback_and_assessment_interruption_reuses_original_returns (test_memory_comparison_recovery.ComparisonRecoveryTests.test_feedback_and_assessment_interruption_reuses_original_returns) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.853s
+
+OK
+test_feedback_and_assessment_interruption_reuses_original_returns (test_memory_comparison_recovery.ComparisonRecoveryTests.test_feedback_and_assessment_interruption_reuses_original_returns) ... 
+  test_feedback_and_assessment_interruption_reuses_original_returns (test_memory_comparison_recovery.ComparisonRecoveryTests.test_feedback_and_assessment_interruption_reuses_original_returns) (kind='feedback') ... FAIL
+  test_feedback_and_assessment_interruption_reuses_original_returns (test_memory_comparison_recovery.ComparisonRecoveryTests.test_feedback_and_assessment_interruption_reuses_original_returns) (kind='assessments') ... FAIL
+  test_feedback_and_assessment_interruption_reuses_original_returns (test_memory_comparison_recovery.ComparisonRecoveryTests.test_feedback_and_assessment_interruption_reuses_original_returns) (kind='evaluation_results') ... FAIL
+
+======================================================================
+FAIL: test_feedback_and_assessment_interruption_reuses_original_returns (test_memory_comparison_recovery.ComparisonRecoveryTests.test_feedback_and_assessment_interruption_reuses_original_returns) (kind='feedback')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_comparison_recovery.py", line 49, in test_feedback_and_assessment_interruption_reuses_original_returns
+    self.assertEqual(counts,before)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: {'execute': 9, 'evaluate': 8} != {'execute': 8, 'evaluate': 8}
+- {'evaluate': 8, 'execute': 9}
+?                            ^
+
++ {'evaluate': 8, 'execute': 8}
+?                            ^
+
+
+======================================================================
+FAIL: test_feedback_and_assessment_interruption_reuses_original_returns (test_memory_comparison_recovery.ComparisonRecoveryTests.test_feedback_and_assessment_interruption_reuses_original_returns) (kind='assessments')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_comparison_recovery.py", line 49, in test_feedback_and_assessment_interruption_reuses_original_returns
+    self.assertEqual(counts,before)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: {'execute': 9, 'evaluate': 8} != {'execute': 8, 'evaluate': 8}
+- {'evaluate': 8, 'execute': 9}
+?                            ^
+
++ {'evaluate': 8, 'execute': 8}
+?                            ^
+
+
+======================================================================
+FAIL: test_feedback_and_assessment_interruption_reuses_original_returns (test_memory_comparison_recovery.ComparisonRecoveryTests.test_feedback_and_assessment_interruption_reuses_original_returns) (kind='evaluation_results')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_comparison_recovery.py", line 49, in test_feedback_and_assessment_interruption_reuses_original_returns
+    self.assertEqual(counts,before)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+AssertionError: {'execute': 9, 'evaluate': 8} != {'execute': 8, 'evaluate': 8}
+- {'evaluate': 8, 'execute': 9}
+?                            ^
+
++ {'evaluate': 8, 'execute': 8}
+?                            ^
+
+
+----------------------------------------------------------------------
+Ran 1 test in 1.669s
+
+FAILED (failures=3)
+test_feedback_and_assessment_interruption_reuses_original_returns (test_memory_comparison_recovery.ComparisonRecoveryTests.test_feedback_and_assessment_interruption_reuses_original_returns) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.837s
+
+OK

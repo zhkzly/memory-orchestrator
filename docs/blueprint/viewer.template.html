@@ -120,7 +120,7 @@ const projectLink=(p)=>"../../"+p.split("/").map(encodeURIComponent).join("/");
 const pretty=(value)=>esc(JSON.stringify(value,null,2));
 const responsibilityLabel=(value)=>({memory_system:"记忆系统",provided_function:"调用方提供的函数"})[value]||value;
 const adjustmentLabel=(value)=>({preserved:"保留",boundary_changed:"职责调整",parameter_unfixed:"参数待定",deferred:"暂缓"})[value]||value;
-const statusLabel=(value)=>({specified_not_implemented:"方案已明确 · 尚未实现",reference_design_unimplemented:"参考设计 · 尚未实现",design_aligned_product_paused:"文档已对齐 · 产品实现暂停",reference_core_implemented:"Python 参考实现 · 效果以实测为准",reference_core_partial_coverage:"主线已实现 · 部分设计义务待接通",planned:"目标契约 · 尚未实现",partial:"部分实现 · 需核对证据",implemented:"所列机制已实现 · 效果另证"})[value]||value;
+const statusLabel=(value)=>({specified_not_implemented:"方案已明确 · 尚未实现",reference_design_unimplemented:"参考设计 · 尚未实现",design_aligned_product_paused:"文档已对齐 · 产品实现暂停",reference_core_implemented:"Python 参考实现 · 效果以实测为准",full_contract_core_implemented:"既定核心机制已实现 · 效果另证",full_contract_implementation_in_progress:"按完整契约实施中",reference_core_partial_coverage:"主线已实现 · 部分设计义务待接通",planned:"目标契约 · 尚未实现",partial:"部分实现 · 需核对证据",implemented:"所列机制已实现 · 效果另证"})[value]||value;
 const policyContent=(value)=>Array.isArray(value)?"<ul>"+list(value)+"</ul>":typeof value==="string"?"<p>"+esc(value)+"</p>":"<pre>"+pretty(value)+"</pre>";
 const paperLinks=(ids)=>ids.map((id)=>{const p=byId(c.paper_sources,id);return p?'<a href="'+esc(p.url)+'">'+esc(p.title)+"</a>":esc(id);}).join(" · ");
 function coverageView(value){

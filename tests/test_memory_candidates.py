@@ -50,6 +50,17 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual(skill['content'], content())
         self.assertEqual(skill_view(snapshot)[skill['skill_id']]['rules'][0]['rule_id'], 'R1')
 
+    def test_candidate_retains_and_checks_exact_diagnosis_obligations(self):
+        diagnosis={'diagnosis_id':'intent','project_id':'p','base_digest':self.base['snapshot_id'],
+            'draft':{'check_plan':self.patch['check_plan']}}
+        self.store.put('diagnoses','intent',diagnosis)
+        for overrides in ({'diagnosis_ref':'intent'}, {'diagnosis_ref':'intent','diagnosis_hash':'wrong'}):
+            with self.assertRaises(DomainError):self.apply(**overrides)
+        candidate=self.apply(diagnosis_ref='intent',diagnosis_hash=digest(diagnosis))
+        self.assertEqual(candidate['diagnosis_ref'],'intent')
+        self.assertEqual(candidate['diagnosis_hash'],digest(diagnosis))
+        self.assertIn('new:csv-preserve',candidate['skill_aliases'])
+
     def test_dependency_new_references_and_assets_are_resolved_together(self):
         patch = copy.deepcopy(self.patch)
         other = content()

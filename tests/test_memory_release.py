@@ -85,6 +85,30 @@ class MemoryReleaseTests(MemoryFixture, unittest.TestCase):
         self.store.put("validations",forged["validation_id"],forged)
         with self.assertRaises(DomainError):verify_validation(self.store,forged)
 
+    def test_publication_checks_actual_snapshot_and_public_case_inputs(self):
+        result=self.compare();original=self.store.get
+        for index in (1,2):
+            def changed(kind,identifier):
+                row=original(kind,identifier)
+                if kind=='evaluation_returns' and row['stage']=='execute':
+                    row['inputs'][index]={'substituted':'not the actual planned input'}
+                return row
+            with self.subTest(index=index),patch.object(self.store,'get',side_effect=changed),self.assertRaises(DomainError):
+                self.promote(result)
+
+    def test_publication_rechecks_original_quality_scope(self):
+        result=self.compare();original=self.store.get
+        plan=original('evaluation_plans',result['plan_ids'][0]);changed_plan=copy.deepcopy(plan)
+        changed_plan['quality_case_refs']=['sum']
+        def changed(kind,identifier):
+            value=original(kind,identifier)
+            if kind=='evaluation_plans' and identifier==plan['plan_id']:return changed_plan
+            if kind=='validations' and value['plan_id']==plan['plan_id']:value['plan_hash']=digest(changed_plan)
+            return value
+        with patch.object(self.store,'get',side_effect=changed),self.assertRaises(DomainError) as caught:
+            self.promote(result)
+        self.assertEqual(caught.exception.code,'quality_scope')
+
     def test_missing_or_duplicate_gates_cannot_be_forged_into_a_release(self):
         result=self.compare()
         val=self.validation(result)

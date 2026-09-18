@@ -2,9 +2,9 @@
 
 本文件不保留与新范围冲突的旧 M1–M6 客户端实施命令。
 
-- 目标架构与节点：docs/blueprint/project-contract.json v1.6.0；逐项 coverage 区分机制、待完成能力和效果证据。
+- 目标架构与节点：docs/blueprint/project-contract.json v1.7.0；逐项coverage区分已接通机制、外部职责和未测效果。
 - 历史主线交付：../archive/2026-09/09-18-python-experience-memory/implement.md（保留 M1–M3 当时的验收，不能据归档勾选宣称全部目标完成）。
-- 当前边界修复及最终证据：见 resume.md；修复已知来源/闭合/投影与计量根因，不恢复旧 CLI/MCP 实施任务。
+- 当前完整实现与最终证据：09-18-complete-memory-evolution及docs/blueprint/implementation-evidence.md；全部O01–O16有消费者与执行证据，不恢复旧CLI/MCP任务。
 - 文档对齐：../09-18-evolution-contract-alignment/（已完成）。
 - 草稿清理：../archive/2026-09/09-18-cleanup-obsolete-drafts/（已完成并归档）。
 

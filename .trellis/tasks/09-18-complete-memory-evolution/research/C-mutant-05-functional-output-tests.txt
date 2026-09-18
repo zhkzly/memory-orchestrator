@@ -1,0 +1,31 @@
+test_compile_and_function_are_both_executed_and_wrong_function_rejected (test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.629s
+
+OK
+test_compile_and_function_are_both_executed_and_wrong_function_rejected (test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected) ... 
+  test_compile_and_function_are_both_executed_and_wrong_function_rejected (test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected) (script='print(12)') ... FAIL
+
+======================================================================
+FAIL: test_compile_and_function_are_both_executed_and_wrong_function_rejected (test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected) (script='print(12)')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_verification.py", line 127, in test_compile_and_function_are_both_executed_and_wrong_function_rejected
+    self.assertEqual(self.validation(result)['status'],expected)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'accepted' != 'rejected'
+- accepted
++ rejected
+
+
+----------------------------------------------------------------------
+Ran 1 test in 1.646s
+
+FAILED (failures=1)
+test_compile_and_function_are_both_executed_and_wrong_function_rejected (test_memory_verification.VerificationTests.test_compile_and_function_are_both_executed_and_wrong_function_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.618s
+
+OK

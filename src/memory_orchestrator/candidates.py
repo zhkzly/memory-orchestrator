@@ -71,7 +71,8 @@ def _edit_skill(skill, edits):
 
 
 def apply_candidate(store, project_id, patch, *, base_digest, expected_generation,
-                    allowed_evidence_refs, allowed_skill_ids, max_operations, max_skills, max_asset_bytes):
+                    allowed_evidence_refs, allowed_skill_ids, max_operations, max_skills, max_asset_bytes,
+                    diagnosis_ref=None, diagnosis_hash=None):
     """Return a persisted proposal or None for NOOP/unchanged content.
 
     Allowed evidence is the caller's verified supplied-reference set. This tests
@@ -88,6 +89,13 @@ def apply_candidate(store, project_id, patch, *, base_digest, expected_generatio
     base = store.snapshot(base_digest)
     if base['project_id'] != project_id:
         raise DomainError('project_mismatch', 'Candidate base belongs to another project')
+    if (diagnosis_ref is None) != (diagnosis_hash is None):
+        raise DomainError('diagnosis_binding', 'Diagnosis reference and hash must be supplied together')
+    if diagnosis_ref is not None:
+        diagnosis = store.get('diagnoses', diagnosis_ref)
+        if (diagnosis.get('project_id') != project_id or diagnosis.get('base_digest') != base_digest
+                or digest(diagnosis) != diagnosis_hash):
+            raise DomainError('diagnosis_binding', 'Diagnosis does not match this project/base/content')
     _references(patch, set(allowed_evidence_refs))
     if patch['operations'][0]['op'] == 'NOOP':
         return None
@@ -180,6 +188,7 @@ def apply_candidate(store, project_id, patch, *, base_digest, expected_generatio
                 'patch': patch, 'changed_skill_refs': sorted(changed),
                 'coupled_asset_hashes': {key: digest(value) for key, value in assets.items()},
                 'evidence_refs': patch['evidence_refs'], 'expected_behavior': patch['expected_behavior'],
-                'check_plan': patch['check_plan']}
+                'check_plan': patch['check_plan'], 'skill_aliases': names,
+                'diagnosis_ref': diagnosis_ref, 'diagnosis_hash': diagnosis_hash}
     store.put('candidates', proposal['proposal_id'], proposal)
     return proposal
