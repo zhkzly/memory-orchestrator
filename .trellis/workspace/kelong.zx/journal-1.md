@@ -189,3 +189,40 @@
 ### Next Steps
 
 - 依父任务resume与总纲coverage选择后续明确交付；不重做已完成修复，不把当前测试当学习收益。
+
+
+## Session 7: 完成文档约定的Python记忆演化机制
+<!-- trellis-session: v=2 fp=e280046519fe4c01 -->
+
+**Date**: 2026-09-19
+**Task**: 完成文档约定的Python记忆演化机制
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+O01–O16完整实现与消费者验收；268项检查、68项官方故障变体及独立复核通过，真实SDK候选因缺可信材料未发布。
+
+### Main Changes
+
+- 目标关联、磁盘轨迹、反馈聚合、经验维护、必要性、检查计划、脚本与局部关系、初始化/恢复、计量与三臂实验已接通
+- 总纲v1.7、HTML、42个Schema/6个提示词与Trellis上下文同步；旧TS保留，原生接入仍暂缓
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9945c31` | feat: complete documented memory evolution mechanisms |
+
+### Testing
+
+- [OK] 268项unittest通过，68/68官方故障变体检出且原hash恢复，Python编译通过
+- [OK] Blueprint check/render/verify、37个文档负例、6个生成视图检查通过；未做浏览器视觉QA
+- [OK] 真实gpt-5.6-terra：4调用/27747已报tokens，候选验证unknown且0发布；受限网络失败保留
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 正式benchmark、语义准确率与净收益尚未测；需独立冻结数据和协议，当前不自动开始客户端接入或大规模实验
