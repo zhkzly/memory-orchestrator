@@ -2,7 +2,7 @@
   "id": "python-experience-memory",
   "name": "python-experience-memory",
   "title": "记忆演化核心：后续实现计划（暂停）",
-  "description": "保留完整记忆演化核心的后续实现计划，当前暂停；不包含重建、迁移或替换旧 TS CLI/MCP/UI。当前只由独立任务清理过期草稿并保存提交。",
+  "description": "完整记忆演化核心的分阶段实现计划；文档对齐和草稿清理已完成，产品实施尚未启动。不包含重建、迁移或替换旧 TS CLI/MCP/UI。",
   "status": "planning",
   "dev_type": "backend",
   "scope": "memory-evolution-core",
@@ -21,7 +21,7 @@
   "children": [],
   "parent": "09-18-experience-learning-architecture",
   "relatedFiles": [],
-  "notes": "用户确认当前只清理过期草稿，旧 TS 保留。清理前检查点 db20db8；产品实现不恢复。",
+  "notes": "文档对齐和清理已完成：db20db8 / d2ad776 / 6e78392。2026-09-18 核对就绪状态，补齐分阶段执行清单；范围保持 v1.4，旧 TS 保留，产品尚未启动。",
   "meta": {
     "contract_version": "1.4.0",
     "user_approved": "false",
@@ -29,7 +29,7 @@
     "entry": "python-api",
     "scope": "memory-evolution-core",
     "implementation_allowed": "false",
-    "pause_reason": "document alignment before further implementation",
+    "pause_reason": "implementation not started; document alignment and cleanup complete",
     "legacy_rebuild_in_scope": "false"
   }
 }

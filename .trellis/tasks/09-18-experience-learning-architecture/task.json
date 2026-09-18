@@ -29,7 +29,7 @@
     ".trellis/spec/guides/system-boundaries.md",
     "docs/research/2026-09-17-agent-improvement/"
   ],
-  "notes": "v1.4 完整演化设计保留；当前活动任务只清理过期草稿并提交，旧 TS 保留，后续核心实现暂停，不包含旧接口重建。",
+  "notes": "v1.4 完整演化设计保留；文档对齐和过期草稿清理已完成，清理任务已归档。核心实现计划已核对并补齐阶段验收，尚未启动；旧 TS 保留，不包含旧接口重建。",
   "meta": {
     "phase": "architecture",
     "implementation_started": "false",

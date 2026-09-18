@@ -1,4 +1,7 @@
 {"file": "docs/blueprint/context.md", "reason": "Generated current scope and complete evolution"}
 {"file": ".trellis/tasks/09-18-python-experience-memory/resume.md", "reason": "Product paused; no implementation permission"}
 {"file": ".trellis/tasks/09-18-python-experience-memory/prd.md", "reason": "Actual current product scope"}
+{"file": ".trellis/tasks/09-18-python-experience-memory/design.md", "reason": "Two input paths and complete evolution ownership"}
+{"file": ".trellis/tasks/09-18-python-experience-memory/implement.md", "reason": "Milestone scope, behavior checks and evidence boundaries"}
+{"file": ".trellis/tasks/09-18-python-experience-memory/checklist.md", "reason": "Verify all retained evolution requirements"}
 {"file": ".trellis/spec/backend/python-learning.md", "reason": "Guidelines only, not authorization"}
