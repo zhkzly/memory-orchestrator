@@ -7,4 +7,4 @@
 - 一轮真实SDK接线4调用，已报模型token27747；候选缺两项可信检查材料，unknown且0发布。没有阈值放松。受限网络失败另留档。
 - 总纲/HTML/摘要、schema/prompt打包来源、使用说明和开发spec均同步。浏览器视觉QA、正式benchmark/语义准确率/净收益未测；不要把这些改写成核心功能仍未实现。
 - 旧TS与用户数据保留；CLI/MCP/Codex/Claude适配与目录同步仍按约定暂缓。
-- A/B/C/root所有mutation窗口已结束，无运行worker。最后剩余收尾：本地提交、当前task归档和journal，随后检查工作树。
+- A/B/C/root所有mutation窗口已结束，无运行worker。实现与验收证据已本地提交9945c31，本任务已归档；会话收尾记录由Trellis journal维护。不继续恢复旧实施待办。
