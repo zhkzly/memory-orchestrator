@@ -1,0 +1,69 @@
+{
+  "contract_version": "1.1.0",
+  "source_sha256": "1d15466b5ffa322b4e0e4cfe20812db5c57982e9a9dd9b2f9479c11aa038d690",
+  "question_count": 28,
+  "node_count": 11,
+  "schema_count": 14,
+  "schema_examples_valid": 11,
+  "document_negative_cases": 20,
+  "schema_negative_cases": 7,
+  "embedded_json_equal": true,
+  "static_ids_unique": 63,
+  "literal_dom_references_resolve": true,
+  "dynamic_dom_behavior": "not tested",
+  "script_syntax": "pass",
+  "node_bundles_checked": 11,
+  "node_bundle_bytes": {
+    "N01": {
+      "compact": 8777,
+      "full": 18223
+    },
+    "N02": {
+      "compact": 13789,
+      "full": 30029
+    },
+    "N03": {
+      "compact": 14363,
+      "full": 29951
+    },
+    "N04": {
+      "compact": 10637,
+      "full": 38714
+    },
+    "N05": {
+      "compact": 15004,
+      "full": 34984
+    },
+    "N06": {
+      "compact": 19785,
+      "full": 73078
+    },
+    "N07": {
+      "compact": 18423,
+      "full": 69097
+    },
+    "N08": {
+      "compact": 14953,
+      "full": 51910
+    },
+    "N09": {
+      "compact": 19168,
+      "full": 44950
+    },
+    "N10": {
+      "compact": 9812,
+      "full": 18181
+    },
+    "N11": {
+      "compact": 14506,
+      "full": 41941
+    }
+  },
+  "protected_product_files_unchanged": 24,
+  "html_bytes": 182363,
+  "browser_visual_interaction": "NOT RUN: prior URL policy denial; no workaround attempted",
+  "model_or_benchmark_calls": 0,
+  "runtime_implemented": false,
+  "scope": "documentation/data/syntax checks only; no runtime or learning-quality claim",
+  "compact_full_contract_equivalence": "node/prompt identities and schema coverage equal for all 11 nodes"
+}

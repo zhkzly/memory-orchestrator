@@ -1,0 +1,5 @@
+{"file":"docs/blueprint/context.md","reason":"核对总纲与固定不变量，不默认加载全部历史研究"}
+{"file":".trellis/spec/backend/architecture-current.md","reason":"当前实现事实与能力边界"}
+{"file":".trellis/spec/backend/validation.md","reason":"检查层级和效果声明边界"}
+{"file":".trellis/spec/backend/project-contract.md","reason":"文档一致性与错误场景"}
+{"file":".trellis/tasks/09-18-experience-learning-architecture/resume.md","reason":"核对本次范围及未完成事项"}

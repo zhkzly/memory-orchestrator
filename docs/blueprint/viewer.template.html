@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="contract-source-sha256" content="__SOURCE_HASH__">
+<title>__PROJECT_TITLE__</title>
+<style>
+:root{color-scheme:light;--bg:#f5f6f8;--surface:#fff;--ink:#182331;--muted:#596878;--line:#dce3ea;--brand:#155cc2;--soft:#eaf2ff;--warm:#805300;--warmbg:#fff6df;--code:#edf1f6;--shadow:0 8px 30px #22344d08}
+:root[data-theme=dark]{color-scheme:dark;--bg:#111720;--surface:#192330;--ink:#e9eef7;--muted:#a6b4c5;--line:#334355;--brand:#8bbbff;--soft:#233f65;--warm:#f0cf87;--warmbg:#342d20;--code:#222f40;--shadow:none}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 system-ui,-apple-system,"Segoe UI","Noto Sans SC","Microsoft YaHei",sans-serif}button,input{font:inherit}button,a{touch-action:manipulation}a{color:var(--brand)}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--brand);outline-offset:3px}h1,h2,h3,p{margin:0}h1{font-size:30px;line-height:1.3;letter-spacing:-.5px}h2{font-size:22px;line-height:1.4}h3{font-size:16px}p+p{margin-top:10px}code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}code{font-size:.88em;overflow-wrap:anywhere}pre{margin:0;background:var(--code);padding:16px;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.8}ul,ol{margin:8px 0;padding-left:21px}li+li{margin-top:7px}.app{max-width:1500px;margin:auto;padding:30px 34px 36px}.eyebrow{font-size:12px;letter-spacing:1.1px;color:var(--brand);font-weight:700;margin-bottom:9px}.header{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:22px}.intro{max-width:880px;margin-top:12px;color:var(--muted)}.top-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}.quiet-button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:8px 13px;text-decoration:none;font-size:13px}.status{display:inline-block;padding:3px 9px;border-radius:6px;background:var(--warmbg);color:var(--warm);font-size:12px;margin-top:12px}.layout{display:grid;grid-template-columns:205px minmax(0,1fr);gap:26px}.sidebar{position:sticky;top:22px;align-self:start}.nav{display:flex;flex-direction:column;gap:5px}.nav button{border:0;background:transparent;color:var(--muted);text-align:left;padding:11px 13px;border-radius:9px}.nav button[aria-selected=true]{color:var(--brand);background:var(--soft);font-weight:650}.nav .num{font:12px ui-monospace,monospace;margin-right:10px;opacity:.8}.sidebar-note{margin:22px 12px;color:var(--muted);font-size:12px;line-height:1.8}.source-hash{display:block;overflow-wrap:anywhere;margin-top:6px;font-size:11px}.view[hidden]{display:none}.view{min-width:0}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:19px}.section-head p{color:var(--muted);margin-top:5px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:23px;box-shadow:var(--shadow)}.panel+.panel{margin-top:18px}.small{font-size:13px;color:var(--muted)}.banner{background:var(--soft);border-left:3px solid var(--brand);padding:13px 16px;border-radius:0 9px 9px 0;margin-bottom:20px}.flow-section+.flow-section{margin-top:21px}.flow-heading{display:flex;gap:10px;align-items:center;margin-bottom:10px}.phase-label{color:var(--muted);font-size:12px;font-weight:650;letter-spacing:.5px}.flow-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.node-tile{min-width:0;border:1px solid var(--line);background:var(--surface);text-align:left;color:var(--ink);border-radius:10px;padding:12px 14px;display:grid;gap:3px}.node-tile:hover{border-color:var(--brand);background:var(--soft)}.node-id{font:11px ui-monospace,monospace;color:var(--brand);letter-spacing:.4px}.node-tile strong{font-size:15px;font-weight:650}.node-tile span:last-child{font-size:12px;color:var(--muted)}.return-line{font-size:13px;color:var(--brand);padding-top:15px}.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.boundary-list li{font-size:14px}.node-explorer{display:grid;grid-template-columns:230px minmax(0,1fr);gap:18px;align-items:start}.filter{width:100%;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);padding:9px 11px;margin-bottom:9px}.node-list{display:flex;flex-direction:column;gap:5px}.node-list button{display:flex;gap:10px;align-items:center;border:1px solid transparent;background:var(--surface);color:var(--ink);padding:10px 11px;text-align:left;border-radius:8px}.node-list button[aria-pressed=true]{border-color:var(--brand);background:var(--soft)}.detail-title{display:flex;gap:12px;align-items:center;margin-bottom:8px}.detail-meta{color:var(--muted);font-size:13px;margin-bottom:17px}.field-title{font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--muted);margin-bottom:7px}.contract-block{margin-top:19px}.io-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.chip{display:inline-block;font:12px/1.6 ui-monospace,monospace;border:1px solid var(--line);background:var(--code);border-radius:5px;padding:2px 7px;margin:0 4px 5px 0;overflow-wrap:anywhere}.unknown{border-left:3px solid var(--warm);padding:9px 12px;background:var(--warmbg);color:var(--warm);border-radius:0 7px 7px 0}.relation-line{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:7px;font-size:12px}.jump{background:transparent;border:0;color:var(--brand);padding:0 3px;text-decoration:underline}.definition{padding:11px 0;border-bottom:1px solid var(--line)}.definition:last-child{border-bottom:0}.definition strong{font-size:13px}.definition p{font-size:13px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}details{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}summary{cursor:pointer;color:var(--brand);font-size:13px}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{font-size:12px;color:var(--muted);font-weight:650}td code{font-size:12px}.table-wrap table{min-width:560px}.rule{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}.rule:last-child{border-bottom:0}.rule p{font-size:14px;margin-top:4px}.rule .small{margin-top:5px;font-size:12px}.formula+.formula{margin-top:16px}.formula .field-title{margin-bottom:6px}.steps{counter-reset:steps;list-style:none;padding:0;margin:0}.steps li{counter-increment:steps;display:flex;gap:12px;align-items:flex-start;padding:10px 0}.steps li::before{content:counter(steps,decimal-leading-zero);font:12px/24px ui-monospace,monospace;color:var(--brand);min-width:26px}.split{display:grid;grid-template-columns:1fr 1fr;gap:18px}.milestone{border-bottom:1px solid var(--line);padding:14px 0}.milestone:last-child{border:0}.milestone p{font-size:14px;margin:5px 0}.footer{color:var(--muted);font-size:12px;margin-top:24px;padding-top:16px;border-top:1px solid var(--line)}.empty{padding:16px;color:var(--muted)}.ref-list{list-style:none;padding:0}.ref-list li{padding:8px 0}.ref-list small{display:block;color:var(--muted);overflow-wrap:anywhere}.warning{font-size:13px;color:var(--warm);background:var(--warmbg);padding:12px 14px;border-radius:8px;margin-top:16px}
+.question-tools{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}.question-tools>div{flex:1}.question-tools .quiet-button{margin-top:23px}.question-count{margin-bottom:14px}.question-card{scroll-margin-top:20px}.question-card h3{font-size:18px}.question-origin{font-size:13px;color:var(--muted);margin-top:9px;border-left:2px solid var(--line);padding-left:11px}.question-answer{display:grid;grid-template-columns:76px minmax(0,1fr);gap:7px 13px;margin:16px 0}.question-answer dt{font-size:12px;color:var(--muted);font-weight:650}.question-answer dd{margin:0;font-size:14px;overflow-wrap:anywhere}.question-map{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px}.implementation-head{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.implementation-head .status{margin-top:0}.payload{margin-top:10px}.prompt-section{margin-top:13px}.prompt-section .field-title{margin-bottom:6px}.paper-entry{padding:15px 0;border-bottom:1px solid var(--line)}.paper-entry:last-child{border:0}.paper-entry p{font-size:13px;margin-top:6px}.paper-entry .paper-limit{color:var(--warm)}.paper-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:12px}.runtime-notice{margin-bottom:18px}.implementation-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.runtime-status{margin:10px 0 0}.source-kind{font-size:11px;color:var(--muted);font-family:ui-monospace,monospace;overflow-wrap:anywhere}.question-card:target{border-color:var(--brand)}
+@media(min-width:1600px){.app{padding-top:42px}.layout{gap:34px}.panel{padding:27px}.node-tile{padding:15px 16px}}
+@media(max-width:1050px){.app{padding:23px 20px}.layout{grid-template-columns:175px minmax(0,1fr);gap:18px}.node-explorer{grid-template-columns:185px minmax(0,1fr)}.flow-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.io-grid,.split{grid-template-columns:1fr}}
+@media(max-width:760px){h1{font-size:25px}.app{padding:18px 15px}.header{display:block}.top-actions{margin-top:15px}.layout{display:block}.sidebar{position:static;margin-bottom:20px}.nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.nav button{padding:9px 10px;font-size:13px}.sidebar-note{display:none}.mini-grid,.node-explorer{grid-template-columns:1fr}.node-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.node-list button{font-size:12px;padding:9px 8px}.node-list .node-id{font-size:10px}.panel{padding:18px}.section-head{display:block}.flow-grid{grid-template-columns:1fr 1fr}.node-tile{padding:11px}.node-tile strong{font-size:13px}.node-tile span:last-child{font-size:11px}.field-title{letter-spacing:0}.detail-title{align-items:flex-start}.status{font-size:11px}}
+@media(max-width:760px){.implementation-grid{grid-template-columns:1fr}.question-tools{gap:7px}.question-answer{grid-template-columns:1fr;gap:4px}.question-answer dd+dt{margin-top:10px}.question-tools .quiet-button{padding:9px}.question-map{gap:5px}}
+@media print{.app{padding:0}.sidebar,.top-actions{display:none}.layout{display:block}.view[hidden]{display:none}.panel{box-shadow:none;break-inside:avoid}.footer{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div><div class="eyebrow" id="version-line"></div><h1 id="project-title"></h1><p class="intro" id="purpose"></p><span class="status" id="implementation-state"></span></div>
+    <div class="top-actions"><button class="quiet-button" id="theme" type="button">切换深浅色</button><a class="quiet-button" href="project-contract.json">查看源数据</a></div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="nav" role="tablist" aria-label="总纲章节">
+        <button id="tab-overview" role="tab" aria-controls="view-overview" aria-selected="true" data-view="overview"><span class="num">01</span>宏观总览</button>
+        <button id="tab-questions" role="tab" aria-controls="view-questions" aria-selected="false" data-view="questions"><span class="num">02</span>逐项问题</button>
+        <button id="tab-runtime" role="tab" aria-controls="view-runtime" aria-selected="false" data-view="runtime"><span class="num">03</span>执行与评价</button>
+        <button id="tab-nodes" role="tab" aria-controls="view-nodes" aria-selected="false" data-view="nodes"><span class="num">04</span>节点契约</button>
+        <button id="tab-rules" role="tab" aria-controls="view-rules" aria-selected="false" data-view="rules"><span class="num">05</span>状态与不变量</button>
+        <button id="tab-resume" role="tab" aria-controls="view-resume" aria-selected="false" data-view="resume"><span class="num">06</span>中断后继续</button>
+        <button id="tab-trace" role="tab" aria-controls="view-trace" aria-selected="false" data-view="trace"><span class="num">07</span>需求与权威来源</button>
+      </nav>
+      <p class="sidebar-note">同一份 JSON 生成阅读视图和执行摘要。历史资料保留，按需查阅。<span class="source-hash" id="hash-short"></span></p>
+    </aside>
+    <main>
+      <section class="view" id="view-overview" role="tabpanel" aria-labelledby="tab-overview">
+        <div class="section-head"><div><h2>一条主线，两种时机</h2><p>执行时使用已发布经验；执行后提炼、修改、检查并发布。</p></div></div>
+        <div class="banner delivery-notice" id="overview-delivery">__CURRENT_DELIVERY_NOTICE__</div>
+        <div class="banner"><strong>实现约束</strong><p id="design-principle"></p><ul id="design-rules"></ul></div>
+        <div class="banner">从空库生成与已有库演化共用修改接口。经验入池、候选生成和正式发布，是三个不同动作。</div>
+        <div class="panel" id="flow"></div>
+        <div class="mini-grid"><div class="panel"><h3>本项目负责</h3><ul class="boundary-list" id="scope-in"></ul></div><div class="panel"><h3>边界之外</h3><ul class="boundary-list" id="scope-out"></ul></div></div>
+        <div class="panel" style="margin-top:18px"><h3>这次具体调整了什么</h3><p class="small">逐项区分保留能力、职责调整、待定参数和暂缓接入；不把调用方式变化解释为删除演化步骤。</p><div class="table-wrap" id="delivery-adjustments"></div></div>
+        <div class="panel" style="margin-top:18px"><h3>参考实现顺序</h3><div id="milestones"></div></div>
+      </section>
+      <section class="view" id="view-questions" role="tabpanel" aria-labelledby="tab-questions" hidden>
+        <div class="section-head"><div><h2>逐条保留问题，再连接到实现</h2><p>Q 编号是按已有对话重建的索引；“对话依据”包含重述与摘录，不冒充用户曾给出的编号原文。</p></div></div>
+        <div class="banner">这里记录设计缺口、当前选择和验收要求。specified_not_implemented 表示已经写明方案，产品逻辑尚未实现。</div>
+        <div class="question-tools"><div><label class="small" for="question-filter">查找问题、节点、需求或论文</label><input class="filter" id="question-filter" placeholder="例如 轨迹、Q08、N06、reward"></div><button class="quiet-button" type="button" id="question-reset">显示全部</button></div>
+        <p class="small question-count" id="question-count" aria-live="polite"></p>
+        <div id="question-cards"></div>
+      </section>
+      <section class="view" id="view-runtime" role="tabpanel" aria-labelledby="tab-runtime" hidden>
+        <div class="section-head"><div><h2>任务怎样执行，更新怎样被接受</h2><p>并行采样、反馈来源、统计分母和发布门槛分别定义。</p></div></div>
+        <div class="banner delivery-notice" id="runtime-delivery">__CURRENT_DELIVERY_NOTICE__</div>
+        <div class="banner runtime-notice">这是参考实现设计，尚未运行学习实验；本页不是任务执行控制台。参数未调优，模型代理兼容性未实测。</div>
+        <div class="panel"><h3>执行边界</h3><div id="runtime-topology"></div></div>
+        <div class="panel"><h3>固定评价规则与待定协议参数</h3><p class="small">调用方提供函数不改变准入规则。参数在运行前明确选择，历史示例不自动成为默认值。</p><div id="runtime-evaluation-policy"></div></div>
+        <div class="panel"><h3>外层循环</h3><ol class="steps" id="runtime-loop"></ol></div>
+        <div class="panel"><h3 id="runtime-example-title"></h3><p class="status">说明性示例 · illustrative_not_measured</p><ol class="steps" id="runtime-example"></ol><details><summary>教学材料与显式协议（未执行）</summary><p class="warning" id="runtime-example-note"></p><div id="runtime-example-materials"></div></details></div>
+        <div id="runtime-policies"></div>
+        <div class="panel"><h3>结构校验之外，还必须实现的语义检查</h3><p class="small">下列检查是产品实现要求，不能用文档结构检查通过代替。</p><ul id="runtime-semantic"></ul></div>
+        <div class="panel"><h3>参考资料与模型调用</h3><p class="warning">历史数值与连接配置尚未实测。协议参数的选择状态以上方 evaluation_policy 为准；此处参考值不是已确定的运行默认值，也不代表统计可靠性、效果或 API 兼容性已经确认。</p><details><summary>展开历史参考配置（不自动生效）</summary><pre class="payload" id="runtime-profile"></pre></details><details><summary>展开模型客户端配置（未连接验证）</summary><pre class="payload" id="runtime-model"></pre></details></div>
+        <div class="panel"><h3>实现与存储安排</h3><details><summary>展开实现顺序</summary><ol class="steps" id="runtime-implementation-order"></ol></details><details><summary>展开产物布局</summary><ul id="runtime-storage-layout"></ul></details></div>
+        <div class="panel"><h3>当前证据边界</h3><ul id="runtime-non-claims"></ul></div>
+      </section>
+      <section class="view" id="view-nodes" role="tabpanel" aria-labelledby="tab-nodes" hidden>
+        <div class="section-head"><div><h2>每个节点都有可检查的交接</h2><p>先看具体步骤、检查与错误分支；提示词、结构定义和说明性示例按需展开。</p></div></div>
+        <div class="node-explorer">
+          <div><label class="small" for="filter">查找节点、K 需求或 I 规则</label><input class="filter" id="filter" placeholder="例如 N08、K10、发布"><div class="node-list" id="node-list"></div></div>
+          <article class="panel" id="node-detail" aria-live="polite"></article>
+        </div>
+      </section>
+      <section class="view" id="view-rules" role="tabpanel" aria-labelledby="tab-rules" hidden>
+        <div class="section-head"><div><h2>允许变化的状态，必须保持的规则</h2><p>形式化约束设计交接；实际实现仍需对应行为检查。</p></div></div>
+        <div class="panel"><h3>状态模型</h3><div id="model" style="margin-top:16px"></div></div>
+        <div class="panel"><h3>版本生命周期</h3><p class="small" id="lifecycle-note"></p><div class="table-wrap" id="transitions"></div></div>
+        <div class="panel"><h3>受限修改操作</h3><div id="operations"></div></div>
+        <div class="panel"><h3>固定不变量</h3><div id="invariants"></div></div>
+        <div class="panel"><h3>可替换的策略与参数</h3><p class="small">实现参考策略后可以调整；不伪造最优参数，也不因此阻止核心实现。</p><div id="configurable"></div></div>
+      </section>
+      <section class="view" id="view-resume" role="tabpanel" aria-labelledby="tab-resume" hidden>
+        <div class="section-head"><div><h2>被打断后，从权威状态恢复</h2><p>不要求记住整段聊天；保留当前目标、范围和最后完成的步骤。</p></div></div>
+        <div class="banner" id="continuity-rule"></div>
+        <div class="split"><div class="panel"><h3>恢复时按这个顺序读</h3><ol class="steps" id="read-order"></ol></div><div class="panel"><h3>当前任务保存这些字段</h3><pre id="task-fields"></pre><p class="small" style="margin-top:12px">实际进度仍由 Trellis 任务和检查点记录，不能只改这个 HTML。</p></div></div>
+        <div class="panel"><h3>新消息怎样影响当前工作</h3><div id="change-rules"></div><p class="warning" id="user-authority"></p></div>
+        <div class="panel"><h3>维护总纲</h3><pre>node docs/blueprint/build.mjs check
+node docs/blueprint/build.mjs render
+node docs/blueprint/build.mjs verify
+node docs/blueprint/build.mjs node N08</pre><p class="small" style="margin-top:12px">改动公共契约时记录版本与来源；只改变阅读样式时修改模板并重新生成。查看节点命令只输出所需契约。</p></div>
+      </section>
+      <section class="view" id="view-trace" role="tabpanel" aria-labelledby="tab-trace" hidden>
+        <div class="section-head"><div><h2>原始需求没有在整理中丢失</h2><p>用稳定编号把用户要求、职责节点和后续实现连接起来。</p></div></div>
+        <div class="panel"><h3>需求覆盖</h3><div class="table-wrap" id="requirements"></div></div>
+        <div class="panel"><h3>论文与源码依据</h3><p class="small">区分论文报告、源码观察和本项目的工程选择；引用某项机制不代表已经复现其结果。</p><div id="paper-sources"></div></div>
+        <div class="panel"><h3>文档权威与用途</h3><div id="authority"></div></div>
+        <div class="panel"><h3>背景资料与版本记录</h3><ul class="ref-list" id="references"></ul><div id="history"></div></div>
+      </section>
+      <footer class="footer" id="limitations"></footer>
+    </main>
+  </div>
+</div>
+<script type="application/json" id="contract-data">__CONTRACT_DATA__</script>
+<script>
+"use strict";
+const c=JSON.parse(document.getElementById("contract-data").textContent);
+const esc=(v)=>String(v).replace(/[&<>"']/g,(ch)=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+const byId=(items,id)=>items.find((v)=>v.id===id);
+const put=(id,html)=>{document.getElementById(id).innerHTML=html;};
+const list=(items)=>items.map((x)=>"<li>"+esc(x)+"</li>").join("");
+const chips=(items)=>items.map((x)=>'<span class="chip">'+esc(x)+"</span>").join("");
+const jump=(id)=>'<button type="button" class="jump" data-node="'+esc(id)+'">'+esc(id)+"</button>";
+const questionJump=(id)=>'<button type="button" class="jump" data-question="'+esc(id)+'">'+esc(id)+"</button>";
+const projectLink=(p)=>"../../"+p.split("/").map(encodeURIComponent).join("/");
+const pretty=(value)=>esc(JSON.stringify(value,null,2));
+const responsibilityLabel=(value)=>({memory_system:"记忆系统",provided_function:"调用方提供的函数"})[value]||value;
+const adjustmentLabel=(value)=>({preserved:"保留",boundary_changed:"职责调整",parameter_unfixed:"参数待定",deferred:"暂缓"})[value]||value;
+const statusLabel=(value)=>({specified_not_implemented:"方案已明确 · 尚未实现",reference_design_unimplemented:"参考设计 · 尚未实现",design_aligned_product_paused:"文档已对齐 · 产品实现暂停",planned:"目标契约 · 尚未实现",partial:"部分实现 · 需核对证据",implemented:"实现标注 · 需核对证据"})[value]||value;
+const policyContent=(value)=>Array.isArray(value)?"<ul>"+list(value)+"</ul>":typeof value==="string"?"<p>"+esc(value)+"</p>":"<pre>"+pretty(value)+"</pre>";
+const paperLinks=(ids)=>ids.map((id)=>{const p=byId(c.paper_sources,id);return p?'<a href="'+esc(p.url)+'">'+esc(p.title)+"</a>":esc(id);}).join(" · ");
+function paperEntry(p){
+  return '<div class="paper-entry"><strong>'+esc(p.title)+'</strong><p class="source-kind">'+esc(p.id)+" · "+esc(p.evidence_level)+'</p><p>参考机制：'+esc(p.mechanism)+'</p><p class="paper-limit">边界：'+esc(p.limitation)+'</p><div class="paper-links"><a href="'+esc(p.url)+'">论文 / 一手来源</a>'+p.code_urls.map((url,i)=>'<a href="'+esc(url)+'">源码 '+(i+1)+"</a>").join("")+"</div></div>";
+}
+let selected="N08",activeView="overview";
+function setView(name,updateHash=true){
+  if(!["overview","questions","runtime","nodes","rules","resume","trace"].includes(name))name="overview";
+  activeView=name;
+  document.querySelectorAll("[data-view]").forEach((b)=>{const active=b.dataset.view===name;b.setAttribute("aria-selected",String(active));b.tabIndex=active?0:-1;});
+  document.querySelectorAll(".view").forEach((p)=>p.hidden=p.id!=="view-"+name);
+  if(updateHash)history.replaceState(null,"","#"+(name==="nodes"?"node:"+selected:name));
+}
+function drawQuestions(){
+  const query=document.getElementById("question-filter").value.trim().toLowerCase();
+  const matches=c.questions.filter((q)=>JSON.stringify(q).toLowerCase().includes(query));
+  document.getElementById("question-count").textContent="显示 "+matches.length+" / "+c.questions.length+" 个问题"+(query?" · 已筛选":" · 默认完整展示");
+  put("question-cards",matches.length?matches.map((q)=>'<article class="panel question-card" id="question-'+esc(q.id)+'" tabindex="-1"><div class="detail-title"><span class="node-id">'+esc(q.id)+"</span><h3>"+esc(q.title)+'</h3></div><span class="status">'+esc(statusLabel(q.status))+' <code>'+esc(q.status)+'</code></span><p class="question-origin">对话依据（重述 / 摘录）：'+esc(q.origin)+'</p><dl class="question-answer"><dt>设计缺口</dt><dd>'+esc(q.gap)+'</dd><dt>当前选择</dt><dd>'+esc(q.decision)+'</dd><dt>如何验收</dt><dd>'+esc(q.acceptance)+'</dd></dl><div class="question-map"><span>需求：</span>'+chips(q.requirement_ids)+'<span>节点：</span>'+q.node_ids.map(jump).join(" · ")+'</div>'+(q.paper_ids.length?'<p class="small" style="margin-top:10px">参考：'+paperLinks(q.paper_ids)+"</p>":"")+"</article>").join(""):'<div class="panel empty">没有匹配问题。点击“显示全部”恢复完整清单。</div>');
+}
+function showQuestion(id,updateHash=true){
+  if(!byId(c.questions,id))return;
+  document.getElementById("question-filter").value="";drawQuestions();setView("questions",false);
+  if(updateHash)history.replaceState(null,"","#question:"+id);
+  const target=document.getElementById("question-"+id);target.focus({preventScroll:true});target.scrollIntoView({block:"start"});
+}
+function drawList(){
+  const q=document.getElementById("filter").value.trim().toLowerCase();
+  const matches=c.nodes.filter((n)=>JSON.stringify([n.id,n.name,n.operator,n.responsibility,n.requirements,n.invariants,n.inputs,n.outputs,n.implementation,c.questions.filter((x)=>x.node_ids.includes(n.id)).map((x)=>[x.id,x.title])]).toLowerCase().includes(q));
+  put("node-list",matches.length?matches.map((n)=>'<button type="button" data-node="'+esc(n.id)+'" aria-pressed="'+(n.id===selected)+'"><span class="node-id">'+esc(n.id)+"</span><span>"+esc(n.name)+"</span></button>").join(""):'<div class="empty">没有匹配节点。全局规则可在“状态与不变量”查看。</div>');
+}
+function showNode(id){
+  const n=byId(c.nodes,id);if(!n)return;
+  selected=id;drawList();
+  const relatedTypes=new Set(n.inputs.concat(n.outputs));
+  const impl=n.implementation;
+  const questions=c.questions.filter((q)=>q.node_ids.includes(id));
+  const prompts=c.prompts.filter((p)=>impl.prompt_ids.includes(p.id));
+  const schemaIds=new Set([...relatedTypes,...(impl.schema_ids||[]),...prompts.map((p)=>p.output_schema)]);
+  const schemas=c.schemas.filter((s)=>schemaIds.has(s.id)||s.node_ids?.includes(id));
+  const includedSchemas=new Set(schemas.map((s)=>s.id));
+  const examples=c.examples.filter((e)=>includedSchemas.has(e.schema_id));
+  const paperIds=new Set([...impl.paper_ids,...questions.flatMap((q)=>q.paper_ids)]);
+  const incoming=c.edges.filter((e)=>e.to===id),outgoing=c.edges.filter((e)=>e.from===id);
+  const relations=(edges,inbound)=>edges.length?edges.map((e)=>'<div class="relation-line">'+jump(inbound?e.from:e.to)+'<span>'+(inbound?"→ 本节点":"← 本节点")+'</span><code>'+esc(e.record)+"</code></div>").join(""):'<p class="small">由任务源、存储或运行配置提供。</p>';
+  const linkedRules=n.invariants.map((id)=>{const r=byId(c.invariants,id);return "<li><code>"+esc(id)+"</code> "+esc(r.rule)+"</li>";}).join("");
+  const reqs=n.requirements.map((id)=>{const r=byId(c.requirements,id);return "<li><code>"+esc(id)+"</code> "+esc(r.rule)+"</li>";}).join("");
+  const promptView=prompts.map((p)=>'<details><summary><code>'+esc(p.id)+'</code> → '+esc(p.output_schema)+'</summary><div class="prompt-section"><div class="field-title">输入字段</div>'+chips(p.input_fields)+'</div><div class="prompt-section"><div class="field-title">System</div><pre>'+esc(p.system)+'</pre></div><div class="prompt-section"><div class="field-title">User 模板</div><pre>'+esc(p.user_template)+'</pre></div><div class="prompt-section"><div class="field-title">输出验证</div><ul>'+list(p.validation)+'</ul></div><div class="prompt-section unknown"><strong>失败时</strong>'+policyContent(p.on_error)+'</div></details>').join("");
+  const schemaView=schemas.map((s)=>'<details><summary><code>'+esc(s.id)+'</code> · '+esc(s.title)+'</summary><pre class="payload">'+pretty(s.json_schema)+'</pre></details>').join("");
+  const exampleView=examples.map((e)=>'<details><summary>'+esc(e.title)+' · 说明性示例</summary><p class="small">'+esc(e.id)+' → '+esc(e.schema_id)+' · <code>'+esc(e.kind)+'</code></p><pre class="payload">'+pretty(e.value)+'</pre></details>').join("");
+  put("node-detail",[
+    '<div class="detail-title"><span class="node-id">'+esc(n.id)+"</span><h2>"+esc(n.name)+'</h2></div><p class="detail-meta">'+esc(n.phase)+"阶段 · "+esc(statusLabel(n.status))+"</p><pre>"+esc(n.operator)+"</pre>",
+    '<div class="contract-block banner delivery-notice">'+document.getElementById("overview-delivery").innerHTML+'</div>',
+    '<div class="contract-block"><strong>职责归属：'+esc(responsibilityLabel(n.responsibility.owner))+'</strong><p>'+esc(n.responsibility.description)+'</p><p class="small">provided_function 表示任务／评价操作由调用方提供，不表示本轮要实现具体客户端适配。</p></div>',
+    '<div class="contract-block"><div class="implementation-head"><strong>处理方式：'+esc(impl.owner)+'</strong><span class="status">'+esc(statusLabel(impl.state))+' <code>'+esc(impl.state)+'</code></span></div><pre>'+esc(impl.signature)+'</pre></div>',
+    '<div class="contract-block"><h3>具体步骤</h3><ol class="steps">'+list(impl.steps)+'</ol></div>',
+    '<div class="implementation-grid contract-block"><div><h3>本节点检查</h3><ul>'+list(impl.checks)+'</ul></div><div><h3>错误与停止条件</h3><ul>'+list(impl.errors)+'</ul></div></div>',
+    '<div class="contract-block unknown"><strong>证据不足或未知时</strong><p>'+esc(n.on_unknown)+'</p></div>',
+    '<div class="io-grid"><div><div class="field-title">输入类型</div>'+chips(n.inputs)+'</div><div><div class="field-title">输出类型</div>'+chips(n.outputs)+'</div></div><div class="contract-block"><div class="field-title">允许写入</div>'+chips(n.writes)+'</div>',
+    '<div class="io-grid"><div><div class="field-title">数据来自</div>'+relations(incoming,true)+'</div><div><div class="field-title">交给谁</div>'+relations(outgoing,false)+'</div></div>',
+    '<details><summary>前置与后置条件</summary><h3 class="prompt-section">前置条件</h3><ul>'+list(n.preconditions)+'</ul><h3>后置条件</h3><ul>'+list(n.postconditions)+'</ul></details>',
+    '<details><summary>本轮评价规则与参数状态</summary>'+evaluationPolicyView(c.runtime.evaluation_policy)+'</details>',
+    '<details><summary>专用提示词（'+prompts.length+'）</summary>'+(promptView||'<p class="small">此节点没有专用模型提示词；依照执行责任实现确定性逻辑或调用外部执行器。</p>')+'</details>',
+    '<details><summary>结构定义（'+schemas.length+'）与示例（'+examples.length+'）</summary><p class="small">JSON Schema 描述目标接口；文档工具只检查结构引用。示例不是实际任务结果，也不能证明产品运行正确。</p>'+schemaView+exampleView+'</details>',
+    '<details open><summary>对应逐项问题（'+questions.length+'）</summary><ul>'+questions.map((q)=>'<li>'+questionJump(q.id)+' '+esc(q.title)+'</li>').join("")+'</ul></details>',
+    '<details><summary>关联的不变量</summary><ul>'+linkedRules+'</ul></details><details><summary>对应用户需求</summary><ul>'+reqs+'</ul></details>',
+    '<details><summary>输入输出记录概览</summary>'+c.records.filter((r)=>relatedTypes.has(r.id)).map((r)=>'<div class="definition"><strong><code>'+esc(r.id)+"</code> · "+esc(r.title)+"</strong><p>"+esc(r.fields)+"</p></div>").join("")+'</details>',
+    '<details><summary>相关论文与源码（'+paperIds.size+'）</summary>'+c.paper_sources.filter((p)=>paperIds.has(p.id)).map(paperEntry).join("")+'</details>',
+    '<div class="contract-block"><div class="field-title">按需读取命令</div><pre>node docs/blueprint/build.mjs node '+esc(id)+"</pre></div>"
+  ].join(""));
+}
+document.getElementById("version-line").textContent="PROJECT CONTRACT / "+c.meta.version+" / "+c.meta.updated;
+document.getElementById("project-title").textContent=c.meta.title;
+document.getElementById("purpose").textContent=c.meta.purpose;
+const implementedCount=c.nodes.filter((n)=>n.status==="implemented").length,partialCount=c.nodes.filter((n)=>n.status==="partial").length;
+document.getElementById("implementation-state").textContent=c.runtime.current_delivery.implementation_allowed===false?"当前仅文档对齐 · 产品实现暂停":implementedCount||partialCount?"目标设计 · 实现标注 "+implementedCount+"/"+c.nodes.length+" · 部分 "+partialCount:"目标设计 · 参考实现待开发";
+document.getElementById("hash-short").textContent="源指纹 "+"__SOURCE_HASH__".slice(0,16);
+const groups=[["执行","运行时选经验并完成任务"],["学习","轨迹与反馈汇合，形成修改候选"],["发布","独立检查后切换版本"],["横切","所有阶段都留下可报告的记录"]];
+put("flow",groups.map(([phase,label])=>'<div class="flow-section"><div class="flow-heading"><span class="phase-label">'+esc(phase)+"</span><h3>"+esc(label)+'</h3></div><div class="flow-grid">'+c.nodes.filter((n)=>n.phase===phase).map((n)=>'<button class="node-tile" type="button" data-node="'+esc(n.id)+'"><span class="node-id">'+esc(n.id)+"</span><strong>"+esc(n.name)+"</strong><span>"+esc(responsibilityLabel(n.responsibility.owner))+"</span><span>"+esc(n.outputs.filter((x)=>x!=="UsageRecord").join(" · "))+"</span></button>").join("")+"</div></div>").join("")+'<p class="return-line">发布后的 LibrarySnapshot 回到 N02，服务下一次任务。点击节点查看实际数据依赖与契约。</p>');
+put("scope-in",list(c.scope.in));put("scope-out",list(c.scope.out));
+put("delivery-adjustments",'<table><thead><tr><th>范围</th><th>调整前</th><th>当前约定</th><th>原因与状态</th></tr></thead><tbody>'+c.runtime.adjustments.map((a)=>'<tr><td><code>'+esc(a.id)+'</code><p>'+esc(a.area)+'</p></td><td>'+esc(a.before)+'</td><td>'+esc(a.after)+'</td><td><strong>'+esc(adjustmentLabel(a.status))+'</strong><p>'+esc(a.reason)+'</p></td></tr>').join("")+'</tbody></table>');
+function evaluationPolicyView(policy){
+  return '<h3 class="prompt-section">固定规则</h3><ul>'+list(policy.fixed_rules)+'</ul><h3 class="prompt-section">运行前需要明确的参数</h3><div class="table-wrap"><table><thead><tr><th>参数</th><th>当前状态</th><th>选择规则</th></tr></thead><tbody>'+policy.parameters.map((p)=>'<tr><td><code>'+esc(p.name)+'</code></td><td>'+esc(p.status)+'</td><td>'+esc(p.rule)+'</td></tr>').join("")+'</tbody></table></div><details><summary>历史参考与未确认草稿（均不自动成为默认值）</summary><div class="table-wrap"><table><thead><tr><th>项目</th><th>旧参考</th><th>未确认草稿</th><th>本轮处理</th></tr></thead><tbody>'+policy.historical_examples.map((p)=>'<tr><td>'+esc(p.name)+'</td><td>'+esc(p.old_reference)+'</td><td>'+esc(p.unconfirmed_draft)+'</td><td>'+esc(p.decision)+'</td></tr>').join("")+'</tbody></table></div></details>';
+}
+put("runtime-evaluation-policy",evaluationPolicyView(c.runtime.evaluation_policy));
+if(c.runtime.design_discipline){
+  document.getElementById("design-principle").textContent=c.runtime.design_discipline.principle;
+  put("design-rules",list(c.runtime.design_discipline.rules));
+}
+drawQuestions();
+put("runtime-topology",'<p style="margin-top:10px">'+esc(c.runtime.topology)+'</p><p>'+esc(c.runtime.first_backend)+'</p><p class="runtime-status"><span class="status">'+esc(statusLabel(c.runtime.status))+'</span></p>');
+put("runtime-loop",list(c.runtime.loop));
+document.getElementById("runtime-example-title").textContent=c.runtime.worked_example.title;
+put("runtime-example",list(c.runtime.worked_example.steps));
+document.getElementById("runtime-example-note").textContent=c.runtime.worked_example.note;
+put("runtime-example-materials",[["protocol","显式比较协议"],["case_set","案例集合"],["evaluator_config","评价函数配置"],["snapshots","完整版本内容"]].map(([key,title])=>'<div class="prompt-section"><h3>'+esc(title)+'</h3><pre class="payload">'+pretty(c.runtime.worked_example[key])+'</pre></div>').join(""));
+put("runtime-semantic",list(c.runtime.semantic_checks));
+const runtimeSections=[["parallelism","并行、隔离与任务顺序"],["feedback","反馈与 reward"],["metrics","指标、分母与成本"],["split_policy","学习、选择与最终评价的边界"],["release_gate","候选发布与退化控制"]];
+put("runtime-policies",runtimeSections.map(([key,title])=>'<div class="panel"><h3>'+esc(title)+'</h3><ul>'+list(c.runtime[key])+'</ul></div>').join(""));
+document.getElementById("runtime-profile").textContent=JSON.stringify(c.runtime.reference_profile,null,2);
+document.getElementById("runtime-model").textContent=JSON.stringify(c.runtime.model_client,null,2);
+put("runtime-non-claims",list(c.runtime.non_claims));
+put("runtime-implementation-order",list(c.runtime.implementation_order||[]));
+put("runtime-storage-layout",list(c.runtime.storage_layout||[]));
+put("milestones",c.milestones.map((m)=>'<div class="milestone"><strong><code>'+esc(m.id)+"</code> "+esc(m.name)+'</strong><p>'+esc(m.result)+'</p><span class="small">涉及节点：</span>'+m.nodes.map(jump).join(" · ")+"</div>").join(""));
+put("model",c.model.map((m)=>'<div class="formula"><div class="field-title">'+esc(m.symbol)+" · "+esc(m.meaning)+"</div><pre>"+esc(m.expression)+"</pre></div>").join(""));
+document.getElementById("lifecycle-note").textContent=c.lifecycle.initial+" "+c.lifecycle.note;
+put("transitions",'<table><thead><tr><th>从</th><th>到</th><th>条件</th><th>写入者</th></tr></thead><tbody>'+c.lifecycle.transitions.map((t)=>"<tr><td><code>"+esc(t.from)+"</code></td><td><code>"+esc(t.to)+"</code></td><td>"+esc(t.when)+"</td><td>"+(t.owner?jump(t.owner):"检查记录")+"</td></tr>").join("")+"</tbody></table>");
+put("operations",c.operations.map((o)=>'<div class="definition"><strong><code>'+esc(o.id)+"</code></strong><p>"+esc(o.rule)+"</p></div>").join(""));
+put("invariants",c.invariants.map((i)=>'<div class="rule"><span class="node-id">'+esc(i.id)+"</span><div><strong>"+esc(i.title)+"</strong><p>"+esc(i.rule)+'</p><p class="small">落实方式：'+esc(i.enforcement)+"</p></div></div>").join(""));
+put("configurable",c.configurable.map((p)=>'<div class="definition"><strong>'+esc(p.name)+" · "+jump(p.owner)+"</strong><p>"+esc(p.options)+"</p><p>"+esc(p.constraint)+"</p></div>").join(""));
+document.getElementById("continuity-rule").textContent=c.continuity.rule;
+put("read-order",list(c.continuity.read_order));
+document.getElementById("task-fields").textContent=c.continuity.task_fields.join("\n");
+put("change-rules",c.continuity.changes.map((v)=>'<div class="definition"><strong>'+esc(v.kind)+"</strong><p>"+esc(v.action)+"</p></div>").join(""));
+document.getElementById("user-authority").textContent=c.continuity.note;
+put("requirements",'<table><thead><tr><th>ID</th><th>已确认要求</th><th>职责节点</th></tr></thead><tbody>'+c.requirements.map((r)=>"<tr><td><code>"+esc(r.id)+"</code></td><td><strong>"+esc(r.title)+"</strong><p>"+esc(r.rule)+"</p></td><td>"+r.node_ids.map(jump).join(" ")+"</td></tr>").join("")+"</tbody></table>");
+put("authority",c.authority.map((a)=>'<div class="definition"><strong>'+esc(a.role)+'</strong><p>'+esc(a.rule)+'</p><a href="'+projectLink(a.path)+'"><code>'+esc(a.path)+"</code></a></div>").join(""));
+put("paper-sources",c.paper_sources.map(paperEntry).join(""));
+put("references",c.references.map((r)=>'<li><a href="'+projectLink(r.path)+'">'+esc(r.title)+"</a><small>"+esc(r.path)+"</small></li>").join(""));
+put("history",c.history.map((v)=>'<div class="definition"><strong>v'+esc(v.version)+" · "+esc(v.date)+"</strong><p>"+esc(v.reason)+"</p></div>").join(""));
+put("limitations",c.limitations.map(esc).join("<br>"));
+const tabs=Array.from(document.querySelectorAll("[data-view]"));
+tabs.forEach((b,index)=>{
+  b.addEventListener("click",()=>setView(b.dataset.view));
+  b.addEventListener("keydown",(event)=>{
+    const directions={ArrowDown:1,ArrowRight:1,ArrowUp:-1,ArrowLeft:-1};
+    let next;if(event.key==="Home")next=0;else if(event.key==="End")next=tabs.length-1;else if(Object.hasOwn(directions,event.key))next=(index+directions[event.key]+tabs.length)%tabs.length;else return;
+    event.preventDefault();tabs[next].focus();setView(tabs[next].dataset.view);
+  });
+});
+document.addEventListener("click",(event)=>{const b=event.target.closest("[data-node]");if(b){showNode(b.dataset.node);setView("nodes");return;}const q=event.target.closest("[data-question]");if(q)showQuestion(q.dataset.question);});
+document.getElementById("filter").addEventListener("input",drawList);
+document.getElementById("question-filter").addEventListener("input",drawQuestions);
+document.getElementById("question-reset").addEventListener("click",()=>{document.getElementById("question-filter").value="";drawQuestions();setView("questions");});
+document.getElementById("theme").addEventListener("click",()=>{const next=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=next;try{localStorage.setItem("project-contract-theme",next);}catch{}});
+try{const theme=localStorage.getItem("project-contract-theme");if(theme==="dark"||theme==="light")document.documentElement.dataset.theme=theme;}catch{}
+function route(){let hash;try{hash=decodeURIComponent(location.hash.slice(1));}catch{hash="overview";}if(hash.startsWith("node:")){showNode(hash.slice(5));setView("nodes",false);}else if(hash.startsWith("question:")&&byId(c.questions,hash.slice(9))){showQuestion(hash.slice(9),false);}else{showNode(selected);setView(hash||"overview",false);}}
+window.addEventListener("hashchange",route);route();
+window.__PROJECT_CONTRACT__={version:c.meta.version,sourceHash:"__SOURCE_HASH__",questionCount:c.questions.length,nodeCount:c.nodes.length,requirementCount:c.requirements.length,recordCount:c.records.length,invariantCount:c.invariants.length,promptCount:c.prompts.length,schemaCount:c.schemas.length,exampleCount:c.examples.length,paperCount:c.paper_sources.length};
+</script>
+</body>
+</html>

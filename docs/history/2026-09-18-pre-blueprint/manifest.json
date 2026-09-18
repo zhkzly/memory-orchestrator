@@ -1,0 +1,32 @@
+[
+  {
+    "original": ".trellis/tasks/09-18-experience-learning-architecture/design.md",
+    "archive": "design.md.txt",
+    "sha256": "ccb4ed9b71a14ea27f2783e921723069b8565c8bb017110e6f0a5b11a3d341a4"
+  },
+  {
+    "original": ".trellis/tasks/09-18-experience-learning-architecture/requirements-ledger.md",
+    "archive": "requirements-ledger.md.txt",
+    "sha256": "7ca6dabe3ac2665c08d2f2a55d91493a60172cc6a8b238a5b35da25e0a247d70"
+  },
+  {
+    "original": ".trellis/spec/guides/system-boundaries.md",
+    "archive": "system-boundaries.md.txt",
+    "sha256": "251a598acb4f191880af5e7b26693c259378b16ed16700df56ee4d0c1056115d"
+  },
+  {
+    "original": ".trellis/tasks/09-18-experience-learning-architecture/prd.md",
+    "archive": "prd.md.txt",
+    "sha256": "6e23264264c227f4d3c0eea0fd1e3f106c697483c64bf98a1a48fffcb5b807cb"
+  },
+  {
+    "original": ".trellis/tasks/09-18-experience-learning-architecture/implement.jsonl",
+    "archive": "implement.jsonl.txt",
+    "sha256": "983a63c2ba68e1bc8e46a8c2bff11e6402f943266631dc15d3915a0269a3c6fd"
+  },
+  {
+    "original": ".trellis/tasks/09-18-experience-learning-architecture/check.jsonl",
+    "archive": "check.jsonl.txt",
+    "sha256": "c971b39ddfe4afd34c6cf86a749a4b38d44817d42fae568959a6065d0d5c8b8b"
+  }
+]

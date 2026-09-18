@@ -1,0 +1,57 @@
+{
+  "illustrative_example": true,
+  "note": "教学示例；不是实测记录，也不是任一客户端的原生事件 schema。",
+  "episode_id": "example-api-field-001",
+  "task": {
+    "instruction": "新增用户备注字段，并确保服务重启后仍能读到。"
+  },
+  "execution": {
+    "agent": "codex-or-claude-code",
+    "repo_snapshot": "example-before",
+    "skill_version": "example-v0"
+  },
+  "events": [
+    {
+      "event_id": "e1",
+      "type": "file_change",
+      "paths": [
+        "src/api.py"
+      ],
+      "diff_ref": "example:patch"
+    },
+    {
+      "event_id": "e2",
+      "type": "tool_call",
+      "call_id": "c1",
+      "tool": "shell",
+      "arguments": {
+        "command": "pytest tests/test_api.py -q"
+      }
+    },
+    {
+      "event_id": "e3",
+      "type": "tool_result",
+      "call_id": "c1",
+      "exit_code": 0,
+      "output": "4 passed"
+    },
+    {
+      "event_id": "e4",
+      "type": "assistant_message",
+      "text": "接口测试通过，修改完成。"
+    }
+  ],
+  "feedback": [
+    {
+      "feedback_id": "f1",
+      "source": "independent_test",
+      "status": "failed",
+      "target_snapshot": "example-after",
+      "detail": "重启后备注字段丢失。"
+    }
+  ],
+  "completeness": {
+    "tool_pairs_complete": true,
+    "example_only": true
+  }
+}

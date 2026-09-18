@@ -1,0 +1,29 @@
+{
+  "id": "00-bootstrap-guidelines",
+  "name": "00-bootstrap-guidelines",
+  "title": "Bootstrap Guidelines",
+  "description": "Fill in project development guidelines for AI agents",
+  "status": "completed",
+  "dev_type": "docs",
+  "scope": null,
+  "package": null,
+  "priority": "P1",
+  "creator": "kelong.zx",
+  "assignee": "kelong.zx",
+  "createdAt": "2026-09-18",
+  "completedAt": "2026-09-18",
+  "branch": null,
+  "base_branch": null,
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [
+    ".trellis/spec/backend/",
+    ".trellis/spec/guides/"
+  ],
+  "notes": "已按实际 CLI/MCP 代码填充规范；初始前端分类不适用，模板已移除。未来架构在独立 planning 任务维护。",
+  "meta": {}
+}

@@ -1,0 +1,1200 @@
+{
+  "schema_version": 1,
+  "meta": {
+    "id": "memory-orchestrator-project-contract",
+    "version": "1.0.0",
+    "updated": "2026-09-18",
+    "title": "Agent 经验学习 · 项目总纲",
+    "status": "accepted-design",
+    "implementation_status": "reference implementation not started",
+    "language": "zh-CN",
+    "authority": "当前目标架构的唯一结构化来源；HTML 由此生成。用户明确的新要求可以修订本文件。",
+    "purpose": "参考已有论文与源码，从现成 Agent 的执行经历积累经验，生成和演化 Skill，并以版本化方式检查、发布和复用。"
+  },
+  "scope": {
+    "in": [
+      "原生执行证据接入与目标版本关联",
+      "长轨迹索引、证据选择与经验归集",
+      "归因、Skill 生成/修订、关系与版本管理",
+      "更新检查、发布回退、上下文提供",
+      "日常与 benchmark 双入口及完整记录"
+    ],
+    "out": [
+      "重写执行器 working memory 或内部 Harness",
+      "SFT/RL 或模型权重更新",
+      "自动把用户偏好当成待优化规则",
+      "以项目必要性实验作为开发门槛",
+      "首版全组合 Skill 搜索或重型多 Agent 调度"
+    ]
+  },
+  "model": [
+    {
+      "symbol": "Z_t",
+      "meaning": "维护状态",
+      "expression": "Z_t = (M_t, V_t, a_t)"
+    },
+    {
+      "symbol": "M_t",
+      "meaning": "经验池",
+      "expression": "M_(t+1) = M_t ∪ Extract(Pack_B(任务, 可见轨迹, 反馈))"
+    },
+    {
+      "symbol": "Δ_(t,k)",
+      "meaning": "第 k 个候选修改",
+      "expression": "Δ_(t,k) = Propose(S^(a_t), Select(M_(t+1))); S_candidate = Apply(S^(a_t), Δ_(t,k))"
+    },
+    {
+      "symbol": "S⁰",
+      "meaning": "冷启动",
+      "expression": "S⁰ = ∅；首次生成是空库上的更新，生成的仍是候选。"
+    },
+    {
+      "symbol": "a_(t+1)",
+      "meaning": "发布选择",
+      "expression": "合格且被选中 → 新版本；否则保持 a_t。库版本 v、Skill 修订 r、任务轮次 t 与总纲版本相互独立。"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "K01",
+      "title": "经验积累",
+      "rule": "把任务经历转为有证据、有适用范围的经验；日志、经验、Skill 与发布版本分开。",
+      "node_ids": [
+        "N04",
+        "N06",
+        "N08",
+        "N10"
+      ]
+    },
+    {
+      "id": "K02",
+      "title": "演化对象",
+      "rule": "执行器管理 working memory；本项目维护长期经验与程序性 Skill，用户事实不由效果分数擅自改写。",
+      "node_ids": [
+        "N02",
+        "N03",
+        "N06"
+      ]
+    },
+    {
+      "id": "K03",
+      "title": "目标变化",
+      "rule": "要求修订、任务切换、暂停恢复分别记录；取消不算失败，旧反馈不能贴到新状态。",
+      "node_ids": [
+        "N01",
+        "N04",
+        "N05"
+      ]
+    },
+    {
+      "id": "K04",
+      "title": "长轨迹",
+      "rule": "原文留存并标记缺失；索引、选择片段、按需展开，不能靠摘要补造事实。",
+      "node_ids": [
+        "N04",
+        "N06"
+      ]
+    },
+    {
+      "id": "K05",
+      "title": "反馈来源",
+      "rule": "区分测试/环境、人工与模型 proxy；观察、评价、归因不是同一种标签。",
+      "node_ids": [
+        "N05",
+        "N07"
+      ]
+    },
+    {
+      "id": "K06",
+      "title": "采样与稳定性",
+      "rule": "支持单例发现、同题多次执行、跨题同类案例和反例；重复评审不能替代重复执行。",
+      "node_ids": [
+        "N06",
+        "N07",
+        "N09"
+      ]
+    },
+    {
+      "id": "K07",
+      "title": "归因与改谁",
+      "rule": "定位到具体问题、Skill/规则和证据；区分未提供、未选中、内容错误、组合冲突、工具或环境问题。",
+      "node_ids": [
+        "N07",
+        "N08"
+      ]
+    },
+    {
+      "id": "K08",
+      "title": "生成与演化",
+      "rule": "允许空库；先匹配已有能力再决定新增、修订或不修改，避免一轨迹一 Skill。",
+      "node_ids": [
+        "N08"
+      ]
+    },
+    {
+      "id": "K09",
+      "title": "原子修改",
+      "rule": "ADD/PATCH/RETIRE/NOOP；操作绑定基础版本、目标、证据和预期行为。",
+      "node_ids": [
+        "N08",
+        "N10"
+      ]
+    },
+    {
+      "id": "K10",
+      "title": "Skill 关系",
+      "rule": "依赖、声明冲突、共同使用、测得影响分开；相关组合做保留依赖的局部对照。",
+      "node_ids": [
+        "N02",
+        "N07",
+        "N08",
+        "N09"
+      ]
+    },
+    {
+      "id": "K11",
+      "title": "版本选择",
+      "rule": "历史、候选、active 分开；默认选适用配置的 active，执行中固定；库版本选择与库内选择分开。",
+      "node_ids": [
+        "N02",
+        "N03",
+        "N10"
+      ]
+    },
+    {
+      "id": "K12",
+      "title": "更新检查",
+      "rule": "比较质量、稳定性、回归和成本；不合格不发布，保留旧版本和回退点。",
+      "node_ids": [
+        "N09",
+        "N10"
+      ]
+    },
+    {
+      "id": "K13",
+      "title": "已有 Agent",
+      "rule": "Task/Environment、Agent、Feedback 分别适配；首批 Codex/Claude，核心不绑定客户端。",
+      "node_ids": [
+        "N01",
+        "N03",
+        "N05"
+      ]
+    },
+    {
+      "id": "K14",
+      "title": "实验与报告",
+      "rule": "日常和 benchmark 共用核心，保留反馈权限差异；从实现开始记录身份、版本、全部结果与成本。",
+      "node_ids": [
+        "N05",
+        "N09",
+        "N11"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "id": "TaskSource",
+      "title": "外部输入",
+      "fields": "用户任务流或 benchmark 条目；公开任务与私有验收材料分离。"
+    },
+    {
+      "id": "TaskSpec",
+      "title": "任务契约",
+      "fields": "task_id / goal_id / revision / requirements / source_event_ids / environment_ref / effective_from / status"
+    },
+    {
+      "id": "UserProjectMemory",
+      "title": "只读既有记忆",
+      "fields": "用户明确偏好与项目事实；保留来源、适用范围、状态。"
+    },
+    {
+      "id": "PolicyConfig",
+      "title": "运行配置",
+      "fields": "证据/上下文预算、采样策略、重复次数、候选数、准入规则、成本上限；记录版本。"
+    },
+    {
+      "id": "EvalProtocol",
+      "title": "评价协议",
+      "fields": "protocol_id / data_version / online_or_frozen / permitted_feedback / split / scoring / unknown_policy"
+    },
+    {
+      "id": "LibrarySnapshot",
+      "title": "不可变库快照",
+      "fields": "snapshot_id / parent / skill_id→revision / asset_hashes / compatibility；生命周期由验证和发布记录表达。"
+    },
+    {
+      "id": "ContextManifest",
+      "title": "提供清单",
+      "fields": "run_id / snapshot_id / selected_skill_revisions / supplied_content_refs / budget / delivery_mode"
+    },
+    {
+      "id": "RunBundle",
+      "title": "执行记录",
+      "fields": "run_id / task_revision / actor_model_config / snapshot_id / initial_state / raw_events / artifact_refs / capture_gaps / outcome / usage"
+    },
+    {
+      "id": "EpisodeIndex",
+      "title": "经历索引",
+      "fields": "目标及修订、跨段事件引用、call_id 配对、相关文件/检查/状态、关联依据和歧义。"
+    },
+    {
+      "id": "Feedback",
+      "title": "结果反馈",
+      "fields": "check_id / criterion_ref / goal_revision / evaluated_state / pass|fail|unknown / source / checked_at / received_at / evidence_refs"
+    },
+    {
+      "id": "ExperiencePool",
+      "title": "经验池",
+      "fields": "带来源的候选经验、已核查经验及反例；入池不等于可直接作为指令。"
+    },
+    {
+      "id": "ExperienceItem",
+      "title": "结构化经验",
+      "fields": "conditions / observed_facts / proposed_guidance / scope / evidence_refs / counterevidence_refs / alternatives / unknowns"
+    },
+    {
+      "id": "SkillRelation",
+      "title": "关系记录",
+      "fields": "from / to / depends_on|declared_conflict|co_used|measured_effect / supporting_refs / applicable_context"
+    },
+    {
+      "id": "ChangeIntent",
+      "title": "修改意图",
+      "fields": "problem_kind / target_skill_rule_refs / hypotheses / alternatives / expected_behavior / evidence_refs / check_plan / abstain_reason"
+    },
+    {
+      "id": "PatchCandidate",
+      "title": "受限候选",
+      "fields": "proposal_id / base_snapshot / operations / targets / coupled_assets / scope / evidence_refs / check_plan"
+    },
+    {
+      "id": "ValidationRecord",
+      "title": "验证记录",
+      "fields": "protocol / baseline / candidate / per_task_runs / quality / regressions / stability / full_cost / accepted|rejected|unknown / reasons"
+    },
+    {
+      "id": "ReleaseRecord",
+      "title": "发布记录",
+      "fields": "old_active / new_active / candidate / validation_ref / reason / timestamp / rollback_target"
+    },
+    {
+      "id": "Report",
+      "title": "效果报告",
+      "fields": "任务与执行分母、结果/异常/未知、救回/回归、全阶段成本及证据链接；不预写提升。"
+    },
+    {
+      "id": "UsageRecord",
+      "title": "全阶段用量",
+      "fields": "usage_id / stage / run_or_proposal_id / tokens / time / monetary_cost / reported|estimated|missing / price_version；按 ID 去重，不把缺失记成零。"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "N01",
+      "name": "任务与环境",
+      "phase": "执行",
+      "operator": "Prepare : TaskSource → TaskSpec",
+      "inputs": [
+        "TaskSource"
+      ],
+      "outputs": [
+        "TaskSpec"
+      ],
+      "writes": [
+        "task_revisions",
+        "environment_refs"
+      ],
+      "preconditions": [
+        "识别公开要求及来源；准备可重放初态，或标明不可重放。"
+      ],
+      "postconditions": [
+        "修订保留原版本和生效位置；暂停/取消与结果标签分开。"
+      ],
+      "on_unknown": "歧义保持未决；不能把 Agent 自己的计划当用户要求。",
+      "requirements": [
+        "K03",
+        "K13"
+      ],
+      "invariants": [
+        "I03",
+        "I12"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "N02",
+      "name": "版本与 Skill 选择",
+      "phase": "执行",
+      "operator": "Select : (TaskSpec, S_active, Memory, Policy) → ContextManifest",
+      "inputs": [
+        "TaskSpec",
+        "LibrarySnapshot",
+        "UserProjectMemory",
+        "SkillRelation",
+        "PolicyConfig"
+      ],
+      "outputs": [
+        "ContextManifest"
+      ],
+      "writes": [
+        "delivery_records"
+      ],
+      "preconditions": [
+        "仅选择当前配置下适用的 active 快照。"
+      ],
+      "postconditions": [
+        "先固定库版本，再按任务选择库内资产；提供内容受预算约束。"
+      ],
+      "on_unknown": "无适用经验时允许空上下文；不强塞候选或无关 Skill。",
+      "requirements": [
+        "K02",
+        "K10",
+        "K11"
+      ],
+      "invariants": [
+        "I02",
+        "I09",
+        "I10"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "N03",
+      "name": "现成 Agent 执行",
+      "phase": "执行",
+      "operator": "Run_h : (TaskSpec, ContextManifest, Policy) → RunBundle",
+      "inputs": [
+        "TaskSpec",
+        "ContextManifest",
+        "PolicyConfig"
+      ],
+      "outputs": [
+        "RunBundle",
+        "UsageRecord"
+      ],
+      "writes": [
+        "run_events",
+        "run_artifacts",
+        "usage_records"
+      ],
+      "preconditions": [
+        "固定执行器/模型配置、工作区、预算和资产快照。"
+      ],
+      "postconditions": [
+        "记录实际可见工具请求/返回、产物与用量；原生 Agent 管理 working memory。"
+      ],
+      "on_unknown": "缺失、截断、未观测消费分别标记；不假定隐藏推理可得。",
+      "requirements": [
+        "K02",
+        "K11",
+        "K13"
+      ],
+      "invariants": [
+        "I02",
+        "I05",
+        "I09"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "N04",
+      "name": "目标与轨迹索引",
+      "phase": "学习",
+      "operator": "Index : (TaskSpec, RunBundle) → EpisodeIndex",
+      "inputs": [
+        "TaskSpec",
+        "RunBundle"
+      ],
+      "outputs": [
+        "EpisodeIndex"
+      ],
+      "writes": [
+        "episode_index_revisions"
+      ],
+      "preconditions": [
+        "原文引用可追溯；调用按 ID 配对，不按相邻文本猜。"
+      ],
+      "postconditions": [
+        "支持 A→B→A 的不连续片段；共享产物变化可关联多个目标。"
+      ],
+      "on_unknown": "关联不确定时保留歧义；不能用最终要求回判全部历史。",
+      "requirements": [
+        "K01",
+        "K03",
+        "K04"
+      ],
+      "invariants": [
+        "I03",
+        "I05"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "N05",
+      "name": "反馈获取",
+      "phase": "学习",
+      "operator": "Evaluate : (TaskSpec, RunBundle, EvalProtocol) → Feedback",
+      "inputs": [
+        "TaskSpec",
+        "RunBundle",
+        "EvalProtocol"
+      ],
+      "outputs": [
+        "Feedback"
+      ],
+      "writes": [
+        "feedback_records"
+      ],
+      "preconditions": [
+        "检查绑定要求版本和被测产物；保留反馈权限。"
+      ],
+      "postconditions": [
+        "测试/环境、人工、模型 proxy 分开；延迟反馈回填原对象。"
+      ],
+      "on_unknown": "检查器异常与任务失败分开；没有依据返回 unknown。",
+      "requirements": [
+        "K03",
+        "K05",
+        "K13",
+        "K14"
+      ],
+      "invariants": [
+        "I03",
+        "I04",
+        "I12"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "N06",
+      "name": "经验提炼与归集",
+      "phase": "学习",
+      "operator": "Extract_B : (EpisodeIndex, Feedback, M, Policy) → ExperienceItem",
+      "inputs": [
+        "EpisodeIndex",
+        "Feedback",
+        "ExperiencePool",
+        "PolicyConfig"
+      ],
+      "outputs": [
+        "ExperienceItem",
+        "UsageRecord"
+      ],
+      "writes": [
+        "experience_records",
+        "usage_records"
+      ],
+      "preconditions": [
+        "按反馈选相关片段，补足要求/操作/结果/恢复链，并按需读取原文。"
+      ],
+      "postconditions": [
+        "输出有范围的经验及支持/反例引用；允许零条或多条。"
+      ],
+      "on_unknown": "达到预算仍不足时记录缺失；摘要不升级为原始事实。",
+      "requirements": [
+        "K01",
+        "K02",
+        "K04",
+        "K06"
+      ],
+      "invariants": [
+        "I04",
+        "I05",
+        "I06"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "N07",
+      "name": "归因与修改目标",
+      "phase": "学习",
+      "operator": "Diagnose : (Experience, M, S, Relations) → ChangeIntent",
+      "inputs": [
+        "ExperienceItem",
+        "ExperiencePool",
+        "LibrarySnapshot",
+        "SkillRelation"
+      ],
+      "outputs": [
+        "ChangeIntent",
+        "UsageRecord"
+      ],
+      "writes": [
+        "change_intents",
+        "usage_records"
+      ],
+      "preconditions": [
+        "对照相关成功/失败经历、当前 Skill 及实际消费证据。"
+      ],
+      "postconditions": [
+        "区分内容、选择、组合、工具、环境/评价问题；指向具体规则或不修改。"
+      ],
+      "on_unknown": "原因保持假设身份；缺少读取日志不能推出未使用。",
+      "requirements": [
+        "K05",
+        "K06",
+        "K07",
+        "K10"
+      ],
+      "invariants": [
+        "I04",
+        "I06",
+        "I11"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "N08",
+      "name": "Skill 生成与演化",
+      "phase": "学习",
+      "operator": "Propose : (S_base, ChangeIntent) → Δ ; Apply(S_base, Δ) → S_candidate",
+      "inputs": [
+        "LibrarySnapshot",
+        "ChangeIntent",
+        "SkillRelation"
+      ],
+      "outputs": [
+        "PatchCandidate",
+        "UsageRecord"
+      ],
+      "writes": [
+        "candidate_assets",
+        "candidate_snapshots",
+        "usage_records"
+      ],
+      "preconditions": [
+        "已有能力先对照；空库允许 ADD；PATCH 绑定基础修订。"
+      ],
+      "postconditions": [
+        "仅 ADD/PATCH/RETIRE/NOOP；关联 Skill/脚本/引用形成同一候选包。"
+      ],
+      "on_unknown": "没有可复用改变就 NOOP；不能用大面积重写掩盖不确定性。",
+      "requirements": [
+        "K01",
+        "K07",
+        "K08",
+        "K09",
+        "K10"
+      ],
+      "invariants": [
+        "I06",
+        "I07",
+        "I11",
+        "I13"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "N09",
+      "name": "候选检查",
+      "phase": "发布",
+      "operator": "Check : (S_base, Δ, Tasks, Protocol, Policy) → ValidationRecord",
+      "inputs": [
+        "LibrarySnapshot",
+        "PatchCandidate",
+        "TaskSpec",
+        "EvalProtocol",
+        "PolicyConfig"
+      ],
+      "outputs": [
+        "ValidationRecord",
+        "RunBundle",
+        "UsageRecord"
+      ],
+      "writes": [
+        "validation_records",
+        "usage_records"
+      ],
+      "preconditions": [
+        "使用允许访问的开发/回归材料；基线与候选配置、信息权限和预算可比。"
+      ],
+      "postconditions": [
+        "保存全部重复执行；检查质量、回归、稳定性和全成本；局部组合检查保留依赖。"
+      ],
+      "on_unknown": "证据不足不通过；模型评审投票不算多次执行。",
+      "requirements": [
+        "K06",
+        "K10",
+        "K12",
+        "K14"
+      ],
+      "invariants": [
+        "I08",
+        "I11",
+        "I12"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "N10",
+      "name": "版本发布与回退",
+      "phase": "发布",
+      "operator": "Publish : (a, Δ, Validation) → (V ∪ {v_new}, a_new)",
+      "inputs": [
+        "LibrarySnapshot",
+        "PatchCandidate",
+        "ValidationRecord"
+      ],
+      "outputs": [
+        "LibrarySnapshot",
+        "ReleaseRecord"
+      ],
+      "writes": [
+        "version_archive",
+        "active_pointer",
+        "release_log"
+      ],
+      "preconditions": [
+        "验证记录通过、基础版本仍匹配、资产完整且兼容。"
+      ],
+      "postconditions": [
+        "仅发布器切换 active；保留父版本、依据和回退点；运行中的快照不变。"
+      ],
+      "on_unknown": "验证未知/失败、base 过期或资产不完整时保留旧 active。",
+      "requirements": [
+        "K01",
+        "K09",
+        "K11",
+        "K12"
+      ],
+      "invariants": [
+        "I06",
+        "I08",
+        "I09",
+        "I13"
+      ],
+      "status": "planned"
+    },
+    {
+      "id": "N11",
+      "name": "记录与结果报告",
+      "phase": "横切",
+      "operator": "Report : (Runs, Checks, Releases, Usage, Protocol) → Report",
+      "inputs": [
+        "RunBundle",
+        "ValidationRecord",
+        "ReleaseRecord",
+        "EvalProtocol",
+        "UsageRecord"
+      ],
+      "outputs": [
+        "Report"
+      ],
+      "writes": [
+        "reports"
+      ],
+      "preconditions": [
+        "先确定统计口径；保存所有分配槽位和实际成本来源。"
+      ],
+      "postconditions": [
+        "在线与冻结协议分报；成功、失败、异常、未知及维护成本同时可查。"
+      ],
+      "on_unknown": "缺少证据不补造数字；接口兼容、资产消费和效果迁移分层报告。",
+      "requirements": [
+        "K14"
+      ],
+      "invariants": [
+        "I04",
+        "I12"
+      ],
+      "status": "planned"
+    }
+  ],
+  "invariants": [
+    {
+      "id": "I01",
+      "title": "先参考实现",
+      "rule": "实现完整机制的最小版本；不以先证明项目必要性作为开工前提。",
+      "enforcement": "意图审查"
+    },
+    {
+      "id": "I02",
+      "title": "执行器边界",
+      "rule": "working memory、模型权重和原生工具循环归执行器；用户事实不由 Skill 效果分数擅自改写。",
+      "enforcement": "代码与调用检查"
+    },
+    {
+      "id": "I03",
+      "title": "要求与状态绑定",
+      "rule": "反馈绑定有效要求及被测状态；任务取消不是失败，后来的要求不追溯约束旧操作。",
+      "enforcement": "来源与场景测试"
+    },
+    {
+      "id": "I04",
+      "title": "保留证据身份",
+      "rule": "观察、评价、原因假设分开；proxy 与 unknown 不升级为真值。",
+      "enforcement": "字段与行为检查"
+    },
+    {
+      "id": "I05",
+      "title": "原文可追溯",
+      "rule": "原始采集记录只追加；派生标注可修订；缺失不由摘要补造。",
+      "enforcement": "存储与缺失场景测试"
+    },
+    {
+      "id": "I06",
+      "title": "三个状态分开",
+      "rule": "经验池 M、版本归档 V、active 指针 a 分开；入池或生成候选不等于发布。",
+      "enforcement": "状态测试"
+    },
+    {
+      "id": "I07",
+      "title": "受限操作",
+      "rule": "修改仅允许显式列出的操作，带目标与基础版本；NOOP 不改变 active。",
+      "enforcement": "操作校验"
+    },
+    {
+      "id": "I08",
+      "title": "唯一发布写入者",
+      "rule": "只有 N10 可以写 active_pointer；发布须关联通过的检查、匹配的基础版本及完整资产。",
+      "enforcement": "文档结构检查 + 实现测试"
+    },
+    {
+      "id": "I09",
+      "title": "运行快照固定",
+      "rule": "每次运行固定 library snapshot；发布或回退只影响后续运行。",
+      "enforcement": "并发/中断测试"
+    },
+    {
+      "id": "I10",
+      "title": "两层选择",
+      "rule": "选择 active 库版本与按任务选库内 Skill 是两个决策。",
+      "enforcement": "接口与消费检查"
+    },
+    {
+      "id": "I11",
+      "title": "关系不是因果",
+      "rule": "依赖、声明冲突、共同使用、测得影响分开；组合消融不破坏必要依赖。",
+      "enforcement": "局部对照与审查"
+    },
+    {
+      "id": "I12",
+      "title": "评价权限与全成本",
+      "rule": "在线先测当前题再更新；冻结测试不更新；计入提炼、失败候选、验证和补救，未来答案不前泄。",
+      "enforcement": "协议与结果审计"
+    },
+    {
+      "id": "I13",
+      "title": "开发与运行资产分开",
+      "rule": "运行时学习器不改 Trellis 规范、开发指令或消费者全局配置。",
+      "enforcement": "写入边界测试"
+    },
+    {
+      "id": "I14",
+      "title": "恢复先读权威状态",
+      "rule": "实现任务绑定总纲版本/节点/范围；中断后先读检查点；用户新要求通过明确修订更新契约。",
+      "enforcement": "任务记录检查"
+    }
+  ],
+  "edges": [
+    {
+      "from": "N01",
+      "to": "N02",
+      "record": "TaskSpec"
+    },
+    {
+      "from": "N02",
+      "to": "N03",
+      "record": "ContextManifest"
+    },
+    {
+      "from": "N03",
+      "to": "N04",
+      "record": "RunBundle"
+    },
+    {
+      "from": "N03",
+      "to": "N05",
+      "record": "RunBundle"
+    },
+    {
+      "from": "N04",
+      "to": "N06",
+      "record": "EpisodeIndex"
+    },
+    {
+      "from": "N05",
+      "to": "N06",
+      "record": "Feedback"
+    },
+    {
+      "from": "N06",
+      "to": "N07",
+      "record": "ExperienceItem"
+    },
+    {
+      "from": "N07",
+      "to": "N08",
+      "record": "ChangeIntent"
+    },
+    {
+      "from": "N08",
+      "to": "N09",
+      "record": "PatchCandidate"
+    },
+    {
+      "from": "N09",
+      "to": "N10",
+      "record": "ValidationRecord"
+    },
+    {
+      "from": "N10",
+      "to": "N02",
+      "record": "LibrarySnapshot"
+    },
+    {
+      "from": "N03",
+      "to": "N11",
+      "record": "RunBundle"
+    },
+    {
+      "from": "N09",
+      "to": "N11",
+      "record": "ValidationRecord"
+    },
+    {
+      "from": "N10",
+      "to": "N11",
+      "record": "ReleaseRecord"
+    },
+    {
+      "from": "N03",
+      "to": "N11",
+      "record": "UsageRecord"
+    },
+    {
+      "from": "N06",
+      "to": "N11",
+      "record": "UsageRecord"
+    },
+    {
+      "from": "N07",
+      "to": "N11",
+      "record": "UsageRecord"
+    },
+    {
+      "from": "N08",
+      "to": "N11",
+      "record": "UsageRecord"
+    },
+    {
+      "from": "N09",
+      "to": "N11",
+      "record": "UsageRecord"
+    }
+  ],
+  "operations": [
+    {
+      "id": "ADD",
+      "rule": "新增能力，保留触发条件、内容、证据及资产依赖。"
+    },
+    {
+      "id": "PATCH",
+      "rule": "对指定基础修订作局部改变，记录预期行为和范围。"
+    },
+    {
+      "id": "RETIRE",
+      "rule": "从后续选择中停用；历史资产与依据保留。"
+    },
+    {
+      "id": "NOOP",
+      "rule": "没有有依据的可复用改变；记录原因，不改变 active。"
+    }
+  ],
+  "lifecycle": {
+    "initial": "空库 v0 可作为初始化 active；没有未经检查的模型候选。",
+    "states": [
+      "candidate",
+      "validated",
+      "active",
+      "archived",
+      "rejected",
+      "needs_evidence"
+    ],
+    "transitions": [
+      {
+        "from": "candidate",
+        "to": "validated",
+        "when": "validation.accepted"
+      },
+      {
+        "from": "candidate",
+        "to": "rejected",
+        "when": "validation.rejected"
+      },
+      {
+        "from": "candidate",
+        "to": "needs_evidence",
+        "when": "validation.unknown"
+      },
+      {
+        "from": "validated",
+        "to": "active",
+        "when": "validation.accepted && base_matches && assets_complete",
+        "owner": "N10",
+        "guards": [
+          "validation.accepted",
+          "base_matches",
+          "assets_complete"
+        ]
+      },
+      {
+        "from": "active",
+        "to": "archived",
+        "when": "另一个合格快照被发布",
+        "owner": "N10"
+      },
+      {
+        "from": "archived",
+        "to": "active",
+        "when": "explicit_rollback && assets_complete && compatible",
+        "owner": "N10",
+        "guards": [
+          "explicit_rollback",
+          "assets_complete",
+          "compatible"
+        ]
+      }
+    ],
+    "note": "修订候选创建新的候选身份。状态是索引/发布记录，不修改不可变资产字节。"
+  },
+  "policies": {
+    "active_writer": "N10",
+    "active_resource": "active_pointer",
+    "publication_guards": [
+      "validation.accepted",
+      "base_matches",
+      "assets_complete"
+    ],
+    "allowed_operations": [
+      "ADD",
+      "PATCH",
+      "RETIRE",
+      "NOOP"
+    ],
+    "raw_evidence_mode": "append-only",
+    "learning_output_excludes": [
+      ".trellis/",
+      ".agents/skills/trellis-*",
+      "消费者全局配置"
+    ],
+    "evaluation_modes": [
+      {
+        "id": "online",
+        "rule": "冻结维护策略；记录当前题成绩后，按协议允许其反馈用于后题。"
+      },
+      {
+        "id": "frozen",
+        "rule": "冻结经验库；最终测试期间不更新，不把用于选候选的集合称为未见测试。"
+      }
+    ]
+  },
+  "configurable": [
+    {
+      "id": "P01",
+      "name": "证据选择",
+      "options": "关键词/事件索引、摘要辅助、语义检索与按需展开",
+      "owner": "N06",
+      "constraint": "引用真实事件；保留未知和总读取成本。"
+    },
+    {
+      "id": "P02",
+      "name": "采样策略",
+      "options": "单例、同题多次执行、跨题同类经历与反例",
+      "owner": "N07",
+      "constraint": "重复次数显式配置，不用默认值承诺统计稳定。"
+    },
+    {
+      "id": "P03",
+      "name": "更新模型与提示词",
+      "options": "可替换提炼/归因/候选生成实现",
+      "owner": "N08",
+      "constraint": "接口、证据身份、修改范围和来源记录保持一致。"
+    },
+    {
+      "id": "P04",
+      "name": "准入与候选数",
+      "options": "质量/回归/成本门槛、重复次数、候选数",
+      "owner": "N09",
+      "constraint": "执行前固定，记录全部结果；没有证据不伪造通过。"
+    },
+    {
+      "id": "P05",
+      "name": "组合检查",
+      "options": "按实际关系选择局部组合和对照",
+      "owner": "N09",
+      "constraint": "保留依赖；共用统计不能自动当作因果。"
+    },
+    {
+      "id": "P06",
+      "name": "存储与执行后端",
+      "options": "本地存储起步；按需适配其他后端和现成 Agent",
+      "owner": "N03",
+      "constraint": "接口兼容、资产消费、效果迁移分别说明。"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "状态、存储与操作",
+      "nodes": [
+        "N04",
+        "N08",
+        "N10"
+      ],
+      "result": "经验/候选/active 分开，基础版本与原子操作可执行。"
+    },
+    {
+      "id": "M2",
+      "name": "执行与反馈接入",
+      "nodes": [
+        "N01",
+        "N02",
+        "N03",
+        "N05"
+      ],
+      "result": "任务、可见执行、验收对象与产物能对应。"
+    },
+    {
+      "id": "M3",
+      "name": "证据整理与提炼",
+      "nodes": [
+        "N04",
+        "N06"
+      ],
+      "result": "长轨迹可按需读，经验带证据、范围和未知。"
+    },
+    {
+      "id": "M4",
+      "name": "归因与 Skill 演化",
+      "nodes": [
+        "N07",
+        "N08"
+      ],
+      "result": "定位修改对象；空库生成、已有库修订和 NOOP 都可执行。"
+    },
+    {
+      "id": "M5",
+      "name": "检查与发布",
+      "nodes": [
+        "N09",
+        "N10",
+        "N02"
+      ],
+      "result": "保留全结果，发布/回退可追溯，运行快照稳定。"
+    },
+    {
+      "id": "M6",
+      "name": "扩展与报告",
+      "nodes": [
+        "N03",
+        "N05",
+        "N11"
+      ],
+      "result": "接第二执行器及 benchmark，分层报告实际结果。"
+    }
+  ],
+  "continuity": {
+    "rule": "继续任务先恢复当前目标、总纲版本、节点范围和检查点；新消息默认在当前任务上澄清或调整，除非用户明确替换目标。",
+    "read_order": [
+      "本总纲的目标/固定边界",
+      "当前 Trellis 任务与 resume.md",
+      "当前任务涉及节点的契约",
+      "必要的当前源码/规范",
+      "按需读取文献与历史材料"
+    ],
+    "changes": [
+      {
+        "kind": "澄清或局部调整",
+        "action": "更新当前任务范围和检查点；未改变公共契约时无需改总纲。"
+      },
+      {
+        "kind": "改变目标或公共边界",
+        "action": "记录用户来源、影响节点与不变量，修订总纲版本，再同步任务；不默默改变约定。"
+      },
+      {
+        "kind": "插入另一项任务",
+        "action": "保存当前检查点，另记插入事项；恢复时核对期间的文件变化。"
+      },
+      {
+        "kind": "历史记忆与当前要求冲突",
+        "action": "以最新明确用户意图及当前总纲修订为依据，历史材料仅作来源。"
+      }
+    ],
+    "task_fields": [
+      "contract_version",
+      "node_ids",
+      "allowed_paths",
+      "out_of_scope",
+      "last_completed_step",
+      "last_check",
+      "next_step",
+      "pending_changes"
+    ],
+    "note": "用户有权改变方向；总纲用于显式记录变更，不用于拒绝已明确的新要求。"
+  },
+  "authority": [
+    {
+      "role": "目标架构",
+      "path": "docs/blueprint/project-contract.json",
+      "rule": "唯一结构化来源；改边界先改这里。"
+    },
+    {
+      "role": "阅读视图",
+      "path": "docs/blueprint/index.html",
+      "rule": "由源文件生成，不独立编辑。"
+    },
+    {
+      "role": "当前实施顺序",
+      "path": ".trellis/tasks/09-18-experience-learning-architecture/implement.md",
+      "rule": "只记录交付顺序、具体任务与验收。"
+    },
+    {
+      "role": "恢复检查点",
+      "path": ".trellis/tasks/09-18-experience-learning-architecture/resume.md",
+      "rule": "记录当前范围、状态和下一步。"
+    },
+    {
+      "role": "当前代码事实",
+      "path": ".trellis/spec/backend/architecture-current.md",
+      "rule": "现有实现与目标契约分开；未实现不能冒充可运行能力。"
+    },
+    {
+      "role": "文献来源",
+      "path": "docs/references/README.md",
+      "rule": "按需查阅，不默认作为执行指令。"
+    },
+    {
+      "role": "历史设计",
+      "path": "docs/history/2026-09-18-pre-blueprint/README.md",
+      "rule": "保留原文，不与当前总纲争夺权威。"
+    }
+  ],
+  "references": [
+    {
+      "title": "反馈与轨迹跨论文综合",
+      "path": "docs/references/feedback-cross-paper-synthesis-20260918.md"
+    },
+    {
+      "title": "SkillSmith 源码与版本机制",
+      "path": "docs/references/skillsmith-code-deep-review-20260918.md"
+    },
+    {
+      "title": "动态目标与评价协议背景",
+      "path": "docs/research/2026-09-17-agent-improvement/dynamic-goals-and-evaluation.md"
+    }
+  ],
+  "limitations": [
+    "形式化文本与文档检查不证明算法有效，也不自动约束运行时代码。",
+    "具体模块必须用相应行为检查落实输入输出、不变量与失败分支。",
+    "HTML 不包含已测任务收益；当前展示的是目标设计与恢复规则。"
+  ],
+  "history": [
+    {
+      "version": "1.0.0",
+      "date": "2026-09-18",
+      "reason": "用户确认关键节点和整体流程，要求减噪、形式化总纲、HTML 阅读及持久保存；沿用参考实现优先，保留产品内检查发布。"
+    }
+  ],
+  "deprecations": []
+}

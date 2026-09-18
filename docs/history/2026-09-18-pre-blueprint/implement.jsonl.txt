@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "现有代码职责与开发检查入口"}
+{"file": ".trellis/spec/backend/contracts-and-storage.md", "reason": "旧类型、存储格式与新协议迁移边界"}
+{"file": ".trellis/spec/guides/system-boundaries.md", "reason": "Agent、反馈、维护与发布的责任边界"}
+{"file": "docs/research/2026-09-17-agent-improvement/dynamic-goals-and-evaluation.md", "reason": "目标变化、轨迹证据与评价协议"}
+{"file": ".trellis/tasks/09-18-experience-learning-architecture/requirements-ledger.md", "reason": "用户关键节点和最新推进意图，优先于旧的实验先行建议"}

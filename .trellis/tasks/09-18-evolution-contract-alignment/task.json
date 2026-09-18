@@ -1,0 +1,30 @@
+{
+  "id": "evolution-contract-alignment",
+  "name": "evolution-contract-alignment",
+  "title": "演化契约对齐（仅文档）",
+  "description": "保留完整记忆演化流程，仅暂缓具体客户端接入；对齐职责、评价协议、输入输出和所有生成视图，不恢复产品实现。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "kelong.zx",
+  "assignee": "kelong.zx",
+  "createdAt": "2026-09-18",
+  "completedAt": "2026-09-18",
+  "branch": "codex/vault-controller-maintenance",
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "09-18-experience-learning-architecture",
+  "relatedFiles": [],
+  "notes": "仅文档 v1.4 对齐完成，产品代码保持暂停。无 commit/push/模型/benchmark。",
+  "meta": {
+    "dev_type": "docs",
+    "implementation_allowed": "false",
+    "contract_version": "1.4.0"
+  }
+}

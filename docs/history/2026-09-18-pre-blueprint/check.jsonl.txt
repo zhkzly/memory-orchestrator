@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/architecture-current.md", "reason": "核对当前实现与未来能力的声明"}
+{"file": ".trellis/spec/backend/validation.md", "reason": "验证层级、命令与实验分母"}
+{"file": ".trellis/spec/guides/system-boundaries.md", "reason": "跨模块读写权与开发/运行资产分离"}
+{"file": "docs/references/feedback-cross-paper-synthesis-20260918.md", "reason": "反馈来源、轨迹粒度和学习证据边界"}
+{"file": ".trellis/tasks/09-18-experience-learning-architecture/requirements-ledger.md", "reason": "用户关键节点和最新推进意图，优先于旧的实验先行建议"}

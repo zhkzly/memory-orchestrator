@@ -4,3 +4,6 @@ dist/
 *.log
 *.tmp
 coverage/
+.venv/
+__pycache__/
+*.py[cod]

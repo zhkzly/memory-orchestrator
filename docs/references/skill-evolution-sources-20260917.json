@@ -1,0 +1,101 @@
+{
+  "date": "2026-09-17",
+  "inspection": "read-only; no model or benchmark execution",
+  "repositories": [
+    {
+      "name": "ZhangZi-a/SkillFlow",
+      "commit": "7b49ff5a7e26cd7706e959bfa0dba4746d18440d",
+      "license_file_observed": false,
+      "files": [
+        {
+          "path": "README.md",
+          "blob_sha": "5cdde0051a91ab9e063badde174aca8978377631",
+          "url": "https://github.com/ZhangZi-a/SkillFlow/blob/7b49ff5a7e26cd7706e959bfa0dba4746d18440d/README.md"
+        },
+        {
+          "path": "analysis/skill_usage_parser.py",
+          "blob_sha": "ec6fb6d760f845a9092772bb21ecbed886c37dd0",
+          "url": "https://github.com/ZhangZi-a/SkillFlow/blob/7b49ff5a7e26cd7706e959bfa0dba4746d18440d/analysis/skill_usage_parser.py"
+        },
+        {
+          "path": "iterative_shared_skills_runner.py",
+          "blob_sha": "c889eaef0a15289c9d59999e86c7fb956f09d87c",
+          "url": "https://github.com/ZhangZi-a/SkillFlow/blob/7b49ff5a7e26cd7706e959bfa0dba4746d18440d/iterative_shared_skills_runner.py"
+        },
+        {
+          "path": "libs/harbor_noinstall_agents/agents.py",
+          "blob_sha": "e93e6578619c95cd38df2e8a7b75adc020d85fa6",
+          "url": "https://github.com/ZhangZi-a/SkillFlow/blob/7b49ff5a7e26cd7706e959bfa0dba4746d18440d/libs/harbor_noinstall_agents/agents.py"
+        },
+        {
+          "path": "libs/skill_evolution/patcher.py",
+          "blob_sha": "d8eb913e369314b257bd9d430691d9ea18b21ef4",
+          "url": "https://github.com/ZhangZi-a/SkillFlow/blob/7b49ff5a7e26cd7706e959bfa0dba4746d18440d/libs/skill_evolution/patcher.py"
+        },
+        {
+          "path": "libs/terminus_env/environments/shared_skills_env.py",
+          "blob_sha": "21b9f140a7a9e28fb6c6a22227fc989e9de727d0",
+          "url": "https://github.com/ZhangZi-a/SkillFlow/blob/7b49ff5a7e26cd7706e959bfa0dba4746d18440d/libs/terminus_env/environments/shared_skills_env.py"
+        }
+      ]
+    },
+    {
+      "name": "A-EVO-Lab/a-evolve",
+      "branch": "release/evo-harness",
+      "commit": "3c7c7b8c62a3f07da1d4407aa03f0ca079954bcf",
+      "license": "MIT",
+      "files": [
+        {
+          "path": "LICENSE",
+          "blob_sha": "b9261ebb4cad0b61e8de76e2ddbfeb019ab8798a",
+          "url": "https://github.com/A-EVO-Lab/a-evolve/blob/3c7c7b8c62a3f07da1d4407aa03f0ca079954bcf/LICENSE"
+        },
+        {
+          "path": "README.md",
+          "blob_sha": "7ed297ddf6392cc56e85a6a148be2221d4a889cf",
+          "url": "https://github.com/A-EVO-Lab/a-evolve/blob/3c7c7b8c62a3f07da1d4407aa03f0ca079954bcf/README.md"
+        },
+        {
+          "path": "agent_evolve/agents/swe/react_solver.py",
+          "blob_sha": "b56fb25bfcddb7628fab5a3e14a17f09171298c5",
+          "url": "https://github.com/A-EVO-Lab/a-evolve/blob/3c7c7b8c62a3f07da1d4407aa03f0ca079954bcf/agent_evolve/agents/swe/react_solver.py"
+        },
+        {
+          "path": "evo_harness/cl_bench.py",
+          "blob_sha": "cf666f0cc1d9694bd922a6b49b73109ee1fb4b74",
+          "url": "https://github.com/A-EVO-Lab/a-evolve/blob/3c7c7b8c62a3f07da1d4407aa03f0ca079954bcf/evo_harness/cl_bench.py"
+        },
+        {
+          "path": "scripts/run_cl_evolve.sh",
+          "blob_sha": "d97a4f214590af6ab4bbee4c28795b7debd43d28",
+          "url": "https://github.com/A-EVO-Lab/a-evolve/blob/3c7c7b8c62a3f07da1d4407aa03f0ca079954bcf/scripts/run_cl_evolve.sh"
+        }
+      ]
+    },
+    {
+      "name": "yangforever17/SkillSmith",
+      "commit": "2cbbd37c5293c3c06f1f5efc5709382639763cfa",
+      "license_note": "README MIT badge; no standalone license file observed",
+      "files": [
+        {
+          "path": "README.md",
+          "blob_sha": "e864ee0ae31bd40c93458713ff30423c7c2b307b",
+          "url": "https://github.com/yangforever17/SkillSmith/blob/2cbbd37c5293c3c06f1f5efc5709382639763cfa/README.md"
+        },
+        {
+          "path": "src/skillsmith/loop.py",
+          "blob_sha": "72fcb64ab6c4021290b50c48dab8644cf9a47264",
+          "url": "https://github.com/yangforever17/SkillSmith/blob/2cbbd37c5293c3c06f1f5efc5709382639763cfa/src/skillsmith/loop.py"
+        }
+      ]
+    },
+    {
+      "name": "google-research/reasoning-bank",
+      "commit": "ed80611788292ea739f1effd31f16c53823b8a0d",
+      "license": "Apache-2.0",
+      "inspection_scope": "README, LICENSE and SWE-Bench/run.sh entrypoint",
+      "entrypoint": "https://github.com/google-research/reasoning-bank/blob/ed80611788292ea739f1effd31f16c53823b8a0d/SWE-Bench/run.sh"
+    }
+  ]
+}
+

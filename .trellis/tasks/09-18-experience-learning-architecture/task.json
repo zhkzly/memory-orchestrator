@@ -1,0 +1,39 @@
+{
+  "id": "experience-learning-architecture",
+  "name": "experience-learning-architecture",
+  "title": "Agent 经验学习系统：架构与设计边界",
+  "description": "明确现成 Agent 接入、执行证据、经验与 Skill 更新、版本发布及实验评价的职责和边界；本任务先完成设计，不启动产品实现。",
+  "status": "planning",
+  "dev_type": "docs",
+  "scope": "architecture",
+  "package": null,
+  "priority": "P2",
+  "creator": "kelong.zx",
+  "assignee": "kelong.zx",
+  "createdAt": "2026-09-18",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-18-python-experience-memory",
+    "09-18-evolution-contract-alignment"
+  ],
+  "parent": null,
+  "relatedFiles": [
+    ".trellis/spec/backend/",
+    ".trellis/spec/guides/system-boundaries.md",
+    "docs/research/2026-09-17-agent-improvement/"
+  ],
+  "notes": "原演化要求保留，v1.4 对齐当前范围/职责/评价协议；当前只处理文档，产品暂停。",
+  "meta": {
+    "phase": "architecture",
+    "implementation_started": "false",
+    "delivery_intent": "reference-implementation",
+    "contract_version": "1.4.0",
+    "contract_source": "docs/blueprint/project-contract.json"
+  }
+}

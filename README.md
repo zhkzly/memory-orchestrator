@@ -1,5 +1,7 @@
 # Memory Orchestrator
 
+当前项目设计与恢复入口见 [文档导航](docs/README.md)。[项目总纲 HTML](docs/blueprint/index.html) 展示目标架构；本 README 下文描述现有 CLI 原型，二者不混作已实现能力。
+
 Memory Orchestrator is a CLI-first local memory system for agent workflows. It captures candidate memories, verifies them against evidence, promotes durable items into a Markdown vault, builds task context packs, scores memory-system quality with rubric proxies, and marks stale or unsafe memory records for cleanup.
 
 The CLI is the canonical interface. Harnesses, agent wrappers, cron jobs, and session hooks should call the same commands instead of owning memory policy. Skills are included as optional instructions for agents that need a human-readable workflow layer, but they do not own policy.

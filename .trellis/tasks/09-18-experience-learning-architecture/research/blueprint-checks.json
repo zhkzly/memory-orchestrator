@@ -1,0 +1,36 @@
+{
+  "date": "2026-09-18",
+  "scope": "Project contract, generated reading views, document authority and resume metadata only.",
+  "contract_version": "1.0.0",
+  "source_sha256": "82b0c6aecfd718c352c32d17ca192bd28819bf2011a80b293b1bb0ad20cba4c8",
+  "coverage": {
+    "requirements": 14,
+    "nodes": 11,
+    "record_types": 19,
+    "invariants": 14
+  },
+  "checks": {
+    "contract_structure": "pass",
+    "negative_cases_detected": 10,
+    "negative_cases_total": 10,
+    "stale_view_rejection": "pass",
+    "generated_views_match": "pass",
+    "embedded_data_matches_source": "pass",
+    "inline_script_syntax": "pass",
+    "trellis_manifests": "5 implement + 5 check entries, valid",
+    "archive_hashes": "6/6 match",
+    "existing_product_files": "44/44 unchanged",
+    "local_markdown_links": "14 files checked, no broken links"
+  },
+  "browser": {
+    "status": "blocked",
+    "reason": "Browser use URL policy rejected the file:// page and prohibited workarounds.",
+    "visual_review": "not performed",
+    "interaction_review": "not performed"
+  },
+  "limits": [
+    "Document checks are not runtime correctness or learning-quality evidence.",
+    "No product runtime implementation, model call or benchmark was performed.",
+    "Generated HTML is a reading view; the JSON is the architecture authority."
+  ]
+}

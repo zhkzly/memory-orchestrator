@@ -1,0 +1,3 @@
+{"file": "docs/blueprint/context.md", "reason": "Existing source context; scope superseded by current PRD"}
+{"file": ".trellis/spec/backend/project-contract.md", "reason": "Generated documentation contract"}
+{"file": ".trellis/tasks/09-18-evolution-contract-alignment/task.md", "reason": "Current doc-only write boundary"}

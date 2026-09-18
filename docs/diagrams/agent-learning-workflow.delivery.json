@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "workflow",
+  "input": "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/docs/diagrams/agent-learning-workflow-v2.json",
+  "output": "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/docs/diagrams/agent-learning-workflow.html",
+  "specification": {
+    "sha256": "5f782ef45141a6f1902382387f2cd99baccd01bab00de4b78d07553bc62ade1b",
+    "bytes": 6348
+  },
+  "artifact": {
+    "sha256": "a08319ccfc7ecaeaf0b73d21782f9352e716fa837aa664ed634bec211ac1c409",
+    "bytes": 722678
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

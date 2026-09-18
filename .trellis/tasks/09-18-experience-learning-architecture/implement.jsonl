@@ -1,0 +1,5 @@
+{"file":"docs/blueprint/context.md","reason":"唯一总纲的生成摘要；按 Nxx 提取具体契约"}
+{"file":".trellis/spec/backend/index.md","reason":"当前代码与必要规范入口"}
+{"file":".trellis/spec/backend/contracts-and-storage.md","reason":"已有类型、存储与迁移边界"}
+{"file":".trellis/spec/backend/project-contract.md","reason":"总纲修改、生成与一致性命令"}
+{"file":".trellis/tasks/09-18-experience-learning-architecture/resume.md","reason":"当前版本、范围、最后完成步骤与下一步"}

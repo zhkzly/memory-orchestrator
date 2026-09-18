@@ -1,0 +1,18 @@
+{
+  "version": "1.4.0",
+  "source_sha256": "69d3f4c231c4f3864b5dec09385dc2de287116ca1d2f1f0cd5f4a903e91d2189",
+  "requirements_retained": 14,
+  "questions_retained": 28,
+  "schema_definitions": 18,
+  "illustrative_examples_valid": 18,
+  "missing_source_and_known_event_probes": "pass",
+  "invalid_rollback_and_selection_rejected": true,
+  "hypothetical_plan_result_selection_release_chain": "consistent, not executed",
+  "embedded_source_equal": true,
+  "view_script_syntax": "pass",
+  "protected_files_unchanged": 23,
+  "product_python_files": [],
+  "model_or_benchmark_executions": 0,
+  "browser_visual_interaction": "not run; existing URL-policy restriction respected",
+  "product_implementation_allowed": false
+}
