@@ -1,0 +1,67 @@
+{
+  "scope": "reference implementation behavior and bounded integration; no benchmark/generalization claim",
+  "contract_version": "1.5.0",
+  "unit_tests": {
+    "command": "PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_memory_*.py' -v",
+    "count": 126,
+    "exit_code": 0
+  },
+  "blueprint": {
+    "negative_cases": 33,
+    "view_checks": 6,
+    "check": true,
+    "verify": true,
+    "self_test": true
+  },
+  "compilation": true,
+  "editable_install": true,
+  "task_context_validate": true,
+  "diff_check": true,
+  "scripted_demo": {
+    "release_count": 2,
+    "rollback_generation": 3,
+    "evaluation_requests": 16,
+    "reused_outcomes": [
+      "pass",
+      "pass"
+    ]
+  },
+  "live_evidence": [
+    "sdk-smoke.json",
+    "live-learning-canary.json",
+    "live-learning-canary-route-v2.json",
+    "live-learning-canary-repair-v3.json"
+  ],
+  "native_adapter_tested": false,
+  "benchmark_tested": false,
+  "browser_visual_tested": false,
+  "source_hashes": {
+    "examples/memory_evolution/demo.py": "739726b26833dceddf81bbb40731b8b87cbe94016ac65e070a71efcb444ce8c7",
+    "src/memory_orchestrator/__init__.py": "34411261695cb1c20da720b9c792ae0bc4a8a7ff8278ce364cb24701221485d1",
+    "src/memory_orchestrator/candidates.py": "b951064335e93d0ed7d37ed430aea18c26b51ffbb65a8f7293be60ca7524a4fa",
+    "src/memory_orchestrator/context.py": "88b2a7d9ca0d8b1e4a430ffa22a1ebac80cd5ce7f51668849d40ce92893c8849",
+    "src/memory_orchestrator/engine.py": "dadcdeabe5aae5abbb6386490724776204e6fb2aba512ed5991907674e67ae64",
+    "src/memory_orchestrator/evaluation.py": "85a24c1f2c6523b88e108941e572537e8d4085624e3b87fc1ec18774127e83f2",
+    "src/memory_orchestrator/evidence.py": "1e68e7ae11de20a921a7076eb4ab226662598cb0a7c36666eba8d368fa153a05",
+    "src/memory_orchestrator/learning.py": "a041271b3109362703702cec022a205ac378e5d9efe33bed8e0522982eb5e047",
+    "src/memory_orchestrator/model.py": "441f5d181269782462a0498ec9a49613ab7a78ea26bcd1039df77df09a2e6032",
+    "src/memory_orchestrator/prompts.json": "456af7301faa584b9857fcbc2f9d8d16985a26b8813d75d65cc0baf46d69b4ee",
+    "src/memory_orchestrator/release.py": "cf0505f85a5f6102f532c6604c64a40fc42f08e8193ecc3d63f33ad1658b4405",
+    "src/memory_orchestrator/report.py": "a69a5a5d61417bef39ed836e5e93dfdbed0aaa00c733a69ff483687dca465e60",
+    "src/memory_orchestrator/sampling.py": "c4d2c888fa0ac4da027e0d71ee8ecbcf1eea706f22895a6670d2756a679313d1",
+    "src/memory_orchestrator/schemas.json": "4911bf34a01a8d70feb28c1216b8c6d1d0acc3261b2f7aeb0c0aa3bd612360fd",
+    "src/memory_orchestrator/schemas.py": "ba1a4ccde874e80e1c1f4b80d1333913a75e5cfdb8bd485ff273d0d6246ebf1e",
+    "src/memory_orchestrator/store.py": "812ba61f6a966d4216197ad166b71a3d3502203cb127ebabd0ca2b384c832975",
+    "tests/test_memory_candidates.py": "771ed2a8a7a5b740d29236d4808e65be72b478056bc50452ff60bfe71766b3a1",
+    "tests/test_memory_context.py": "fd6dd926557d4cd4f53652b68c57edb8fb1a56b4627424e7a1c2798fc3b79800",
+    "tests/test_memory_evaluation.py": "a0352ca7630f8bf8f3a6355f08f43fd13f9655fef03f56d4188bf19115920226",
+    "tests/test_memory_evidence.py": "af0e83219e5c06352d6fede2ec89c05a0d4afb7ee4ccd6e25e6141c372021486",
+    "tests/test_memory_flow.py": "2e6c8b7236395d148eb0fc8c0ae080091137fc8f3f05e842ee76ea7f046e1bd1",
+    "tests/test_memory_learning.py": "f857a2d482a695080de4238152ab4e237c77d5bb8fab0bc25f5883299dc09d3c",
+    "tests/test_memory_model.py": "3dd59f9cd3a81ae2a59aea347e3af1d2fcffe430b5f7eee094e871ce08266151",
+    "tests/test_memory_release.py": "026381b2e8621a8e5865a26dec5f84b63127965e03c0dfd639b53d399f8e50c4",
+    "tests/test_memory_report.py": "167ceb0cf13abcf534df1731bcab33dcfefbfa4e2215445891caa11ee3bb6818",
+    "tests/test_memory_sampling.py": "5acbd2c879229ecfb4b9ea070fdd047e6a962bbca2937d0590e0b83850a4f630",
+    "tests/test_memory_store.py": "50003466752a7669306740047322e00534f8fd595b1320b52440edb4e367bd0c"
+  }
+}

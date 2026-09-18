@@ -4,6 +4,7 @@ from copy import deepcopy
 from datetime import datetime, timezone
 import hashlib
 import json
+import math
 from pathlib import Path
 import uuid
 
@@ -45,6 +46,39 @@ def new_id(prefix):
 
 def now_iso():
     return datetime.now(timezone.utc).isoformat(timespec="microseconds").replace("+00:00", "Z")
+
+
+def normalize_usage_measurements(supplied):
+    """Keep malformed provider measurements unknown and explain the lost fields."""
+    result = {"tokens": None, "monetary_cost": None, "currency": None, "diagnostics": []}
+    if supplied is None:
+        return result
+    if not isinstance(supplied, dict):
+        result["diagnostics"].append({"path": "usage", "reason": "expected object", "received": supplied})
+        return result
+    tokens = supplied.get("tokens")
+    if isinstance(tokens, dict):
+        result["tokens"] = {}
+        for key in ("input_tokens", "output_tokens", "total_tokens"):
+            value = tokens.get(key)
+            if value is None or (type(value) is int and value >= 0):
+                result["tokens"][key] = value
+            else:
+                result["tokens"][key] = None
+                result["diagnostics"].append({"path": "usage.tokens." + key, "reason": "expected nonnegative integer or null", "received": value})
+    elif tokens is not None:
+        result["diagnostics"].append({"path": "usage.tokens", "reason": "expected object or null", "received": tokens})
+    value = supplied.get("monetary_cost")
+    if value is None or (type(value) in (int, float) and math.isfinite(value) and value >= 0):
+        result["monetary_cost"] = value
+    else:
+        result["diagnostics"].append({"path": "usage.monetary_cost", "reason": "expected finite nonnegative number or null", "received": value})
+    currency = supplied.get("currency")
+    if currency is None or (isinstance(currency, str) and currency.strip()):
+        result["currency"] = currency
+    else:
+        result["diagnostics"].append({"path": "usage.currency", "reason": "expected nonempty string or null", "received": currency})
+    return result
 
 
 def _bundle(filename):

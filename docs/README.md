@@ -2,10 +2,11 @@
 
 日常只从这里进入，避免在旧方案之间来回切换。
 
-当前 v1.4 完成演化契约对齐：完整学习/比较/发布流程保留，具体 CLI/MCP/客户端适配暂缓。**产品实现仍暂停**；文档完成不意味着可以按旧任务状态继续写代码。
+当前 v1.5.0 已落地 Python 记忆核心参考实现：完整学习/比较/发布流程保留，具体 CLI/MCP/客户端适配暂缓。实际实现和证据见当前任务检查点，不从历史暂停状态恢复。
 
 | 用途 | 入口 |
 | --- | --- |
+| 使用 Python 核心 | [调用方式与本地闭环示例](../examples/memory_evolution/README.md) |
 | 人读宏观设计 | [项目总纲 HTML](blueprint/index.html) |
 | 核对之前的关键思考 | [28 项问题与实现决定](blueprint/index.html#questions) |
 | 看并行、reward、提取和发布 | [执行与评价](blueprint/index.html#runtime) |
@@ -22,6 +23,6 @@
 - [总纲 v1.0 来源快照](history/2026-09-18-blueprint-v1/project-contract.json)：节点细化前的结构化设计。
 - [本轮对齐前快照](history/2026-09-18-before-evolution-alignment/manifest.json)：保留修订前的总纲和相互冲突的任务材料，可追溯此次调整。
 
-旧流程图、过期立项/复现执行提案和未采用的 Python 测试草稿已清理；原文可从 Git 检查点 `db20db8` 回查。旧 TS 产品仍保留。当前清理不包含迁移、重建旧 CLI/MCP 或恢复产品实现。
+旧流程图、过期立项/复现执行提案和未采用的 Python 测试草稿已清理；原文可从 Git 检查点 `db20db8` 回查。旧 TS 产品仍保留。当前 Python 实施不包含迁移、重建旧 CLI/MCP。
 
 生成页面和摘要：`node docs/blueprint/build.mjs render`；检查同步：`node docs/blueprint/build.mjs verify`。

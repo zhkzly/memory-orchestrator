@@ -29,12 +29,12 @@
     ".trellis/spec/guides/system-boundaries.md",
     "docs/research/2026-09-17-agent-improvement/"
   ],
-  "notes": "文档对齐和清理已完成；用户明确启动 Python 子任务 M1–M3，旧 TS 保留。",
+  "notes": "Python子任务M1–M3参考实现完成；126行为测试，原生接入/benchmark/浏览器视觉检查未声明完成；旧TS保留。",
   "meta": {
     "phase": "architecture",
     "implementation_started": "true",
     "delivery_intent": "reference-implementation",
-    "contract_version": "1.4.1",
+    "contract_version": "1.5.0",
     "contract_source": "docs/blueprint/project-contract.json"
   }
 }

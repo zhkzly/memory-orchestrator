@@ -1,0 +1,352 @@
+{
+  "kind": "live_teacher_local_csv_integration_not_benchmark",
+  "store_root": "/tmp/memory-live-repair-v3-1psjjqaw",
+  "contract_source": {
+    "path": "docs/blueprint/project-contract.json",
+    "version": "1.5.0",
+    "sha256": "18c0d14fb9cdbfffe206e529250a325fd2892cbc416c6004c0c1512c3a8f232f"
+  },
+  "model": "gpt-5.6-terra",
+  "budget": {
+    "max_input_chars": 80000,
+    "max_output_chars": 16000,
+    "max_output_tokens": 2048,
+    "max_total_input_chars": 200000,
+    "max_calls": 4,
+    "max_format_repairs": 1
+  },
+  "timeout_seconds": 45,
+  "elapsed_seconds": 52.65548070598743,
+  "actual_model_calls": 3,
+  "result": {
+    "evidence_kind": "constructed local integration; not a benchmark or generalization claim",
+    "teacher_mode": "provided",
+    "learning_statuses": [
+      "proposed"
+    ],
+    "release_count": 0,
+    "after_release": [],
+    "rollback": null,
+    "report": {
+      "report_id": "report_3d4ccdf849144db0825c8d8bc2c0a57f",
+      "project_id": "csv-demo",
+      "created_at": "2026-09-18T12:11:14.417113Z",
+      "evidence_kind": "caller execution/evaluation records; not automatic independent truth",
+      "evaluation_requests": 8,
+      "outcomes": {
+        "pass": 4,
+        "fail": 4,
+        "unknown": 0
+      },
+      "comparisons": [
+        {
+          "plan_id": "plan_9e7e8cb6debd4eafb08974bcc00a3ab9",
+          "project_id": "csv-demo",
+          "validation_id": "validation_d25f759cb3f443499ef46311186c7629",
+          "validation_status": "rejected",
+          "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+          "candidate_digest": "73cff8ff66c372f05228b3999755501abde0637a918cd39824ae53ca9006f627",
+          "case_set_ref": "cases_53917af555544b79b22abd6a4ead8255",
+          "case_set_hash": "b39d9f8d880ec833aa363bd4c1c8820be79f2b62c457d471558a0409ff780fdb",
+          "protocol_ref": "protocol_3e5468fb623746d6bd353428751a5edf",
+          "protocol_hash": "dbe17c5f784574bfc635a6fe6909e686ec1537d8d4cef6404b16be9572ea50b5",
+          "acceptance_scope": "local repair",
+          "repeat_count": 2,
+          "planned_requests": 8,
+          "recorded_results": 8,
+          "missing_request_ids": [],
+          "duplicate_request_ids": [],
+          "unexpected_request_ids": [],
+          "mismatched_request_ids": [],
+          "binding_errors": [],
+          "by_split": {
+            "target": [
+              {
+                "case_id": "leading-zeros",
+                "split": "target",
+                "base": 0.0,
+                "base_range": 0.0,
+                "candidate": 0.0,
+                "candidate_range": 0.0,
+                "gain": 0.0,
+                "base_known_repeats": 2,
+                "candidate_known_repeats": 2,
+                "observed_change": "unchanged"
+              }
+            ],
+            "regression": [
+              {
+                "case_id": "numeric-regression",
+                "split": "regression",
+                "base": 1.0,
+                "base_range": 0.0,
+                "candidate": 1.0,
+                "candidate_range": 0.0,
+                "gain": 0.0,
+                "base_known_repeats": 2,
+                "candidate_known_repeats": 2,
+                "observed_change": "unchanged"
+              }
+            ],
+            "transfer": []
+          }
+        }
+      ],
+      "pooled_rate_note": "Overall success rate mixes base and candidate requests; it is not an improvement estimate.",
+      "sampling_slots": 2,
+      "unique_case_identity_count": 2,
+      "observed_success_rate": 0.5,
+      "coverage": 1.0,
+      "identification_bounds": [
+        0.5,
+        0.5
+      ],
+      "known_task_ids": [
+        "leading-zeros"
+      ],
+      "episodes_with_unknown_task_id": 0,
+      "distinct_known_task_count": 1,
+      "episode_count": 2,
+      "candidate_counts": {
+        "accepted": 0,
+        "rejected": 1,
+        "unknown": 0
+      },
+      "usage": {
+        "unique_calls": 23,
+        "by_stage": {
+          "evaluate": 10,
+          "execute": 10,
+          "extract": 1,
+          "diagnose": 1,
+          "propose": 1
+        },
+        "known_cost_subtotals": {},
+        "missing_cost_calls": 23,
+        "complete_cost_totals": null,
+        "sum_run_time": 52.57101955395774,
+        "known_run_time_subtotal": 52.57101955395774,
+        "missing_time_calls": 0,
+        "tokens": {
+          "known_subtotals": {
+            "input_tokens": 15802,
+            "output_tokens": 2529,
+            "total_tokens": 18331
+          },
+          "known_calls": {
+            "input_tokens": 3,
+            "output_tokens": 3,
+            "total_tokens": 3
+          },
+          "missing_calls": {
+            "input_tokens": 20,
+            "output_tokens": 20,
+            "total_tokens": 20
+          },
+          "complete_totals": {
+            "input_tokens": null,
+            "output_tokens": null,
+            "total_tokens": null
+          }
+        },
+        "usage_ids": [
+          "modelcall_328088f179654cc3a7e7d737af33e74d",
+          "modelcall_91751594dd11402da8df5a8bd5a2ea31",
+          "modelcall_fc845832ff2046399385994a969247ef",
+          "usage_06c206563485418fac35b20451b8eb8e",
+          "usage_100fb4b7b992453da5a8ae3b92175837",
+          "usage_2bc73a87e2b3402fb1d0e7d9591f29ae",
+          "usage_355979979e8e4da9bc8c60a2746157fa",
+          "usage_3eb7ff2786324a8887a2b02e8bcbca65",
+          "usage_40c53940a3c54e8fb890f45038e36abe",
+          "usage_47a4788d23f048c8a901c21aa1bb952c",
+          "usage_5faa486edb014e878be60d2f40cbf1dc",
+          "usage_6d03e15e657d4edc87f957976f66c8d4",
+          "usage_77aceb7a38cb457d91272a9d531e6c55",
+          "usage_7c482e4e4cb7403eb8c23bbefbd32e81",
+          "usage_8b8f7e027e444d9faaade450823bd2ed",
+          "usage_911290e3a41b447b9b93a068c8f6a1fa",
+          "usage_b2de023b0dee4324aff3855069515945",
+          "usage_b3bac4b7e70d4e57b4acbff85a20f832",
+          "usage_bd3e49ea58794769bbdd2de0cd5a27a4",
+          "usage_c86373367a304bbc884e2b78ef2c8c52",
+          "usage_cb18e23da93c4778b37494d8a9c8bfdc",
+          "usage_cd4d8fcea73f4a4790288e661ba19fce",
+          "usage_d267431362354bacbb5102ea6b4d4dcd"
+        ],
+        "unaccounted_evaluation_requests": 0,
+        "unaccounted_sampling_slots": 0,
+        "incomplete_sampling_slots": 0
+      },
+      "committed_release_ids": []
+    }
+  },
+  "learning_cycles": [
+    {
+      "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+      "candidate_ids": [],
+      "candidate_slots": [
+        {
+          "candidate_id": null,
+          "slot": 0,
+          "status": "not_started"
+        }
+      ],
+      "contract_source": {
+        "path": "docs/blueprint/project-contract.json",
+        "sha256": "18c0d14fb9cdbfffe206e529250a325fd2892cbc416c6004c0c1512c3a8f232f",
+        "version": "1.5.0"
+      },
+      "created_at": "2026-09-18T12:10:21.787461Z",
+      "cycle_id": "learning_67395d127a7e4713887a4708ffb7dd4f",
+      "diagnosis_id": null,
+      "errors": [],
+      "expected_generation": 0,
+      "experience_ids": [],
+      "model_limits": {
+        "max_calls": 4,
+        "max_format_repairs": 1,
+        "max_input_chars": 80000,
+        "max_output_chars": 16000,
+        "max_output_tokens": 2048,
+        "max_total_input_chars": 200000
+      },
+      "policy": {
+        "candidate_count": 1,
+        "evaluation_scope": "local CSV repair; target and regression, no transfer claim",
+        "expanded_packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 38000,
+          "max_fragment_chars": 1200,
+          "token_budget": 24000
+        },
+        "max_asset_bytes": 20000,
+        "max_expansions": 2,
+        "max_experiences": 3,
+        "max_operations": 3,
+        "max_read_requests": 4,
+        "max_related_chars": 16000,
+        "max_related_episodes": 8,
+        "max_related_experiences": 4,
+        "max_skills": 20,
+        "packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 28000,
+          "max_fragment_chars": 1200,
+          "token_budget": 16000
+        }
+      },
+      "project_id": "csv-demo",
+      "report_ids": [],
+      "requested_episode_ids": [
+        "episode_86de15aa2c4f47308bbb485243c13a7b",
+        "episode_98f7d3a419ad4f3f9ce4c4db7fefc9b1"
+      ],
+      "source_episode_ids": [
+        "episode_86de15aa2c4f47308bbb485243c13a7b",
+        "episode_98f7d3a419ad4f3f9ce4c4db7fefc9b1"
+      ],
+      "status": "planned",
+      "usage_ids": []
+    },
+    {
+      "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+      "candidate_ids": [
+        "proposal_1d443e22ece44c03ba71af0a9a40c20a"
+      ],
+      "candidate_slots": [
+        {
+          "candidate_id": "proposal_1d443e22ece44c03ba71af0a9a40c20a",
+          "slot": 0,
+          "status": "candidate"
+        }
+      ],
+      "completed_at": "2026-09-18T12:11:14.360341Z",
+      "contract_source": {
+        "path": "docs/blueprint/project-contract.json",
+        "sha256": "18c0d14fb9cdbfffe206e529250a325fd2892cbc416c6004c0c1512c3a8f232f",
+        "version": "1.5.0"
+      },
+      "created_at": "2026-09-18T12:10:21.787461Z",
+      "cycle_id": "learning_67395d127a7e4713887a4708ffb7dd4f",
+      "diagnosis_id": "diagnosis_44f772548d3e4dd3a8d647c62a7af8b1",
+      "errors": [],
+      "expected_generation": 0,
+      "experience_ids": [
+        "experience_faf1e93e2b494b04b6cbdc3f873adb49"
+      ],
+      "model_limits": {
+        "max_calls": 4,
+        "max_format_repairs": 1,
+        "max_input_chars": 80000,
+        "max_output_chars": 16000,
+        "max_output_tokens": 2048,
+        "max_total_input_chars": 200000
+      },
+      "policy": {
+        "candidate_count": 1,
+        "evaluation_scope": "local CSV repair; target and regression, no transfer claim",
+        "expanded_packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 38000,
+          "max_fragment_chars": 1200,
+          "token_budget": 24000
+        },
+        "max_asset_bytes": 20000,
+        "max_expansions": 2,
+        "max_experiences": 3,
+        "max_operations": 3,
+        "max_read_requests": 4,
+        "max_related_chars": 16000,
+        "max_related_episodes": 8,
+        "max_related_experiences": 4,
+        "max_skills": 20,
+        "packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 28000,
+          "max_fragment_chars": 1200,
+          "token_budget": 16000
+        }
+      },
+      "project_id": "csv-demo",
+      "reason": null,
+      "report_ids": [
+        "modelreport_0fcf7f9f602c49309b0c8114cd8bcac2",
+        "modelreport_172ad3f515594db4baa29447ad5f3fbc",
+        "modelreport_eba4b397439c4ec5a9cae4a7d8ac59a9"
+      ],
+      "requested_episode_ids": [
+        "episode_86de15aa2c4f47308bbb485243c13a7b",
+        "episode_98f7d3a419ad4f3f9ce4c4db7fefc9b1"
+      ],
+      "source_episode_ids": [
+        "episode_86de15aa2c4f47308bbb485243c13a7b",
+        "episode_98f7d3a419ad4f3f9ce4c4db7fefc9b1"
+      ],
+      "status": "proposed",
+      "usage_ids": [
+        "modelcall_91751594dd11402da8df5a8bd5a2ea31",
+        "modelcall_fc845832ff2046399385994a969247ef",
+        "modelcall_328088f179654cc3a7e7d737af33e74d"
+      ]
+    }
+  ],
+  "source_hashes": {
+    "src/memory_orchestrator/__init__.py": "34411261695cb1c20da720b9c792ae0bc4a8a7ff8278ce364cb24701221485d1",
+    "src/memory_orchestrator/candidates.py": "b951064335e93d0ed7d37ed430aea18c26b51ffbb65a8f7293be60ca7524a4fa",
+    "src/memory_orchestrator/context.py": "92238ff164765c6b02b544763cda0fe6da7470f24d3bd3a36712ec3ba291be51",
+    "src/memory_orchestrator/engine.py": "dadcdeabe5aae5abbb6386490724776204e6fb2aba512ed5991907674e67ae64",
+    "src/memory_orchestrator/evaluation.py": "85a24c1f2c6523b88e108941e572537e8d4085624e3b87fc1ec18774127e83f2",
+    "src/memory_orchestrator/evidence.py": "1e68e7ae11de20a921a7076eb4ab226662598cb0a7c36666eba8d368fa153a05",
+    "src/memory_orchestrator/learning.py": "73a3e8398593d079a369359523fa4ee2b6f1d2d1d5095a9bb0f531d0f216d67e",
+    "src/memory_orchestrator/model.py": "441f5d181269782462a0498ec9a49613ab7a78ea26bcd1039df77df09a2e6032",
+    "src/memory_orchestrator/prompts.json": "456af7301faa584b9857fcbc2f9d8d16985a26b8813d75d65cc0baf46d69b4ee",
+    "src/memory_orchestrator/release.py": "cf0505f85a5f6102f532c6604c64a40fc42f08e8193ecc3d63f33ad1658b4405",
+    "src/memory_orchestrator/report.py": "a69a5a5d61417bef39ed836e5e93dfdbed0aaa00c733a69ff483687dca465e60",
+    "src/memory_orchestrator/sampling.py": "c4d2c888fa0ac4da027e0d71ee8ecbcf1eea706f22895a6670d2756a679313d1",
+    "src/memory_orchestrator/schemas.json": "4911bf34a01a8d70feb28c1216b8c6d1d0acc3261b2f7aeb0c0aa3bd612360fd",
+    "src/memory_orchestrator/schemas.py": "ba1a4ccde874e80e1c1f4b80d1333913a75e5cfdb8bd485ff273d0d6246ebf1e",
+    "src/memory_orchestrator/store.py": "812ba61f6a966d4216197ad166b71a3d3502203cb127ebabd0ca2b384c832975"
+  },
+  "source_unchanged": true
+}

@@ -3,8 +3,18 @@ from __future__ import annotations
 
 import json
 import math
+import re
 
 from .schemas import DomainError, digest, new_id
+
+
+def terms(text):
+    """Small lexical retrieval heuristic, not a semantic applicability proof."""
+    stop = {'a', 'an', 'the', 'and', 'or', 'to', 'of', 'for', 'in', 'with', 'is', 'be', 'must'}
+    result = set(re.findall(r'[a-z0-9_]+', text.casefold())) - stop
+    for phrase in re.findall(r'[\u4e00-\u9fff]+', text):
+        result.update(phrase[i:i + 2] for i in range(max(1, len(phrase) - 1)))
+    return result
 
 
 def select_context(store, task, policy, *, explicit_snapshot=None):
@@ -59,23 +69,25 @@ def select_context(store, task, policy, *, explicit_snapshot=None):
         values = set(ids)
         return any(values.intersection(skills[s]['content']['declared_conflicts']) for s in values)
 
-    text = task['description'].casefold()
+    query = terms(task['description'])
+    requested_family = terms(task.get('task_family') or '')
     scores = {}
     for sid, skill in skills.items():
         content = skill['content']
-        family = task.get('task_family')
-        family_match = family is not None and content['scope']['task_family'] == family
-        trigger_matches = sum(trigger.casefold() in text for trigger in content['triggers'])
-        if (family is not None and not family_match) or not (family_match or trigger_matches):
+        family_match = len((requested_family or query) & terms(content['scope']['task_family']))
+        trigger_matches = len(query & terms(' '.join(content['triggers'])))
+        if not (family_match or trigger_matches):
             exclusions.append({'skill_id': sid, 'reason': 'scope_or_trigger'})
         else:
-            scores[sid] = float(trigger_matches + int(family_match))
+            scores[sid] = float(trigger_matches + family_match)
     relations = store.list('relations', project_id=project)
 
     def score(sid):
         related = 0.0
         for relation in relations:
-            if relation.get('from') != sid or relation.get('to') not in selected:
+            forward = relation.get('from') == sid and relation.get('to') in selected
+            reverse_co_use = relation.get('kind') == 'co_used' and relation.get('to') == sid and relation.get('from') in selected
+            if not (forward or reverse_co_use):
                 continue
             value = relation.get('value')
             if relation.get('kind') in ('co_used', 'measured_effect') and relation.get('supporting_refs'):
@@ -118,6 +130,7 @@ def select_context(store, task, policy, *, explicit_snapshot=None):
                 'dependency_closure': selected, 'roots': roots, 'supplied_text': supplied,
                 'supplied_hash': digest(supplied), 'exclusions': exclusions,
                 'fact_refs': fact_refs, 'fact_read_errors': facts['errors'],
+                'selection_method': 'lexical family/trigger overlap; prose conditions remain advisory',
                 'budget': {'unit': 'characters', 'limit': budget, 'used': len(supplied),
                            'token_measurement': 'not_measured'},
                 'consumption_observability': 'unknown'}

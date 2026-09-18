@@ -1,0 +1,240 @@
+{
+  "kind": "live_teacher_local_csv_integration_not_benchmark",
+  "store_root": "/tmp/memory-live-cycle-ikil2jix",
+  "model": "gpt-5.6-terra",
+  "budget": {
+    "max_input_chars": 80000,
+    "max_output_chars": 16000,
+    "max_output_tokens": 2048,
+    "max_total_input_chars": 200000,
+    "max_calls": 4,
+    "max_format_repairs": 1
+  },
+  "timeout_seconds": 45,
+  "elapsed_seconds": 27.319533849004074,
+  "actual_model_calls": 2,
+  "result": {
+    "evidence_kind": "constructed local integration; not a benchmark or generalization claim",
+    "teacher_mode": "provided",
+    "learning_statuses": [
+      "noop"
+    ],
+    "release_count": 0,
+    "after_release": [],
+    "rollback": null,
+    "report": {
+      "report_id": "report_160f73b1cd404321964dff167c6cd5e5",
+      "project_id": "csv-demo",
+      "created_at": "2026-09-18T11:46:08.411302Z",
+      "evidence_kind": "caller execution/evaluation records; not automatic independent truth",
+      "evaluation_requests": 0,
+      "outcomes": {
+        "pass": 0,
+        "fail": 0,
+        "unknown": 0
+      },
+      "comparisons": [],
+      "pooled_rate_note": "Overall success rate mixes base and candidate requests; it is not an improvement estimate.",
+      "sampling_slots": 2,
+      "unique_case_identity_count": 0,
+      "observed_success_rate": null,
+      "coverage": null,
+      "identification_bounds": null,
+      "known_task_ids": [
+        "leading-zeros"
+      ],
+      "episodes_with_unknown_task_id": 0,
+      "distinct_known_task_count": 1,
+      "episode_count": 2,
+      "candidate_counts": {
+        "accepted": 0,
+        "rejected": 0,
+        "unknown": 0
+      },
+      "usage": {
+        "unique_calls": 6,
+        "by_stage": {
+          "evaluate": 2,
+          "extract": 1,
+          "execute": 2,
+          "diagnose": 1
+        },
+        "known_cost_subtotals": {},
+        "missing_cost_calls": 6,
+        "complete_cost_totals": null,
+        "sum_run_time": 27.274838396013365,
+        "known_run_time_subtotal": 27.274838396013365,
+        "missing_time_calls": 0,
+        "tokens": {
+          "known_subtotals": {
+            "input_tokens": 11170,
+            "output_tokens": 1318,
+            "total_tokens": 12488
+          },
+          "known_calls": {
+            "input_tokens": 2,
+            "output_tokens": 2,
+            "total_tokens": 2
+          },
+          "missing_calls": {
+            "input_tokens": 4,
+            "output_tokens": 4,
+            "total_tokens": 4
+          },
+          "complete_totals": {
+            "input_tokens": null,
+            "output_tokens": null,
+            "total_tokens": null
+          }
+        },
+        "usage_ids": [
+          "modelcall_844c6e2af73e4ad598b650d5e140b6c2",
+          "modelcall_c5b24f592ed544e2b3d4737777694c10",
+          "usage_360685501d5a42d7b9b1d59efdb22900",
+          "usage_74d76b2ffcf947b684b68f5421d67e71",
+          "usage_a629b83065a3462cb40b4f98d0d94599",
+          "usage_a86eca6102da49b58744c4c7f221f84f"
+        ],
+        "unaccounted_evaluation_requests": 0,
+        "unaccounted_sampling_slots": 0,
+        "incomplete_sampling_slots": 0
+      },
+      "committed_release_ids": []
+    }
+  },
+  "learning_cycles": [
+    {
+      "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+      "candidate_ids": [],
+      "candidate_slots": [
+        {
+          "candidate_id": null,
+          "slot": 0,
+          "status": "noop"
+        }
+      ],
+      "completed_at": "2026-09-18T11:46:08.409764Z",
+      "created_at": "2026-09-18T11:45:41.115359Z",
+      "cycle_id": "learning_81039ee2761f488aac35869e647fd6a0",
+      "diagnosis_id": "diagnosis_b763822bda8f44348514da5f9c0bcb06",
+      "errors": [],
+      "expected_generation": 0,
+      "experience_ids": [
+        "experience_0f904d3dcc8a4b689f6e10b37d8ce3d3"
+      ],
+      "policy": {
+        "candidate_count": 1,
+        "evaluation_scope": "local CSV repair; target and regression, no transfer claim",
+        "expanded_packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 38000,
+          "max_fragment_chars": 1200,
+          "token_budget": 24000
+        },
+        "max_asset_bytes": 20000,
+        "max_expansions": 2,
+        "max_experiences": 3,
+        "max_operations": 3,
+        "max_read_requests": 4,
+        "max_related_chars": 16000,
+        "max_related_episodes": 8,
+        "max_related_experiences": 4,
+        "max_skills": 20,
+        "packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 28000,
+          "max_fragment_chars": 1200,
+          "token_budget": 16000
+        }
+      },
+      "project_id": "csv-demo",
+      "reason": "asset_gap",
+      "report_ids": [
+        "modelreport_7b0ba49211164cd1a911bad6d0c46806",
+        "modelreport_9855c147572b41bdafe15dde563ba5c8"
+      ],
+      "requested_episode_ids": [
+        "episode_0d9775551bd8490c924fb8e2f55c43a7",
+        "episode_586a3b0ad29842709cece98c991e6ae1"
+      ],
+      "source_episode_ids": [
+        "episode_0d9775551bd8490c924fb8e2f55c43a7",
+        "episode_586a3b0ad29842709cece98c991e6ae1"
+      ],
+      "status": "noop",
+      "usage_ids": [
+        "modelcall_c5b24f592ed544e2b3d4737777694c10",
+        "modelcall_844c6e2af73e4ad598b650d5e140b6c2"
+      ]
+    },
+    {
+      "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+      "candidate_ids": [],
+      "candidate_slots": [
+        {
+          "candidate_id": null,
+          "slot": 0,
+          "status": "not_started"
+        }
+      ],
+      "created_at": "2026-09-18T11:45:41.115359Z",
+      "cycle_id": "learning_81039ee2761f488aac35869e647fd6a0",
+      "diagnosis_id": null,
+      "errors": [],
+      "expected_generation": 0,
+      "experience_ids": [],
+      "policy": {
+        "candidate_count": 1,
+        "evaluation_scope": "local CSV repair; target and regression, no transfer claim",
+        "expanded_packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 38000,
+          "max_fragment_chars": 1200,
+          "token_budget": 24000
+        },
+        "max_asset_bytes": 20000,
+        "max_expansions": 2,
+        "max_experiences": 3,
+        "max_operations": 3,
+        "max_read_requests": 4,
+        "max_related_chars": 16000,
+        "max_related_episodes": 8,
+        "max_related_experiences": 4,
+        "max_skills": 20,
+        "packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 28000,
+          "max_fragment_chars": 1200,
+          "token_budget": 16000
+        }
+      },
+      "project_id": "csv-demo",
+      "report_ids": [],
+      "requested_episode_ids": [
+        "episode_0d9775551bd8490c924fb8e2f55c43a7",
+        "episode_586a3b0ad29842709cece98c991e6ae1"
+      ],
+      "source_episode_ids": [
+        "episode_0d9775551bd8490c924fb8e2f55c43a7",
+        "episode_586a3b0ad29842709cece98c991e6ae1"
+      ],
+      "status": "planned",
+      "usage_ids": []
+    }
+  ],
+  "source_hashes": {
+    "src/memory_orchestrator/__init__.py": "34411261695cb1c20da720b9c792ae0bc4a8a7ff8278ce364cb24701221485d1",
+    "src/memory_orchestrator/candidates.py": "b951064335e93d0ed7d37ed430aea18c26b51ffbb65a8f7293be60ca7524a4fa",
+    "src/memory_orchestrator/context.py": "92238ff164765c6b02b544763cda0fe6da7470f24d3bd3a36712ec3ba291be51",
+    "src/memory_orchestrator/engine.py": "dadcdeabe5aae5abbb6386490724776204e6fb2aba512ed5991907674e67ae64",
+    "src/memory_orchestrator/evaluation.py": "85a24c1f2c6523b88e108941e572537e8d4085624e3b87fc1ec18774127e83f2",
+    "src/memory_orchestrator/evidence.py": "1e68e7ae11de20a921a7076eb4ab226662598cb0a7c36666eba8d368fa153a05",
+    "src/memory_orchestrator/learning.py": "7fd113f78dd21fe2ca84d333547857942ef96643a415104c9e5f4c4abb2971f8",
+    "src/memory_orchestrator/model.py": "31b9d6f4d9554913632693d05d4ab1f8888cf3ad91d2f1f35e7698f12f7fcdb6",
+    "src/memory_orchestrator/release.py": "cf0505f85a5f6102f532c6604c64a40fc42f08e8193ecc3d63f33ad1658b4405",
+    "src/memory_orchestrator/report.py": "a69a5a5d61417bef39ed836e5e93dfdbed0aaa00c733a69ff483687dca465e60",
+    "src/memory_orchestrator/sampling.py": "721848020bc5fbb3ba3881cc29af914e1b1a4946b5b68cc17a625f564f2d4115",
+    "src/memory_orchestrator/schemas.py": "ba1a4ccde874e80e1c1f4b80d1333913a75e5cfdb8bd485ff273d0d6246ebf1e",
+    "src/memory_orchestrator/store.py": "812ba61f6a966d4216197ad166b71a3d3502203cb127ebabd0ca2b384c832975"
+  }
+}

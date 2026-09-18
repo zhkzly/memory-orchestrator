@@ -27,7 +27,22 @@
 - `buildContextPack` 会调用 `touchMemoryFiles` 写回计数/时间。它不是无副作用读取；检索计数不证明模型已读取、采用或受益。
 - `spawnAgent` 设置 `MEMORY_ORCHESTRATOR_CONTEXT` 等环境变量并启动 CLI；这不独立证明原生模型消费了上下文。
 - controller 的 `evaluateProposal` 使用风险、目标、可逆性等结构条件；它没有测量 Skill 更新后的任务成功率。
-- 当前 `MemoryKind` 为 personal/project/evidence/session。新的 Episode、GoalRevision、SkillSnapshot 等尚未实现。
+- 旧 TS 的 `MemoryKind` 为 personal/project/evidence/session；它没有 Python 核心的 Episode、目标修订索引或 Skill 快照，不能将两者混用。
+
+## Python 记忆演化核心
+
+`src/memory_orchestrator/` 是当前独立 Python 库；具体例子见 [调用说明](../../../examples/memory_evolution/README.md)。
+
+| 模块 | 实际职责 |
+| --- | --- |
+| store / schemas | 本地不可变记录、事实修订、原文/反馈关联、完整资产快照、Schema 与原子提交原语 |
+| context / sampling | 固定库版本与有界提供；先记录计划与输入，再调用外部执行/评分函数，保留所有槽位 |
+| evidence / model / learning | 目标/原文索引、有界片段和补读；按显式模型预算提取、归因、提案，保留历史边界 |
+| candidates | ADD/PATCH/RETIRE/NOOP 与完整资产检查；仅生成候选 |
+| evaluation / release / report | 冻结协议比较、选择、精确候选发布/CAS/回退、分母/逐题指标与未知成本 |
+| engine | `evolve()` 组合学习、比较、选择和发布，调用方提供实际执行与评价能力 |
+
+实际实现采用本地文件、普通函数和有界线程池；没有 OS 隔离或硬取消任意 Python 回调的能力。构造测试和真实 SDK 调用分别记录，不能据此宣称原生 Agent 接入或 benchmark 收益。
 
 ## 修改位置
 

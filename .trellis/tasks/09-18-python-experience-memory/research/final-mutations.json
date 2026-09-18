@@ -1,0 +1,72 @@
+[
+  {
+    "target": "src/memory_orchestrator/context.py",
+    "binding": "lexical_scope",
+    "tests": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_context -v",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/context.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/engine.py",
+    "binding": "composition_executes_candidates",
+    "tests": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_flow -v",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/engine.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/engine.py",
+    "binding": "unselected_not_published",
+    "tests": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_flow -v",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/engine.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/schemas.py",
+    "binding": "normalize_noninteger_tokens",
+    "tests": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_sampling.SamplingTests.test_invalid_callback_usage_remains_missing_and_does_not_break_report -v",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/schemas.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/sampling.py",
+    "binding": "frozen_relations",
+    "tests": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_context -v",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/sampling.py",
+    "binding": "rich_input",
+    "tests": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_sampling.SamplingTests.test_rich_inputs_and_checker_evidence_are_available_to_extraction -v",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/sampling.py",
+    "binding": "rich_feedback",
+    "tests": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_sampling.SamplingTests.test_rich_inputs_and_checker_evidence_are_available_to_extraction -v",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/learning.py",
+    "binding": "consumption_reaches_diagnosis",
+    "tests": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_flow -v",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "docs/blueprint/build.mjs",
+    "binding": "explicit_permission",
+    "tests": "node docs/blueprint/build.mjs self-test",
+    "exit_code": 0,
+    "output": "✅ 执照发放:docs/blueprint/build.mjs 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "docs/blueprint/viewer.template.html",
+    "binding": "visible_scope",
+    "tests": "node docs/blueprint/build.mjs self-test",
+    "exit_code": 0,
+    "output": "✅ 执照发放:docs/blueprint/viewer.template.html 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  }
+]

@@ -1,0 +1,284 @@
+{
+  "kind": "live_teacher_local_csv_integration_not_benchmark",
+  "store_root": "/tmp/memory-live-route-v2-tye0gji3",
+  "contract_source": {
+    "path": "docs/blueprint/project-contract.json",
+    "version": "1.5.0",
+    "sha256": "fdbda52b2f230935096e6f1bcb275aae653225e338bd4af78e8ba9c466528a2a"
+  },
+  "model": "gpt-5.6-terra",
+  "budget": {
+    "max_input_chars": 80000,
+    "max_output_chars": 16000,
+    "max_output_tokens": 2048,
+    "max_total_input_chars": 200000,
+    "max_calls": 4,
+    "max_format_repairs": 1
+  },
+  "timeout_seconds": 45,
+  "elapsed_seconds": 27.904476110998075,
+  "actual_model_calls": 2,
+  "result": {
+    "evidence_kind": "constructed local integration; not a benchmark or generalization claim",
+    "teacher_mode": "provided",
+    "learning_statuses": [
+      "error"
+    ],
+    "release_count": 0,
+    "after_release": [],
+    "rollback": null,
+    "report": {
+      "report_id": "report_7ae226ba33714593a2c696bd3c34eb0f",
+      "project_id": "csv-demo",
+      "created_at": "2026-09-18T11:56:21.676918Z",
+      "evidence_kind": "caller execution/evaluation records; not automatic independent truth",
+      "evaluation_requests": 0,
+      "outcomes": {
+        "pass": 0,
+        "fail": 0,
+        "unknown": 0
+      },
+      "comparisons": [],
+      "pooled_rate_note": "Overall success rate mixes base and candidate requests; it is not an improvement estimate.",
+      "sampling_slots": 2,
+      "unique_case_identity_count": 0,
+      "observed_success_rate": null,
+      "coverage": null,
+      "identification_bounds": null,
+      "known_task_ids": [
+        "leading-zeros"
+      ],
+      "episodes_with_unknown_task_id": 0,
+      "distinct_known_task_count": 1,
+      "episode_count": 2,
+      "candidate_counts": {
+        "accepted": 0,
+        "rejected": 0,
+        "unknown": 0
+      },
+      "usage": {
+        "unique_calls": 6,
+        "by_stage": {
+          "diagnose": 1,
+          "evaluate": 2,
+          "execute": 2,
+          "extract": 1
+        },
+        "known_cost_subtotals": {},
+        "missing_cost_calls": 6,
+        "complete_cost_totals": null,
+        "sum_run_time": 27.856199563015252,
+        "known_run_time_subtotal": 27.856199563015252,
+        "missing_time_calls": 0,
+        "tokens": {
+          "known_subtotals": {
+            "input_tokens": 11674,
+            "output_tokens": 1340,
+            "total_tokens": 13014
+          },
+          "known_calls": {
+            "input_tokens": 2,
+            "output_tokens": 2,
+            "total_tokens": 2
+          },
+          "missing_calls": {
+            "input_tokens": 4,
+            "output_tokens": 4,
+            "total_tokens": 4
+          },
+          "complete_totals": {
+            "input_tokens": null,
+            "output_tokens": null,
+            "total_tokens": null
+          }
+        },
+        "usage_ids": [
+          "modelcall_9f221bd6338c4af79382136317c5da27",
+          "modelcall_fbed4f3a163d4b0d96a830bb9775c6e3",
+          "usage_03545d24efa84bc9a8e16e78d296cd12",
+          "usage_8d5b3b66439e448889b90b0c0cdc4f8e",
+          "usage_9095bd9080f4486981e358308bb01b6d",
+          "usage_9881d4e8f1d140fb8b017e16c2139434"
+        ],
+        "unaccounted_evaluation_requests": 0,
+        "unaccounted_sampling_slots": 0,
+        "incomplete_sampling_slots": 0
+      },
+      "committed_release_ids": []
+    }
+  },
+  "learning_cycles": [
+    {
+      "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+      "candidate_ids": [],
+      "candidate_slots": [
+        {
+          "candidate_id": null,
+          "slot": 0,
+          "status": "not_started"
+        }
+      ],
+      "completed_at": "2026-09-18T11:56:21.675304Z",
+      "contract_source": {
+        "path": "docs/blueprint/project-contract.json",
+        "sha256": "fdbda52b2f230935096e6f1bcb275aae653225e338bd4af78e8ba9c466528a2a",
+        "version": "1.5.0"
+      },
+      "created_at": "2026-09-18T11:55:53.798769Z",
+      "cycle_id": "learning_8ca1756ee3bd48b7a721ba1008d4d35a",
+      "diagnosis_id": null,
+      "errors": [
+        {
+          "code": "stale_diagnosis_target",
+          "cycle_id": "learning_8ca1756ee3bd48b7a721ba1008d4d35a",
+          "details": {},
+          "error_id": "error_c5adecbedc8c489cb0febc2d6e9f8ae1",
+          "message": "Diagnosis target must match the current base Skill revision.",
+          "project_id": "csv-demo",
+          "stage": "diagnose_v1"
+        }
+      ],
+      "expected_generation": 0,
+      "experience_ids": [
+        "experience_1501ca427c9d43d2aa88240f32733f0a"
+      ],
+      "model_limits": {
+        "max_calls": 4,
+        "max_format_repairs": 1,
+        "max_input_chars": 80000,
+        "max_output_chars": 16000,
+        "max_output_tokens": 2048,
+        "max_total_input_chars": 200000
+      },
+      "policy": {
+        "candidate_count": 1,
+        "evaluation_scope": "local CSV repair; target and regression, no transfer claim",
+        "expanded_packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 38000,
+          "max_fragment_chars": 1200,
+          "token_budget": 24000
+        },
+        "max_asset_bytes": 20000,
+        "max_expansions": 2,
+        "max_experiences": 3,
+        "max_operations": 3,
+        "max_read_requests": 4,
+        "max_related_chars": 16000,
+        "max_related_episodes": 8,
+        "max_related_experiences": 4,
+        "max_skills": 20,
+        "packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 28000,
+          "max_fragment_chars": 1200,
+          "token_budget": 16000
+        }
+      },
+      "project_id": "csv-demo",
+      "reason": "Diagnosis target must match the current base Skill revision.",
+      "report_ids": [
+        "modelreport_1008aa9aea1b43c5b249d79ec5833aef",
+        "modelreport_772fefb1f00e4417b7d7f98dd69c8bd0"
+      ],
+      "requested_episode_ids": [
+        "episode_3ff8fd1abfe84e1ea5ea14a82c77a268",
+        "episode_ac0d730cfd93449fa328858ab58b9892"
+      ],
+      "source_episode_ids": [
+        "episode_3ff8fd1abfe84e1ea5ea14a82c77a268",
+        "episode_ac0d730cfd93449fa328858ab58b9892"
+      ],
+      "status": "error",
+      "usage_ids": [
+        "modelcall_fbed4f3a163d4b0d96a830bb9775c6e3",
+        "modelcall_9f221bd6338c4af79382136317c5da27"
+      ]
+    },
+    {
+      "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+      "candidate_ids": [],
+      "candidate_slots": [
+        {
+          "candidate_id": null,
+          "slot": 0,
+          "status": "not_started"
+        }
+      ],
+      "contract_source": {
+        "path": "docs/blueprint/project-contract.json",
+        "sha256": "fdbda52b2f230935096e6f1bcb275aae653225e338bd4af78e8ba9c466528a2a",
+        "version": "1.5.0"
+      },
+      "created_at": "2026-09-18T11:55:53.798769Z",
+      "cycle_id": "learning_8ca1756ee3bd48b7a721ba1008d4d35a",
+      "diagnosis_id": null,
+      "errors": [],
+      "expected_generation": 0,
+      "experience_ids": [],
+      "model_limits": {
+        "max_calls": 4,
+        "max_format_repairs": 1,
+        "max_input_chars": 80000,
+        "max_output_chars": 16000,
+        "max_output_tokens": 2048,
+        "max_total_input_chars": 200000
+      },
+      "policy": {
+        "candidate_count": 1,
+        "evaluation_scope": "local CSV repair; target and regression, no transfer claim",
+        "expanded_packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 38000,
+          "max_fragment_chars": 1200,
+          "token_budget": 24000
+        },
+        "max_asset_bytes": 20000,
+        "max_expansions": 2,
+        "max_experiences": 3,
+        "max_operations": 3,
+        "max_read_requests": 4,
+        "max_related_chars": 16000,
+        "max_related_episodes": 8,
+        "max_related_experiences": 4,
+        "max_skills": 20,
+        "packet": {
+          "max_catalog_refs": 8,
+          "max_chars": 28000,
+          "max_fragment_chars": 1200,
+          "token_budget": 16000
+        }
+      },
+      "project_id": "csv-demo",
+      "report_ids": [],
+      "requested_episode_ids": [
+        "episode_3ff8fd1abfe84e1ea5ea14a82c77a268",
+        "episode_ac0d730cfd93449fa328858ab58b9892"
+      ],
+      "source_episode_ids": [
+        "episode_3ff8fd1abfe84e1ea5ea14a82c77a268",
+        "episode_ac0d730cfd93449fa328858ab58b9892"
+      ],
+      "status": "planned",
+      "usage_ids": []
+    }
+  ],
+  "source_hashes": {
+    "src/memory_orchestrator/__init__.py": "34411261695cb1c20da720b9c792ae0bc4a8a7ff8278ce364cb24701221485d1",
+    "src/memory_orchestrator/candidates.py": "b951064335e93d0ed7d37ed430aea18c26b51ffbb65a8f7293be60ca7524a4fa",
+    "src/memory_orchestrator/context.py": "92238ff164765c6b02b544763cda0fe6da7470f24d3bd3a36712ec3ba291be51",
+    "src/memory_orchestrator/engine.py": "dadcdeabe5aae5abbb6386490724776204e6fb2aba512ed5991907674e67ae64",
+    "src/memory_orchestrator/evaluation.py": "85a24c1f2c6523b88e108941e572537e8d4085624e3b87fc1ec18774127e83f2",
+    "src/memory_orchestrator/evidence.py": "1e68e7ae11de20a921a7076eb4ab226662598cb0a7c36666eba8d368fa153a05",
+    "src/memory_orchestrator/learning.py": "687bfff97d704a99137a8b1f94fb7c185374695c853f2bcf5b82fb9d93c8a138",
+    "src/memory_orchestrator/model.py": "31b9d6f4d9554913632693d05d4ab1f8888cf3ad91d2f1f35e7698f12f7fcdb6",
+    "src/memory_orchestrator/prompts.json": "2fb74cd8d8729756e0c13c9533985a766948c1540ddbd82a71f70f57d76cdac3",
+    "src/memory_orchestrator/release.py": "cf0505f85a5f6102f532c6604c64a40fc42f08e8193ecc3d63f33ad1658b4405",
+    "src/memory_orchestrator/report.py": "a69a5a5d61417bef39ed836e5e93dfdbed0aaa00c733a69ff483687dca465e60",
+    "src/memory_orchestrator/sampling.py": "c4d2c888fa0ac4da027e0d71ee8ecbcf1eea706f22895a6670d2756a679313d1",
+    "src/memory_orchestrator/schemas.json": "768f6fa12d5c6d73658cf18ac0c2166153c9e4c5d503e6ff9be303dd1d5848db",
+    "src/memory_orchestrator/schemas.py": "ba1a4ccde874e80e1c1f4b80d1333913a75e5cfdb8bd485ff273d0d6246ebf1e",
+    "src/memory_orchestrator/store.py": "812ba61f6a966d4216197ad166b71a3d3502203cb127ebabd0ca2b384c832975"
+  },
+  "source_unchanged": true
+}

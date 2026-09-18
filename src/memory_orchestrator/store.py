@@ -20,7 +20,7 @@ from .schemas import DomainError, digest, json_bytes, new_id, now_iso, validate
 
 KINDS = frozenset({
     "episodes", "feedback", "contexts", "relations", "executions", "errors",
-    "run_groups", "runs", "group_receipts", "assessments", "evidence_packets",
+    "run_groups", "sampling_inputs", "runs", "group_receipts", "assessments", "evidence_packets",
     "experiences", "diagnoses", "learning_cycles", "evaluation_plans",
     "evaluation_inputs", "evaluation_returns", "evaluation_results", "validations",
     "selections", "releases", "usage", "reports", "candidates", "protocols",

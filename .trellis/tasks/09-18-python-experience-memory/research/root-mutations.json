@@ -1,0 +1,104 @@
+[
+  {
+    "target": "src/memory_orchestrator/context.py",
+    "binding": "declared-conflict",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/context.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/context.py",
+    "binding": "dependency-closure",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/context.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/context.py",
+    "binding": "whole-group-budget",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/context.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/candidates.py",
+    "binding": "operation-budget",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/candidates.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/candidates.py",
+    "binding": "skill-revision",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/candidates.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/candidates.py",
+    "binding": "target-scope",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/candidates.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/candidates.py",
+    "binding": "visible-evidence",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/candidates.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/candidates.py",
+    "binding": "generation",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/candidates.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/candidates.py",
+    "binding": "rule-anchor",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/candidates.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/sampling.py",
+    "binding": "callback-identity",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/sampling.py",
+    "binding": "complete-slots",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/sampling.py",
+    "binding": "feedback-visibility",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/sampling.py",
+    "binding": "terminal-cancellation",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/sampling.py",
+    "binding": "raw-parent-missing",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/sampling.py",
+    "binding": "input-persistence",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/sampling.py",
+    "binding": "trace-backed-use",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  },
+  {
+    "target": "src/memory_orchestrator/context.py",
+    "binding": "relation-consumer",
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/context.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+  }
+]

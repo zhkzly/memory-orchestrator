@@ -8,6 +8,7 @@ import unittest
 from memory_orchestrator.context import select_context
 from memory_orchestrator.schemas import DomainError
 from memory_orchestrator.store import Store
+from memory_orchestrator.sampling import _record_consumption
 
 
 def skill(skill_id, deps=(), conflicts=()):
@@ -81,6 +82,42 @@ class ContextTests(unittest.TestCase):
         self.assertNotIn('other fact', result['supplied_text'])
         self.assertEqual(before, self.store.facts('p'))
         self.assertEqual(result['consumption_observability'], 'unknown')
+
+    def test_trace_backed_co_use_can_affect_selection_but_delivery_alone_cannot(self):
+        skills = {s: skill(s) for s in ['a', 'b', 'c']}
+        snapshot = self.store.save_snapshot('p', skills, {})
+        manifest = select_context(self.store, self.task, {**self.policy, 'max_roots': 3}, explicit_snapshot=snapshot['snapshot_id'])
+        empty, _ = _record_consumption(self.store, 'p', manifest, {}, 'constructed_empty_run', learn_relations=True)
+        self.assertEqual(empty, [])
+        self.assertEqual(self.store.list('relations'), [])
+        output = {'events': [{'event_id': 'read-a', 'source_role': 'tool', 'kind': 'action'},
+                             {'event_id': 'read-c', 'source_role': 'tool', 'kind': 'action'}],
+                  'consumption_events': [{'skill_id': 'a', 'event_id': 'read-a'},
+                                         {'skill_id': 'c', 'event_id': 'read-c'}]}
+        self.store.put('executions', 'constructed_run', {'project_id': 'p', 'run_id': 'constructed_run', 'output': output})
+        observed, _ = _record_consumption(self.store, 'p', manifest, output, 'constructed_validation_run', learn_relations=False)
+        self.assertEqual(len(observed), 2)
+        self.assertEqual(self.store.list('relations'), [])
+        refs, gaps = _record_consumption(self.store, 'p', manifest, output, 'constructed_run', learn_relations=True)
+        self.assertEqual(len(refs), 2)
+        self.assertEqual(gaps, [])
+        result = select_context(self.store, self.task, self.policy, explicit_snapshot=snapshot['snapshot_id'])
+        self.assertEqual([x['skill_id'] for x in result['roots']], ['a', 'c'])
+        self.assertEqual(self.store.list('relations')[0]['evidence_level'], 'reported_by_execution_function')
+
+    def test_natural_language_scope_and_triggers_are_not_opaque_ids(self):
+        # Derived from live canary candidate 73cff8ff: valid model output that
+        # used "local CSV repair" rather than the caller's short family label.
+        generated = skill('csv')
+        generated['content']['scope']['task_family'] = 'local CSV repair'
+        generated['content']['triggers'] = ['A numeric-looking identifier in a declared string column must retain leading zeros.']
+        unrelated = skill('vehicle')
+        unrelated['content']['scope']['task_family'] = 'vehicle navigation'
+        unrelated['content']['triggers'] = ['navigate destination route']
+        snapshot = self.store.save_snapshot('p', {'csv': generated, 'vehicle': unrelated}, {})
+        result = select_context(self.store, {**self.task, 'task_family': 'csv'}, self.policy,
+                                explicit_snapshot=snapshot['snapshot_id'])
+        self.assertEqual([s['skill_id'] for s in result['selected_skills']], ['csv'])
 
 
 if __name__ == '__main__':

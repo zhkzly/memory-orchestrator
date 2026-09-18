@@ -20,10 +20,15 @@
   "subtasks": [],
   "children": [],
   "parent": "09-18-experience-learning-architecture",
-  "relatedFiles": [],
-  "notes": "2026-09-18 用户明确继续实施；起点 ffb1709，按 M1–M3 检查、审查和提交。",
+  "relatedFiles": [
+    "src/memory_orchestrator/",
+    "tests/",
+    "examples/memory_evolution/",
+    "docs/blueprint/"
+  ],
+  "notes": "M1–M3参考实现完成，126项测试及独立审查通过；真实模型候选未改善而拒绝，保留全部canary结果；无native/benchmark声明。",
   "meta": {
-    "contract_version": "1.4.1",
+    "contract_version": "1.5.0",
     "user_approved": "true",
     "language": "python",
     "entry": "python-api",

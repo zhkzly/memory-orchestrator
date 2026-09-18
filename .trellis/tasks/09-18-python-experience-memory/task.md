@@ -13,3 +13,7 @@
 - 2026-09-18：用户已允许实施，旧暂停条件由本次开工取代。阶段状态升为 v1.4.1，N01–N11 行为契约不变。
 - 选择：新文件先记录缺失行为的红测试，最小实现回绿后用官方 mutation_license.py 证明验收；工具要求目标已存在且基线绿，不能虚构实现前执照。备选是拿旧不相关文件领照，拒绝这种无效证据；若工具支持新文件前置验收，再调整顺序。
 - M1 交接复核：facts 返回分域字典而非列表，context 消费按实际 API 修正；ContextManifest 固定 task_ref=task_id 与独立 task_revision 两字段，store 逐项核对。检查表 1/2/3/9 的目标不变，失败位于 Code 的跨模块数据形状，不改反馈或准入规则。
+- 独立审查发现采样父引用、取消终态、输入回读三处缺口（对应检查2/3/8）。复现后补红测试：统一映射event ID/父引用，派生轨迹拒绝仍终结槽位；保留cancelled/budget_exhausted；先存sampling_inputs再执行，私有criteria不披露给execute。备选为删去父引用/把取消当失败，均违反现有契约，不采用。
+
+- 真实模型取证：首轮 asset_gap→NOOP；第二轮编造新Skill目标被stale_diagnosis_target拒绝，均未发布且记录费用。source v1.5将路由与空库targets=[]披露清楚；纯语义错误接入已有max_format_repairs/global max_calls，不新增无限重试，保留失败产物。
+- 反馈正文交接：实际public输入及评价器返回的evidence进入可切片的原文索引；私有criteria不直接投给execute或学习器。用量格式统一，非法provider测量保留raw与diagnostic并记未知。

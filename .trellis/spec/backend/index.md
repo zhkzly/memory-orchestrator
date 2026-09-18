@@ -1,6 +1,6 @@
 # CLI 与记忆核心开发规范
 
-适用范围：`src/`、`scripts/harness.mjs`、`schema.json`、`tools.md` 及产品自带的 `skills/memory-*/`。本项目是单仓库 TypeScript CLI/MCP 原型；当前没有 React/Vue 组件层。内嵌 review UI 位于 `src/cli.ts`，不据此创建独立前端架构。
+适用范围：`src/` 与相关产品文件。仓库保留 TypeScript CLI/MCP 原型，新的 Python 记忆演化核心位于 `src/memory_orchestrator/`，遵循 python-learning.md。当前没有 React/Vue 组件层；旧内嵌 review UI 位于 `src/cli.ts`，不据此创建独立前端架构。
 
 ## Pre-Development Checklist
 

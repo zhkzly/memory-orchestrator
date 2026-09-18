@@ -120,7 +120,7 @@ const projectLink=(p)=>"../../"+p.split("/").map(encodeURIComponent).join("/");
 const pretty=(value)=>esc(JSON.stringify(value,null,2));
 const responsibilityLabel=(value)=>({memory_system:"记忆系统",provided_function:"调用方提供的函数"})[value]||value;
 const adjustmentLabel=(value)=>({preserved:"保留",boundary_changed:"职责调整",parameter_unfixed:"参数待定",deferred:"暂缓"})[value]||value;
-const statusLabel=(value)=>({specified_not_implemented:"方案已明确 · 尚未实现",reference_design_unimplemented:"参考设计 · 尚未实现",design_aligned_product_paused:"文档已对齐 · 产品实现暂停",planned:"目标契约 · 尚未实现",partial:"部分实现 · 需核对证据",implemented:"实现标注 · 需核对证据"})[value]||value;
+const statusLabel=(value)=>({specified_not_implemented:"方案已明确 · 尚未实现",reference_design_unimplemented:"参考设计 · 尚未实现",design_aligned_product_paused:"文档已对齐 · 产品实现暂停",reference_core_implemented:"Python 参考实现 · 效果以实测为准",planned:"目标契约 · 尚未实现",partial:"部分实现 · 需核对证据",implemented:"实现标注 · 需核对证据"})[value]||value;
 const policyContent=(value)=>Array.isArray(value)?"<ul>"+list(value)+"</ul>":typeof value==="string"?"<p>"+esc(value)+"</p>":"<pre>"+pretty(value)+"</pre>";
 const paperLinks=(ids)=>ids.map((id)=>{const p=byId(c.paper_sources,id);return p?'<a href="'+esc(p.url)+'">'+esc(p.title)+"</a>":esc(id);}).join(" · ");
 function paperEntry(p){

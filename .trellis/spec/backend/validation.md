@@ -13,6 +13,10 @@
 
 ## 证据层级
 
+Python 核心使用 `PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_memory_*.py' -v` 和 `python3 -m compileall -q src/memory_orchestrator`。调用示例 `examples/memory_evolution/demo.py` 默认使用 scripted teacher 与真实本地 CSV 回调；这仍是构造集成检查。真实 SDK/学习调用另存配置、预算、源码 hash 和结果；NOOP、失败及未发布均保留。
+
+模型/回调的 tokens 只允许非负整数或 null；非法测量保存原文与诊断后记为缺失。报告按唯一 usage_id、阶段和币种统计，输入/输出/total token 分开，不重复求和；不完整计划不能宣称成本完整。final/validation 轨迹和共用统计不能流入学习。
+
 1. 形状/类型：字段、路径、协议是否匹配。
 2. 确定性执行：编译、脚本、测试和产物是否满足所检查的条件。
 3. 原生接入：指定客户端实际接受资产，并有可观测事件。
