@@ -7,10 +7,8 @@
 - [来源、阅读批注、源码对照与候选实验](viking://resources/ai-engineering/references/rsi-context-engineering-20260917/README.md)
 - [Foundry 与 Agent 自进化：六篇论文对照](foundry-rsi-paper-review-20260917.md)
 - [六篇公开论文阅读索引（OpenViking）](viking://resources/ai-engineering/references/rsi-context-engineering-20260917/six-paper-reading-index-20260917.md)
-- [现成 Coding Agent 的 Skill 演化：源码复现方案](skill-evolution-replication-20260917.md)
-- [复现方案的固定提交与源码索引](skill-evolution-sources-20260917.json)
-- [后续立项审查：动机、Gap 与三位 Agent 的质疑](../research/2026-09-17-agent-improvement/decision.md)（替代“以复现作为项目目标”的建议）
-- [最新工程项目提案：仓库级经验维护](../research/2026-09-17-agent-improvement/project-proposal.md)（按用户明确的真实问题与实验标准）
+- [Skill 演化论文的固定源码核查](skill-evolution-source-notes-20260917.md)
+- [固定提交与源码索引](skill-evolution-sources-20260917.json)
 - [从原生 Agent 轨迹到经验：数据与最小实现](../research/2026-09-17-agent-improvement/trajectory-learning-walkthrough.md)
 - [SkillSmith 独立论文全文精读](skillsmith-paper-independent-20260918.md)
 - [SkillSmith 源码深读与确定性样例核查](skillsmith-code-deep-review-20260918.md)
@@ -31,6 +29,8 @@
 - [Awesome RSI 文献导航](https://github.com/Prism-Shadow/awesome-rsi)
 
 ## 当前项目定位
+
+当前设计以 [项目总纲](../blueprint/index.html) 为准。过期的复现/先导立项执行提案已清理，Git 检查点 `db20db8` 保留原文。保留论文作为方法来源，不要求先证明项目必要性或发明新算法才开发。
 
 本项目已包含分层记忆、上下文构造、会话记录与记忆库维护。controller 的结构评分与提案安全检查不能替代 Agent 下游任务效果评测。
 

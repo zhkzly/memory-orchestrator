@@ -1,0 +1,11 @@
+{
+  "checkpoint_commit": "db20db8",
+  "removed_files": 25,
+  "protected_files_unchanged": 34,
+  "checked_navigation_files": 10,
+  "broken_local_links": [],
+  "future_task_status": "planning",
+  "implementation_allowed": false,
+  "legacy_rebuild_in_scope": false,
+  "product_code_changes": false
+}

@@ -1,0 +1,131 @@
+{
+  "checkpoint_commit": "db20db8",
+  "removed": [
+    {
+      "path": "pyproject.toml",
+      "reason": "未采用的打包草稿，无 Python 产品包",
+      "sha256": "cbbcc86dbbb9f729d6b2ef010ced8052e421b9af1f67d3c748efad45a3196c85"
+    },
+    {
+      "path": "tests/test_engine.py",
+      "reason": "提前创建且依赖尚不存在 API 的测试草稿",
+      "sha256": "7ab9c5684b72812aed960eae937a8eb2130cc5745e55f92191874a47357c0c08"
+    },
+    {
+      "path": "tests/test_learning.py",
+      "reason": "提前创建且依赖尚不存在 API 的测试草稿",
+      "sha256": "cc3280d1c2785588b825436ebcf236641dce689aa807c0c40e324522321a5c6d"
+    },
+    {
+      "path": "tests/test_evaluation.py",
+      "reason": "含未确认评价默认值的测试草稿",
+      "sha256": "678b6e95e2cc4b105624f3fd8806c42fba736878a5d8b70b4026392bd9b3dcc2"
+    },
+    {
+      "path": ".trellis/tasks/09-18-python-experience-memory/evaluation-stage.md",
+      "reason": "中断实现 worker 的旧执行计划",
+      "sha256": "9cbddbdd74e270eeb83aaadee271e77271dc5a9c9336ef0ff1fe0df1353ad379"
+    },
+    {
+      "path": ".trellis/tasks/09-18-python-experience-memory/research/learning-plan.md",
+      "reason": "中断实现 worker 的旧执行计划",
+      "sha256": "912a59b4d9aadecd25a7b7f93b12ec7784dd69cfb0516b9bc6a736e10311c201"
+    },
+    {
+      "path": "docs/references/skill-evolution-replication-20260917.md",
+      "reason": "过期复现执行提案；源码事实已提取保留",
+      "sha256": "a61804f3f1f45d44f85110cad620cbf089dc7e98368f0f3b34ca2fabca1f86c6"
+    },
+    {
+      "path": "docs/diagrams/agent-learning-workflow.json",
+      "reason": "已被同源 v1.4 HTML 替代的旧流程图/配套检查产物",
+      "sha256": "338610b56c633f1da5b5790a40cd6cc33c4e181ddb5ce3110c3e7c481f4fb1f6"
+    },
+    {
+      "path": "docs/diagrams/agent-learning-workflow-v2.json",
+      "reason": "已被同源 v1.4 HTML 替代的旧流程图/配套检查产物",
+      "sha256": "5f782ef45141a6f1902382387f2cd99baccd01bab00de4b78d07553bc62ade1b"
+    },
+    {
+      "path": "docs/diagrams/agent-learning-workflow.visual-check.1440x900.dark.png",
+      "reason": "已被同源 v1.4 HTML 替代的旧流程图/配套检查产物",
+      "sha256": "5f13a8c54dc2d7beea754389a69aedbcc0b0e04e6765483cb484a9092f3f0d1a"
+    },
+    {
+      "path": "docs/diagrams/agent-learning-workflow.visual-check.json",
+      "reason": "已被同源 v1.4 HTML 替代的旧流程图/配套检查产物",
+      "sha256": "04913ec5a15923240fee37a74b09daca5f12f90465814d5ce61902a5c18923a5"
+    },
+    {
+      "path": "docs/diagrams/agent-learning-workflow.html",
+      "reason": "已被同源 v1.4 HTML 替代的旧流程图/配套检查产物",
+      "sha256": "a08319ccfc7ecaeaf0b73d21782f9352e716fa837aa664ed634bec211ac1c409"
+    },
+    {
+      "path": "docs/diagrams/agent-learning-workflow.delivery.json",
+      "reason": "已被同源 v1.4 HTML 替代的旧流程图/配套检查产物",
+      "sha256": "1dfabb2f58a7bc5a4ed5c5756c3c63aec9edbfd32625de8afb2dc5129434c3dd"
+    },
+    {
+      "path": "docs/diagrams/agent-learning-workflow.visual-check.2048x1320.light.png",
+      "reason": "已被同源 v1.4 HTML 替代的旧流程图/配套检查产物",
+      "sha256": "888efdea0e37221e4c067640d9ff30a062b148aa8b56a586457b3165ce817b7c"
+    },
+    {
+      "path": "docs/diagrams/agent-learning-workflow.visual-check.2048x1320.dark.png",
+      "reason": "已被同源 v1.4 HTML 替代的旧流程图/配套检查产物",
+      "sha256": "d4ed500ed62014746fa4a7b4fbd6cadf536a8f557a7ff188001c7e6f59fc11b6"
+    },
+    {
+      "path": "docs/diagrams/agent-learning-workflow.visual-check.html",
+      "reason": "已被同源 v1.4 HTML 替代的旧流程图/配套检查产物",
+      "sha256": "c53d0f24bb869519f275bffd69c2f95d0b981bcd85ea07fb12fca2f2684459e5"
+    },
+    {
+      "path": "docs/diagrams/agent-learning-workflow.visual-check.1440x900.light.png",
+      "reason": "已被同源 v1.4 HTML 替代的旧流程图/配套检查产物",
+      "sha256": "72d5e5c2e6d285cd0fe8b18615d4fa04265fb5223f279652575e64b7fbe4a99e"
+    },
+    {
+      "path": "docs/research/2026-09-17-agent-improvement/candidate-screening.md",
+      "reason": "已被用户否定或后续总纲替代的立项/试点计划及配套审查；Git 历史保留",
+      "sha256": "db38351954e607cd829dadb68e802d0bf2fe80e12bc330417cc2817e59d27bf9"
+    },
+    {
+      "path": "docs/research/2026-09-17-agent-improvement/checklist.md",
+      "reason": "已被用户否定或后续总纲替代的立项/试点计划及配套审查；Git 历史保留",
+      "sha256": "70c36769e20c980778190130a40f8077c24e19edfe4240fe632be40ccd0b6d06"
+    },
+    {
+      "path": "docs/research/2026-09-17-agent-improvement/decision.md",
+      "reason": "已被用户否定或后续总纲替代的立项/试点计划及配套审查；Git 历史保留",
+      "sha256": "553bfc9491ed0ce80b6f5966e61b554f7784e07223449db3afa5943236d152ae"
+    },
+    {
+      "path": "docs/research/2026-09-17-agent-improvement/novelty-review.md",
+      "reason": "已被用户否定或后续总纲替代的立项/试点计划及配套审查；Git 历史保留",
+      "sha256": "cfc5d47873a97496c90c9ba131266b16d95bbb7a385e04d6ffe73070d3fe3e8c"
+    },
+    {
+      "path": "docs/research/2026-09-17-agent-improvement/product-review.md",
+      "reason": "已被用户否定或后续总纲替代的立项/试点计划及配套审查；Git 历史保留",
+      "sha256": "082440f020b81e7b1656bb3cc187c24d7e98279d1ac8ebb71295b4953ab57a9d"
+    },
+    {
+      "path": "docs/research/2026-09-17-agent-improvement/project-proposal.md",
+      "reason": "已被用户否定或后续总纲替代的立项/试点计划及配套审查；Git 历史保留",
+      "sha256": "843001464c673ab3111928e49d3060391af92cad1413ac23aac7500da09bb472"
+    },
+    {
+      "path": "docs/research/2026-09-17-agent-improvement/task.md",
+      "reason": "已被用户否定或后续总纲替代的立项/试点计划及配套审查；Git 历史保留",
+      "sha256": "6826f57a6394e68396ead58d7e828acd5e2b28f1fe8c297a270dd2a3c5ec66aa"
+    },
+    {
+      "path": "docs/research/2026-09-17-agent-improvement/validity-review.md",
+      "reason": "已被用户否定或后续总纲替代的立项/试点计划及配套审查；Git 历史保留",
+      "sha256": "3ee27b518fec77c5d709c9a22287baf8871482aa7097d40a4c0dc408cf26a810"
+    }
+  ],
+  "note": "旧 TS、当前总纲、用户数据未删除；可 git show db20db8:<path> 回查。"
+}

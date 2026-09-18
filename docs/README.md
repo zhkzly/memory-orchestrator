@@ -17,10 +17,11 @@
 ## 按需资料
 
 - [论文与源码参考](references/README.md)：背景证据，不自动覆盖当前总纲。
-- [历史研究与方案](research/2026-09-17-agent-improvement/)：保留探索过程，不能从早期建议重新推断当前目标。
+- [轨迹与动态目标研究材料](research/2026-09-17-agent-improvement/)：保留当前仍引用的数据说明和研究依据。
 - [总纲收敛前快照](history/2026-09-18-pre-blueprint/README.md)：原设计字节与哈希。
 - [总纲 v1.0 来源快照](history/2026-09-18-blueprint-v1/project-contract.json)：节点细化前的结构化设计。
 - [本轮对齐前快照](history/2026-09-18-before-evolution-alignment/manifest.json)：保留修订前的总纲和相互冲突的任务材料，可追溯此次调整。
-- [旧流程图](diagrams/agent-learning-workflow.html)：历史概览；当前节点和边以总纲为准。
+
+旧流程图、过期立项/复现执行提案和未采用的 Python 测试草稿已清理；原文可从 Git 检查点 `db20db8` 回查。旧 TS 产品仍保留。当前清理不包含迁移、重建旧 CLI/MCP 或恢复产品实现。
 
 生成页面和摘要：`node docs/blueprint/build.mjs render`；检查同步：`node docs/blueprint/build.mjs verify`。

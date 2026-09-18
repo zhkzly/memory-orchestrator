@@ -20,7 +20,8 @@
   "subtasks": [],
   "children": [
     "09-18-python-experience-memory",
-    "09-18-evolution-contract-alignment"
+    "09-18-evolution-contract-alignment",
+    "09-18-cleanup-obsolete-drafts"
   ],
   "parent": null,
   "relatedFiles": [
@@ -28,7 +29,7 @@
     ".trellis/spec/guides/system-boundaries.md",
     "docs/research/2026-09-17-agent-improvement/"
   ],
-  "notes": "原演化要求保留，v1.4 对齐当前范围/职责/评价协议；当前只处理文档，产品暂停。",
+  "notes": "v1.4 完整演化设计保留；当前活动任务只清理过期草稿并提交，旧 TS 保留，后续核心实现暂停，不包含旧接口重建。",
   "meta": {
     "phase": "architecture",
     "implementation_started": "false",

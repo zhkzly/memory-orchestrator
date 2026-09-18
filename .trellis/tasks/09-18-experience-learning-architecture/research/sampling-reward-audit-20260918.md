@@ -292,7 +292,7 @@ HTML 应展示契约和预期执行顺序，不能用可点的按钮暗示产品
 - src/core.ts:209 — 原型 evidence 条数验证，不是任务收益判分。
 - src/controller.ts:550 — 原型维护风险结构分，不是候选版本回归。
 - docs/references/feedback-selfjudge-comparison-20260918.md — 已有 ReasoningBank 反馈数据流与 MaTTS 阅读背景。
-- docs/references/skill-evolution-replication-20260917.md — 冻结源码索引；其中“先复现/先验必要性”路线已被用户后续要求取代，仅引用源码事实。
+- docs/references/skill-evolution-source-notes-20260917.md — 保留的固定源码事实；原过期执行提案见 Git 检查点 db20db8。
 - docs/references/skillsmith-code-deep-review-20260918.md — 既有候选检查和平均分回归边界。
 
 ## Related specs
