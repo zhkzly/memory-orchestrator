@@ -135,7 +135,7 @@ function validate(c, checkPaths = true) {
     else {
       textRequired(delivery, ["scope", "source"], "runtime.current_delivery");
       for (const field of ["in", "out", "dependencies"]) textList(delivery[field], "runtime.current_delivery." + field, "E_CURRENT_DELIVERY", field !== "dependencies");
-      if (delivery.implementation_allowed !== false) add("E_IMPLEMENTATION_PERMISSION", "runtime.current_delivery.implementation_allowed", "This document-alignment scope keeps product implementation paused: expected false.");
+      if (typeof delivery.implementation_allowed !== "boolean") add("E_IMPLEMENTATION_PERMISSION", "runtime.current_delivery.implementation_allowed", "Declare implementation permission explicitly as a boolean for the current scope.");
     }
     if (!Array.isArray(runtime.adjustments) || !runtime.adjustments.length) add("E_ADJUSTMENTS", "runtime.adjustments", "Record preserved capabilities and explicit boundary or parameter changes.");
     else {
@@ -225,7 +225,7 @@ function contextMarkdown(c, digest) {
     "权威源：docs/blueprint/project-contract.json；阅读视图：docs/blueprint/index.html。", "",
     "## 本轮范围与工作许可", "",
     delivery.scope, "",
-    "**产品实现暂停：implementation_allowed=" + delivery.implementation_allowed + "。当前仅做文档对齐。**", "",
+    "**" + (delivery.implementation_allowed ? "产品实现已获授权" : "产品实现暂停") + "：implementation_allowed=" + delivery.implementation_allowed + "。是否已完成以节点证据为准。**", "",
     "本轮保留：", ...delivery.in.map((item) => "- " + item), "",
     "暂缓／不做：", ...delivery.out.map((item) => "- " + item), "",
     "需要调用方提供：", ...delivery.dependencies.map((item) => "- " + item), "",
@@ -297,7 +297,7 @@ function render(c, raw) {
   const title = escapeHtml(c.meta.title);
   const delivery = c.runtime.current_delivery;
   const items = (values) => "<ul>" + values.map((value) => "<li>" + escapeHtml(value) + "</li>").join("") + "</ul>";
-  const deliveryNotice = '<strong>本轮范围 · 仅文档对齐</strong><p>' + escapeHtml(delivery.scope) + '</p><p class="warning">产品实现暂停 · implementation_allowed=' + escapeHtml(delivery.implementation_allowed) + '</p><details><summary>保留能力、暂缓事项与调用方职责</summary><h3>本轮保留</h3>' + items(delivery.in) + '<h3>暂缓／不做</h3>' + items(delivery.out) + '<h3>需要调用方提供</h3>' + items(delivery.dependencies) + '<p class="small">范围来源：' + escapeHtml(delivery.source) + '</p></details>';
+  const deliveryNotice = '<strong>本轮范围</strong><p>' + escapeHtml(delivery.scope) + '</p><p class="warning">' + (delivery.implementation_allowed ? '产品实现已获授权' : '产品实现暂停') + ' · implementation_allowed=' + escapeHtml(delivery.implementation_allowed) + '</p><details><summary>保留能力、暂缓事项与调用方职责</summary><h3>本轮保留</h3>' + items(delivery.in) + '<h3>暂缓／不做</h3>' + items(delivery.out) + '<h3>需要调用方提供</h3>' + items(delivery.dependencies) + '<p class="small">范围来源：' + escapeHtml(delivery.source) + '</p></details>';
   const html = readFileSync(template, "utf8").replaceAll("__PROJECT_TITLE__", () => title).replaceAll("__SOURCE_HASH__", () => digest).replaceAll("__CURRENT_DELIVERY_NOTICE__", () => deliveryNotice).replace("__CONTRACT_DATA__", () => json);
   return { html, context: contextMarkdown(c, digest), digest };
 }
@@ -327,7 +327,7 @@ function selfTest(c) {
     ["missing selection publication guard", "E_PUBLICATION_GUARD", (d) => { d.policies.publication_guards = guards.filter((g) => g !== "selection_matches"); }],
     ["missing selection activation guard", "E_PUBLICATION_GUARD", (d) => { d.lifecycle.transitions.find((t) => t.from === "validated" && t.to === "active").guards = guards.filter((g) => g !== "selection_matches"); }],
     ["missing current scope", "E_CURRENT_DELIVERY", (d) => { delete d.runtime.current_delivery; }],
-    ["contradictory implementation permission", "E_IMPLEMENTATION_PERMISSION", (d) => { d.runtime.current_delivery.implementation_allowed = true; }],
+    ["invalid implementation permission type", "E_IMPLEMENTATION_PERMISSION", (d) => { d.runtime.current_delivery.implementation_allowed = "true"; }],
     ["missing implementation permission", "E_IMPLEMENTATION_PERMISSION", (d) => { delete d.runtime.current_delivery.implementation_allowed; }],
     ["missing scope dependencies", "E_CURRENT_DELIVERY", (d) => { delete d.runtime.current_delivery.dependencies; }],
     ["concrete adapter confused with responsibility", "E_NODE_RESPONSIBILITY", (d) => { d.nodes[0].responsibility.owner = "codex_adapter"; }],
@@ -351,8 +351,14 @@ function selfTest(c) {
   const withoutReferenceNumbers = structuredClone(c);
   withoutReferenceNumbers.runtime.reference_profile = { label: c.runtime.reference_profile.label, normative: false };
   const views = [
-    { name: "context includes current scope and paused permission", passed: markdown.includes(delivery.scope) && markdown.includes("implementation_allowed=false") },
-    { name: "HTML overview and runtime both include visible current scope", passed: ["overview-delivery", "runtime-delivery"].every((id) => rendered.html.includes('id="' + id + '"><strong>本轮范围 · 仅文档对齐</strong><p>' + escapeHtml(delivery.scope))) && !rendered.html.includes("__CURRENT_DELIVERY_NOTICE__") },
+    { name: "context includes current scope and actual permission", passed: markdown.includes(delivery.scope) && markdown.includes("implementation_allowed=" + delivery.implementation_allowed) },
+    { name: "HTML overview and runtime both include visible current scope", passed: ["overview-delivery", "runtime-delivery"].every((id) => rendered.html.includes('id="' + id + '"><strong>本轮范围</strong><p>' + escapeHtml(delivery.scope))) && !rendered.html.includes("__CURRENT_DELIVERY_NOTICE__") },
+    { name: "both authorized and paused scopes validate and render truthfully", passed: [true, false].every((allowed) => {
+      const changed = structuredClone(c); changed.runtime.current_delivery.implementation_allowed = allowed;
+      const view = render(changed, JSON.stringify(changed));
+      const label = allowed ? "产品实现已获授权" : "产品实现暂停";
+      return validate(changed, false).length === 0 && view.context.includes(label + "：implementation_allowed=" + allowed) && view.html.includes(label + " · implementation_allowed=" + allowed);
+    }) },
     { name: "every compact node includes current scope and evaluation policy", passed: c.nodes.every((n) => {
       const bundle = nodeBundle(c, n);
       return JSON.stringify(bundle.runtime.current_delivery) === JSON.stringify(delivery) && JSON.stringify(bundle.runtime.evaluation_policy) === JSON.stringify(c.runtime.evaluation_policy);

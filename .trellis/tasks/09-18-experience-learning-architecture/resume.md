@@ -1,10 +1,7 @@
 # 架构恢复检查点
 
-- contract_version：1.4.0
-- 当前状态：演化契约文档对齐及过期草稿清理均已完成；产品 Python 实现尚未启动。
-- 用户要求：保留完整演化能力，暂缓 CLI/MCP/具体客户端，评价形式与准入协议分开。
-- 文档源：docs/blueprint/project-contract.json；HTML/context/node 均输出当前范围与暂停状态。
-- 已完成文档任务：.trellis/tasks/09-18-evolution-contract-alignment；清理任务在 archive/2026-09/09-18-cleanup-obsolete-drafts。
-- 产品状态与未验收草稿：.trellis/tasks/09-18-python-experience-memory/resume.md。
-- 不从旧状态或自动记忆恢复代码，不将结构检查当产品/效果完成。
-- 后续实施入口：../09-18-python-experience-memory/implement.md；先同步开工阶段状态和文档工具，再依次交付 M1–M3，不重做架构。
+- contract_version：1.4.1；设计保持既定 N01–N11；用户已明确继续 Python 核心实施。
+- 文档对齐和清理已完成；当前活动子任务：.trellis/tasks/09-18-python-experience-memory。
+- 按该子任务 implement.md 执行 M1–M3，实际进度与检查见其 resume.md。
+- 总纲 current_delivery 已允许实现；CLI/MCP/具体客户端/目录同步继续暂缓；旧 TS 和用户数据保留。
+- 所有节点完成情况依赖实际证据，结构检查与构造用例不能代替学习效果。

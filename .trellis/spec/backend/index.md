@@ -18,10 +18,11 @@
 | [contracts-and-storage.md](contracts-and-storage.md) | TypeScript/Zod/持久化契约与兼容边界 |
 | [validation.md](validation.md) | 当前检查入口与证据层级 |
 | [project-contract.md](project-contract.md) | 总纲来源、生成命令、文档一致性与恢复规则 |
+| [python-learning.md](python-learning.md) | 当前 Python 记忆演化核心的存储、模型与验证规范 |
 
 ## Quality Check
 
 - 当前行为有源代码引用，目标行为有任务设计引用。
 - 数据契约变更覆盖所有消费者；未执行的检查不声明通过。
 - 结构评分、检索次数和模型评价不包装成真实任务收益。
-- 本轮 Trellis 接入与架构整理不修改产品实现或依赖。
+- 产品实施范围以当前任务与总纲为准；旧 TS 和新的 Python 核心分别遵守对应规范。

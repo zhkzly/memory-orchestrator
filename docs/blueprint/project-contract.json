@@ -2,15 +2,15 @@
   "schema_version": 1,
   "meta": {
     "id": "memory-orchestrator-project-contract",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "updated": "2026-09-18",
     "title": "Agent 经验学习 · 项目总纲",
-    "status": "aligned-design-review",
-    "implementation_status": "Product implementation paused; this revision changes documents only",
+    "status": "implementation-in-progress",
+    "implementation_status": "Python memory core M1-M3 authorized; implementation evidence tracked per node",
     "language": "zh-CN",
     "authority": "当前目标架构的唯一结构化来源；HTML 由此生成。用户明确的新要求可以修订本文件。",
     "purpose": "参考已有论文与源码，从现成 Agent 的执行经历积累经验，生成和演化 Skill，并以版本化方式检查、发布和复用。",
-    "revision_source": "用户批准按保留完整演化、暂缓客户端接入、分开评价形式与规则的方案修改文档；未授权恢复产品代码。"
+    "revision_source": "用户在实现就绪说明后明确“继续吧”，启动既定 M1–M3；不改变节点职责和评价规则。"
   },
   "scope": {
     "in": [
@@ -1702,8 +1702,8 @@
   "continuity": {
     "rule": "继续任务先恢复当前目标、总纲版本、节点范围和检查点；新消息默认在当前任务上澄清或调整，除非用户明确替换目标。",
     "read_order": [
-      "当前交付范围与 implementation_allowed（本轮 false）",
-      "当前文档任务 resume.md；产品任务仍暂停",
+      "当前交付范围、implementation_allowed 与节点实际证据",
+      "当前 Python 实施任务 resume.md 与 M1–M3 检查点",
       "对应 Q/N 的职责、输入输出和评价协议",
       "必要的 schema/示例；历史参考配置不自动生效",
       "按需读取原论文及历史，不用旧 in_progress 字段恢复代码"
@@ -1839,6 +1839,11 @@
       "version": "1.4.0",
       "date": "2026-09-18",
       "reason": "用户批准修正接入讨论引入的连带变更：完整演化保留，具体客户端暂缓，执行/评价调用边界与准入规则分开；同步所有阅读入口及暂停状态。"
+    },
+    {
+      "version": "1.4.1",
+      "date": "2026-09-18",
+      "reason": "用户明确启动 Python 记忆核心实施；同步阶段状态和生成器，N01–N11 的演化职责及协议规则保持不变。"
     }
   ],
   "deprecations": [],
@@ -2451,7 +2456,7 @@
     }
   ],
   "runtime": {
-    "status": "design_aligned_product_paused",
+    "status": "implementation_in_progress",
     "topology": "Python 记忆演化系统组织经历、经验与 Skill 的完整更新循环；具体任务执行和评价由明确的 Python 函数提供。已有经历可直接导入。CLI/MCP/原生客户端是后续访问或采集适配，不决定演化职责。",
     "first_backend": "当前不指定客户端后端。直接 Python 调用方可以提交已有经历；需要新采样或重测时提供 execute/evaluate 函数，并声明实际可观察证据与环境限制。",
     "loop": [
@@ -2687,7 +2692,7 @@
       ]
     },
     "current_delivery": {
-      "scope": "文档对齐：保留完整记忆演化；具体客户端接入暂缓，产品实现暂停",
+      "scope": "Python 记忆演化核心实施：按 M1–M3 交付，具体客户端接入暂缓",
       "in": [
         "普通事实记忆",
         "已有经历导入",
@@ -2698,21 +2703,21 @@
         "比较协议、版本选择、发布回退、复用与成本"
       ],
       "out": [
-        "本轮产品代码",
         "Codex/Claude 具体适配",
         "记忆操作 CLI",
         "MCP/插件",
         "原生会话自动采集",
         "项目目录 Skill 同步",
-        "未授权删除或回滚旧 TS/测试草稿"
+        "旧 TS 重建、迁移或删除",
+        "未声明预算的 benchmark 与推送"
       ],
       "dependencies": [
         "调用方提供实际任务执行函数；系统决定采样计划并完整记录请求和结果。",
         "调用方提供真实评分依据或评价函数；系统固定比较对象/协议、汇总结果、决定采用。",
         "已有经历可不具备源快照/上下文/反馈；缺失影响结论，不阻止记录。"
       ],
-      "implementation_allowed": false,
-      "source": "本轮用户“可以的，就这样改吧”指前述文档修订，产品实现继续暂停。"
+      "implementation_allowed": true,
+      "source": "2026-09-18 用户在就绪核查后明确“继续吧”；沿用已审查的记忆核心范围。"
     },
     "adjustments": [
       {

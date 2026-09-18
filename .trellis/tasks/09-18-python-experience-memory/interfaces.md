@@ -1,6 +1,6 @@
-# v1.4 数据交接索引（非已实现 API）
+# v1.4.1 数据交接索引（具体 API 以实施证据为准）
 
-产品代码仍暂停。本页只连接源契约，字段、模型模板和 Schema 均在 docs/blueprint/project-contract.json；不维护另一套 Python 默认签名。
+产品实施已启动。本页连接源契约，字段、模型模板和 Schema 均在 docs/blueprint/project-contract.json；不维护另一套 Python 默认签名。
 
 | 环节 | 当前交接 | 缺失/责任规则 |
 | --- | --- | --- |
