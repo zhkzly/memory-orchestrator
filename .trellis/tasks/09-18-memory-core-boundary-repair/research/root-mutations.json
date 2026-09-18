@@ -1,0 +1,42 @@
+[
+  {
+    "name": "embedded result schema",
+    "target": "src/memory_orchestrator/schemas.json",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_contract -v",
+    "mutation": "python3 -c 'import json; from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/schemas.json'\"'\"'); d=json.loads(p.read_text()); del d['\"'\"'schemas'\"'\"']['\"'\"'ValidationRecord'\"'\"']['\"'\"'properties'\"'\"']['\"'\"'results'\"'\"']['\"'\"'items'\"'\"']['\"'\"'properties'\"'\"']['\"'\"'execution_status'\"'\"']; p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\"'\"'\\n'\"'\"')'",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_contract -v",
+      "--target",
+      "src/memory_orchestrator/schemas.json",
+      "--mutate",
+      "python3 -c 'import json; from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/schemas.json'\"'\"'); d=json.loads(p.read_text()); del d['\"'\"'schemas'\"'\"']['\"'\"'ValidationRecord'\"'\"']['\"'\"'properties'\"'\"']['\"'\"'results'\"'\"']['\"'\"'items'\"'\"']['\"'\"'properties'\"'\"']['\"'\"'execution_status'\"'\"']; p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\"'\"'\\n'\"'\"')'"
+    ],
+    "exit_code": 0,
+    "output": "✅ 执照发放:src/memory_orchestrator/schemas.json 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "before_sha256": "8a46f4bebda00c3b87d810d3c1132c73f727fbc8195f1f4aa9ddd08791ead731",
+    "after_sha256": "8a46f4bebda00c3b87d810d3c1132c73f727fbc8195f1f4aa9ddd08791ead731"
+  },
+  {
+    "name": "coverage admission",
+    "target": "docs/blueprint/build.mjs",
+    "tests": "node docs/blueprint/build.mjs self-test",
+    "mutation": "python3 -c 'from pathlib import Path; p=Path('\"'\"'docs/blueprint/build.mjs'\"'\"'); s=p.read_text(); old='\"'\"'const coverage = (item) => {'\"'\"'; assert old in s; p.write_text(s.replace(old,old+'\"'\"' return;'\"'\"',1))'",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "node docs/blueprint/build.mjs self-test",
+      "--target",
+      "docs/blueprint/build.mjs",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'docs/blueprint/build.mjs'\"'\"'); s=p.read_text(); old='\"'\"'const coverage = (item) => {'\"'\"'; assert old in s; p.write_text(s.replace(old,old+'\"'\"' return;'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "output": "✅ 执照发放:docs/blueprint/build.mjs 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "before_sha256": "a90115f744d0ea1d1cae95a603ef17a5579d618ed561dfe2fb1f18296964d1d9",
+    "after_sha256": "a90115f744d0ea1d1cae95a603ef17a5579d618ed561dfe2fb1f18296964d1d9"
+  }
+]

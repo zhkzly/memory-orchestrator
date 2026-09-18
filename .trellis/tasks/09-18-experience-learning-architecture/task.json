@@ -2,7 +2,7 @@
   "id": "experience-learning-architecture",
   "name": "experience-learning-architecture",
   "title": "Agent 经验学习系统：架构与设计边界",
-  "description": "明确现成 Agent 接入、执行证据、经验与 Skill 更新、版本发布及实验评价的职责和边界；本任务先完成设计，不启动产品实现。",
+  "description": "架构父任务：维护经验与 Skill 演化的目标、职责和逐项覆盖；已授权的 Python 子任务落实实现及修复，具体客户端接入与未测效果另列。",
   "status": "planning",
   "dev_type": "docs",
   "scope": "architecture",
@@ -21,7 +21,8 @@
   "children": [
     "09-18-python-experience-memory",
     "09-18-evolution-contract-alignment",
-    "09-18-cleanup-obsolete-drafts"
+    "09-18-cleanup-obsolete-drafts",
+    "09-18-memory-core-boundary-repair"
   ],
   "parent": null,
   "relatedFiles": [
@@ -29,12 +30,12 @@
     ".trellis/spec/guides/system-boundaries.md",
     "docs/research/2026-09-17-agent-improvement/"
   ],
-  "notes": "Python子任务M1–M3参考实现完成；126行为测试，原生接入/benchmark/浏览器视觉检查未声明完成；旧TS保留。",
+  "notes": "M1–M3交付Python主线；审查后的共享边界修复与最新验收见resume.md。总纲v1.6逐项保留待实现能力和效果边界；父任务不因子任务归档而声称全部完成。旧TS保留。",
   "meta": {
     "phase": "architecture",
     "implementation_started": "true",
     "delivery_intent": "reference-implementation",
-    "contract_version": "1.5.0",
+    "contract_version": "1.6.0",
     "contract_source": "docs/blueprint/project-contract.json"
   }
 }

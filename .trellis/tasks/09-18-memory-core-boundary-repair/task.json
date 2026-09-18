@@ -1,0 +1,32 @@
+{
+  "id": "memory-core-boundary-repair",
+  "name": "memory-core-boundary-repair",
+  "title": "修正记忆演化的事实边界、证据交接与统计粒度",
+  "description": "基于6a9a1db审查，从共享根因修复已知关联、组闭合、模型证据结构和原始账本视图；同步完成度标注，不增加客户端或通用框架。",
+  "status": "in_progress",
+  "dev_type": "backend",
+  "scope": "memory-core-boundary-repair",
+  "package": null,
+  "priority": "P2",
+  "creator": "kelong.zx",
+  "assignee": "kelong.zx",
+  "createdAt": "2026-09-18",
+  "completedAt": null,
+  "branch": "codex/vault-controller-maintenance",
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "09-18-experience-learning-architecture",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "dev_type": "backend",
+    "user_approved": "true",
+    "implementation_allowed": "true",
+    "contract_baseline": "1.5.0",
+    "contract_version": "1.6.0"
+  }
+}

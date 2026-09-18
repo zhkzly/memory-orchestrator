@@ -2,7 +2,10 @@
 import copy
 import json
 import tempfile
+import threading
+import time
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 
 from memory_orchestrator.store import Store
 from memory_orchestrator.schemas import DomainError
@@ -11,7 +14,7 @@ from memory_orchestrator.report import report
 from memory_orchestrator.learning import find_related, learn
 from memory_orchestrator.sampling import sample_tasks
 from memory_orchestrator.evidence import build_packet, expand_packet, index_episodes, validate_citations
-from test_memory_evidence import EXAMPLES, csv_episodes, limits as packet_limits
+from test_memory_evidence import EXAMPLES, csv_episodes, episode, event, limits as packet_limits
 from test_memory_model import FakeCall, response, limits as model_limits
 
 
@@ -56,6 +59,94 @@ class LearningTests(unittest.TestCase):
     def model(self, values):
         call = FakeCall([response(v) if not isinstance(v, Exception) else v for v in values])
         return StructuredModel(call, limits=model_limits(max_calls=12)), call
+
+    def visible_packet(self, ep):
+        """Decode the actual StructuredModel transport message, not the index."""
+        with tempfile.TemporaryDirectory() as root:
+            store = Store(root)
+            store.add_episode(ep)
+            model, call = self.model([EXAMPLES["abstain"]])
+            result = learn(store, [ep["episode_id"]], model, policy=policy())
+            self.assertEqual(result["status"], "abstained")
+            self.assertEqual(len(call.calls), 1)
+            body = call.calls[0]["messages"][1]["content"]
+            value, _ = json.JSONDecoder().raw_decode(body.split("证据包及缺口：", 1)[1].lstrip())
+            value.pop("packet_id")
+            return value
+
+    def test_same_text_different_call_identity_changes_actual_model_input(self):
+        # Directly derived from audit F03 call_metadata_loss, with identical text/IDs.
+        first = episode()
+        first["events"] = [
+            {**event("a1", "launch process", "action"), "call_id": "c1"},
+            {**event("a2", "launch process", "action"), "call_id": "c2"},
+            {**event("r1", "result success", "result"), "call_id": "c1"},
+            {**event("r2", "result failure", "result"), "call_id": "c2"},
+        ]
+        second = copy.deepcopy(first)
+        second["events"][2]["call_id"], second["events"][3]["call_id"] = "c2", "c1"
+        a, b = self.visible_packet(first), self.visible_packet(second)
+        self.assertEqual([x["text"] for x in a["fragments"]], [x["text"] for x in b["fragments"]])
+        self.assertNotEqual(a, b)
+        self.assertNotEqual(a["relations"]["calls"], b["relations"]["calls"])
+
+    def test_same_text_different_goal_identity_changes_actual_model_input(self):
+        # Directly derived from audit F03 goal_metadata_loss.
+        first = episode()
+        first["events"] = [
+            {**event("u1", "Continue task", "instruction", source_role="user", goal_id="A"), "task_revision": "r1"},
+            {**event("u2", "Continue task", "instruction", source_role="user", goal_id="B"), "task_revision": "r1"},
+        ]
+        second = copy.deepcopy(first)
+        second["events"][1]["goal_id"] = "A"
+        a, b = self.visible_packet(first), self.visible_packet(second)
+        self.assertEqual([x["text"] for x in a["fragments"]], [x["text"] for x in b["fragments"]])
+        self.assertNotEqual(a, b)
+        self.assertEqual([x["relation"] for x in a["relations"]["goals"]], ["continues", "switches"])
+        self.assertEqual([x["relation"] for x in b["relations"]["goals"]], ["continues", "continues"])
+
+    def test_open_local_group_cannot_call_model_or_write_learning_records(self):
+        # Real callback scheduling from F04, with a bounded second-slot barrier.
+        started, release = threading.Event(), threading.Event()
+        def execute(request, *_):
+            if request["repeat_index"] == 1:
+                started.set()
+                if not release.wait(timeout=5):
+                    raise TimeoutError("test second-slot barrier")
+            return {"artifact": "partial group material"}
+        tasks = [{"project_id": "demo-project", "task_id": "barrier", "revision": "barrier@1", "description": "CSV local group"}]
+        sampling = {"purpose": "learning", "update_mode": "frozen_microbatch", "repeat_count": 2,
+                    "max_parallel": 2, "protocol_id": "barrier-test", "executor": {"id": "fixture", "config": {}}}
+        context = {"max_roots": 1, "max_context_chars": 5000, "relation_weight": 0.0}
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            future = pool.submit(sample_tasks, self.store, tasks, execute, None,
+                                 policy=sampling, context_policy=context)
+            try:
+                self.assertTrue(started.wait(timeout=2))
+                deadline = time.monotonic() + 2
+                sampled = []
+                while time.monotonic() < deadline:
+                    sampled = [x for x in self.store.list("episodes", "demo-project") if x["source"]["kind"] == "execution_function"]
+                    if self.store.list("runs", "demo-project") and sampled:
+                        break
+                    time.sleep(0.01)
+                self.assertTrue(sampled)
+                self.assertFalse(future.done())
+                self.assertEqual(self.store.list("group_receipts", "demo-project"), [])
+                before = {path: path.read_bytes() for path in self.store.root.rglob("*.json")}
+                model, call = self.model([EXAMPLES["abstain"]])
+                with self.assertRaises(DomainError) as caught:
+                    learn(self.store, [sampled[0]["episode_id"]], model, policy=policy())
+                self.assertEqual(caught.exception.code, "learning_not_permitted")
+                self.assertEqual(call.calls, [])
+                self.assertEqual(before, {path: path.read_bytes() for path in self.store.root.rglob("*.json")})
+            finally:
+                release.set()
+                result = future.result(timeout=5)
+        model, call = self.model([EXAMPLES["abstain"]])
+        after = learn(self.store, [result["episodes"][0]["episode_id"]], model, policy=policy())
+        self.assertEqual(after["status"], "abstained")
+        self.assertEqual(len(call.calls), 1)
 
     def test_generate_candidate_from_empty_library_and_keep_active(self):
         model, call = self.model(drafts(self.source))
@@ -346,6 +437,38 @@ class LearningTests(unittest.TestCase):
         result = learn(self.store, self.ids, model, policy=policy())
         self.assertEqual(result["status"], "noop")
         self.assertNotIn("FROZEN SECRET", str(call.calls))
+
+    def test_canonical_merge_cannot_reintroduce_mixed_forbidden_history(self):
+        extraction, diagnosis, _ = drafts(self.source)
+        diagnosis["route"] = "external_issue"
+        first = learn(self.store, self.ids, self.model([extraction, diagnosis])[0], policy=policy())
+        valid = self.store.get("experiences", first["experience_ids"][0])
+        frozen = sample_tasks(self.store,
+            [{"project_id": "demo-project", "task_id": "held-out-canonical", "revision": "v1", "description": "CSV held-out"}],
+            lambda *args: {"artifact": "PRIVATE CANONICAL MATERIAL"}, None,
+            policy={"purpose": "final", "update_mode": "none", "repeat_count": 1, "max_parallel": 1,
+                    "protocol_id": "frozen-canonical", "executor": {"id": "fixture", "config": {}}},
+            context_policy={"max_roots": 1, "max_context_chars": 5000, "relation_weight": 0.0})["episodes"][0]
+        # A historical pre-fix record mixes valid and forbidden sources. It
+        # remains auditable, but neither retrieval nor consolidation may reuse it.
+        polluted = copy.deepcopy(valid)
+        polluted.update(record_id="mixed-historical", created_at="2027-01-01T00:00:00Z",
+                        source_episode_ids=[*valid["source_episode_ids"], frozen["episode_id"]])
+        polluted["retained_evidence"].append({"role": "boundary_refs", "ref_id": "PRIVATE_CANONICAL_BOUNDARY",
+            "packet_id": "old-private-packet", "record_id": "mixed-historical", "status": "historical_reference_not_retracted"})
+        self.store.put("experiences", polluted["record_id"], polluted)
+        revised = copy.deepcopy(extraction)
+        revised["experiences"][0]["unknowns"].append("Fresh lawful source observation remains limited.")
+        model, call = self.model([revised, diagnosis])
+        result = learn(self.store, self.ids, model, policy=policy())
+        self.assertEqual(result["status"], "noop")
+        fresh = self.store.get("experiences", result["experience_ids"][0])
+        self.assertEqual(fresh["supersedes"], valid["record_id"])
+        self.assertEqual(fresh["source_episode_ids"], valid["source_episode_ids"])
+        self.assertNotIn("PRIVATE_CANONICAL_BOUNDARY", json.dumps(fresh))
+        self.assertNotIn("PRIVATE CANONICAL MATERIAL", str(call.calls))
+        self.assertNotIn("PRIVATE_CANONICAL_BOUNDARY", str(call.calls))
+        self.assertEqual(self.store.get("experiences", polluted["record_id"]), polluted)
 
     def test_enabled_learning_samples_and_unknown_import_sources_still_work(self):
         sampled = sample_tasks(self.store,

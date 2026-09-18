@@ -1,0 +1,16 @@
+{
+  "raw_feedback": [
+    "pass"
+  ],
+  "assessments": [
+    "pass"
+  ],
+  "run_bundles": 0,
+  "reported_outcomes": {
+    "pass": 0,
+    "fail": 0,
+    "unknown": 1
+  },
+  "recorded_runs": 0,
+  "learning_gate": "learning_not_permitted"
+}

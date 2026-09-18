@@ -13,7 +13,8 @@ class MemoryReportTests(MemoryFixture,unittest.TestCase):
         self.compare(candidates=[self.candidate,bad])
         output=report(self.store,self.project)
         self.assertEqual(output["evaluation_requests"],16)
-        self.assertEqual(output["candidate_counts"],{"accepted":1,"rejected":1,"unknown":0})
+        self.assertEqual(output["candidate_counts"],{"unique_snapshots":2,"proposal_records":2,"compared_snapshots":2})
+        self.assertEqual(output["validation_attempt_counts"],{"accepted":1,"rejected":1,"unknown":0})
         self.assertEqual(output["usage"]["unique_calls"],32)
         self.assertAlmostEqual(output["usage"]["complete_cost_totals"]["test-unit"],0.48)
         self.assertEqual(output["usage"]["by_stage"],{"execute":16,"evaluate":16})
@@ -152,6 +153,195 @@ class MemoryReportTests(MemoryFixture,unittest.TestCase):
             self.assertIsNone(row["gain"])
             self.assertEqual(row["base_known_repeats"],0)
             self.assertEqual(row["observed_change"],"unknown")
+
+    def test_observed_results_survive_interruption_before_validation(self):
+        original=self.store.put
+        def stop_after_results(kind,identifier,value):
+            if kind=="validations":raise OSError("constructed interruption after results")
+            return original(kind,identifier,value)
+        with patch.object(self.store,"put",side_effect=stop_after_results),self.assertRaises(OSError):
+            self.compare()
+        self.assertEqual(self.store.list("validations",project_id=self.project),[])
+        output=report(self.store,self.project)
+        self.assertEqual(output["outcomes"],{"pass":6,"fail":2,"unknown":0})
+        comparison=output["comparisons"][0]
+        self.assertEqual(comparison["recorded_results"],8)
+        self.assertEqual(comparison["validation_status"],"missing")
+        self.assertEqual(comparison["by_split"]["target"][0]["gain"],1)
+        self.assertEqual(self.store.active(self.project),self.active)
+
+    def test_revalidation_counts_attempts_not_additional_candidates(self):
+        self.compare();self.compare()
+        output=report(self.store,self.project)
+        self.assertEqual(output["candidate_counts"]["unique_snapshots"],1)
+        self.assertEqual(output["candidate_counts"]["proposal_records"],1)
+        self.assertEqual(output["validation_attempt_counts"]["accepted"],2)
+        self.assertEqual(output["comparison_summary"]["planned_requests"],16)
+
+    def test_sampling_quality_modes_any_all_and_terminal_states(self):
+        from memory_orchestrator.sampling import sample_tasks
+        task={"project_id":self.project,"task_id":"sample-csv","revision":"1",
+              "description":"CSV identifiers","input":"001","criteria":{"expected":"001"}}
+        def execute(request,snapshot,case):
+            return {"artifact":"002" if request["repeat_index"]==1 else "001"}
+        def evaluate(request,execution,case):
+            passed=execution["artifact"]==case["criteria"]["expected"]
+            return {"outcome":"pass" if passed else "fail","score":int(passed),"source":"executable",
+                    "evidence":[{"actual":execution["artifact"]}]}
+        sample_tasks(self.store,[task],execute,evaluate,policy={"repeat_count":3,"max_parallel":2,
+            "purpose":"learning","update_mode":"task_barrier","protocol_id":"sample/v1",
+            "executor":{"id":"csv/v1","config":{}}},
+            context_policy={"max_roots":2,"max_context_chars":5000,"relation_weight":0.0})
+        output=report(self.store,self.project)
+        self.assertEqual(output["evaluation_requests"],0)
+        group=output["sampling"]["groups"][0]
+        self.assertTrue(all(row["assessment_ref"] for row in group["results"]))
+        self.assertTrue(all(row["assessment_source"]=="referenced" for row in group["results"]))
+        self.assertEqual(group["outcomes"],{"pass":2,"fail":1,"unknown":0})
+        self.assertEqual(group["execution_status_counts"]["completed"],3)
+        self.assertTrue(group["any_success"]);self.assertFalse(group["all_success"])
+        mode=output["sampling"]["by_mode"][0]
+        self.assertEqual((mode["purpose"],mode["update_mode"]),("learning","task_barrier"))
+        self.assertAlmostEqual(mode["observed_success_rate"],2/3)
+
+    def test_partial_result_any_all_keep_missing_repeats_unknown(self):
+        original=self.store.put;written=[]
+        def stop_partway(kind,identifier,value):
+            if kind=="evaluation_results":
+                if len(written)==3:raise OSError("partial result persistence")
+                written.append(identifier)
+            return original(kind,identifier,value)
+        with patch.object(self.store,"put",side_effect=stop_partway),self.assertRaises(OSError):self.compare()
+        output=report(self.store,self.project)
+        self.assertEqual(output["outcomes"],{"pass":1,"fail":2,"unknown":5})
+        row=output["comparisons"][0]["by_split"]["target"][0]
+        self.assertTrue(row["candidate_any_success"])
+        self.assertIsNone(row["candidate_all_success"])
+        self.assertFalse(row["base_any_success"])
+        self.assertFalse(row["base_all_success"])
+        missing=output["comparisons"][0]["by_split"]["regression"][0]
+        self.assertIsNone(missing["base_any_success"])
+        self.assertIsNone(missing["base_all_success"])
+
+    def test_legacy_sampling_requires_unique_bound_feedback(self):
+        from memory_orchestrator.sampling import sample_tasks
+        from memory_orchestrator.schemas import new_id
+        sampled=sample_tasks(self.store,[{"project_id":self.project,"task_id":"legacy","revision":"1",
+            "description":"Legacy outcome","criteria":{}}],lambda *_:{"artifact":"ok"},
+            lambda *_:{"outcome":"pass","score":1,"source":"executable","evidence":["checked"]},
+            policy={"repeat_count":1,"max_parallel":1,"purpose":"learning","update_mode":"task_barrier",
+                    "protocol_id":"legacy/v1","executor":{"id":"fixture","config":{}}},
+            context_policy={"max_roots":2,"max_context_chars":5000,"relation_weight":0})
+        original_list=self.store.list
+        def legacy_list(kind,project_id=None):
+            rows=original_list(kind,project_id=project_id)
+            if kind=="runs":
+                rows=copy.deepcopy(rows)
+                for row in rows:row.pop("assessment_ref",None)
+            return rows
+        with patch.object(self.store,"list",side_effect=legacy_list):
+            first=report(self.store,self.project)["sampling"]["groups"][0]
+            self.assertEqual(first["outcomes"],{"pass":1,"fail":0,"unknown":0})
+            self.assertEqual(first["results"][0]["assessment_source"],"unique_original_feedback")
+            existing=self.store.feedback_for(sampled["episodes"][0]["episode_id"])[0]
+            other=copy.deepcopy(existing);other.update(check_id=new_id("feedback"),outcome="fail",score=0)
+            self.store.add_feedback(other)
+            ambiguous=report(self.store,self.project)["sampling"]["groups"][0]
+            self.assertEqual(ambiguous["outcomes"],{"pass":0,"fail":0,"unknown":1})
+            self.assertIn("ambiguous_assessment",ambiguous["results"][0]["reason"])
+
+    def test_comparison_terminal_states_are_separate_from_known_scores(self):
+        def cancelled(*args):
+            out=execute_csv(*args);out["execution_status"]="cancelled";return out
+        self.compare(execute_fn=cancelled)
+        output=report(self.store,self.project)
+        self.assertEqual(output["outcomes"],{"pass":6,"fail":2,"unknown":0})
+        self.assertEqual(output["execution_status_counts"]["cancelled"],8)
+        candidate=output["comparisons"][0]["by_split"]["target"][0]
+        self.assertTrue(candidate["candidate_all_success"])
+        self.assertEqual(candidate["candidate_execution_status_counts"]["cancelled"],2)
+        mode=output["comparison_summary"]["by_mode"][0]
+        self.assertEqual((mode["purpose"],mode["update_mode"],mode["scoring_policy"]),
+                         ("validation","none","available_artifact"))
+
+    def test_explicit_assessment_cannot_borrow_other_runs_feedback(self):
+        from memory_orchestrator.sampling import sample_tasks
+        sampled=sample_tasks(self.store,[{"project_id":self.project,"task_id":"assessment","revision":"1",
+            "description":"Bind score to run","criteria":{}}],lambda *_:{"artifact":"ok"},
+            lambda *_:{"outcome":"pass","score":1,"source":"executable","evidence":["checked"]},
+            policy={"repeat_count":2,"max_parallel":1,"purpose":"learning","update_mode":"task_barrier",
+                    "protocol_id":"assessment/v1","executor":{"id":"fixture","config":{}}},
+            context_policy={"max_roots":2,"max_context_chars":5000,"relation_weight":0})
+        first=self.store.get("runs",sampled["run_ids"][0]);second=self.store.get("runs",sampled["run_ids"][1])
+        original=self.store.list
+        def mixed_pointer(kind,project_id=None):
+            values=original(kind,project_id=project_id)
+            if kind=="runs":
+                values=copy.deepcopy(values)
+                for row in values:
+                    if row["run_id"]==first["run_id"]:row["assessment_ref"]=second["assessment_ref"]
+            return values
+        with patch.object(self.store,"list",side_effect=mixed_pointer):
+            group=report(self.store,self.project)["sampling"]["groups"][0]
+        self.assertEqual(group["outcomes"],{"pass":1,"fail":0,"unknown":1})
+        bad=next(r for r in group["results"] if r["run_id"]==first["run_id"])
+        self.assertEqual(bad["assessment_error"]["code"],"assessment_binding")
+
+    def test_early_sampling_scores_survive_both_persistence_interruptions(self):
+        from memory_orchestrator.sampling import sample_tasks
+        from memory_orchestrator.lineage import require_learning_source
+        from memory_orchestrator.schemas import new_id
+        from pathlib import Path
+        for stop_kind in ("assessments","runs"):
+            with self.subTest(stop_kind=stop_kind):
+                project="early-"+stop_kind
+                original=self.store.put
+                def interrupted(kind,identifier,value):
+                    if kind==stop_kind:raise OSError("Interrupted before "+kind)
+                    return original(kind,identifier,value)
+                with patch.object(self.store,"put",side_effect=interrupted),self.assertRaises(OSError):
+                    sample_tasks(self.store,[{"project_id":project,"task_id":"task","revision":"1",
+                        "description":"Early observation","criteria":{}}],lambda *_:{"artifact":"ok"},
+                        lambda *_:{"outcome":"pass","score":1,"source":"executable","evidence":["checked"]},
+                        policy={"repeat_count":1,"max_parallel":1,"purpose":"learning","update_mode":"task_barrier",
+                                "protocol_id":"early/v1","executor":{"id":"fixture","config":{}}},
+                        context_policy={"max_roots":1,"max_context_chars":5000,"relation_weight":0})
+                episode=self.store.list("episodes",project_id=project)[0]
+                before={str(p):p.read_bytes() for p in Path(self.temp.name).rglob('*.json')}
+                output=report(self.store,project)
+                # report itself is appended; observations and missing lifecycle records are unchanged.
+                for path,data in before.items():self.assertEqual(Path(path).read_bytes(),data)
+                self.assertEqual(self.store.list("runs",project_id=project),[])
+                self.assertEqual(self.store.list("group_receipts",project_id=project),[])
+                group=output["sampling"]["groups"][0]
+                self.assertEqual(group["recorded_runs"],0)
+                self.assertEqual(group["recorded_receipts"],0)
+                self.assertEqual(group["outcomes"],{"pass":1,"fail":0,"unknown":0})
+                source=group["results"][0]["assessment_source"]
+                self.assertEqual(source,"unique_original_feedback" if stop_kind=="assessments" else "recovered_assessment")
+                with self.assertRaises(DomainError):require_learning_source(self.store,episode)
+                original_get=self.store.get
+                def contradictory_source(kind,identifier):
+                    value=original_get(kind,identifier)
+                    if kind=="executions" and identifier==episode["source"]["reference"]:
+                        value=copy.deepcopy(value);value["request"]["request_id"]="another-known-run"
+                    return value
+                with patch.object(self.store,"get",side_effect=contradictory_source):
+                    wrong=report(self.store,project)["sampling"]["groups"][0]
+                self.assertEqual(wrong["outcomes"],{"pass":0,"fail":0,"unknown":1})
+                if stop_kind=="assessments":
+                    duplicate=copy.deepcopy(self.store.feedback_for(episode["episode_id"])[0])
+                    duplicate.update(check_id=new_id("feedback"),outcome="fail",score=0)
+                    self.store.add_feedback(duplicate)
+                else:
+                    duplicate=copy.deepcopy(self.store.list("assessments",project_id=project)[0])
+                    duplicate["assessment_id"]=new_id("assessment")
+                    self.store.put("assessments",duplicate["assessment_id"],duplicate)
+                ambiguous=report(self.store,project)["sampling"]["groups"][0]
+                self.assertEqual(ambiguous["outcomes"],{"pass":0,"fail":0,"unknown":1})
+                self.assertIn("ambiguous_assessment",ambiguous["results"][0]["reason"])
+                self.assertEqual(self.store.list("runs",project_id=project),[])
+                with self.assertRaises(DomainError):require_learning_source(self.store,episode)
 
 
 if __name__=="__main__":unittest.main()

@@ -120,9 +120,12 @@ const projectLink=(p)=>"../../"+p.split("/").map(encodeURIComponent).join("/");
 const pretty=(value)=>esc(JSON.stringify(value,null,2));
 const responsibilityLabel=(value)=>({memory_system:"记忆系统",provided_function:"调用方提供的函数"})[value]||value;
 const adjustmentLabel=(value)=>({preserved:"保留",boundary_changed:"职责调整",parameter_unfixed:"参数待定",deferred:"暂缓"})[value]||value;
-const statusLabel=(value)=>({specified_not_implemented:"方案已明确 · 尚未实现",reference_design_unimplemented:"参考设计 · 尚未实现",design_aligned_product_paused:"文档已对齐 · 产品实现暂停",reference_core_implemented:"Python 参考实现 · 效果以实测为准",planned:"目标契约 · 尚未实现",partial:"部分实现 · 需核对证据",implemented:"实现标注 · 需核对证据"})[value]||value;
+const statusLabel=(value)=>({specified_not_implemented:"方案已明确 · 尚未实现",reference_design_unimplemented:"参考设计 · 尚未实现",design_aligned_product_paused:"文档已对齐 · 产品实现暂停",reference_core_implemented:"Python 参考实现 · 效果以实测为准",reference_core_partial_coverage:"主线已实现 · 部分设计义务待接通",planned:"目标契约 · 尚未实现",partial:"部分实现 · 需核对证据",implemented:"所列机制已实现 · 效果另证"})[value]||value;
 const policyContent=(value)=>Array.isArray(value)?"<ul>"+list(value)+"</ul>":typeof value==="string"?"<p>"+esc(value)+"</p>":"<pre>"+pretty(value)+"</pre>";
 const paperLinks=(ids)=>ids.map((id)=>{const p=byId(c.paper_sources,id);return p?'<a href="'+esc(p.url)+'">'+esc(p.title)+"</a>":esc(id);}).join(" · ");
+function coverageView(value){
+  return '<div class="contract-block coverage"><h3>当前实现覆盖</h3><p>'+esc(value.implemented)+'</p><h4>待实现 / 待完成</h4>'+(value.remaining.length?'<ul>'+list(value.remaining)+'</ul>':'<p class="small">本项列明的机制暂无待实现项；效果仍需独立证据。</p>')+'<details><summary>行为证据与外部边界</summary>'+(value.external.length?'<h4>外部职责与边界</h4><ul>'+list(value.external)+'</ul>':'')+'<h4>行为检查入口与运行记录</h4><ul>'+value.behavior_evidence.map((ref)=>'<li><a href="'+projectLink(ref)+'"><code>'+esc(ref)+'</code></a></li>').join('')+'</ul><p class="small">测试文件及记录对应具体条件；存在这些文件不等于全部义务已验收。</p><h4>效果证据</h4><p>'+esc(value.effect_evidence)+'</p></details></div>';
+}
 function paperEntry(p){
   return '<div class="paper-entry"><strong>'+esc(p.title)+'</strong><p class="source-kind">'+esc(p.id)+" · "+esc(p.evidence_level)+'</p><p>参考机制：'+esc(p.mechanism)+'</p><p class="paper-limit">边界：'+esc(p.limitation)+'</p><div class="paper-links"><a href="'+esc(p.url)+'">论文 / 一手来源</a>'+p.code_urls.map((url,i)=>'<a href="'+esc(url)+'">源码 '+(i+1)+"</a>").join("")+"</div></div>";
 }
@@ -138,7 +141,7 @@ function drawQuestions(){
   const query=document.getElementById("question-filter").value.trim().toLowerCase();
   const matches=c.questions.filter((q)=>JSON.stringify(q).toLowerCase().includes(query));
   document.getElementById("question-count").textContent="显示 "+matches.length+" / "+c.questions.length+" 个问题"+(query?" · 已筛选":" · 默认完整展示");
-  put("question-cards",matches.length?matches.map((q)=>'<article class="panel question-card" id="question-'+esc(q.id)+'" tabindex="-1"><div class="detail-title"><span class="node-id">'+esc(q.id)+"</span><h3>"+esc(q.title)+'</h3></div><span class="status">'+esc(statusLabel(q.status))+' <code>'+esc(q.status)+'</code></span><p class="question-origin">对话依据（重述 / 摘录）：'+esc(q.origin)+'</p><dl class="question-answer"><dt>设计缺口</dt><dd>'+esc(q.gap)+'</dd><dt>当前选择</dt><dd>'+esc(q.decision)+'</dd><dt>如何验收</dt><dd>'+esc(q.acceptance)+'</dd></dl><div class="question-map"><span>需求：</span>'+chips(q.requirement_ids)+'<span>节点：</span>'+q.node_ids.map(jump).join(" · ")+'</div>'+(q.paper_ids.length?'<p class="small" style="margin-top:10px">参考：'+paperLinks(q.paper_ids)+"</p>":"")+"</article>").join(""):'<div class="panel empty">没有匹配问题。点击“显示全部”恢复完整清单。</div>');
+  put("question-cards",matches.length?matches.map((q)=>'<article class="panel question-card" id="question-'+esc(q.id)+'" tabindex="-1"><div class="detail-title"><span class="node-id">'+esc(q.id)+"</span><h3>"+esc(q.title)+'</h3></div><span class="status">'+esc(statusLabel(q.status))+' <code>'+esc(q.status)+'</code></span><p class="question-origin">对话依据（重述 / 摘录）：'+esc(q.origin)+'</p><dl class="question-answer"><dt>问题背景（设计时）</dt><dd>'+esc(q.gap)+'</dd><dt>当前选择</dt><dd>'+esc(q.decision)+'</dd><dt>如何验收</dt><dd>'+esc(q.acceptance)+'</dd></dl>'+coverageView(q.coverage)+'<div class="question-map"><span>需求：</span>'+chips(q.requirement_ids)+'<span>节点：</span>'+q.node_ids.map(jump).join(" · ")+'</div>'+(q.paper_ids.length?'<p class="small" style="margin-top:10px">参考：'+paperLinks(q.paper_ids)+"</p>":"")+"</article>").join(""):'<div class="panel empty">没有匹配问题。点击“显示全部”恢复完整清单。</div>');
 }
 function showQuestion(id,updateHash=true){
   if(!byId(c.questions,id))return;
@@ -148,7 +151,7 @@ function showQuestion(id,updateHash=true){
 }
 function drawList(){
   const q=document.getElementById("filter").value.trim().toLowerCase();
-  const matches=c.nodes.filter((n)=>JSON.stringify([n.id,n.name,n.operator,n.responsibility,n.requirements,n.invariants,n.inputs,n.outputs,n.implementation,c.questions.filter((x)=>x.node_ids.includes(n.id)).map((x)=>[x.id,x.title])]).toLowerCase().includes(q));
+  const matches=c.nodes.filter((n)=>JSON.stringify([n.id,n.name,n.operator,n.responsibility,n.requirements,n.invariants,n.inputs,n.outputs,n.implementation,n.coverage,c.questions.filter((x)=>x.node_ids.includes(n.id)).map((x)=>[x.id,x.title])]).toLowerCase().includes(q));
   put("node-list",matches.length?matches.map((n)=>'<button type="button" data-node="'+esc(n.id)+'" aria-pressed="'+(n.id===selected)+'"><span class="node-id">'+esc(n.id)+"</span><span>"+esc(n.name)+"</span></button>").join(""):'<div class="empty">没有匹配节点。全局规则可在“状态与不变量”查看。</div>');
 }
 function showNode(id){
@@ -175,7 +178,8 @@ function showNode(id){
     '<div class="contract-block banner delivery-notice">'+document.getElementById("overview-delivery").innerHTML+'</div>',
     '<div class="contract-block"><strong>职责归属：'+esc(responsibilityLabel(n.responsibility.owner))+'</strong><p>'+esc(n.responsibility.description)+'</p><p class="small">provided_function 表示任务／评价操作由调用方提供，不表示本轮要实现具体客户端适配。</p></div>',
     '<div class="contract-block"><div class="implementation-head"><strong>处理方式：'+esc(impl.owner)+'</strong><span class="status">'+esc(statusLabel(impl.state))+' <code>'+esc(impl.state)+'</code></span></div><pre>'+esc(impl.signature)+'</pre></div>',
-    '<div class="contract-block"><h3>具体步骤</h3><ol class="steps">'+list(impl.steps)+'</ol></div>',
+    coverageView(n.coverage),
+    '<div class="contract-block"><h3>目标流程</h3><p class="small">以下为目标契约；当前完成情况以上方覆盖清单和行为记录为准。</p><ol class="steps">'+list(impl.steps)+'</ol></div>',
     '<div class="implementation-grid contract-block"><div><h3>本节点检查</h3><ul>'+list(impl.checks)+'</ul></div><div><h3>错误与停止条件</h3><ul>'+list(impl.errors)+'</ul></div></div>',
     '<div class="contract-block unknown"><strong>证据不足或未知时</strong><p>'+esc(n.on_unknown)+'</p></div>',
     '<div class="io-grid"><div><div class="field-title">输入类型</div>'+chips(n.inputs)+'</div><div><div class="field-title">输出类型</div>'+chips(n.outputs)+'</div></div><div class="contract-block"><div class="field-title">允许写入</div>'+chips(n.writes)+'</div>',
@@ -194,11 +198,10 @@ function showNode(id){
 document.getElementById("version-line").textContent="PROJECT CONTRACT / "+c.meta.version+" / "+c.meta.updated;
 document.getElementById("project-title").textContent=c.meta.title;
 document.getElementById("purpose").textContent=c.meta.purpose;
-const implementedCount=c.nodes.filter((n)=>n.status==="implemented").length,partialCount=c.nodes.filter((n)=>n.status==="partial").length;
-document.getElementById("implementation-state").textContent=c.runtime.current_delivery.implementation_allowed===false?"当前仅文档对齐 · 产品实现暂停":implementedCount||partialCount?"目标设计 · 实现标注 "+implementedCount+"/"+c.nodes.length+" · 部分 "+partialCount:"目标设计 · 参考实现待开发";
+document.getElementById("implementation-state").textContent=c.runtime.current_delivery.implementation_allowed===false?"当前仅文档对齐 · 产品实现暂停":c.meta.implementation_status;
 document.getElementById("hash-short").textContent="源指纹 "+"__SOURCE_HASH__".slice(0,16);
 const groups=[["执行","运行时选经验并完成任务"],["学习","轨迹与反馈汇合，形成修改候选"],["发布","独立检查后切换版本"],["横切","所有阶段都留下可报告的记录"]];
-put("flow",groups.map(([phase,label])=>'<div class="flow-section"><div class="flow-heading"><span class="phase-label">'+esc(phase)+"</span><h3>"+esc(label)+'</h3></div><div class="flow-grid">'+c.nodes.filter((n)=>n.phase===phase).map((n)=>'<button class="node-tile" type="button" data-node="'+esc(n.id)+'"><span class="node-id">'+esc(n.id)+"</span><strong>"+esc(n.name)+"</strong><span>"+esc(responsibilityLabel(n.responsibility.owner))+"</span><span>"+esc(n.outputs.filter((x)=>x!=="UsageRecord").join(" · "))+"</span></button>").join("")+"</div></div>").join("")+'<p class="return-line">发布后的 LibrarySnapshot 回到 N02，服务下一次任务。点击节点查看实际数据依赖与契约。</p>');
+put("flow",groups.map(([phase,label])=>'<div class="flow-section"><div class="flow-heading"><span class="phase-label">'+esc(phase)+"</span><h3>"+esc(label)+'</h3></div><div class="flow-grid">'+c.nodes.filter((n)=>n.phase===phase).map((n)=>'<button class="node-tile" type="button" data-node="'+esc(n.id)+'"><span class="node-id">'+esc(n.id)+"</span><strong>"+esc(n.name)+"</strong><span>"+esc(responsibilityLabel(n.responsibility.owner))+" · "+esc(statusLabel(n.status))+"</span><span>"+esc(n.outputs.filter((x)=>x!=="UsageRecord").join(" · "))+"</span></button>").join("")+"</div></div>").join("")+'<p class="return-line">发布后的 LibrarySnapshot 回到 N02，服务下一次任务。点击节点查看实际数据依赖与契约。</p>');
 put("scope-in",list(c.scope.in));put("scope-out",list(c.scope.out));
 put("delivery-adjustments",'<table><thead><tr><th>范围</th><th>调整前</th><th>当前约定</th><th>原因与状态</th></tr></thead><tbody>'+c.runtime.adjustments.map((a)=>'<tr><td><code>'+esc(a.id)+'</code><p>'+esc(a.area)+'</p></td><td>'+esc(a.before)+'</td><td>'+esc(a.after)+'</td><td><strong>'+esc(adjustmentLabel(a.status))+'</strong><p>'+esc(a.reason)+'</p></td></tr>').join("")+'</tbody></table>');
 function evaluationPolicyView(policy){

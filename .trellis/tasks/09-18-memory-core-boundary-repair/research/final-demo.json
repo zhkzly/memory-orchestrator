@@ -1,0 +1,807 @@
+{
+  "evidence_kind": "constructed local integration; not a benchmark or generalization claim",
+  "teacher_mode": "scripted",
+  "learning_statuses": [
+    "proposed",
+    "proposed"
+  ],
+  "release_count": 2,
+  "after_release": [
+    {
+      "snapshot_digest": "509dea3fbe13615ffc290c1b981bed41c93dd49384579869bdde25301061e573",
+      "outcome": "pass"
+    },
+    {
+      "snapshot_digest": "c3c1323c16ea057f44e3994046a1b16816d9b30f86954d7655533d4d9d634ad0",
+      "outcome": "pass"
+    }
+  ],
+  "rollback": {
+    "expected_active_digest": "c3c1323c16ea057f44e3994046a1b16816d9b30f86954d7655533d4d9d634ad0",
+    "expected_generation": 2,
+    "kind": "rollback",
+    "new_digest": "509dea3fbe13615ffc290c1b981bed41c93dd49384579869bdde25301061e573",
+    "new_generation": 3,
+    "project_id": "csv-demo",
+    "reason": "Demonstrate explicit return to an earlier committed library.",
+    "release_id": "release_088ac2e963aa5550a26d5141313cc33ceb3ff313b92a52a8569ad2bd51e1448e",
+    "rollback_target_release_ref": "release_33f17597ac30fb858638bb4469c3a75b4dcc440ce34d8bfd28b6ef2e3b037c75",
+    "selection_ref": null,
+    "status": "published",
+    "timestamp": "2026-09-18T14:38:38.850592Z",
+    "validation_ref": null
+  },
+  "report": {
+    "report_id": "report_4de631f04c3b4cd6806c73b8412a53a9",
+    "project_id": "csv-demo",
+    "created_at": "2026-09-18T14:38:38.882811Z",
+    "evidence_kind": "caller execution/evaluation records; not automatic independent truth",
+    "evaluation_requests": 16,
+    "outcomes": {
+      "pass": 12,
+      "fail": 4,
+      "unknown": 0
+    },
+    "execution_status_counts": {
+      "completed": 16,
+      "cancelled": 0,
+      "timeout": 0,
+      "budget_exhausted": 0,
+      "adapter_error": 0,
+      "unknown": 0
+    },
+    "observed_success_rate": 0.75,
+    "coverage": 1.0,
+    "identification_bounds": [
+      0.75,
+      0.75
+    ],
+    "any_success": true,
+    "all_success": false,
+    "comparisons": [
+      {
+        "plan_id": "plan_570f6bd642d845a98e46b2073059eea4",
+        "project_id": "csv-demo",
+        "validation_id": "validation_a986fb4adc6346c2b2dfd187d1b8885b",
+        "validation_status": "accepted",
+        "validations": [
+          {
+            "validation_id": "validation_a986fb4adc6346c2b2dfd187d1b8885b",
+            "status": "accepted",
+            "binding_errors": []
+          }
+        ],
+        "base_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+        "candidate_digest": "509dea3fbe13615ffc290c1b981bed41c93dd49384579869bdde25301061e573",
+        "case_set_ref": "cases_a39d1f78e5ab4e449866c3369dc4014c",
+        "case_set_hash": "b39d9f8d880ec833aa363bd4c1c8820be79f2b62c457d471558a0409ff780fdb",
+        "protocol_ref": "protocol_1a3b10b029344293b4e75380f01fefa2",
+        "protocol_hash": "087a4d5725d32f9fb7c1d9bc145f927c47b6319d16d654c47c3f7e21ec04d5ad",
+        "purpose": "validation",
+        "update_mode": "none",
+        "scoring_policy": "available_artifact",
+        "proposal_ids": [
+          "proposal_b573957d1e0a484e992e060e274d1dde"
+        ],
+        "acceptance_scope": "local repair",
+        "repeat_count": 2,
+        "planned_requests": 8,
+        "recorded_results": 8,
+        "missing_request_ids": [],
+        "mismatched_request_ids": [],
+        "by_split": {
+          "target": [
+            {
+              "case_id": "leading-zeros",
+              "split": "target",
+              "base": 0.0,
+              "base_range": 0.0,
+              "candidate": 1.0,
+              "candidate_range": 0.0,
+              "gain": 1.0,
+              "base_known_repeats": 2,
+              "base_outcomes": {
+                "pass": 0,
+                "fail": 2,
+                "unknown": 0
+              },
+              "base_any_success": false,
+              "base_all_success": false,
+              "base_execution_status_counts": {
+                "completed": 2,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "candidate_known_repeats": 2,
+              "candidate_outcomes": {
+                "pass": 2,
+                "fail": 0,
+                "unknown": 0
+              },
+              "candidate_any_success": true,
+              "candidate_all_success": true,
+              "candidate_execution_status_counts": {
+                "completed": 2,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "observed_change": "improved"
+            }
+          ],
+          "regression": [
+            {
+              "case_id": "numeric-regression",
+              "split": "regression",
+              "base": 1.0,
+              "base_range": 0.0,
+              "candidate": 1.0,
+              "candidate_range": 0.0,
+              "gain": 0.0,
+              "base_known_repeats": 2,
+              "base_outcomes": {
+                "pass": 2,
+                "fail": 0,
+                "unknown": 0
+              },
+              "base_any_success": true,
+              "base_all_success": true,
+              "base_execution_status_counts": {
+                "completed": 2,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "candidate_known_repeats": 2,
+              "candidate_outcomes": {
+                "pass": 2,
+                "fail": 0,
+                "unknown": 0
+              },
+              "candidate_any_success": true,
+              "candidate_all_success": true,
+              "candidate_execution_status_counts": {
+                "completed": 2,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "observed_change": "unchanged"
+            }
+          ],
+          "transfer": []
+        }
+      },
+      {
+        "plan_id": "plan_f196997a69f54bf6a3657d7bf10a8a60",
+        "project_id": "csv-demo",
+        "validation_id": "validation_91df5d14b03c4136b468b5515e75d368",
+        "validation_status": "accepted",
+        "validations": [
+          {
+            "validation_id": "validation_91df5d14b03c4136b468b5515e75d368",
+            "status": "accepted",
+            "binding_errors": []
+          }
+        ],
+        "base_digest": "509dea3fbe13615ffc290c1b981bed41c93dd49384579869bdde25301061e573",
+        "candidate_digest": "c3c1323c16ea057f44e3994046a1b16816d9b30f86954d7655533d4d9d634ad0",
+        "case_set_ref": "cases_d492ac28914a4e8abe43ffd5f81562b7",
+        "case_set_hash": "84af30fd5beecad6fbf7b406205b4d1106c8f6bfeda5d98d065c6a59f9de0cd3",
+        "protocol_ref": "protocol_9c89982061fc47e19d24f6c415d9acc5",
+        "protocol_hash": "fd67e034ec86068f8350534925fb98d271e5c496dc2f3fc78bb09269b0d9b39f",
+        "purpose": "validation",
+        "update_mode": "none",
+        "scoring_policy": "available_artifact",
+        "proposal_ids": [
+          "proposal_72cdefbc9d804c4a801ca969fed27c34"
+        ],
+        "acceptance_scope": "local repair",
+        "repeat_count": 2,
+        "planned_requests": 8,
+        "recorded_results": 8,
+        "missing_request_ids": [],
+        "mismatched_request_ids": [],
+        "by_split": {
+          "target": [
+            {
+              "case_id": "empty-numeric",
+              "split": "target",
+              "base": 0.0,
+              "base_range": 0.0,
+              "candidate": 1.0,
+              "candidate_range": 0.0,
+              "gain": 1.0,
+              "base_known_repeats": 2,
+              "base_outcomes": {
+                "pass": 0,
+                "fail": 2,
+                "unknown": 0
+              },
+              "base_any_success": false,
+              "base_all_success": false,
+              "base_execution_status_counts": {
+                "completed": 2,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "candidate_known_repeats": 2,
+              "candidate_outcomes": {
+                "pass": 2,
+                "fail": 0,
+                "unknown": 0
+              },
+              "candidate_any_success": true,
+              "candidate_all_success": true,
+              "candidate_execution_status_counts": {
+                "completed": 2,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "observed_change": "improved"
+            }
+          ],
+          "regression": [
+            {
+              "case_id": "numeric-regression",
+              "split": "regression",
+              "base": 1.0,
+              "base_range": 0.0,
+              "candidate": 1.0,
+              "candidate_range": 0.0,
+              "gain": 0.0,
+              "base_known_repeats": 2,
+              "base_outcomes": {
+                "pass": 2,
+                "fail": 0,
+                "unknown": 0
+              },
+              "base_any_success": true,
+              "base_all_success": true,
+              "base_execution_status_counts": {
+                "completed": 2,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "candidate_known_repeats": 2,
+              "candidate_outcomes": {
+                "pass": 2,
+                "fail": 0,
+                "unknown": 0
+              },
+              "candidate_any_success": true,
+              "candidate_all_success": true,
+              "candidate_execution_status_counts": {
+                "completed": 2,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "observed_change": "unchanged"
+            }
+          ],
+          "transfer": []
+        }
+      }
+    ],
+    "comparison_summary": {
+      "planned_requests": 16,
+      "by_mode": [
+        {
+          "purpose": "validation",
+          "update_mode": "none",
+          "scoring_policy": "available_artifact",
+          "group_unit": "case_and_arm",
+          "group_count": 8,
+          "planned_requests": 16,
+          "outcomes": {
+            "pass": 12,
+            "fail": 4,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 16,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 0.75,
+          "coverage": 1.0,
+          "identification_bounds": [
+            0.75,
+            0.75
+          ],
+          "any_success": true,
+          "all_success": false,
+          "any_success_groups": {
+            "true": 6,
+            "false": 2,
+            "unknown": 0
+          },
+          "all_success_groups": {
+            "true": 6,
+            "false": 2,
+            "unknown": 0
+          }
+        }
+      ],
+      "outcomes": {
+        "pass": 12,
+        "fail": 4,
+        "unknown": 0
+      },
+      "execution_status_counts": {
+        "completed": 16,
+        "cancelled": 0,
+        "timeout": 0,
+        "budget_exhausted": 0,
+        "adapter_error": 0,
+        "unknown": 0
+      },
+      "observed_success_rate": 0.75,
+      "coverage": 1.0,
+      "identification_bounds": [
+        0.75,
+        0.75
+      ],
+      "any_success": true,
+      "all_success": false
+    },
+    "pooled_rate_note": "Overall success rate mixes base and candidate requests; it is not an improvement estimate.",
+    "sampling_slots": 6,
+    "sampling": {
+      "groups": [
+        {
+          "group_id": "group_8bfeda291e8e434ba7a212e97f6af5d5",
+          "purpose": "validation",
+          "update_mode": "none",
+          "scoring_policy": "completed_only",
+          "snapshot_digest": "c3c1323c16ea057f44e3994046a1b16816d9b30f86954d7655533d4d9d634ad0",
+          "task_revision": "v1",
+          "planned_slots": 1,
+          "recorded_runs": 1,
+          "missing_run_ids": [],
+          "recorded_receipts": 1,
+          "receipt_refs": [
+            "receipt_3f5f3896bc7843c9a836295ba2891c4a"
+          ],
+          "results": [
+            {
+              "run_id": "run_e2005fe6daed41f2954ee7317dae97f1",
+              "outcome": "pass",
+              "score": 1.0,
+              "feedback_ref": "check_b66ba59b47a54753996948eeb7fd3093",
+              "execution_status": "completed",
+              "assessment_ref": "assessment_97971305b7e145008a78a40a01ae03cb",
+              "assessment_source": "referenced"
+            }
+          ],
+          "outcomes": {
+            "pass": 1,
+            "fail": 0,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 1,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 1.0,
+          "coverage": 1.0,
+          "identification_bounds": [
+            1.0,
+            1.0
+          ],
+          "any_success": true,
+          "all_success": true
+        },
+        {
+          "group_id": "group_48bd0b3d777a480596ca6949ff3ee105",
+          "purpose": "validation",
+          "update_mode": "none",
+          "scoring_policy": "completed_only",
+          "snapshot_digest": "509dea3fbe13615ffc290c1b981bed41c93dd49384579869bdde25301061e573",
+          "task_revision": "v1",
+          "planned_slots": 1,
+          "recorded_runs": 1,
+          "missing_run_ids": [],
+          "recorded_receipts": 1,
+          "receipt_refs": [
+            "receipt_657fe4175ed5402bae43958a5eddd5aa"
+          ],
+          "results": [
+            {
+              "run_id": "run_30f3afc5a0964959890125c033a375af",
+              "outcome": "pass",
+              "score": 1.0,
+              "feedback_ref": "check_b3cf42532b884401af127b51b3241d54",
+              "execution_status": "completed",
+              "assessment_ref": "assessment_a400649433fa4441b076bb93acb47292",
+              "assessment_source": "referenced"
+            }
+          ],
+          "outcomes": {
+            "pass": 1,
+            "fail": 0,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 1,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 1.0,
+          "coverage": 1.0,
+          "identification_bounds": [
+            1.0,
+            1.0
+          ],
+          "any_success": true,
+          "all_success": true
+        },
+        {
+          "group_id": "group_19fb611df3c344e3a75bc72eab1dc37a",
+          "purpose": "learning",
+          "update_mode": "task_barrier",
+          "scoring_policy": "completed_only",
+          "snapshot_digest": "509dea3fbe13615ffc290c1b981bed41c93dd49384579869bdde25301061e573",
+          "task_revision": "v1",
+          "planned_slots": 2,
+          "recorded_runs": 2,
+          "missing_run_ids": [],
+          "recorded_receipts": 1,
+          "receipt_refs": [
+            "receipt_57c87aade0654bceb83dfff14038bbec"
+          ],
+          "results": [
+            {
+              "run_id": "run_5ab9572668d940908b6c861d8220ee7f",
+              "outcome": "fail",
+              "score": 0.0,
+              "feedback_ref": "check_021536e3fc1e4830b4213cc697c03d5d",
+              "execution_status": "completed",
+              "assessment_ref": "assessment_050fb6fc87ea4c34918161cb3837ca62",
+              "assessment_source": "referenced"
+            },
+            {
+              "run_id": "run_4ccc8a38c6d747f1b82764090dc985ce",
+              "outcome": "fail",
+              "score": 0.0,
+              "feedback_ref": "check_c303170d9bac40beaac560111cca1cd3",
+              "execution_status": "completed",
+              "assessment_ref": "assessment_ca5feaf579c54d6e854c18b5a5067bce",
+              "assessment_source": "referenced"
+            }
+          ],
+          "outcomes": {
+            "pass": 0,
+            "fail": 2,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 2,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 0.0,
+          "coverage": 1.0,
+          "identification_bounds": [
+            0.0,
+            0.0
+          ],
+          "any_success": false,
+          "all_success": false
+        },
+        {
+          "group_id": "group_ed52107233694de592c29334be25cc05",
+          "purpose": "learning",
+          "update_mode": "task_barrier",
+          "scoring_policy": "completed_only",
+          "snapshot_digest": "92f7f1892f9e6ba3002837b14785cb2a58d29b93797eefc52189a357e54ee580",
+          "task_revision": "v1",
+          "planned_slots": 2,
+          "recorded_runs": 2,
+          "missing_run_ids": [],
+          "recorded_receipts": 1,
+          "receipt_refs": [
+            "receipt_a8c06f8f1f674689a312ee42bb50f123"
+          ],
+          "results": [
+            {
+              "run_id": "run_a06a8b07a3af4bfab96fb4a39db898da",
+              "outcome": "fail",
+              "score": 0.0,
+              "feedback_ref": "check_5e88a2bc93e745f7942e5c6c42d2b000",
+              "execution_status": "completed",
+              "assessment_ref": "assessment_17db0931f70840ebac76fb657b0b032d",
+              "assessment_source": "referenced"
+            },
+            {
+              "run_id": "run_b343ff5f0c394cda9f62bdac346681d9",
+              "outcome": "fail",
+              "score": 0.0,
+              "feedback_ref": "check_c264afd166b74d8b9e5c2ca9a20413de",
+              "execution_status": "completed",
+              "assessment_ref": "assessment_dc3218feeb494b3aafa4ee1c13408d2d",
+              "assessment_source": "referenced"
+            }
+          ],
+          "outcomes": {
+            "pass": 0,
+            "fail": 2,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 2,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 0.0,
+          "coverage": 1.0,
+          "identification_bounds": [
+            0.0,
+            0.0
+          ],
+          "any_success": false,
+          "all_success": false
+        }
+      ],
+      "by_mode": [
+        {
+          "purpose": "learning",
+          "update_mode": "task_barrier",
+          "scoring_policy": "completed_only",
+          "group_unit": "same_task_run_group",
+          "group_count": 2,
+          "planned_requests": 4,
+          "outcomes": {
+            "pass": 0,
+            "fail": 4,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 4,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 0.0,
+          "coverage": 1.0,
+          "identification_bounds": [
+            0.0,
+            0.0
+          ],
+          "any_success": false,
+          "all_success": false,
+          "any_success_groups": {
+            "true": 0,
+            "false": 2,
+            "unknown": 0
+          },
+          "all_success_groups": {
+            "true": 0,
+            "false": 2,
+            "unknown": 0
+          }
+        },
+        {
+          "purpose": "validation",
+          "update_mode": "none",
+          "scoring_policy": "completed_only",
+          "group_unit": "same_task_run_group",
+          "group_count": 2,
+          "planned_requests": 2,
+          "outcomes": {
+            "pass": 2,
+            "fail": 0,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 2,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 1.0,
+          "coverage": 1.0,
+          "identification_bounds": [
+            1.0,
+            1.0
+          ],
+          "any_success": true,
+          "all_success": true,
+          "any_success_groups": {
+            "true": 2,
+            "false": 0,
+            "unknown": 0
+          },
+          "all_success_groups": {
+            "true": 2,
+            "false": 0,
+            "unknown": 0
+          }
+        }
+      ]
+    },
+    "unique_case_identity_count": 4,
+    "known_task_ids": [
+      "empty-numeric",
+      "leading-zeros"
+    ],
+    "episodes_with_unknown_task_id": 0,
+    "distinct_known_task_count": 2,
+    "episode_count": 6,
+    "candidate_counts": {
+      "unique_snapshots": 2,
+      "proposal_records": 2,
+      "compared_snapshots": 2
+    },
+    "proposal_attempts": {
+      "planned_slots": 2,
+      "slot_status_counts": {
+        "candidate": 2
+      },
+      "finished_slots": 2,
+      "note": "Proposal slots are not unique snapshots or model repair calls; usage records count physical calls."
+    },
+    "proposal_snapshots": [
+      {
+        "proposal_id": "proposal_b573957d1e0a484e992e060e274d1dde",
+        "candidate_digest": "509dea3fbe13615ffc290c1b981bed41c93dd49384579869bdde25301061e573"
+      },
+      {
+        "proposal_id": "proposal_72cdefbc9d804c4a801ca969fed27c34",
+        "candidate_digest": "c3c1323c16ea057f44e3994046a1b16816d9b30f86954d7655533d4d9d634ad0"
+      }
+    ],
+    "validation_attempt_counts": {
+      "accepted": 2,
+      "rejected": 0,
+      "unknown": 0
+    },
+    "snapshot_validation_statuses": {
+      "509dea3fbe13615ffc290c1b981bed41c93dd49384579869bdde25301061e573": [
+        "accepted"
+      ],
+      "c3c1323c16ea057f44e3994046a1b16816d9b30f86954d7655533d4d9d634ad0": [
+        "accepted"
+      ]
+    },
+    "usage": {
+      "unique_calls": 50,
+      "by_stage": {
+        "evaluate": 22,
+        "diagnose": 2,
+        "execute": 22,
+        "extract": 2,
+        "propose": 2
+      },
+      "known_cost_subtotals": {},
+      "missing_cost_calls": 50,
+      "complete_cost_totals": null,
+      "sum_run_time": 0.14762761109159328,
+      "known_run_time_subtotal": 0.14762761109159328,
+      "missing_time_calls": 0,
+      "tokens": {
+        "known_subtotals": {
+          "input_tokens": null,
+          "output_tokens": null,
+          "total_tokens": null
+        },
+        "known_calls": {
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "total_tokens": 0
+        },
+        "missing_calls": {
+          "input_tokens": 50,
+          "output_tokens": 50,
+          "total_tokens": 50
+        },
+        "complete_totals": {
+          "input_tokens": null,
+          "output_tokens": null,
+          "total_tokens": null
+        }
+      },
+      "usage_ids": [
+        "demo_call_0018c3a5f516425ab74c88b9a149eee5",
+        "demo_call_014bad5bf3b844128dbd08d66a156f66",
+        "demo_call_2b947551d56745d5b7132c592e70cf82",
+        "demo_call_70f1309bdd5648fca3b37194a99f5f7f",
+        "demo_call_aa2181a1b4fa42f6aafe761dba63ee05",
+        "demo_call_d61d2d425e29483989bad28bb15cd8ab",
+        "usage_023b5a9047824184ad6b7d21bf9cfa07",
+        "usage_04d448a2d6e74e47a76c40b6a681363a",
+        "usage_299534bc501945948ce5764408d050a1",
+        "usage_35157c84173047b4a275c71f50df3c0a",
+        "usage_35cdfed83de748a18764677d31cdaaad",
+        "usage_496ad65744cd46faa725ae35be146748",
+        "usage_4b83c54f4c87460694bbb1be02590152",
+        "usage_5145b4e811244f84b8056a276feb6306",
+        "usage_516d9b5b2ba848d5b678a45e6601a8d6",
+        "usage_54a7734428044bceb12619cbb6238a8e",
+        "usage_64d25e622b6c49ea8e02327767e1b1f3",
+        "usage_68f348bb4c9b422e8dd511443552798d",
+        "usage_729f1d01e99e42e1b466092e768a08bc",
+        "usage_7b1933107cf245328a3ee17d753a7781",
+        "usage_8515cda58be9488193229e3e875aa04a",
+        "usage_892cfe1304ae42a3816fdd99e980165b",
+        "usage_8c0b49830d9a4a3dbe9e967b299c25a6",
+        "usage_8ccbd1f05e304dd98f0058ef5469c077",
+        "usage_93031f6b739249c389f9ff2ae08e7299",
+        "usage_9972c04020be484fa875467b87e919bd",
+        "usage_9cea15187d4e42fb80a7b0776f34643e",
+        "usage_9ee534ee95d7471bb44486bf2a0d056c",
+        "usage_a1478ee8dfd04e6d9f76d56b7f49604f",
+        "usage_a415ac3e22f946a8b6d08faf35c67f1d",
+        "usage_af7b9a292d4d416bbc0e1542e84ca52b",
+        "usage_b2cfca845b2140cdb25c0df69a2a6ce6",
+        "usage_b69b35d293694184966295e4fdcb0fcc",
+        "usage_bab1a3a01c36409ba67297c1709d09e4",
+        "usage_bd99b839d97c465985fb8d0e7ea140c1",
+        "usage_cdd55dba65b34a6087392d1e4da252b1",
+        "usage_d160721f3b334057bfa9e73065404414",
+        "usage_d209b75260fe4973842860dfad71ec54",
+        "usage_d4e6a3e68de5455c87965f6fc144955d",
+        "usage_dc2d55e028f84cdfb62bc825a648f742",
+        "usage_e0e4df30feae42a6b34150bff36878ab",
+        "usage_e14dc534b188408991452e41f98a5a8e",
+        "usage_e2bb85dca94a455cb88de4b3a6aa2d6c",
+        "usage_ea9335bc61ea489e9fe2540ac5e54135",
+        "usage_f01418d9f78e4d0f99224f58038719b7",
+        "usage_f1c0459fb6b245adb48e66d71317a8c9",
+        "usage_f1c600cc8f5741f8be46a6e5e51a4218",
+        "usage_fbac3bc948634c938e8e8d40cbc01b37",
+        "usage_fc79ad38bb0442548270c7c4c4f9a077",
+        "usage_fdf3731795104fcb92b7bc4dd7ca070e"
+      ],
+      "unaccounted_evaluation_requests": 0,
+      "unaccounted_sampling_slots": 0,
+      "incomplete_sampling_slots": 0
+    },
+    "committed_release_ids": [
+      "release_33f17597ac30fb858638bb4469c3a75b4dcc440ce34d8bfd28b6ef2e3b037c75",
+      "release_f850932755ee762f174d76229ccf180ec470dc7169480b3cc6486d692e4cde67",
+      "release_088ac2e963aa5550a26d5141313cc33ceb3ff313b92a52a8569ad2bd51e1448e"
+    ]
+  }
+}

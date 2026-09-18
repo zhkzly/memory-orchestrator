@@ -7,6 +7,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .schemas import DomainError, digest, new_id, now_iso, validate, normalize_usage_measurements
+from .outcomes import parse_execution, resolve_scoring_policy
 
 
 BASE_GATES = {"complete_results", "target_gain", "regression_non_decrease",
@@ -60,8 +61,9 @@ def _error(exc):
 def _check_protocol(protocol, case_set, candidate_count, max_parallel):
     p, cs = _json(protocol), _json(case_set)
     _require(set(p) <= {"id", "comparison_scope", "repeat_count", "required_gates", "criteria",
-                       "selection_rule", "executor", "evaluator", "allowed_sources", "material_visibility", "note"},
+                       "selection_rule", "executor", "evaluator", "allowed_sources", "material_visibility", "note", "scoring_policy"},
              "unsupported_protocol", "Unsupported protocol fields; no ignored policy switches")
+    p["scoring_policy"] = resolve_scoring_policy(p.get("scoring_policy"), default="available_artifact")
     _require(type(max_parallel) is int and max_parallel > 0, "invalid_parallelism", "max_parallel must be positive")
     _require(type(p.get("repeat_count")) is int and p["repeat_count"] > 0,
              "invalid_protocol", "repeat_count must be explicit and positive")
@@ -165,36 +167,50 @@ def _invoke(store, project, request, stage, callback, args):
     return record
 
 
-def _unknown(request, reason, execution_ref=None, usage_refs=None, evidence_refs=None):
+def _unknown(request, reason, execution_ref=None, usage_refs=None, evidence_refs=None, execution_status="unknown"):
     return {"request_id": request["request_id"], "case_ref": request["case_ref"],
             "snapshot_digest": request["snapshot_digest"], "outcome": "unknown", "score": None,
             "evaluator_status": "error", "source": "executable",
             "evidence_refs": evidence_refs or [], "execution_ref": execution_ref,
-            "usage_refs": usage_refs or [], "gaps": [reason]}
+            "usage_refs": usage_refs or [], "gaps": [reason], "execution_status": execution_status}
 
 
-def _one_request(store, project, request, snapshot, case, execute_fn, evaluate_fn, sources):
+def _one_request(store, project, request, snapshot, case, execute_fn, evaluate_fn, sources, scoring_policy):
     public_case = {k: copy.deepcopy(case[k]) for k in ("id", "split", "task")}
     execution = _invoke(store, project, request, "execute", execute_fn, (request, snapshot, public_case))
     usage = [execution["usage_ref"]]
-    if execution["error"] or "artifact" not in execution["returned"]:
-        return _unknown(request, f"Execution unavailable: {execution['error'] or 'missing artifact'}", execution["id"], usage)
+    terminal = parse_execution(execution["returned"], execution["error"], scoring_policy)
+    execution_status = terminal["execution_status"]
+    if not terminal["eligible"]:
+        return _unknown(request, f"Execution ineligible: {terminal['reason']}", execution["id"], usage,
+                        execution_status=execution_status)
     feedback = _invoke(store, project, request, "evaluate", evaluate_fn,
                        (request, execution["returned"], case))
     usage.append(feedback["usage_ref"])
     out = feedback["returned"]
     evidence = [feedback["id"]]
     if feedback["error"]:
-        return _unknown(request, f"Evaluator error: {feedback['error']}", execution["id"], usage, evidence)
+        return _unknown(request, f"Evaluator error: {feedback['error']}", execution["id"], usage, evidence, execution_status)
     valid = (out.get("outcome") in {"pass", "fail"} and _number(out.get("score"))
              and 0 <= out["score"] <= 1 and out.get("source") in sources
              and isinstance(out.get("evidence"), list) and bool(out["evidence"]))
     if not valid:
-        return _unknown(request, "Unknown, invalid score/source or missing evaluation evidence", execution["id"], usage, evidence)
+        return _unknown(request, "Unknown, invalid score/source or missing evaluation evidence", execution["id"], usage, evidence, execution_status)
     return {"request_id": request["request_id"], "case_ref": request["case_ref"],
             "snapshot_digest": request["snapshot_digest"], "outcome": out["outcome"], "score": out["score"],
             "evaluator_status": "ok", "source": out["source"], "evidence_refs": evidence,
-            "execution_ref": execution["id"], "usage_refs": usage, "gaps": []}
+            "execution_ref": execution["id"], "usage_refs": usage, "gaps": [], "execution_status": execution_status}
+
+
+def proposal_aliases(candidates):
+    """Content identities map to all distinct persisted proposal attempts."""
+    aliases, seen = {}, {}
+    for candidate in candidates:
+        proposal, snapshot = candidate["proposal_id"], candidate["candidate_digest"]
+        _require(proposal not in seen or seen[proposal] == snapshot, "proposal_binding", "Proposal names different snapshots")
+        seen[proposal] = snapshot
+        aliases.setdefault(snapshot, set()).add(proposal)
+    return {snapshot: sorted(ids) for snapshot, ids in aliases.items()}
 
 
 def _summaries(plan, results, case_set):
@@ -288,46 +304,50 @@ def compare_candidates(store, project_id, candidates, case_set, protocol, execut
     """
     _require(callable(execute_fn) and callable(evaluate_fn), "missing_callback", "Actual execution and evaluation functions required")
     _require(isinstance(candidates, list) and bool(candidates), "missing_candidates", "Candidates required")
-    protocol, case_set = _check_protocol(protocol, case_set, len(candidates), max_parallel)
     active = copy.deepcopy(store.active(project_id))
     snapshots = {active["snapshot_id"]: store.snapshot(active["snapshot_id"])}
     candidates = _json(candidates)
-    seen = set()
+    attempts = {}
     for candidate in candidates:
         canonical = store.get("candidates", candidate["proposal_id"])
         _require(canonical == candidate, "candidate_changed", "Use the stored immutable candidate")
         _require(candidate["project_id"] == project_id and candidate["base_digest"] == active["snapshot_id"]
                  and candidate["expected_generation"] == active["generation"], "stale_candidate", "Candidate project/base/generation mismatch")
+        attempts[candidate["proposal_id"]] = candidate
         sid = candidate["candidate_digest"]
-        _require(sid not in seen, "duplicate_candidate", "Duplicate candidate snapshot")
-        seen.add(sid)
         snapshot = store.snapshot(sid)
         _require(snapshot["project_id"] == project_id and snapshot["parent"] == active["snapshot_id"],
                  "candidate_parent", "Candidate must belong to this project and base")
         snapshots[sid] = snapshot
+    candidates = list(attempts.values())
+    aliases = proposal_aliases(candidates)
+    protocol, case_set = _check_protocol(protocol, case_set, len(aliases), max_parallel)
     round_id = new_id("comparison")
     protocol_id, cases_id = new_id("protocol"), new_id("cases")
     store.put("protocols", protocol_id, {"id": protocol_id, "project_id": project_id, "value": protocol})
     store.put("case_sets", cases_id, {"id": cases_id, "project_id": project_id, "value": case_set})
     plans = []
-    for candidate in candidates:
+    for snapshot_digest, proposal_ids in aliases.items():
         requests = [{"request_id": new_id("request"), "case_ref": case["id"], "arm": arm,
-                     "snapshot_digest": candidate["base_digest"] if arm == "base" else candidate["candidate_digest"],
+                     "snapshot_digest": active["snapshot_id"] if arm == "base" else snapshot_digest,
                      "repeat_index": i} for case in case_set["cases"] for arm in ("base", "candidate")
                     for i in range(protocol["repeat_count"])]
         plan = {"plan_id": new_id("plan"), "project_id": project_id, "base_digest": active["snapshot_id"],
-                "candidate_digest": candidate["candidate_digest"], "expected_generation": active["generation"],
+                "candidate_digest": snapshot_digest, "expected_generation": active["generation"],
                 "protocol_ref": protocol_id, "protocol_hash": digest(protocol), "case_set_ref": cases_id,
                 "case_set_hash": digest(case_set), "evaluator_ref": protocol["evaluator"]["id"],
                 "evaluator_config_hash": digest(protocol["evaluator"]["config"]),
-                "repeat_count": protocol["repeat_count"], "acceptance_scope": protocol["comparison_scope"], "requests": requests}
+                "repeat_count": protocol["repeat_count"], "acceptance_scope": protocol["comparison_scope"], "requests": requests,
+                "proposal_ids": proposal_ids, "scoring_policy": protocol["scoring_policy"],
+                "purpose": "validation", "update_mode": "none"}
         validate("EvaluationPlan", plan)
         store.put("evaluation_plans", plan["plan_id"], plan)
         plans.append(plan)
     frozen = {"id": round_id, "project_id": project_id, "base_digest": active["snapshot_id"],
               "expected_generation": active["generation"], "candidates": candidates, "protocol_ref": protocol_id,
               "case_set_ref": cases_id, "plan_ids": [p["plan_id"] for p in plans],
-              "selection_rule": protocol["selection_rule"], "max_parallel": max_parallel}
+              "selection_rule": protocol["selection_rule"], "max_parallel": max_parallel,
+              "proposal_snapshots": [{"proposal_id": c["proposal_id"], "candidate_digest": c["candidate_digest"]} for c in candidates]}
     store.put("evaluation_inputs", round_id, frozen)
     by_case = {c["id"]: c for c in case_set["cases"]}
     requests = [r for p in plans for r in p["requests"]]
@@ -335,7 +355,7 @@ def compare_candidates(store, project_id, candidates, case_set, protocol, execut
     try:
         with ThreadPoolExecutor(max_workers=min(max_parallel, len(requests))) as pool:
             futures = {pool.submit(_one_request, store, project_id, r, snapshots[r["snapshot_digest"]], by_case[r["case_ref"]],
-                                   execute_fn, evaluate_fn, protocol["allowed_sources"]): r for r in requests}
+                                   execute_fn, evaluate_fn, protocol["allowed_sources"], protocol["scoring_policy"]): r for r in requests}
             for future in as_completed(futures):
                 request = futures[future]
                 try:
@@ -373,7 +393,8 @@ def compare_candidates(store, project_id, candidates, case_set, protocol, execut
     selection = {"selection_id": new_id("selection"), "project_id": project_id, "base_digest": active["snapshot_id"],
                  "expected_generation": active["generation"], "selection_rule_ref": round_id,
                  "selection_rule_hash": digest(protocol["selection_rule"]),
-                 "candidate_validations": [{"candidate_digest": v["candidate_digest"], "validation_ref": v["validation_id"], "status": v["status"]} for v in validations],
+                 "candidate_validations": [{"candidate_digest": v["candidate_digest"], "validation_ref": v["validation_id"], "status": v["status"],
+                                            "proposal_ids": aliases[v["candidate_digest"]]} for v in validations],
                  "decision": "selected" if ranked else "keep_current",
                  "selected_candidate_digest": ranked[0][3] if ranked else None,
                  "selected_validation_ref": ranked[0][4] if ranked else None,
@@ -403,6 +424,8 @@ def verify_validation(store, validation):
     _require(validation["expected_active_generation"] == plan["expected_generation"], "validation_binding", "Wrong generation")
     _require(plan["evaluator_ref"] == protocol["evaluator"]["id"] and plan["evaluator_config_hash"] == digest(protocol["evaluator"]["config"]),
              "validation_binding", "Evaluator identity/config changed")
+    scoring_policy = resolve_scoring_policy(protocol.get("scoring_policy"), default="available_artifact")
+    _require(plan.get("scoring_policy", scoring_policy) == scoring_policy, "scoring_policy_binding", "Plan scoring policy differs from its frozen protocol")
     expected = {r["request_id"]: r for r in plan["requests"]}
     expected_pairs = {(c["id"], arm, i) for c in cases["cases"] for arm in ("base", "candidate")
                       for i in range(protocol["repeat_count"])}
@@ -418,9 +441,14 @@ def verify_validation(store, validation):
         req = expected[result["request_id"]]
         _require(result == store.get("evaluation_results", result["request_id"]), "result_changed", "Stored result changed")
         _require(all(result[k] == req[k] for k in ("case_ref", "snapshot_digest")), "result_binding", "Result belongs to another case/version")
+        execution = store.get("evaluation_returns", result["execution_ref"]) if result["execution_ref"] else None
+        terminal = parse_execution(execution["returned"], execution["error"], scoring_policy) if execution else {
+            "execution_status": "unknown", "eligible": False}
+        _require(result.get("execution_status", terminal["execution_status"]) == terminal["execution_status"],
+                 "execution_status_binding", "Recorded terminal state differs from execution evidence")
         if result["outcome"] == "unknown":
             continue
-        execution = store.get("evaluation_returns", result["execution_ref"])
+        _require(execution is not None and terminal["eligible"], "scoring_policy_binding", "Execution is ineligible under frozen scoring policy")
         _require(execution["project_id"] == plan["project_id"] and execution["request"] == req
                  and execution["stage"] == "execute" and execution["error"] is None,
                  "execution_binding", "Missing/invalid actual execution")

@@ -35,6 +35,10 @@ from memory_orchestrator.report import report
 5. `compare_candidates()` 先固定案例、协议和候选集合，再调用执行／评价函数；所有结果和费用入账。`ValidationRecord` 表示是否通过，`SelectionRecord` 表示最终选择，二者分开。
 6. `publish()` 核对项目、完整资产、确切候选、验证／选择关系和 base/generation 后切换 active。`rollback()` 只回到同项目的已提交发布历史，并产生新代次。下一次召回使用新的 active；正在执行的任务仍用原快照。
 
+记录保存后可以查询，但不一定可以学习。对于本地采样，`learn()` 会检查计划中的全部槽位、实际终态记录和完成回执；`frozen_microbatch` 还检查调用前冻结的全部成员组。父经历、相关经验和同内容历史经验合并使用同一资格判断。未知外部导入可以保留，不要求伪造本地运行计划；已知本地矛盾不能降为未知以绕过检查。
+
+多个提案可能产生相同快照。比较只执行唯一内容，冻结其全部 proposal ID；每次提案和费用仍保留。发布必须匹配该比较中选定快照的真实提案别名。
+
 完整参数和可运行调用见 [demo.py](demo.py)。采样次数、候选数、准入门槛、模型及证据预算均来自显式配置；本例数值不是库的全局默认。
 
 调用方可直接使用 `evolve()` 串起步骤 4–6，由核心选择并发布通过的候选；无需自己重写演化决策。只需积累候选、暂缺评价材料时使用 `learn()`。
@@ -59,11 +63,21 @@ evaluate(request, execution, full_case) -> {
 
 私有评价标准不传给 `execute`。若回调回传 request/case/snapshot 身份，核心核对是否一致；原始返回和错误另行保存。标量分数和 `llm_proxy` 标签不会自行变成独立真值，实际评价依据由调用方提供。
 
+`scoring_policy` 在运行前写入有效采样政策或比较协议。采样默认 `completed_only`，只评价正常完成且有 artifact 键的返回；比较默认 `available_artifact`，允许独立评价取消、超时或预算耗尽后留下的产物。可显式选择另一个政策。`adapter_error`、错误身份或缺失产物不会被评分；显式 `artifact: null` 与缺失键不同，null 的任务含义由评价方判断。执行终态与任务 outcome 分别报告，不能把取消直接算失败。
+
 `events` 可保留 `event_id`、`parent_event_id`、`task_revision`、`goal_id`、`call_id` 和已知来源角色。采样器统一映射本地事件与父引用；缺失、重复或循环关系保留在原文并标记派生缺口，不补造。
+
+`EvidencePacket` v2 将已知结构和当前披露的调用/目标/父子关系提供给模型；片段、补读目录和关系全部计入 JSON 字符预算。目录只有元数据，不是已读事实。列表内顺序不证明跨线程因果。已知初态不匹配会写入 `initial_state_binding` 和缺口，而不是伪称没有收到初态。
 
 可选 `consumption_events=[{"skill_id": "...", "event_id": "..."}]` 必须关联已提供 Skill 和实际返回的 tool/environment 事件，才记录共用统计；仅提供 Skill 不算使用。共用统计能辅助选择，不能解释为因果收益。未知隔离和消费情况会明确保留。
 
 用量统一为 `tokens={input_tokens,output_tokens,total_tokens}`、`monetary_cost`、`currency`；未知值为 `null`。报告去重计入执行、评分和学习调用，按币种保留已知小计与缺失数，未完成计划不能声称成本完整。
+
+报告按冻结计划读取原始结果，即使尚无 ValidationRecord，也展示已观察成绩并注明尚未验收；它不因此允许发布。采样使用每次运行关联的单 `task_outcome` TaskAssessment。旧记录只在原反馈唯一且绑定可证时恢复，否则 unknown。唯一快照、proposal 记录/槽位和 validation 尝试分别计数；评分政策、purpose/update_mode、执行终态和 any/all-success 分栏。
+
+采样若在 Feedback→Assessment 或 Assessment→RunBundle 之间中断，报告同样可以读取与冻结槽位唯一绑定的已保存成绩。缺失的 Bundle/回执仍单独列出，不生成替代记录；有竞争评分或矛盾身份则保留 unknown，学习准入仍检查实际组/批次闭合。
+
+当前仍未接通多标准聚合、自动执行诊断 `check_plan`、流式轨迹索引、关系效果实验与标准 seed 实验臂。所有目标能力和剩余义务见 [总纲](../../docs/blueprint/index.html) 的逐项覆盖。这里的 Python API 不依赖 CLI/MCP 或客户端目录同步。
 
 ## 接入实际模型
 

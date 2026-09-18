@@ -1,0 +1,108 @@
+{
+  "tool": "/home/kelong/ai-workbench/tools/mutation_license.py",
+  "baseline_tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence test_memory_learning -q",
+  "baseline_test_count": 43,
+  "before_sha256": "669ee5f121ac9ba251f52abe61c2d90c451ab45e7b162b10eea51260004be1ed  src/memory_orchestrator/evidence.py\n3a3337b80f606733d8316b3b960d493b506ae9684b61eb4c7e6f00c5e0f3928f  src/memory_orchestrator/learning.py\n",
+  "after_sha256": "669ee5f121ac9ba251f52abe61c2d90c451ab45e7b162b10eea51260004be1ed  src/memory_orchestrator/evidence.py\n3a3337b80f606733d8316b3b960d493b506ae9684b61eb4c7e6f00c5e0f3928f  src/memory_orchestrator/learning.py\n",
+  "mutations": [
+    {
+      "label": "observed-call-metadata",
+      "target": "src/memory_orchestrator/evidence.py",
+      "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_packet_projects_observed_call_parent_role_and_source_order -q",
+      "exit_code": 0,
+      "raw_output": "✅ 执照发放:src/memory_orchestrator/evidence.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+      "mutate": "apply_patch <<'PATCH'\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-            **{key: record[key] for key in (\"task_id\", \"goal_id\", \"source_role\", \"call_id\",\n+            **{key: (None if key == \"call_id\" else record[key]) for key in (\"task_id\", \"goal_id\", \"source_role\", \"call_id\",\n*** End Patch\nPATCH",
+      "command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_packet_projects_observed_call_parent_role_and_source_order -q' --target 'src/memory_orchestrator/evidence.py' --mutate 'apply_patch <<'\\''PATCH'\\''\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-            **{key: record[key] for key in (\"task_id\", \"goal_id\", \"source_role\", \"call_id\",\n+            **{key: (None if key == \"call_id\" else record[key]) for key in (\"task_id\", \"goal_id\", \"source_role\", \"call_id\",\n*** End Patch\nPATCH'"
+    },
+    {
+      "label": "goal-to-model",
+      "target": "src/memory_orchestrator/evidence.py",
+      "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_same_text_different_goal_identity_changes_actual_model_input -q",
+      "exit_code": 0,
+      "raw_output": "✅ 执照发放:src/memory_orchestrator/evidence.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+      "mutate": "apply_patch <<'PATCH'\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-                      \"revision\": transition[\"revision\"], \"relation\": transition[\"relation\"] if complete else \"ambiguous\",\n+                      \"revision\": transition[\"revision\"], \"relation\": \"continues\",\n*** End Patch\nPATCH",
+      "command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_same_text_different_goal_identity_changes_actual_model_input -q' --target 'src/memory_orchestrator/evidence.py' --mutate 'apply_patch <<'\\''PATCH'\\''\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-                      \"revision\": transition[\"revision\"], \"relation\": transition[\"relation\"] if complete else \"ambiguous\",\n+                      \"revision\": transition[\"revision\"], \"relation\": \"continues\",\n*** End Patch\nPATCH'"
+    },
+    {
+      "label": "call-pair-endpoints",
+      "target": "src/memory_orchestrator/evidence.py",
+      "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_packet_projects_observed_call_parent_role_and_source_order -q",
+      "exit_code": 0,
+      "raw_output": "✅ 执照发放:src/memory_orchestrator/evidence.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+      "mutate": "apply_patch <<'PATCH'\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-        result_bases = [event_bases[(pair[\"episode_id\"], eid)] for eid in pair[\"result_event_ids\"]]\n+        result_bases = [event_bases[(pair[\"episode_id\"], eid)] for eid in pair[\"action_event_ids\"]]\n*** End Patch\nPATCH",
+      "command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_packet_projects_observed_call_parent_role_and_source_order -q' --target 'src/memory_orchestrator/evidence.py' --mutate 'apply_patch <<'\\''PATCH'\\''\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-        result_bases = [event_bases[(pair[\"episode_id\"], eid)] for eid in pair[\"result_event_ids\"]]\n+        result_bases = [event_bases[(pair[\"episode_id\"], eid)] for eid in pair[\"action_event_ids\"]]\n*** End Patch\nPATCH'"
+    },
+    {
+      "label": "goal-visible-basis",
+      "target": "src/memory_orchestrator/evidence.py",
+      "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_goal_transition_needs_its_visible_basis -q",
+      "exit_code": 0,
+      "raw_output": "✅ 执照发放:src/memory_orchestrator/evidence.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+      "mutate": "apply_patch <<'PATCH'\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-        complete = all(ref in visible for ref in transition[\"basis_refs\"])\n+        complete = True\n*** End Patch\nPATCH",
+      "command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_goal_transition_needs_its_visible_basis -q' --target 'src/memory_orchestrator/evidence.py' --mutate 'apply_patch <<'\\''PATCH'\\''\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-        complete = all(ref in visible for ref in transition[\"basis_refs\"])\n+        complete = True\n*** End Patch\nPATCH'"
+    },
+    {
+      "label": "structural-budget",
+      "target": "src/memory_orchestrator/evidence.py",
+      "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_relationship_metadata_is_bounded_and_undisclosed_endpoints_are_partial -q",
+      "exit_code": 0,
+      "raw_output": "✅ 执照发放:src/memory_orchestrator/evidence.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+      "mutate": "apply_patch <<'PATCH'\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-    serialized = _json(packet)\n+    serialized = _json({**packet, \"fragments\": [{\"text\": f[\"text\"]} for f in packet[\"fragments\"]], \"readable_ref_catalog\": [], \"relations\": {}})\n*** End Patch\nPATCH",
+      "command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_relationship_metadata_is_bounded_and_undisclosed_endpoints_are_partial -q' --target 'src/memory_orchestrator/evidence.py' --mutate 'apply_patch <<'\\''PATCH'\\''\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-    serialized = _json(packet)\n+    serialized = _json({**packet, \"fragments\": [{\"text\": f[\"text\"]} for f in packet[\"fragments\"]], \"readable_ref_catalog\": [], \"relations\": {}})\n*** End Patch\nPATCH'"
+    },
+    {
+      "label": "structure-validation",
+      "target": "src/memory_orchestrator/evidence.py",
+      "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_structure_and_relationships_share_exact_source_validation -q",
+      "exit_code": 0,
+      "raw_output": "✅ 执照发放:src/memory_orchestrator/evidence.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+      "mutate": "apply_patch <<'PATCH'\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-            if structured and item.get(\"structure\") != expected[\"structure\"]:\n+            if False and structured and item.get(\"structure\") != expected[\"structure\"]:\n*** End Patch\nPATCH",
+      "command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_structure_and_relationships_share_exact_source_validation -q' --target 'src/memory_orchestrator/evidence.py' --mutate 'apply_patch <<'\\''PATCH'\\''\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-            if structured and item.get(\"structure\") != expected[\"structure\"]:\n+            if False and structured and item.get(\"structure\") != expected[\"structure\"]:\n*** End Patch\nPATCH'"
+    },
+    {
+      "label": "relation-validation",
+      "target": "src/memory_orchestrator/evidence.py",
+      "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_structure_and_relationships_share_exact_source_validation -q",
+      "exit_code": 0,
+      "raw_output": "✅ 执照发放:src/memory_orchestrator/evidence.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+      "mutate": "apply_patch <<'PATCH'\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-    if structured and packet.get(\"relations\") != refreshed[\"relations\"]:\n+    if False and structured and packet.get(\"relations\") != refreshed[\"relations\"]:\n*** End Patch\nPATCH",
+      "command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_structure_and_relationships_share_exact_source_validation -q' --target 'src/memory_orchestrator/evidence.py' --mutate 'apply_patch <<'\\''PATCH'\\''\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-    if structured and packet.get(\"relations\") != refreshed[\"relations\"]:\n+    if False and structured and packet.get(\"relations\") != refreshed[\"relations\"]:\n*** End Patch\nPATCH'"
+    },
+    {
+      "label": "legacy-upgrade",
+      "target": "src/memory_orchestrator/evidence.py",
+      "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_legacy_packet_remains_readable_and_expansion_upgrades_structure -q",
+      "exit_code": 0,
+      "raw_output": "✅ 执照发放:src/memory_orchestrator/evidence.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+      "mutate": "apply_patch <<'PATCH'\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-    result[\"projection_version\"] = 2\n+    result.pop(\"projection_version\", None)\n*** End Patch\nPATCH",
+      "command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_legacy_packet_remains_readable_and_expansion_upgrades_structure -q' --target 'src/memory_orchestrator/evidence.py' --mutate 'apply_patch <<'\\''PATCH'\\''\n*** Begin Patch\n*** Update File: src/memory_orchestrator/evidence.py\n@@\n-    result[\"projection_version\"] = 2\n+    result.pop(\"projection_version\", None)\n*** End Patch\nPATCH'"
+    },
+    {
+      "label": "learning-entry-admission",
+      "target": "src/memory_orchestrator/learning.py",
+      "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_open_local_group_cannot_call_model_or_write_learning_records -q",
+      "exit_code": 0,
+      "raw_output": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+      "mutate": "apply_patch <<'PATCH'\n*** Begin Patch\n*** Update File: src/memory_orchestrator/learning.py\n@@\n-        require_learning_source(store, episode)\n+        pass  # mutation: skip source admission\n*** End Patch\nPATCH",
+      "command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_open_local_group_cannot_call_model_or_write_learning_records -q' --target 'src/memory_orchestrator/learning.py' --mutate 'apply_patch <<'\\''PATCH'\\''\n*** Begin Patch\n*** Update File: src/memory_orchestrator/learning.py\n@@\n-        require_learning_source(store, episode)\n+        pass  # mutation: skip source admission\n*** End Patch\nPATCH'"
+    },
+    {
+      "label": "related-experience-admission",
+      "target": "src/memory_orchestrator/learning.py",
+      "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_frozen_parent_and_polluted_related_memory_cannot_bypass_source_gate -q",
+      "exit_code": 0,
+      "raw_output": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+      "mutate": "apply_patch <<'PATCH'\n*** Begin Patch\n*** Update File: src/memory_orchestrator/learning.py\n@@\n-            if not _eligible_experience(store, memory):\n+            if False and not _eligible_experience(store, memory):\n*** End Patch\nPATCH",
+      "command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_frozen_parent_and_polluted_related_memory_cannot_bypass_source_gate -q' --target 'src/memory_orchestrator/learning.py' --mutate 'apply_patch <<'\\''PATCH'\\''\n*** Begin Patch\n*** Update File: src/memory_orchestrator/learning.py\n@@\n-            if not _eligible_experience(store, memory):\n+            if False and not _eligible_experience(store, memory):\n*** End Patch\nPATCH'"
+    },
+    {
+      "label": "canonical-history-admission",
+      "target": "src/memory_orchestrator/learning.py",
+      "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_canonical_merge_cannot_reintroduce_mixed_forbidden_history -q",
+      "exit_code": 0,
+      "raw_output": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+      "mutate": "apply_patch <<'PATCH'\n*** Begin Patch\n*** Update File: src/memory_orchestrator/learning.py\n@@\n-                if x.get(\"canonical_key\") == canonical and _eligible_experience(store, x)]\n+                if x.get(\"canonical_key\") == canonical]\n*** End Patch\nPATCH",
+      "command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_learning.LearningTests.test_canonical_merge_cannot_reintroduce_mixed_forbidden_history -q' --target 'src/memory_orchestrator/learning.py' --mutate 'apply_patch <<'\\''PATCH'\\''\n*** Begin Patch\n*** Update File: src/memory_orchestrator/learning.py\n@@\n-                if x.get(\"canonical_key\") == canonical and _eligible_experience(store, x)]\n+                if x.get(\"canonical_key\") == canonical]\n*** End Patch\nPATCH'"
+    }
+  ]
+}

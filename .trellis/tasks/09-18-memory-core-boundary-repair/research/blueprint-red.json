@@ -1,0 +1,217 @@
+{
+  "ok": false,
+  "baseline": "pass",
+  "derived_negative_cases": [
+    {
+      "name": "missing requirement",
+      "expected": "E_MISSING_REQUIREMENT",
+      "caught": true
+    },
+    {
+      "name": "duplicate node",
+      "expected": "E_DUP_ID",
+      "caught": true
+    },
+    {
+      "name": "unknown record",
+      "expected": "E_TYPE_REF",
+      "caught": true
+    },
+    {
+      "name": "unauthorized active writer",
+      "expected": "E_ACTIVE_OWNER",
+      "caught": true
+    },
+    {
+      "name": "validation bypass",
+      "expected": "E_GATE_BYPASS",
+      "caught": true
+    },
+    {
+      "name": "missing publication guard",
+      "expected": "E_PUBLICATION_GUARD",
+      "caught": true
+    },
+    {
+      "name": "candidate directly active",
+      "expected": "E_ACTIVE_TRANSITION",
+      "caught": true
+    },
+    {
+      "name": "unknown operation",
+      "expected": "E_OPERATIONS",
+      "caught": true
+    },
+    {
+      "name": "unsupported completion claim",
+      "expected": "E_IMPLEMENTATION_EVIDENCE",
+      "caught": true
+    },
+    {
+      "name": "missing obligation coverage",
+      "expected": "E_COVERAGE",
+      "caught": false
+    },
+    {
+      "name": "unfinished obligation labelled implemented",
+      "expected": "E_COVERAGE",
+      "caught": false
+    },
+    {
+      "name": "stale question status",
+      "expected": "E_COVERAGE",
+      "caught": false
+    },
+    {
+      "name": "completion without behavior evidence",
+      "expected": "E_COVERAGE",
+      "caught": false
+    },
+    {
+      "name": "empty node data",
+      "expected": "E_EMPTY",
+      "caught": true
+    },
+    {
+      "name": "missing user question",
+      "expected": "E_MISSING_QUESTION",
+      "caught": true
+    },
+    {
+      "name": "missing node implementation",
+      "expected": "E_NODE_IMPLEMENTATION",
+      "caught": true
+    },
+    {
+      "name": "unknown implementation prompt",
+      "expected": "E_PROMPT_REF",
+      "caught": true
+    },
+    {
+      "name": "prompt assigned to wrong node",
+      "expected": "E_PROMPT_MAPPING",
+      "caught": true
+    },
+    {
+      "name": "unknown prompt schema",
+      "expected": "E_SCHEMA_REF",
+      "caught": true
+    },
+    {
+      "name": "unknown node schema",
+      "expected": "E_SCHEMA_REF",
+      "caught": true
+    },
+    {
+      "name": "unknown example schema",
+      "expected": "E_SCHEMA_REF",
+      "caught": true
+    },
+    {
+      "name": "unknown source reference",
+      "expected": "E_PAPER_REF",
+      "caught": true
+    },
+    {
+      "name": "missing exact candidate publication guard",
+      "expected": "E_PUBLICATION_GUARD",
+      "caught": true
+    },
+    {
+      "name": "missing configuration publication guard",
+      "expected": "E_PUBLICATION_GUARD",
+      "caught": true
+    },
+    {
+      "name": "missing selection publication guard",
+      "expected": "E_PUBLICATION_GUARD",
+      "caught": true
+    },
+    {
+      "name": "missing selection activation guard",
+      "expected": "E_PUBLICATION_GUARD",
+      "caught": true
+    },
+    {
+      "name": "missing current scope",
+      "expected": "E_CURRENT_DELIVERY",
+      "caught": true
+    },
+    {
+      "name": "invalid implementation permission type",
+      "expected": "E_IMPLEMENTATION_PERMISSION",
+      "caught": true
+    },
+    {
+      "name": "missing implementation permission",
+      "expected": "E_IMPLEMENTATION_PERMISSION",
+      "caught": true
+    },
+    {
+      "name": "missing scope dependencies",
+      "expected": "E_CURRENT_DELIVERY",
+      "caught": true
+    },
+    {
+      "name": "concrete adapter confused with responsibility",
+      "expected": "E_NODE_RESPONSIBILITY",
+      "caught": true
+    },
+    {
+      "name": "missing node responsibility",
+      "expected": "E_NODE_RESPONSIBILITY",
+      "caught": true
+    },
+    {
+      "name": "missing evaluation policy",
+      "expected": "E_EVALUATION_POLICY",
+      "caught": true
+    },
+    {
+      "name": "unknown adjustment status",
+      "expected": "E_ADJUSTMENTS",
+      "caught": true
+    },
+    {
+      "name": "unknown adjustment node",
+      "expected": "E_NODE_REF",
+      "caught": true
+    },
+    {
+      "name": "undeclared prompt field",
+      "expected": "E_PROMPT_FIELDS",
+      "caught": true
+    },
+    {
+      "name": "unused prompt field",
+      "expected": "E_PROMPT_FIELDS",
+      "caught": true
+    }
+  ],
+  "generated_view_checks": [
+    {
+      "name": "context includes current scope and actual permission",
+      "passed": true
+    },
+    {
+      "name": "HTML overview and runtime both include visible current scope",
+      "passed": true
+    },
+    {
+      "name": "both authorized and paused scopes validate and render truthfully",
+      "passed": true
+    },
+    {
+      "name": "every compact node includes current scope and evaluation policy",
+      "passed": true
+    },
+    {
+      "name": "historical numeric examples are not mandatory defaults",
+      "passed": true
+    },
+    {
+      "name": "compact node preserves reference configuration authority marker",
+      "passed": true
+    }
+  ]
+}

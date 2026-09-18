@@ -16,11 +16,12 @@ import stat
 import tempfile
 
 from .schemas import DomainError, digest, json_bytes, new_id, now_iso, validate
+from .lineage import check_feedback_binding, resolve_episode_source
 
 
 KINDS = frozenset({
     "episodes", "feedback", "contexts", "relations", "executions", "errors",
-    "run_groups", "sampling_inputs", "runs", "group_receipts", "assessments", "evidence_packets",
+    "run_groups", "sampling_inputs", "sampling_batches", "runs", "group_receipts", "assessments", "evidence_packets",
     "experiences", "diagnoses", "learning_cycles", "evaluation_plans",
     "evaluation_inputs", "evaluation_returns", "evaluation_results", "validations",
     "selections", "releases", "usage", "reports", "candidates", "protocols",
@@ -30,7 +31,9 @@ SCHEMA_KINDS = {
     "episodes": ("EpisodeRecord", "episode_id"),
     "feedback": ("Feedback", "check_id"),
     "run_groups": ("RunGroupPlan", "group_id"),
+    "sampling_batches": ("SamplingBatchPlan", "batch_id"),
     "runs": ("RunBundle", "run_id"),
+    "assessments": ("TaskAssessment", "assessment_id"),
     "evidence_packets": ("EvidencePacket", "packet_id"),
     "evaluation_plans": ("EvaluationPlan", "plan_id"),
     "evaluation_results": ("EvaluationResult", "request_id"),
@@ -229,6 +232,8 @@ class Store:
                 self._check_episode(record)
             elif kind == "feedback":
                 self._check_feedback(record)
+            elif kind == "assessments":
+                self._check_assessment(record)
             return self._put_unlocked(kind, record_id, record)
 
     def remember(self, kind, content, source, project_id=None, memory_id=None):
@@ -346,6 +351,7 @@ class Store:
 
     def _check_episode(self, record, pending_feedback=None):
         project = record["project_id"]
+        resolve_episode_source(self, record)
         source = record["source_snapshot_ref"]
         if source is not None:
             _same_project(self.snapshot(source), project)
@@ -411,14 +417,25 @@ class Store:
     def _check_feedback(self, feedback, episode=None):
         if episode is None:
             episode = self.get("episodes", feedback["subject_ref"])
-        _same_project(episode, feedback["project_id"])
-        if episode["episode_id"] != feedback["subject_ref"]:
-            raise DomainError("REFERENCE_MISMATCH", "Feedback subject does not match imported episode")
-        revisions = {episode["task"]["revision"], *(x.get("task_revision") for x in episode["events"])} - {None}
-        if (feedback["binding_status"] == "bound" and feedback["task_revision"] is not None
-                and revisions and feedback["task_revision"] not in revisions):
-            raise DomainError("REFERENCE_MISMATCH", "Bound feedback refers to another task revision",
-                              {"known_revisions": sorted(revisions), "actual": feedback["task_revision"]})
+        return check_feedback_binding(self, feedback, episode)
+
+    def _check_assessment(self, assessment):
+        """The current producer supports exactly one linked task_outcome, not a rubric DSL."""
+        if assessment.get('aggregation_rule') != 'single_task_outcome' or len(assessment['criterion_feedback_ids']) != 1:
+            raise DomainError('UNSUPPORTED_AGGREGATION', 'Current assessments link one task_outcome feedback.')
+        episode = self.get('episodes', assessment['subject_ref'])
+        _same_project(episode, assessment.get('project_id'))
+        feedback = self.get('feedback', assessment['criterion_feedback_ids'][0])
+        source = check_feedback_binding(self, feedback, episode)
+        if feedback['criterion_id'] != 'task_outcome' or any(assessment[key] != feedback[key] for key in ('outcome', 'score')):
+            raise DomainError('REFERENCE_MISMATCH', 'Assessment must preserve the linked task_outcome result.')
+        if assessment.get('run_id') is not None and feedback.get('run_id') is not None and assessment['run_id'] != feedback['run_id']:
+            raise DomainError('REFERENCE_MISMATCH', 'Assessment refers to another run.')
+        if source['known'] and assessment.get('run_id') is not None and assessment['run_id'] != source['run_id']:
+            raise DomainError('REFERENCE_MISMATCH', 'Assessment contradicts the known episode source run.')
+        group = source['group']
+        if group is not None and assessment['protocol_id'] != group['protocol_id']:
+            raise DomainError('REFERENCE_MISMATCH', 'Assessment protocol differs from the known run plan.')
 
     def add_feedback(self, feedback):
         feedback = validate("Feedback", feedback)

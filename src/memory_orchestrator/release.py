@@ -2,12 +2,27 @@
 from __future__ import annotations
 
 from .schemas import digest, now_iso, validate
-from .evaluation import _require, _check_protocol, _gates, _rank, verify_validation
+from .evaluation import _require, _check_protocol, _gates, _rank, verify_validation, proposal_aliases
+
+
+def _frozen_aliases(store, selection):
+    frozen = store.get("evaluation_inputs", selection["selection_rule_ref"])
+    aliases = proposal_aliases(frozen["candidates"])
+    mapping = [{"proposal_id": c["proposal_id"], "candidate_digest": c["candidate_digest"]} for c in frozen["candidates"]]
+    _require(frozen.get("proposal_snapshots", mapping) == mapping, "proposal_binding", "Frozen proposal/snapshot mapping changed")
+    for candidate in frozen["candidates"]:
+        _require(store.get("candidates", candidate["proposal_id"]) == candidate,
+                 "candidate_changed", "A frozen proposal no longer matches its stored attempt")
+    for entry in selection["candidate_validations"]:
+        expected = aliases.get(entry["candidate_digest"])
+        actual = entry.get("proposal_ids") if "proposal_snapshots" in frozen else entry.get("proposal_ids", expected)
+        _require(expected is not None and actual == expected, "selection_aliases", "Selected snapshot aliases differ from frozen proposal attempts")
+    return frozen, aliases
 
 
 def _verify_selection(store, selection):
     validate("SelectionRecord", selection)
-    frozen = store.get("evaluation_inputs", selection["selection_rule_ref"])
+    frozen, aliases = _frozen_aliases(store, selection)
     _require(selection["project_id"] == frozen["project_id"]
              and selection["base_digest"] == frozen["base_digest"]
              and selection["expected_generation"] == frozen["expected_generation"]
@@ -25,6 +40,9 @@ def _verify_selection(store, selection):
     for entry in entries:
         val = store.get("validations", entry["validation_ref"])
         plan, _, _ = verify_validation(store, val)
+        expected_aliases = aliases[entry["candidate_digest"]]
+        actual_aliases = plan.get("proposal_ids") if "proposal_snapshots" in frozen else plan.get("proposal_ids", expected_aliases)
+        _require(actual_aliases == expected_aliases, "plan_aliases", "Comparison plan lost or changed proposal aliases")
         _require(val["validation_id"] == entry["validation_ref"] and val["candidate_digest"] == entry["candidate_digest"]
                  and val["status"] == entry["status"] and val["project_id"] == frozen["project_id"]
                  and val["base_digest"] == frozen["base_digest"]
@@ -81,6 +99,9 @@ def publish(store, project_id, candidate_id, validation_id, selection_id, *, exp
              and selection["selected_candidate_digest"] == candidate["candidate_digest"]
              and selection["selected_validation_ref"] == validation_id,
              "selection_mismatch", "Only the selected accepted candidate can publish")
+    frozen, aliases = _frozen_aliases(store, selection)
+    _require(candidate in frozen["candidates"] and candidate_id in aliases[candidate["candidate_digest"]],
+             "candidate_changed", "Proposal was not one of the frozen attempts for the selected snapshot")
     identity = {"project_id": project_id, "expected_active_digest": expected_active_digest,
                 "expected_generation": expected_generation, "new_digest": candidate["candidate_digest"],
                 "validation_ref": validation_id, "selection_ref": selection_id, "rollback_target_release_ref": None,
@@ -91,8 +112,7 @@ def publish(store, project_id, candidate_id, validation_id, selection_id, *, exp
     active = store.active(project_id)
     _require(active["snapshot_id"] == expected_active_digest and active["generation"] == expected_generation,
              "stale", "Active changed; rebase/re-evaluation required")
-    frozen = _verify_selection(store, selection)
-    _require(candidate in frozen["candidates"], "candidate_changed", "Candidate differs from frozen comparison")
+    _verify_selection(store, selection)
     snapshot = store.snapshot(candidate["candidate_digest"])
     _require(snapshot["project_id"] == project_id and snapshot["parent"] == expected_active_digest,
              "candidate_parent", "Candidate project or parent differs")

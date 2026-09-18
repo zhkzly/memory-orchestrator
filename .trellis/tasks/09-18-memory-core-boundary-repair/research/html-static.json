@@ -1,0 +1,7 @@
+{
+  "command": "Parse generated inline JavaScript and compare embedded canonical JSON",
+  "source_sha256": "129ba6c47f740b9f58a4642c04c8e7ed0e1e7ca3811f1503f8ae52e703520cc7",
+  "executable_scripts_parsed": 1,
+  "embedded_source_equal": true,
+  "visual_qa": false
+}

@@ -1,8 +1,8 @@
 {
   "source": {
     "path": "docs/blueprint/project-contract.json",
-    "version": "1.5.0",
-    "sha256": "cfb5c34e4077c0adad846fdccd49cefbbc29e852ecb7b91314299579021ff085"
+    "version": "1.6.0",
+    "sha256": "129ba6c47f740b9f58a4642c04c8e7ed0e1e7ca3811f1503f8ae52e703520cc7"
   },
   "schemas": {
     "ExperienceDraft": {
@@ -1741,6 +1741,14 @@
         "subject_ref": {
           "type": "string",
           "minLength": 1
+        },
+        "assessment_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_id": {
+          "type": "string",
+          "minLength": 1
         }
       },
       "required": [
@@ -1798,6 +1806,48 @@
           }
         }
       ]
+    },
+    "SamplingBatchPlan": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "batch_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "group_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "update_mode": {
+          "enum": [
+            "task_barrier",
+            "frozen_microbatch",
+            "none"
+          ]
+        },
+        "snapshot_digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "batch_id",
+        "project_id",
+        "group_ids",
+        "update_mode",
+        "snapshot_digest"
+      ],
+      "additionalProperties": false
     },
     "RunGroupPlan": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -1923,6 +1973,16 @@
             "minLength": 1
           },
           "minItems": 0
+        },
+        "scoring_policy": {
+          "enum": [
+            "completed_only",
+            "available_artifact"
+          ]
+        },
+        "batch_ref": {
+          "type": "string",
+          "minLength": 1
         }
       },
       "required": [
@@ -1968,7 +2028,8 @@
             }
           }
         }
-      ]
+      ],
+      "description": "新采样显式保存 scoring_policy 和 batch_ref；历史缺字段不伪造批次闭合证据。执行终态与任务真值分别记录。"
     },
     "RunBundle": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -2095,6 +2156,50 @@
         "executor_ref": {
           "type": "string",
           "minLength": 1
+        },
+        "assessment_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "initial_state_binding": {
+          "type": "object",
+          "properties": {
+            "expected": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "reported": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "status": {
+              "enum": [
+                "matched",
+                "mismatched",
+                "unknown"
+              ]
+            }
+          },
+          "required": [
+            "expected",
+            "reported",
+            "status"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -2231,6 +2336,105 @@
               "episode_id": {
                 "type": "string",
                 "minLength": 1
+              },
+              "structure": {
+                "type": "object",
+                "properties": {
+                  "source_kind": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "namespace": {
+                    "enum": [
+                      "event",
+                      "requirement",
+                      "feedback"
+                    ]
+                  },
+                  "source_position": {
+                    "type": "integer",
+                    "minimum": -1,
+                    "description": "原事件列表内序号；requirement 使用 -1，feedback 使用事件数。不是时间戳或全局因果顺序。"
+                  },
+                  "task_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "goal_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "source_role": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "call_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "parent_event_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "parent_episode_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "source_kind",
+                  "namespace",
+                  "source_position",
+                  "task_id",
+                  "goal_id",
+                  "source_role",
+                  "call_id",
+                  "parent_event_id",
+                  "parent_episode_id"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -2326,6 +2530,105 @@
               "episode_id": {
                 "type": "string",
                 "minLength": 1
+              },
+              "structure": {
+                "type": "object",
+                "properties": {
+                  "source_kind": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "namespace": {
+                    "enum": [
+                      "event",
+                      "requirement",
+                      "feedback"
+                    ]
+                  },
+                  "source_position": {
+                    "type": "integer",
+                    "minimum": -1,
+                    "description": "原事件列表内序号；requirement 使用 -1，feedback 使用事件数。不是时间戳或全局因果顺序。"
+                  },
+                  "task_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "goal_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "source_role": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "call_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "parent_event_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "parent_episode_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "source_kind",
+                  "namespace",
+                  "source_position",
+                  "task_id",
+                  "goal_id",
+                  "source_role",
+                  "call_id",
+                  "parent_event_id",
+                  "parent_episode_id"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -2451,6 +2754,179 @@
             "additionalProperties": false
           },
           "minItems": 1
+        },
+        "projection_version": {
+          "const": 2
+        },
+        "relations": {
+          "type": "object",
+          "properties": {
+            "calls": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "episode_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "call_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "action_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 0
+                  },
+                  "result_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 0
+                  },
+                  "status": {
+                    "enum": [
+                      "paired",
+                      "ambiguous"
+                    ]
+                  },
+                  "coverage": {
+                    "enum": [
+                      "complete",
+                      "partial"
+                    ]
+                  }
+                },
+                "required": [
+                  "episode_id",
+                  "call_id",
+                  "action_refs",
+                  "result_refs",
+                  "status",
+                  "coverage"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0
+            },
+            "goals": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "event_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "goal_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "revision": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "relation": {
+                    "enum": [
+                      "continues",
+                      "revises",
+                      "switches",
+                      "resumes",
+                      "ambiguous"
+                    ]
+                  },
+                  "basis_refs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 0
+                  },
+                  "coverage": {
+                    "enum": [
+                      "complete",
+                      "partial"
+                    ]
+                  }
+                },
+                "required": [
+                  "event_ref",
+                  "goal_id",
+                  "revision",
+                  "relation",
+                  "basis_refs",
+                  "coverage"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0
+            },
+            "parents": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "child_ref": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "parent_ref": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "status": {
+                    "enum": [
+                      "provided",
+                      "readable",
+                      "outside_packet",
+                      "missing"
+                    ]
+                  }
+                },
+                "required": [
+                  "child_ref",
+                  "parent_ref",
+                  "status"
+                ],
+                "additionalProperties": false
+              },
+              "minItems": 0
+            }
+          },
+          "required": [
+            "calls",
+            "goals",
+            "parents"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -2471,7 +2947,37 @@
         "episode_bindings"
       ],
       "additionalProperties": false,
-      "description": "已读事实和可补读目录分开。导入材料的源快照/上下文/反馈可以为空，gaps 记录缺失；禁止伪造 RunBundle/GroupReceipt。"
+      "description": "已读事实和可补读目录分开。导入材料的源快照/上下文/反馈可以为空，gaps 记录缺失；禁止伪造 RunBundle/GroupReceipt。 projection_version=2 的新包保留已知结构和局部关系，所有元数据计入整包预算。无此字段的历史包只按其原有证据读取；补读时从原索引重建，不臆造关系。",
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "projection_version"
+            ]
+          },
+          "then": {
+            "required": [
+              "relations"
+            ],
+            "properties": {
+              "fragments": {
+                "items": {
+                  "required": [
+                    "structure"
+                  ]
+                }
+              },
+              "readable_ref_catalog": {
+                "items": {
+                  "required": [
+                    "structure"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "ValidationRecord": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -2605,6 +3111,16 @@
                   "minLength": 1
                 },
                 "minItems": 0
+              },
+              "execution_status": {
+                "enum": [
+                  "completed",
+                  "timeout",
+                  "budget_exhausted",
+                  "adapter_error",
+                  "cancelled",
+                  "unknown"
+                ]
               }
             },
             "required": [
@@ -3466,6 +3982,27 @@
             "additionalProperties": false
           },
           "minItems": 2
+        },
+        "proposal_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "scoring_policy": {
+          "enum": [
+            "completed_only",
+            "available_artifact"
+          ]
+        },
+        "purpose": {
+          "const": "validation"
+        },
+        "update_mode": {
+          "const": "none"
         }
       },
       "required": [
@@ -3485,7 +4022,7 @@
         "requests"
       ],
       "additionalProperties": false,
-      "description": "次数和协议无默认。宿主另检查请求唯一、base/candidate 成对、重复范围与案例覆盖；JSON Schema 不证明实际执行或真值。"
+      "description": "次数和协议无默认。宿主另检查请求唯一、base/candidate 成对、重复范围与案例覆盖；JSON Schema 不证明实际执行或真值。 新计划按唯一 snapshot 比较，proposal_ids 保留该内容的所有提案别名；有效 scoring_policy 在运行前冻结。"
     },
     "EvaluationResult": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -3570,6 +4107,16 @@
             "minLength": 1
           },
           "minItems": 0
+        },
+        "execution_status": {
+          "enum": [
+            "completed",
+            "timeout",
+            "budget_exhausted",
+            "adapter_error",
+            "cancelled",
+            "unknown"
+          ]
         }
       },
       "required": [
@@ -3674,6 +4221,15 @@
                   "rejected",
                   "unknown"
                 ]
+              },
+              "proposal_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1,
+                "uniqueItems": true
               }
             },
             "required": [

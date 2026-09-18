@@ -7,7 +7,8 @@ import unittest
 from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import patch
 
-from memory_orchestrator.schemas import DomainError, new_id
+from memory_orchestrator.schemas import DomainError, new_id, digest
+from memory_orchestrator.evaluation import verify_validation
 from memory_orchestrator.release import publish, rollback
 from test_memory_evaluation import MemoryFixture, case_set, execute_csv
 
@@ -37,6 +38,52 @@ class MemoryReleaseTests(MemoryFixture, unittest.TestCase):
             publish(self.store,self.project,wrong["proposal_id"],wrong_val["validation_id"],result["selection_id"],
                     expected_active_digest=self.active["snapshot_id"],expected_generation=0)
         self.assertEqual(self.store.active(self.project),self.active)
+
+    def test_selected_snapshot_allows_frozen_alias_but_not_later_alias(self):
+        duplicate=copy.deepcopy(self.candidate);duplicate["proposal_id"]=new_id("proposal")
+        self.store.put("candidates",duplicate["proposal_id"],duplicate)
+        result=self.compare(candidates=[self.candidate,duplicate])
+        release=self.promote(result,duplicate)
+        self.assertEqual(self.promote(result,self.candidate),release)
+        unconsidered=copy.deepcopy(self.candidate);unconsidered["proposal_id"]=new_id("proposal")
+        self.store.put("candidates",unconsidered["proposal_id"],unconsidered)
+        with self.assertRaises(DomainError):self.promote(result,unconsidered)
+
+    def test_alias_mapping_cannot_be_forged_in_selection(self):
+        result=self.compare()
+        selection=self.store.get("selections",result["selection_id"])
+        forged=copy.deepcopy(selection);forged["selection_id"]=new_id("forgedselection")
+        forged["candidate_validations"][0]["proposal_ids"]=["not-a-frozen-proposal"]
+        self.store.put("selections",forged["selection_id"],forged)
+        with self.assertRaises(DomainError):
+            publish(self.store,self.project,self.candidate["proposal_id"],result["validation_ids"][0],forged["selection_id"],
+                    expected_active_digest=self.active["snapshot_id"],expected_generation=0)
+
+    def test_noncompleted_but_verified_artifact_can_publish_under_frozen_policy(self):
+        def cancelled(*args):
+            out=execute_csv(*args);out["execution_status"]="cancelled";return out
+        result=self.compare(execute_fn=cancelled)
+        release=self.promote(result)
+        self.assertEqual(release["status"],"published")
+        self.assertTrue(all(row["execution_status"]=="cancelled" for row in self.validation(result)["results"]))
+
+    def test_publication_recheck_enforces_recorded_scoring_policy(self):
+        def cancelled(*args):
+            out=execute_csv(*args);out["execution_status"]="cancelled";return out
+        result=self.compare(execute_fn=cancelled)
+        original=self.validation(result)
+        old_plan=self.store.get("evaluation_plans",original["plan_id"])
+        old_protocol=self.store.get("protocols",old_plan["protocol_ref"])
+        strict=copy.deepcopy(old_protocol);strict["id"]=new_id("protocol")
+        strict["value"]["scoring_policy"]="completed_only"
+        self.store.put("protocols",strict["id"],strict)
+        plan=copy.deepcopy(old_plan);plan.update(plan_id=new_id("plan"),protocol_ref=strict["id"],
+            protocol_hash=digest(strict["value"]),scoring_policy="completed_only")
+        self.store.put("evaluation_plans",plan["plan_id"],plan)
+        forged=copy.deepcopy(original);forged.update(validation_id=new_id("validation"),plan_id=plan["plan_id"],
+            plan_hash=digest(plan),protocol_hash=plan["protocol_hash"])
+        self.store.put("validations",forged["validation_id"],forged)
+        with self.assertRaises(DomainError):verify_validation(self.store,forged)
 
     def test_missing_or_duplicate_gates_cannot_be_forged_into_a_release(self):
         result=self.compare()

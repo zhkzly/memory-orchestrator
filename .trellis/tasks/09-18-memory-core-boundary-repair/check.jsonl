@@ -1,0 +1,7 @@
+{"file": "docs/blueprint/context.md", "reason": "Current design with audit limitations; not proof of complete implementation"}
+{"file": ".trellis/tasks/09-18-memory-core-boundary-repair/prd.md", "reason": "Authorized repair scope"}
+{"file": ".trellis/tasks/09-18-memory-core-boundary-repair/design.md", "reason": "Root causes and ownership"}
+{"file": ".trellis/tasks/09-18-memory-core-boundary-repair/implement.md", "reason": "Work sequence and verification"}
+{"file": ".trellis/tasks/09-18-memory-core-boundary-repair/resume.md", "reason": "Current checkpoint"}
+{"file": ".trellis/spec/backend/python-learning.md", "reason": "Python conventions"}
+{"file": ".trellis/tasks/09-18-experience-learning-architecture/research/implementation-coverage-audit-20260918/README.md", "reason": "Audited requirements and counterexamples"}

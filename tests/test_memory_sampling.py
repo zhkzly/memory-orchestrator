@@ -71,6 +71,102 @@ class SamplingTests(unittest.TestCase):
         self.assertTrue(all(self.store.feedback_for(e['episode_id'])[0]['visibility'] == 'final_only'
                             for e in result['episodes']))
 
+    def test_partial_events_survive_noncompleted_terminal_results(self):
+        for terminal in ('timeout', 'cancelled', 'budget_exhausted'):
+            with self.subTest(terminal=terminal):
+                output = {'execution_status': terminal, 'artifact': 'partial', 'events': [
+                    {'event_id': 'read', 'kind': 'action', 'text': 'read before interruption', 'call_id': 'c1'},
+                    {'event_id': 'seen', 'kind': 'observation', 'text': 'partial original evidence',
+                     'call_id': 'c1', 'parent_event_id': 'read'}]}
+                result = self.run_samples(lambda *args: output, repeat_count=1)
+                ep = result['episodes'][0]
+                self.assertTrue(any(e['text'] == 'partial original evidence' for e in ep['events']))
+                self.assertFalse(any('events were not supplied' in gap for gap in ep['gaps']))
+                child = next(e for e in ep['events'] if e['text'] == 'partial original evidence')
+                self.assertEqual(child['parent_event_id'], 'observation_0')
+                self.assertEqual(self.store.get('runs', result['run_ids'][0])['execution_status'], terminal)
+
+    def test_known_initial_state_mismatch_is_explicit_not_missing(self):
+        from memory_orchestrator.schemas import digest
+        self.tasks[0]['initial_state_digest'] = digest('planned')
+        result = self.run_samples(lambda *args: {'artifact': '001',
+            'initial_state_digest': digest('observed'), 'environment_instance_id': 'env'}, repeat_count=1)
+        run = self.store.get('runs', result['run_ids'][0])
+        self.assertEqual(run['execution_status'], 'completed')
+        self.assertEqual(run['initial_state_binding'], {'expected': digest('planned'),
+            'reported': digest('observed'), 'status': 'mismatched'})
+        self.assertTrue(any('initial-state mismatch' in gap.lower() for gap in run['capture_gaps']))
+        self.assertFalse(any('did not report both' in gap for gap in run['capture_gaps']))
+
+    def test_scoring_policy_is_frozen_and_terminal_status_is_not_outcome(self):
+        calls = []
+        def execute(*args):
+            plans = self.store.list('run_groups', project_id='p')
+            self.assertTrue(all('scoring_policy' in plan for plan in plans))
+            return {'execution_status': 'cancelled', 'artifact': '001'}
+        def evaluate(*args):
+            calls.append('evaluated')
+            return {'outcome': 'pass', 'score': 1.0, 'source': 'executable', 'evidence': ['checked partial artifact']}
+        default = self.run_samples(execute, evaluate, repeat_count=1)
+        self.assertEqual(calls, [])
+        assessed = self.run_samples(execute, evaluate, repeat_count=1, scoring_policy='available_artifact')
+        self.assertEqual(calls, ['evaluated'])
+        run = self.store.get('runs', assessed['run_ids'][0])
+        self.assertEqual(run['execution_status'], 'cancelled')
+        assessment = self.store.get('assessments', run['assessment_ref'])
+        self.assertEqual(assessment['run_id'], run['run_id'])
+        self.assertEqual(assessment['outcome'], 'pass')
+        feedback = self.store.get('feedback', assessment['criterion_feedback_ids'][0])
+        self.assertEqual(feedback['subject_ref'], assessed['episodes'][0]['episode_id'])
+        self.assertEqual(assessment['subject_ref'], feedback['subject_ref'])
+        self.assertEqual(assessment['aggregation_rule'], 'single_task_outcome')
+        unknown = self.store.get('assessments', self.store.get('runs', default['run_ids'][0])['assessment_ref'])
+        self.assertEqual(unknown['outcome'], 'unknown')
+
+    def test_available_artifact_never_bypasses_wrong_identity(self):
+        called = []
+        result = self.run_samples(lambda *args: {'artifact': '001', 'execution_status': 'timeout', 'request_id': 'wrong'},
+                                 lambda *args: called.append(args), repeat_count=1, scoring_policy='available_artifact')
+        self.assertEqual(called, [])
+        self.assertEqual(self.store.get('runs', result['run_ids'][0])['execution_status'], 'adapter_error')
+
+    def test_closed_source_checks_actual_slots_runs_and_receipt(self):
+        from memory_orchestrator.lineage import require_learning_source
+        result = self.run_samples(lambda *args: {'artifact': '001'}, repeat_count=2)
+        ep = result['episodes'][0]
+        self.assertTrue(require_learning_source(self.store, ep)['known'])
+        receipt_id = result['receipt_ids'][0]
+        path = self.store._record_path('group_receipts', receipt_id)
+        original = path.read_bytes()
+        path.unlink()
+        with self.assertRaises(DomainError) as raised: require_learning_source(self.store, ep)
+        self.assertEqual(raised.exception.code, 'learning_not_permitted')
+        path.write_bytes(original)
+        missing_run = self.store._record_path('runs', result['run_ids'][1])
+        run_bytes = missing_run.read_bytes(); missing_run.unlink()
+        with self.assertRaises(DomainError): require_learning_source(self.store, ep)
+        missing_run.write_bytes(run_bytes)
+        receipt = self.store.get('group_receipts', receipt_id)
+        path.unlink()
+        self.store.put('group_receipts', receipt_id, {**receipt, 'run_ids': [result['run_ids'][0]], 'all_slots_accounted': True})
+        with self.assertRaises(DomainError): require_learning_source(self.store, ep)
+        path.write_bytes(original)
+        self.assertTrue(require_learning_source(self.store, ep)['known'])
+
+    def test_frozen_microbatch_requires_every_member_group_to_close(self):
+        from memory_orchestrator.lineage import require_learning_source
+        self.tasks.append({**self.tasks[0], 'task_id': 'csv-second'})
+        result = self.run_samples(lambda *args: {'artifact': '001'}, repeat_count=1, update_mode='frozen_microbatch')
+        first = self.store.get('run_groups', result['plan_ids'][0])
+        batch = self.store.get('sampling_batches', first['batch_ref'])
+        self.assertCountEqual(batch['group_ids'], result['plan_ids'])
+        self.assertTrue(require_learning_source(self.store, result['episodes'][0])['known'])
+        other_receipt = self.store._record_path('group_receipts', result['receipt_ids'][1])
+        original = other_receipt.read_bytes(); other_receipt.unlink()
+        with self.assertRaises(DomainError): require_learning_source(self.store, result['episodes'][0])
+        other_receipt.write_bytes(original)
+        self.assertTrue(require_learning_source(self.store, result['episodes'][0])['known'])
+
     def test_invalid_or_unbounded_sampling_rejected_before_any_call(self):
         calls = []
         for count in (0, True, -1):

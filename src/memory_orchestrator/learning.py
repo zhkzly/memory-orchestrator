@@ -8,6 +8,7 @@ import re
 from .candidates import apply_candidate, skill_view
 from .context import terms as _terms
 from .evidence import build_packet, expand_packet, feedback_view, index_episodes, validate_citations
+from .lineage import require_learning_source
 from .schemas import DomainError, digest, load_contracts, new_id, now_iso, validate
 
 
@@ -36,43 +37,16 @@ def _policy(policy):
     return copy.deepcopy(policy)
 
 
-def _check_learning_source(store, episode, visited=None):
-    """Respect known execution purpose before any trajectory enters model inputs.
-
-    Imported material without a local run remains allowed with unknown provenance.
-    A known frozen run (including an explicit parent) is never relabelled training.
-    """
-    visited = set() if visited is None else visited
-    eid = episode["episode_id"]
-    if eid in visited:
-        return
-    visited.add(eid)
-    reference = episode["source"]["reference"]
-    if reference is not None:
-        try:
-            run = store.get("runs", reference)
-        except DomainError as exc:
-            if exc.code != "NOT_FOUND":
-                raise
-            try:
-                store.get("executions", reference)
-            except DomainError as missing:
-                if missing.code != "NOT_FOUND":
-                    raise
-            else:
-                raise DomainError("learning_not_permitted", "Local execution has no completed, purpose-bound run record.", {"episode_id": eid})
-        else:
-            group = store.get("run_groups", run["group_id"])
-            if run["project_id"] != episode["project_id"] or group["project_id"] != episode["project_id"]:
-                raise DomainError("project_mismatch", "Execution provenance belongs to another project.")
-            if group["purpose"] != "learning" or group["learning_enabled"] is not True or group["update_mode"] == "none":
-                raise DomainError("learning_not_permitted", "Frozen validation/final or learning-disabled execution cannot train memory.",
-                                  {"episode_id": eid, "run_id": reference, "group_id": group["group_id"], "purpose": group["purpose"]})
-    for parent_id in _unique(e.get("parent_episode_id") for e in episode["events"] if e.get("parent_episode_id") and e["parent_episode_id"] != eid):
-        parent = store.get("episodes", parent_id)
-        if parent["project_id"] != episode["project_id"]:
-            raise DomainError("project_mismatch", "Parent episode belongs to another project.")
-        _check_learning_source(store, parent, visited)
+def _eligible_experience(store, memory):
+    """Retrieval and canonical-history merging share the source admission rule."""
+    try:
+        for eid in memory.get("source_episode_ids", []):
+            require_learning_source(store, store.get("episodes", eid))
+    except DomainError as exc:
+        if exc.code != "learning_not_permitted":
+            raise
+        return False
+    return True
 
 
 def _retained_evidence(records):
@@ -101,13 +75,7 @@ def _visible_related(records, packet):
 
 def _source_provenance(store, episode, contexts):
     context = contexts.get(episode['context_ref']) if episode['context_ref'] is not None else None
-    run = None
-    if episode['source']['reference'] is not None:
-        try:
-            run = store.get('runs', episode['source']['reference'])
-        except DomainError as exc:
-            if exc.code != 'NOT_FOUND':
-                raise
+    run = require_learning_source(store, episode)['run']
     return {'episode_id': episode['episode_id'], 'source': episode['source'],
             'source_snapshot_ref': episode['source_snapshot_ref'], 'context_ref': episode['context_ref'],
             'provided_context': None if context is None else {key: context.get(key) for key in
@@ -149,7 +117,8 @@ def find_related(experiences, task, project_id, *, limit, max_chars):
 
 def _save_experience(store, draft, packet, index, cycle_id):
     canonical = digest({key: draft[key] for key in ("kind", "scope", "guidance")})
-    previous = [x for x in store.list("experiences", index["project_id"]) if x.get("canonical_key") == canonical]
+    previous = [x for x in store.list("experiences", index["project_id"])
+                if x.get("canonical_key") == canonical and _eligible_experience(store, x)]
     newest = max(previous, key=lambda r: (r["created_at"], r["record_id"])) if previous else None
     references = set(draft["supporting_refs"] + draft["counterevidence_refs"] + draft["boundary_refs"])
     for fact in draft["observed_facts"]:
@@ -226,7 +195,7 @@ def learn(store, episode_ids, model, *, policy):
     if any(ep["project_id"] != project for ep in episodes):
         raise DomainError("project_mismatch", "Learning cannot mix projects.")
     for episode in episodes:
-        _check_learning_source(store, episode)
+        require_learning_source(store, episode)
     if not callable(getattr(model, "generate", None)) or not isinstance(getattr(model, "limits", None), dict):
         raise DomainError("model_boundary", "Use a structured model boundary with explicit limits.")
     active = store.ensure_project(project)
@@ -299,12 +268,7 @@ def learn(store, episode_ids, model, *, policy):
         task_text = "\n".join(ep["task"]["description"] + "\n" + "\n".join(e["text"][:1000] for e in ep["events"][:3]) for ep in episodes)
         eligible_memories, excluded_memories = [], []
         for memory in store.list("experiences", project):
-            try:
-                for eid in memory.get("source_episode_ids", []):
-                    _check_learning_source(store, store.get("episodes", eid))
-            except DomainError as exc:
-                if exc.code != "learning_not_permitted":
-                    raise
+            if not _eligible_experience(store, memory):
                 excluded_memories.append(memory["record_id"])
             else:
                 eligible_memories.append(memory)
@@ -315,6 +279,7 @@ def learn(store, episode_ids, model, *, policy):
             ep = store.get("episodes", eid)
             if ep["project_id"] != project:
                 raise DomainError("project_mismatch", "Related experience references a different project.")
+            require_learning_source(store, ep)
             episodes.append(ep)
         result["source_episode_ids"] = [ep["episode_id"] for ep in episodes]
         contexts = {ep["context_ref"]: store.get("contexts", ep["context_ref"]) for ep in episodes if ep["context_ref"]}

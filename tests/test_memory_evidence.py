@@ -89,6 +89,114 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(pair["result_event_ids"], ["r"])
         self.assertTrue(any("c2" in g for g in index["gaps"]))
 
+    def test_packet_projects_observed_call_parent_role_and_source_order(self):
+        ep = episode()
+        action = {**event("launch", "start", "action", source_role="agent", task_id="A", goal_id="G"), "call_id": "c1"}
+        result = {**event("returned", "done", "result", source_role="tool", parent_event_id="launch"), "call_id": "c1"}
+        ep["events"] = [action, event("between", "unrelated"), result]
+        packet = build_packet(index_episodes([ep]), limits=limits())
+        self.assertEqual(packet["projection_version"], 2)
+        fragments = {f["event_id"]: f for f in packet["fragments"]}
+        info = fragments["returned"]["structure"]
+        self.assertEqual(info["source_kind"], "result")
+        self.assertEqual(info["source_position"], 2)
+        self.assertEqual(info["source_role"], "tool")
+        self.assertEqual(info["call_id"], "c1")
+        self.assertEqual(info["parent_event_id"], "launch")
+        self.assertIsNone(info["task_id"])
+        self.assertIsNone(info["goal_id"])
+        self.assertEqual(fragments["launch"]["structure"]["task_id"], "A")
+        self.assertEqual(fragments["launch"]["structure"]["goal_id"], "G")
+        self.assertEqual(packet["relations"]["calls"], [{"episode_id": ep["episode_id"], "call_id": "c1",
+            "action_refs": [fragments["launch"]["ref_id"]], "result_refs": [fragments["returned"]["ref_id"]],
+            "status": "paired", "coverage": "complete"}])
+        self.assertEqual(packet["relations"]["parents"], [{"child_ref": fragments["returned"]["ref_id"],
+            "parent_ref": fragments["launch"]["ref_id"], "status": "provided"}])
+
+    def test_structure_and_relationships_share_exact_source_validation(self):
+        ep = episode()
+        ep["events"] = [
+            {**event("a", "same text", "action", source_role="agent"), "call_id": "known"},
+            {**event("b", "same text", "result", source_role="tool", parent_event_id="a"), "call_id": "known"}]
+        index = index_episodes([ep]); packet = build_packet(index, limits=limits())
+        for field, wrong in [("call_id", "invented"), ("source_position", 999), ("source_role", "user"),
+                             ("goal_id", "invented goal"), ("parent_event_id", "invented parent")]:
+            altered = copy.deepcopy(packet)
+            altered["fragments"][1]["structure"][field] = wrong
+            with self.subTest(field=field), self.assertRaises(DomainError):
+                validate_packet(altered, index)
+        altered = copy.deepcopy(packet)
+        altered["relations"]["calls"][0]["result_refs"] = [packet["fragments"][0]["ref_id"]]
+        with self.assertRaises(DomainError): validate_packet(altered, index)
+
+    def test_cross_episode_parent_identity_survives_projection(self):
+        parent = episode()
+        parent["episode_id"] = "parent-episode"
+        parent["events"] = [event("same-id", "parent text", "action", source_role="agent")]
+        child = episode()
+        child["episode_id"] = "child-episode"
+        child["events"] = [event("same-id", "child text", "result", source_role="tool",
+                                  parent_episode_id="parent-episode", parent_event_id="same-id")]
+        packet = build_packet(index_episodes([parent, child]), limits=limits())
+        first = next(f for f in packet["fragments"] if f["text"] == "parent text")
+        second = next(f for f in packet["fragments"] if f["text"] == "child text")
+        self.assertEqual(second["structure"]["parent_episode_id"], "parent-episode")
+        self.assertEqual(packet["relations"]["parents"], [{"child_ref": second["ref_id"],
+                         "parent_ref": first["ref_id"], "status": "provided"}])
+
+    def test_relationship_metadata_is_bounded_and_undisclosed_endpoints_are_partial(self):
+        ep = episode()
+        ep["events"] = [{**event(f"a{i}", "launch task " * 30, "action"), "call_id": f"call-{i}"} for i in range(20)]
+        ep["events"] += [{**event(f"r{i}", "task returned " * 30, "result"), "call_id": f"call-{i}"} for i in range(20)]
+        index = index_episodes([ep])
+        packet = build_packet(index, limits=limits(8000, 100, 2))
+        self.assertLessEqual(len(json.dumps(packet, ensure_ascii=False, sort_keys=True, separators=(",", ":"))), 8000)
+        available = {x["ref_id"] for x in packet["fragments"] + packet["readable_ref_catalog"]}
+        self.assertLess(len(packet["relations"]["calls"]), len(index["call_pairs"]))
+        self.assertTrue(any(x["coverage"] == "partial" for x in packet["relations"]["calls"]))
+        for relation in packet["relations"]["calls"]:
+            self.assertTrue(set(relation["action_refs"] + relation["result_refs"]) <= available)
+        for locator in packet["readable_ref_catalog"]:
+            with self.assertRaises(DomainError): validate_citations({"evidence_refs": [locator["ref_id"]]}, packet)
+
+    def test_goal_transition_needs_its_visible_basis(self):
+        ep = episode()
+        ep["events"] = [{**event(f"u{i}", "Continue", "instruction", source_role="user", goal_id="A" if i < 19 else "B"),
+                         "task_revision": "r1"} for i in range(20)]
+        index = index_episodes([ep])
+        focus = next(r["base_ref"] for r in index["records"].values() if r["event_id"] == "u19")
+        packet = build_packet(index, limits=limits(5000, 30, 0), focus_refs=[focus])
+        shown = next(f for f in packet["fragments"] if f["event_id"] == "u19")
+        relation = next(r for r in packet["relations"]["goals"] if r["event_ref"] == shown["ref_id"])
+        self.assertEqual(relation["goal_id"], "B")
+        self.assertEqual(relation["coverage"], "partial")
+        self.assertEqual(relation["relation"], "ambiguous")
+        self.assertTrue(any("relationship endpoints" in reason for reason in packet["coverage"]["incomplete_reasons"]))
+
+    def test_legacy_packet_remains_readable_and_expansion_upgrades_structure(self):
+        ep = episode()
+        ep["events"][0]["call_id"] = "legacy-known-call"
+        ep["events"][0]["source_role"] = "tool"
+        ep["events"] += [event(f"more{i}", "old details " * 100) for i in range(12)]
+        index = index_episodes([ep]); current = build_packet(index, limits=limits(6000, 200, 3))
+        legacy = copy.deepcopy(current)
+        legacy.pop("projection_version"); legacy.pop("relations")
+        for item in legacy["fragments"] + legacy["readable_ref_catalog"]:
+            item.pop("structure")
+        # This is the actual v1 field shape, derived from the unchanged source index.
+        before = copy.deepcopy(legacy)
+        self.assertEqual(validate_packet(legacy, index), legacy)
+        ref = legacy["omitted_refs"][0]
+        expanded = expand_packet(index, legacy, [{"ref_id": ref, "purpose": "Read legacy source"}], limits=limits())
+        self.assertEqual(legacy, before)
+        self.assertEqual(expanded["projection_version"], 2)
+        self.assertTrue(all("structure" in f for f in expanded["fragments"] + expanded["readable_ref_catalog"]))
+        self.assertTrue({f["ref_id"] for f in legacy["fragments"]} <= {f["ref_id"] for f in expanded["fragments"]})
+        self.assertIn(ref, {f["ref_id"] for f in expanded["fragments"]})
+        source = next(f for f in expanded["fragments"] if f["event_id"] == ep["events"][0]["event_id"])
+        self.assertEqual(source["structure"]["call_id"], "legacy-known-call")
+        self.assertEqual(source["structure"]["source_role"], "tool")
+
     def test_cross_project_context_and_duplicate_event_rejected(self):
         ep = episode(); other = episode(); other.update(episode_id="other", project_id="foreign")
         with self.assertRaises(DomainError): index_episodes([ep, other])

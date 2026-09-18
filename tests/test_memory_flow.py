@@ -1,5 +1,7 @@
 """Whole local flow with an explicit scripted teacher, not a learning benchmark."""
 import importlib.util
+import copy
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -15,6 +17,42 @@ spec.loader.exec_module(demo)
 
 
 class FlowTests(unittest.TestCase):
+    def test_engine_uses_selected_snapshot_not_first_proposal(self):
+        class TwoChoices(demo.ScriptedTeacher):
+            proposed=0
+            def generate(self,prompt_id,inputs,**kwargs):
+                response=super().generate(prompt_id,inputs,**kwargs)
+                if prompt_id=='propose_v1':
+                    self.proposed+=1
+                    if self.proposed==1:
+                        response['value']['asset_edits'][0]['content']=json.dumps(
+                            {'preserve_string_columns':False,'empty_numeric_as_null':False},sort_keys=True)
+                return response
+        learning=copy.deepcopy(demo.LEARNING);learning['candidate_count']=2
+        comparison=demo.protocol('two-distinct/v1');comparison['criteria']['maximum_evaluation_calls']=16
+        with tempfile.TemporaryDirectory() as root,patch.object(demo,'LEARNING',learning),patch.object(demo,'protocol',return_value=comparison):
+            result=demo.run_demo(root,model=TwoChoices(),rounds=1)
+            self.assertEqual(result['release_count'],1)
+            self.assertEqual(result['report']['validation_attempt_counts'],{'accepted':1,'rejected':1,'unknown':0})
+            store=Store(root);active=store.snapshot(store.active('csv-demo')['snapshot_id'])
+            config=json.loads(next(iter(active['assets'].values())))
+            self.assertTrue(config['preserve_string_columns'])
+
+    def test_duplicate_generation_attempts_still_publish_one_snapshot(self):
+        learning=copy.deepcopy(demo.LEARNING);learning['candidate_count']=2
+        with tempfile.TemporaryDirectory() as root, patch.object(demo,'LEARNING',learning):
+            result=demo.run_demo(root,rounds=1)
+            store=Store(root)
+            proposals=store.list('candidates',project_id='csv-demo')
+            self.assertEqual(len(proposals),2)
+            self.assertEqual(len({p['candidate_digest'] for p in proposals}),1)
+            self.assertEqual(result['release_count'],1)
+            self.assertEqual(result['report']['evaluation_requests'],8)
+            self.assertEqual(result['report']['usage']['by_stage']['propose'],2)
+            self.assertEqual(result['report']['proposal_attempts']['planned_slots'],2)
+            self.assertEqual(result['report']['candidate_counts']['proposal_records'],2)
+            self.assertEqual(result['report']['candidate_counts']['unique_snapshots'],1)
+
     def test_rejected_and_invalid_comparisons_cannot_publish(self):
         for invalid in (False, True):
             explicit = demo.protocol('refusal/v1')
@@ -30,7 +68,7 @@ class FlowTests(unittest.TestCase):
                     errors = Store(root).list('errors', project_id='csv-demo')
                     self.assertTrue(any(error.get('stage') == 'compare' for error in errors))
                 else:
-                    self.assertEqual(result['report']['candidate_counts']['rejected'], 1)
+                    self.assertEqual(result['report']['validation_attempt_counts']['rejected'], 1)
 
     def test_generate_patch_publish_reuse_rollback_and_reopen(self):
         with tempfile.TemporaryDirectory() as root:

@@ -1,0 +1,34 @@
+{
+  "assessments": {
+    "interrupted_before": "assessments",
+    "raw_feedback": [
+      "pass"
+    ],
+    "assessments": [],
+    "run_bundles": 0,
+    "reported_outcomes": {
+      "pass": 1,
+      "fail": 0,
+      "unknown": 0
+    },
+    "recorded_runs": 0,
+    "learning_gate": "learning_not_permitted"
+  },
+  "runs": {
+    "interrupted_before": "runs",
+    "raw_feedback": [
+      "pass"
+    ],
+    "assessments": [
+      "pass"
+    ],
+    "run_bundles": 0,
+    "reported_outcomes": {
+      "pass": 1,
+      "fail": 0,
+      "unknown": 0
+    },
+    "recorded_runs": 0,
+    "learning_gate": "learning_not_permitted"
+  }
+}

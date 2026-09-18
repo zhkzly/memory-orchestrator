@@ -24,6 +24,8 @@ v1.1 加入 Q01–Q28 问题对照、逐节点 implementation、runtime、prompt
 
 v1.4 要求 current_delivery 及 implementation_allowed 显示在 HTML、context 和 compact node 输出；节点职责、调整清单和评价政策同步生成。演化能力与具体客户端适配分开，参考配置 normative=false，不决定实际运行协议。多候选发布须匹配 SelectionRecord。
 
+v1.6 在每个 Q/N 上分别记录已实现机制、剩余义务、外部职责、行为检查引用和效果证据。节点与 implementation.state 必须一致；仍有待实现项不能标 implemented；旧任务暂停文案不能替代当前机制覆盖。HTML 与简短摘要直接展示这份清单，不用 implemented 数量推导项目完成率。检查器验证声明自洽，不能自动证明其语义真实。
+
 `render` 写 `index.html` 和 `context.md`；两者包含源 SHA-256，不能分别手改。`node Nxx` 默认输出节点、提示词和相关结构索引，供任务按需读取；`node Nxx --full` 才包含完整 schema/示例。避免每次恢复都灌入大量重复结构。
 
 ## 4. Validation & Error Matrix

@@ -1,0 +1,165 @@
+{
+  "note": "Exact commands reconstructed from the already executed A mutation batch. Saving this file did not run any checks or mutations. Run official_command from the repository root only in a coordinated mutation window; the official tool restores each target.",
+  "commands": [
+    {
+      "file": "src/memory_orchestrator/store.py",
+      "tests": "test_memory_store.py",
+      "name": "feedback shared binding",
+      "before": "return check_feedback_binding(self, feedback, episode)",
+      "after": "return resolve_episode_source(self, episode)",
+      "tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_store.py",
+      "mutation_command": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/store.py\"); s=p.read_text(); old=\"return check_feedback_binding(self, feedback, episode)\"; assert old in s; p.write_text(s.replace(old,\"return resolve_episode_source(self, episode)\",1))'",
+      "official_command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_store.py' --target 'src/memory_orchestrator/store.py' --mutate 'python3 -c '\\''from pathlib import Path; p=Path(\"src/memory_orchestrator/store.py\"); s=p.read_text(); old=\"return check_feedback_binding(self, feedback, episode)\"; assert old in s; p.write_text(s.replace(old,\"return resolve_episode_source(self, episode)\",1))'\\'''",
+      "previous_result": {
+        "name": "feedback shared binding",
+        "file": "src/memory_orchestrator/store.py",
+        "exit_code": 0,
+        "output": "✅ 执照发放:src/memory_orchestrator/store.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+      }
+    },
+    {
+      "file": "src/memory_orchestrator/lineage.py",
+      "tests": "test_memory_store.py",
+      "name": "known source project",
+      "before": "_agree('project_id', [episode['project_id'], run_data.get('project_id'), execution_data.get('project_id'),",
+      "after": "_agree('project_id', [episode['project_id'], None, None,",
+      "tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_store.py",
+      "mutation_command": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); old=\"_agree('\\''project_id'\\'', [episode['\\''project_id'\\''], run_data.get('\\''project_id'\\''), execution_data.get('\\''project_id'\\''),\"; assert old in s; p.write_text(s.replace(old,\"_agree('\\''project_id'\\'', [episode['\\''project_id'\\''], None, None,\",1))'",
+      "official_command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_store.py' --target 'src/memory_orchestrator/lineage.py' --mutate 'python3 -c '\\''from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); old=\"_agree('\\''\\'\\'''\\''project_id'\\''\\'\\'''\\'', [episode['\\''\\'\\'''\\''project_id'\\''\\'\\'''\\''], run_data.get('\\''\\'\\'''\\''project_id'\\''\\'\\'''\\''), execution_data.get('\\''\\'\\'''\\''project_id'\\''\\'\\'''\\''),\"; assert old in s; p.write_text(s.replace(old,\"_agree('\\''\\'\\'''\\''project_id'\\''\\'\\'''\\'', [episode['\\''\\'\\'''\\''project_id'\\''\\'\\'''\\''], None, None,\",1))'\\'''",
+      "previous_result": {
+        "name": "known source project",
+        "file": "src/memory_orchestrator/lineage.py",
+        "exit_code": 0,
+        "output": "✅ 执照发放:src/memory_orchestrator/lineage.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+      }
+    },
+    {
+      "file": "src/memory_orchestrator/lineage.py",
+      "tests": "test_memory_store.py",
+      "name": "feedback artifact identity",
+      "before": "_agree('artifact_digest', [feedback['evaluated_state_digest'], checked_source['artifact_digest']])",
+      "after": "_agree('artifact_digest', [feedback['evaluated_state_digest']])",
+      "tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_store.py",
+      "mutation_command": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); old=\"_agree('\\''artifact_digest'\\'', [feedback['\\''evaluated_state_digest'\\''], checked_source['\\''artifact_digest'\\'']])\"; assert old in s; p.write_text(s.replace(old,\"_agree('\\''artifact_digest'\\'', [feedback['\\''evaluated_state_digest'\\'']])\",1))'",
+      "official_command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_store.py' --target 'src/memory_orchestrator/lineage.py' --mutate 'python3 -c '\\''from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); old=\"_agree('\\''\\'\\'''\\''artifact_digest'\\''\\'\\'''\\'', [feedback['\\''\\'\\'''\\''evaluated_state_digest'\\''\\'\\'''\\''], checked_source['\\''\\'\\'''\\''artifact_digest'\\''\\'\\'''\\'']])\"; assert old in s; p.write_text(s.replace(old,\"_agree('\\''\\'\\'''\\''artifact_digest'\\''\\'\\'''\\'', [feedback['\\''\\'\\'''\\''evaluated_state_digest'\\''\\'\\'''\\'']])\",1))'\\'''",
+      "previous_result": {
+        "name": "feedback artifact identity",
+        "file": "src/memory_orchestrator/lineage.py",
+        "exit_code": 0,
+        "output": "✅ 执照发放:src/memory_orchestrator/lineage.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+      }
+    },
+    {
+      "file": "src/memory_orchestrator/store.py",
+      "tests": "test_memory_store.py",
+      "name": "assessment source identity",
+      "before": "if source['known'] and assessment.get('run_id') is not None and assessment['run_id'] != source['run_id']:",
+      "after": "if False and source['known'] and assessment.get('run_id') is not None and assessment['run_id'] != source['run_id']:",
+      "tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_store.py",
+      "mutation_command": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/store.py\"); s=p.read_text(); old=\"if source['\\''known'\\''] and assessment.get('\\''run_id'\\'') is not None and assessment['\\''run_id'\\''] != source['\\''run_id'\\'']:\"; assert old in s; p.write_text(s.replace(old,\"if False and source['\\''known'\\''] and assessment.get('\\''run_id'\\'') is not None and assessment['\\''run_id'\\''] != source['\\''run_id'\\'']:\",1))'",
+      "official_command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_store.py' --target 'src/memory_orchestrator/store.py' --mutate 'python3 -c '\\''from pathlib import Path; p=Path(\"src/memory_orchestrator/store.py\"); s=p.read_text(); old=\"if source['\\''\\'\\'''\\''known'\\''\\'\\'''\\''] and assessment.get('\\''\\'\\'''\\''run_id'\\''\\'\\'''\\'') is not None and assessment['\\''\\'\\'''\\''run_id'\\''\\'\\'''\\''] != source['\\''\\'\\'''\\''run_id'\\''\\'\\'''\\'']:\"; assert old in s; p.write_text(s.replace(old,\"if False and source['\\''\\'\\'''\\''known'\\''\\'\\'''\\''] and assessment.get('\\''\\'\\'''\\''run_id'\\''\\'\\'''\\'') is not None and assessment['\\''\\'\\'''\\''run_id'\\''\\'\\'''\\''] != source['\\''\\'\\'''\\''run_id'\\''\\'\\'''\\'']:\",1))'\\'''",
+      "previous_result": {
+        "name": "assessment source identity",
+        "file": "src/memory_orchestrator/store.py",
+        "exit_code": 0,
+        "output": "✅ 执照发放:src/memory_orchestrator/store.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+      }
+    },
+    {
+      "file": "src/memory_orchestrator/lineage.py",
+      "tests": "test_memory_sampling.py",
+      "name": "actual receipt run set",
+      "before": "and set(actual_ids) == set(run_ids) and receipt.get('all_slots_accounted') is True",
+      "after": "and True and receipt.get('all_slots_accounted') is True",
+      "tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py",
+      "mutation_command": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); old=\"and set(actual_ids) == set(run_ids) and receipt.get('\\''all_slots_accounted'\\'') is True\"; assert old in s; p.write_text(s.replace(old,\"and True and receipt.get('\\''all_slots_accounted'\\'') is True\",1))'",
+      "official_command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py' --target 'src/memory_orchestrator/lineage.py' --mutate 'python3 -c '\\''from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); old=\"and set(actual_ids) == set(run_ids) and receipt.get('\\''\\'\\'''\\''all_slots_accounted'\\''\\'\\'''\\'') is True\"; assert old in s; p.write_text(s.replace(old,\"and True and receipt.get('\\''\\'\\'''\\''all_slots_accounted'\\''\\'\\'''\\'') is True\",1))'\\'''",
+      "previous_result": {
+        "name": "actual receipt run set",
+        "file": "src/memory_orchestrator/lineage.py",
+        "exit_code": 0,
+        "output": "✅ 执照发放:src/memory_orchestrator/lineage.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+      }
+    },
+    {
+      "file": "src/memory_orchestrator/lineage.py",
+      "tests": "test_memory_sampling.py",
+      "name": "microbatch member closure",
+      "before": "for member in groups:",
+      "after": "for member in [group]:",
+      "tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py",
+      "mutation_command": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); old=\"for member in groups:\"; assert old in s; p.write_text(s.replace(old,\"for member in [group]:\",1))'",
+      "official_command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py' --target 'src/memory_orchestrator/lineage.py' --mutate 'python3 -c '\\''from pathlib import Path; p=Path(\"src/memory_orchestrator/lineage.py\"); s=p.read_text(); old=\"for member in groups:\"; assert old in s; p.write_text(s.replace(old,\"for member in [group]:\",1))'\\'''",
+      "previous_result": {
+        "name": "microbatch member closure",
+        "file": "src/memory_orchestrator/lineage.py",
+        "exit_code": 0,
+        "output": "✅ 执照发放:src/memory_orchestrator/lineage.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+      }
+    },
+    {
+      "file": "src/memory_orchestrator/sampling.py",
+      "tests": "test_memory_sampling.py",
+      "name": "partial events retain",
+      "before": "if binding_error is None and isinstance(reported_events, list):",
+      "after": "if status == 'completed' and binding_error is None and isinstance(reported_events, list):",
+      "tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py",
+      "mutation_command": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/sampling.py\"); s=p.read_text(); old=\"if binding_error is None and isinstance(reported_events, list):\"; assert old in s; p.write_text(s.replace(old,\"if status == '\\''completed'\\'' and binding_error is None and isinstance(reported_events, list):\",1))'",
+      "official_command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py' --target 'src/memory_orchestrator/sampling.py' --mutate 'python3 -c '\\''from pathlib import Path; p=Path(\"src/memory_orchestrator/sampling.py\"); s=p.read_text(); old=\"if binding_error is None and isinstance(reported_events, list):\"; assert old in s; p.write_text(s.replace(old,\"if status == '\\''\\'\\'''\\''completed'\\''\\'\\'''\\'' and binding_error is None and isinstance(reported_events, list):\",1))'\\'''",
+      "previous_result": {
+        "name": "partial events retain",
+        "file": "src/memory_orchestrator/sampling.py",
+        "exit_code": 0,
+        "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+      }
+    },
+    {
+      "file": "src/memory_orchestrator/sampling.py",
+      "tests": "test_memory_sampling.py",
+      "name": "known initial mismatch visible",
+      "before": "'matched' if expected_initial == initial else 'mismatched'",
+      "after": "'matched' if expected_initial == initial else 'unknown'",
+      "tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py",
+      "mutation_command": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/sampling.py\"); s=p.read_text(); old=\"'\\''matched'\\'' if expected_initial == initial else '\\''mismatched'\\''\"; assert old in s; p.write_text(s.replace(old,\"'\\''matched'\\'' if expected_initial == initial else '\\''unknown'\\''\",1))'",
+      "official_command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py' --target 'src/memory_orchestrator/sampling.py' --mutate 'python3 -c '\\''from pathlib import Path; p=Path(\"src/memory_orchestrator/sampling.py\"); s=p.read_text(); old=\"'\\''\\'\\'''\\''matched'\\''\\'\\'''\\'' if expected_initial == initial else '\\''\\'\\'''\\''mismatched'\\''\\'\\'''\\''\"; assert old in s; p.write_text(s.replace(old,\"'\\''\\'\\'''\\''matched'\\''\\'\\'''\\'' if expected_initial == initial else '\\''\\'\\'''\\''unknown'\\''\\'\\'''\\''\",1))'\\'''",
+      "previous_result": {
+        "name": "known initial mismatch visible",
+        "file": "src/memory_orchestrator/sampling.py",
+        "exit_code": 0,
+        "output": "✅ 执照发放:src/memory_orchestrator/sampling.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+      }
+    },
+    {
+      "file": "src/memory_orchestrator/outcomes.py",
+      "tests": "test_memory_sampling.py",
+      "name": "error blocks artifact evaluation",
+      "before": "if error is not None:",
+      "after": "if False and error is not None:",
+      "tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py",
+      "mutation_command": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/outcomes.py\"); s=p.read_text(); old=\"if error is not None:\"; assert old in s; p.write_text(s.replace(old,\"if False and error is not None:\",1))'",
+      "official_command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py' --target 'src/memory_orchestrator/outcomes.py' --mutate 'python3 -c '\\''from pathlib import Path; p=Path(\"src/memory_orchestrator/outcomes.py\"); s=p.read_text(); old=\"if error is not None:\"; assert old in s; p.write_text(s.replace(old,\"if False and error is not None:\",1))'\\'''",
+      "previous_result": {
+        "name": "error blocks artifact evaluation",
+        "file": "src/memory_orchestrator/outcomes.py",
+        "exit_code": 0,
+        "output": "✅ 执照发放:src/memory_orchestrator/outcomes.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+      }
+    },
+    {
+      "file": "src/memory_orchestrator/outcomes.py",
+      "tests": "test_memory_sampling.py",
+      "name": "available artifact policy",
+      "before": "allowed = status == 'completed' or policy == 'available_artifact'",
+      "after": "allowed = status == 'completed'",
+      "tests_command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py",
+      "mutation_command": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/outcomes.py\"); s=p.read_text(); old=\"allowed = status == '\\''completed'\\'' or policy == '\\''available_artifact'\\''\"; assert old in s; p.write_text(s.replace(old,\"allowed = status == '\\''completed'\\''\",1))'",
+      "official_command": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p test_memory_sampling.py' --target 'src/memory_orchestrator/outcomes.py' --mutate 'python3 -c '\\''from pathlib import Path; p=Path(\"src/memory_orchestrator/outcomes.py\"); s=p.read_text(); old=\"allowed = status == '\\''\\'\\'''\\''completed'\\''\\'\\'''\\'' or policy == '\\''\\'\\'''\\''available_artifact'\\''\\'\\'''\\''\"; assert old in s; p.write_text(s.replace(old,\"allowed = status == '\\''\\'\\'''\\''completed'\\''\\'\\'''\\''\",1))'\\'''",
+      "previous_result": {
+        "name": "available artifact policy",
+        "file": "src/memory_orchestrator/outcomes.py",
+        "exit_code": 0,
+        "output": "✅ 执照发放:src/memory_orchestrator/outcomes.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+      }
+    }
+  ]
+}

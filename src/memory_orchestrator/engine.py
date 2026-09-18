@@ -27,7 +27,10 @@ def evolve(store, episode_ids, model, *, learning_policy, case_set, protocol,
         if selection['decision'] != 'selected':
             result['status'] = 'not_selected'
             return result
-        selected = next(c for c in candidates if c['candidate_digest'] == selection['selected_candidate_digest'])
+        selected_entry = next(entry for entry in selection['candidate_validations']
+                              if entry['candidate_digest'] == selection['selected_candidate_digest'])
+        selected_id = selected_entry['proposal_ids'][0]
+        selected = store.get('candidates', selected_id)
         stage = 'publish'
         result['release'] = publish(store, project, selected['proposal_id'], selection['selected_validation_ref'],
                                     selection['selection_id'], expected_active_digest=selection['base_digest'],

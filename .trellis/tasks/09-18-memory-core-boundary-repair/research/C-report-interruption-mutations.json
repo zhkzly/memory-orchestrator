@@ -1,0 +1,140 @@
+[
+  {
+    "label": "observations_not_validation_view",
+    "target": "src/memory_orchestrator/report.py",
+    "command_argv": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_report -v",
+      "--target",
+      "src/memory_orchestrator/report.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/report.py'\"'\"'); s=p.read_text(); assert '\"'\"'result = _optional(store, \"evaluation_results\", rid)'\"'\"' in s; p.write_text(s.replace('\"'\"'result = _optional(store, \"evaluation_results\", rid)'\"'\"','\"'\"'result = _optional(store, \"evaluation_results\", rid) if store.list(\"validations\", project_id=plan[\"project_id\"]) else None'\"'\"',1))'"
+    ],
+    "old": "result = _optional(store, \"evaluation_results\", rid)",
+    "new": "result = _optional(store, \"evaluation_results\", rid) if store.list(\"validations\", project_id=plan[\"project_id\"]) else None",
+    "replace_all": false,
+    "returncode": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/report.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "before_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "after_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "exact_restoration": true
+  },
+  {
+    "label": "snapshot_not_validation_count",
+    "target": "src/memory_orchestrator/report.py",
+    "command_argv": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_report -v",
+      "--target",
+      "src/memory_orchestrator/report.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/report.py'\"'\"'); s=p.read_text(); assert '\"'\"'len({p[\"candidate_digest\"] for p in proposals})'\"'\"' in s; p.write_text(s.replace('\"'\"'len({p[\"candidate_digest\"] for p in proposals})'\"'\"','\"'\"'len(validations)'\"'\"',1))'"
+    ],
+    "old": "len({p[\"candidate_digest\"] for p in proposals})",
+    "new": "len(validations)",
+    "replace_all": false,
+    "returncode": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/report.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "before_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "after_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "exact_restoration": true
+  },
+  {
+    "label": "unique_feedback_all_read_paths",
+    "target": "src/memory_orchestrator/report.py",
+    "command_argv": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_report -v",
+      "--target",
+      "src/memory_orchestrator/report.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/report.py'\"'\"'); s=p.read_text(); assert '\"'\"'len(matches) != 1'\"'\"' in s; p.write_text(s.replace('\"'\"'len(matches) != 1'\"'\"','\"'\"'not matches'\"'\"'))'"
+    ],
+    "old": "len(matches) != 1",
+    "new": "not matches",
+    "replace_all": true,
+    "returncode": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/report.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "before_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "after_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "exact_restoration": true
+  },
+  {
+    "label": "unknown_any_success",
+    "target": "src/memory_orchestrator/report.py",
+    "command_argv": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_report -v",
+      "--target",
+      "src/memory_orchestrator/report.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/report.py'\"'\"'); s=p.read_text(); assert '\"'\"'True if counts[\"pass\"] else None if counts[\"unknown\"] else False'\"'\"' in s; p.write_text(s.replace('\"'\"'True if counts[\"pass\"] else None if counts[\"unknown\"] else False'\"'\"','\"'\"'True if counts[\"pass\"] else False'\"'\"',1))'"
+    ],
+    "old": "True if counts[\"pass\"] else None if counts[\"unknown\"] else False",
+    "new": "True if counts[\"pass\"] else False",
+    "replace_all": false,
+    "returncode": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/report.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "before_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "after_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "exact_restoration": true
+  },
+  {
+    "label": "early_score_not_runbundle_view",
+    "target": "src/memory_orchestrator/report.py",
+    "command_argv": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_report -v",
+      "--target",
+      "src/memory_orchestrator/report.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/report.py'\"'\"'); s=p.read_text(); assert '\"'\"'row = _sampling_outcome(store, slot[\"run_id\"], run, group, feedback_records)'\"'\"' in s; p.write_text(s.replace('\"'\"'row = _sampling_outcome(store, slot[\"run_id\"], run, group, feedback_records)'\"'\"','\"'\"'row = _unknown(\"No RunBundle\") if run is None else _sampling_outcome(store, slot[\"run_id\"], run, group, feedback_records)'\"'\"',1))'"
+    ],
+    "old": "row = _sampling_outcome(store, slot[\"run_id\"], run, group, feedback_records)",
+    "new": "row = _unknown(\"No RunBundle\") if run is None else _sampling_outcome(store, slot[\"run_id\"], run, group, feedback_records)",
+    "replace_all": false,
+    "returncode": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/report.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "before_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "after_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "exact_restoration": true
+  },
+  {
+    "label": "unique_early_assessment",
+    "target": "src/memory_orchestrator/report.py",
+    "command_argv": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_report -v",
+      "--target",
+      "src/memory_orchestrator/report.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/report.py'\"'\"'); s=p.read_text(); assert '\"'\"'if len(available) > 1 or len(matches) != 1:'\"'\"' in s; p.write_text(s.replace('\"'\"'if len(available) > 1 or len(matches) != 1:'\"'\"','\"'\"'if len(matches) != 1:'\"'\"',1))'"
+    ],
+    "old": "if len(available) > 1 or len(matches) != 1:",
+    "new": "if len(matches) != 1:",
+    "replace_all": false,
+    "returncode": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/report.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "before_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "after_sha256": "0b9e330c2fd4653d36a87da848de713b28e5ec4aab36c2a56067e1bf6a7005b3",
+    "exact_restoration": true
+  }
+]

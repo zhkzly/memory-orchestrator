@@ -41,6 +41,14 @@ def _kind(event):
     return "observation"
 
 
+def _structure(record):
+    """One projection for declared event metadata, including its source order."""
+    return {"source_kind": record["source_kind"], "namespace": record["namespace"],
+            "source_position": record["position"],
+            **{key: record[key] for key in ("task_id", "goal_id", "source_role", "call_id",
+                                            "parent_event_id", "parent_episode_id")}}
+
+
 def index_episodes(episodes, *, feedback=(), contexts=None):
     """Index explicit identities; do not inherit the final goal onto old events.
 
@@ -66,6 +74,7 @@ def index_episodes(episodes, *, feedback=(), contexts=None):
         records[base] = {
             "base_ref": base, "episode_id": ep["episode_id"], "event_id": event["event_id"],
             "kind": kind or _kind(event), "text": event["text"],
+            "source_kind": event["kind"], "namespace": namespace,
             "raw_ref": event.get("source_ref") or f"episode:{ep['episode_id']}/{namespace}:{event['event_id']}",
             "raw_hash": digest(event["text"]), "task_revision": event.get("task_revision"),
             "task_id": event.get("task_id"), "goal_id": event.get("goal_id"),
@@ -91,7 +100,8 @@ def index_episodes(episodes, *, feedback=(), contexts=None):
         add(ep, {"event_id": "task", "kind": "instruction", "text": ep["task"]["description"],
                  "task_id": ep["task"]["task_id"], "task_revision": ep["task"]["revision"]},
             -1, namespace="requirement", kind="task")
-        seen_goals, previous, calls = set(), None, defaultdict(lambda: {"actions": [], "results": []})
+        seen_goals, previous, previous_ref = {}, None, None
+        calls = defaultdict(lambda: {"actions": [], "results": []})
         event_ids = {event["event_id"] for event in ep["events"]}
         for position, event in enumerate(ep["events"]):
             item = add(ep, event, position)
@@ -109,11 +119,16 @@ def index_episodes(episodes, *, feedback=(), contexts=None):
                     relation = "resumes"
                 else:
                     relation = "switches"
+                basis = [previous_ref] if previous_ref is not None else []
+                if relation == "resumes":
+                    basis.append(seen_goals[key])
                 transitions.append({"event_ref": item["base_ref"], "episode_id": eid,
-                                    "goal_id": key[0], "revision": key[1], "relation": relation})
+                                    "goal_id": key[0], "revision": key[1], "relation": relation,
+                                    "basis_refs": _unique(basis)})
                 if None not in key:
                     previous = key
-                    seen_goals.add(key)
+                    previous_ref = item["base_ref"]
+                    seen_goals.setdefault(key, item["base_ref"])
             if event["call_id"] is not None:
                 bucket = calls[event["call_id"]]
                 if event["kind"] == "action":
@@ -177,7 +192,7 @@ def _piece(record, start, end):
             "event_id": record["event_id"], "kind": record["kind"], "raw_ref": record["raw_ref"],
             "raw_hash": record["raw_hash"], "text": raw[start:end].decode("utf-8"),
             "range": {"start_byte": start, "end_byte_exclusive": end},
-            "task_revision": record["task_revision"]}
+            "task_revision": record["task_revision"], "structure": _structure(record)}
 
 
 def _pieces(record, width, extra):
@@ -191,7 +206,7 @@ def _pieces(record, width, extra):
 
 
 def _catalog(fragment):
-    return {**{k: fragment[k] for k in ("ref_id", "episode_id", "task_revision", "raw_ref", "raw_hash", "range")},
+    return {**{k: fragment[k] for k in ("ref_id", "episode_id", "task_revision", "raw_ref", "raw_hash", "range", "structure")},
             "available": True}
 
 
@@ -230,6 +245,52 @@ def _bindings(index):
     return bindings
 
 
+def _relations(packet, index):
+    """Disclose relationships only between currently provided/readable events.
+
+    Metadata in a read locator is not permission to cite the unread event body.
+    Coverage is explicit when an indexed counterpart is outside this packet.
+    """
+    visible, provided = {}, {f["ref_id"] for f in packet["fragments"]}
+    # A supplied range takes precedence over a locator for the same event.
+    for item, available in [(item, True) for item in packet["fragments"]] + [
+            (item, item["available"]) for item in packet["readable_ref_catalog"]]:
+        if not available:
+            continue
+        record, _ = _resolve(index, item["ref_id"])
+        visible.setdefault(record["base_ref"], item["ref_id"])
+    event_bases = {(r["episode_id"], r["event_id"]): ref for ref, r in index["records"].items() if r["source_event"]}
+    calls, goals, parents = [], [], []
+    for pair in index["call_pairs"]:
+        action_bases = [event_bases[(pair["episode_id"], eid)] for eid in pair["action_event_ids"]]
+        result_bases = [event_bases[(pair["episode_id"], eid)] for eid in pair["result_event_ids"]]
+        action_refs = [visible[ref] for ref in action_bases if ref in visible]
+        result_refs = [visible[ref] for ref in result_bases if ref in visible]
+        if action_refs or result_refs:
+            calls.append({"episode_id": pair["episode_id"], "call_id": pair["call_id"],
+                          "action_refs": action_refs, "result_refs": result_refs, "status": pair["status"],
+                          "coverage": "complete" if all(ref in visible for ref in action_bases + result_bases) else "partial"})
+    for transition in index["goal_transitions"]:
+        if transition["event_ref"] not in visible:
+            continue
+        complete = all(ref in visible for ref in transition["basis_refs"])
+        goals.append({"event_ref": visible[transition["event_ref"]], "goal_id": transition["goal_id"],
+                      "revision": transition["revision"], "relation": transition["relation"] if complete else "ambiguous",
+                      "basis_refs": [visible[ref] for ref in transition["basis_refs"] if ref in visible],
+                      "coverage": "complete" if complete else "partial"})
+    for base, child_ref in visible.items():
+        record = index["records"][base]
+        if record["parent_event_id"] is None:
+            continue
+        identity = (record["parent_episode_id"] or record["episode_id"], record["parent_event_id"])
+        parent_base = event_bases.get(identity)
+        parent_ref = visible.get(parent_base)
+        status = ("missing" if parent_base is None else "outside_packet" if parent_ref is None
+                  else "provided" if parent_ref in provided else "readable")
+        parents.append({"child_ref": child_ref, "parent_ref": parent_ref, "status": status})
+    return {"calls": calls, "goals": goals, "parents": parents}
+
+
 def _refresh(packet, index):
     selected = {_resolve(index, f["ref_id"])[0]["base_ref"] for f in packet["fragments"]}
     catalog_refs = [c["ref_id"] for c in packet["readable_ref_catalog"]]
@@ -244,6 +305,13 @@ def _refresh(packet, index):
         "omitted_episode_refs": [ep["episode_id"] for ep in index["episodes"]
                                  if ep["episode_id"] not in {f["episode_id"] for f in packet["fragments"]}],
     }
+    if packet.get("projection_version") == 2:
+        packet["relations"] = _relations(packet, index)
+        relations = packet["relations"]
+        if (any(row["coverage"] == "partial" for row in relations["calls"] + relations["goals"])
+                or any(row["status"] in ("missing", "outside_packet") for row in relations["parents"])):
+            packet["coverage"]["incomplete_reasons"].append(
+                "Some relationship endpoints are outside the provided/readable packet; do not infer their bodies or goal transitions.")
 
 
 def _fits(packet, limits, reserve=0):
@@ -264,6 +332,7 @@ def build_packet(index, *, limits, focus_refs=()):
         gaps += [f"{len(index['gaps']) - len(gaps)} additional gap annotations remain in the source index."]
     gaps += ["Token estimate = ceil(UTF-8 JSON bytes / 3); not a tokenizer measurement."]
     packet = {
+        "projection_version": 2,
         "packet_id": new_id("packet"), "project_id": index["project_id"],
         "episode_refs": [ep["episode_id"] for ep in index["episodes"]], "episode_bindings": bindings,
         "task_revision": next(iter(revisions)) if len(revisions) == 1 else None,
@@ -317,6 +386,10 @@ def build_packet(index, *, limits, focus_refs=()):
 
 def validate_packet(packet, index):
     packet = validate("EvidencePacket", packet)
+    structured = packet.get("projection_version") == 2
+    if not structured and ("relations" in packet or any("structure" in item
+            for item in packet["fragments"] + packet["readable_ref_catalog"])):
+        raise DomainError("evidence_mismatch", "Structural evidence must declare projection_version=2.")
     if packet["project_id"] != index["project_id"] or packet["episode_refs"] != [ep["episode_id"] for ep in index["episodes"]]:
         raise DomainError("project_mismatch", "Packet source identities differ from the original index.")
     if packet["episode_bindings"] != _bindings(index):
@@ -343,10 +416,14 @@ def validate_packet(packet, index):
                     raise DomainError("evidence_mismatch", f"Original evidence field changed: {key}", {"ref_id": item["ref_id"]})
             if field == "fragments" and any(item[key] != expected[key] for key in ("text", "event_id", "kind")):
                 raise DomainError("evidence_mismatch", "Provided text is not the exact original byte range.")
+            if structured and item.get("structure") != expected["structure"]:
+                raise DomainError("evidence_mismatch", "Observed event structure changed.", {"ref_id": item["ref_id"]})
     refreshed = copy.deepcopy(packet)
     _refresh(refreshed, index)
     if packet["coverage"] != refreshed["coverage"] or packet["omitted_refs"] != refreshed["omitted_refs"]:
         raise DomainError("evidence_mismatch", "Packet coverage or unread references changed.")
+    if structured and packet.get("relations") != refreshed["relations"]:
+        raise DomainError("evidence_mismatch", "Packet relationships differ from the visible source projection.")
     if math.ceil(len(_json(packet).encode("utf-8")) / 3) > packet["token_budget"]:
         raise DomainError("evidence_budget_exhausted", "Packet exceeds its explicitly estimated token budget.")
     return packet
@@ -365,6 +442,12 @@ def expand_packet(index, packet, requests, *, limits):
         if ref not in catalog or not catalog[ref]["available"] or ref in supplied:
             raise DomainError("unsupported_evidence", "Only unread, available catalog references can be expanded.", {"ref_id": ref})
         result["fragments"].append(_resolve(index, ref)[1])
+    # Legacy archives stay readable. Re-reading their sources upgrades a new
+    # packet, without changing the archived packet or dropping prior body ranges.
+    result["projection_version"] = 2
+    result["fragments"] = [_resolve(index, item["ref_id"])[1] for item in result["fragments"]]
+    result["readable_ref_catalog"] = [{**_catalog(_resolve(index, item["ref_id"])[1]), "available": item["available"]}
+                                     for item in result["readable_ref_catalog"]]
     result["packet_id"] = new_id("packet")
     result["token_budget"] = limits["token_budget"]
     result["readable_ref_catalog"] = [item for item in result["readable_ref_catalog"] if item["ref_id"] not in refs]

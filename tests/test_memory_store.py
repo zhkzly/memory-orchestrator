@@ -114,6 +114,68 @@ class StoreTests(unittest.TestCase):
         recalled["tokens"] = 123
         self.assertIsNone(self.store.get("usage", "usage-1")["tokens"])
 
+    def test_early_feedback_uses_known_execution_without_requiring_run_or_receipt(self):
+        value = episode(identifier="early")
+        value["task"].update(task_id="task", revision="v1")
+        value["source"] = {"kind": "execution_function", "reference": "run-early"}
+        self.store.put("executions", "run-early", {"run_id": "run-early", "project_id": "alpha",
+            "request": {"request_id": "run-early", "case_id": "task", "task_revision": "v1"},
+            "output": {"artifact": "first-state"}, "error": None})
+        self.store.add_episode(value)
+        correct = feedback(subject="early")
+        correct.update(check_id="early-correct", run_id="run-early", task_revision="v1",
+                       evaluated_state_digest=digest("first-state"), binding_status="bound")
+        self.assertEqual(self.store.add_feedback(correct), correct)
+        self.assertEqual(self.store.list("runs"), [])
+        self.assertEqual(self.store.list("group_receipts"), [])
+        for field, wrong in (("run_id", "other-run"), ("evaluated_state_digest", digest("other-state")),
+                             ("task_revision", "v2")):
+            bad = {**correct, "check_id": "wrong-" + field, field: wrong}
+            self.assert_domain("REFERENCE_MISMATCH", self.store.add_feedback, bad)
+            unbound = {**bad, "check_id": "unbound-" + field, "binding_status": "unbound"}
+            self.assertEqual(self.store.add_feedback(unbound), unbound)
+
+    def test_declared_known_run_constrains_feedback_even_for_unknown_import_source(self):
+        value = episode()
+        self.store.add_episode(value)
+        self.store.put('executions', 'known-run', {'run_id': 'known-run', 'project_id': 'alpha',
+            'request': {'request_id': 'known-run', 'task_revision': 'v1'},
+            'output': {'artifact': 'known-state'}, 'error': None})
+        item = feedback()
+        item.update(run_id='known-run', evaluated_state_digest=digest('wrong-state'), binding_status='bound')
+        self.assert_domain('REFERENCE_MISMATCH', self.store.add_feedback, item)
+        item['evaluated_state_digest'] = digest('known-state')
+        self.assertEqual(self.store.add_feedback(item), item)
+
+    def test_single_assessment_is_bound_before_bundle_and_preserves_feedback_result(self):
+        value = episode()
+        value['source'] = {'kind': 'execution_function', 'reference': 'early-run'}
+        self.store.put('executions', 'early-run', {'run_id': 'early-run', 'project_id': 'alpha',
+            'request': {'request_id': 'early-run', 'task_revision': 'v1'},
+            'output': {'artifact': 'state'}, 'error': None})
+        self.store.add_episode(value)
+        item = feedback()
+        item.update(criterion_id='task_outcome', run_id=None, evaluated_state_digest=digest('state'), binding_status='bound')
+        self.store.add_feedback(item)
+        assessment = {'assessment_id': 'early-assessment', 'project_id': 'alpha', 'run_id': 'early-run',
+            'subject_ref': value['episode_id'], 'protocol_id': 'external-explicit-protocol',
+            'criterion_feedback_ids': [item['check_id']], 'outcome': item['outcome'], 'score': item['score'],
+            'aggregation_rule': 'single_task_outcome', 'unknown_reasons': []}
+        self.assertEqual(self.store.put('assessments', assessment['assessment_id'], assessment), assessment)
+        self.assertEqual(self.store.list('runs'), [])
+        self.assert_domain('REFERENCE_MISMATCH', self.store.put, 'assessments', 'wrong-result',
+                           {**assessment, 'assessment_id': 'wrong-result', 'outcome': 'pass', 'score': 1})
+        self.assert_domain('REFERENCE_MISMATCH', self.store.put, 'assessments', 'wrong-assessment-run',
+                           {**assessment, 'assessment_id': 'wrong-assessment-run', 'run_id': 'other-run'})
+
+    def test_known_execution_project_cannot_be_relabelled_by_episode(self):
+        self.store.put("executions", "foreign-run", {"run_id": "foreign-run", "project_id": "beta",
+            "request": {"request_id": "foreign-run", "task_revision": "v1"},
+            "output": {"artifact": "other project"}, "error": None})
+        value = episode()
+        value["source"] = {"kind": "execution_function", "reference": "foreign-run"}
+        self.assert_domain("PROJECT_MISMATCH", self.store.add_episode, value)
+
     def test_fact_corrections_keep_history_and_project_scope(self):
         user = self.store.remember("user", "中文回答", "explicit user input")
         first = self.store.remember("project", "SQLite", "project decision", project_id="alpha")

@@ -246,5 +246,43 @@ class MemoryEvaluationTests(MemoryFixture, unittest.TestCase):
             self.assertEqual(usage["tokens"],{"input_tokens":None,"output_tokens":None,"total_tokens":None})
             self.assertEqual(len(usage["diagnostics"]),4)
 
+    def test_duplicate_proposals_share_one_comparison_but_keep_aliases(self):
+        duplicate=copy.deepcopy(self.candidate);duplicate["proposal_id"]=new_id("proposal")
+        self.store.put("candidates",duplicate["proposal_id"],duplicate)
+        p=protocol();p["criteria"]["maximum_evaluation_calls"]=8
+        result=self.compare(candidates=[self.candidate,duplicate],protocol=p)
+        self.assertEqual(len(result["plan_ids"]),1)
+        plan=self.store.get("evaluation_plans",result["plan_ids"][0])
+        self.assertCountEqual(plan["proposal_ids"],[self.candidate["proposal_id"],duplicate["proposal_id"]])
+        self.assertEqual(len(plan["requests"]),8)
+        frozen=self.store.get("evaluation_inputs",result["comparison_id"])
+        self.assertEqual(len(frozen["candidates"]),2)
+        self.assertEqual(len(frozen["proposal_snapshots"]),2)
+        self.assertEqual(len(self.store.list("candidates",project_id=self.project)),2)
+        selected=self.store.get("selections",result["selection_id"])
+        self.assertEqual(len(selected["candidate_validations"]),1)
+        self.assertCountEqual(selected["candidate_validations"][0]["proposal_ids"],plan["proposal_ids"])
+
+    def test_scoring_policy_is_frozen_and_noncompleted_artifact_can_be_scored(self):
+        def cancelled(*args):
+            out=execute_csv(*args);out["execution_status"]="cancelled";return out
+        result=self.compare(execute_fn=cancelled)
+        plan=self.store.get("evaluation_plans",result["plan_ids"][0])
+        frozen=self.store.get("protocols",plan["protocol_ref"])["value"]
+        self.assertEqual(plan["scoring_policy"],"available_artifact")
+        self.assertEqual(frozen["scoring_policy"],plan["scoring_policy"])
+        self.assertEqual(self.validation(result)["status"],"accepted")
+        self.assertTrue(all(r["execution_status"]=="cancelled" for r in self.validation(result)["results"]))
+        strict=protocol();strict["scoring_policy"]="completed_only"
+        scored=[]
+        def strict_evaluate(*args):
+            scored.append(args[0]["request_id"])
+            return evaluate_csv(*args)
+        strict_result=self.compare(protocol=strict,execute_fn=cancelled,
+                                   evaluate_fn=strict_evaluate)
+        self.assertEqual(self.validation(strict_result)["status"],"unknown")
+        self.assertEqual(scored,[])
+
+
 
 if __name__ == "__main__": unittest.main()

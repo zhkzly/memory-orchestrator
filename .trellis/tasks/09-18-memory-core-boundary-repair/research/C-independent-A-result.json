@@ -1,0 +1,31 @@
+{
+  "early_feedback": {
+    "saved": true,
+    "runs": 0,
+    "receipts": 0,
+    "rejections": {
+      "run_id": "REFERENCE_MISMATCH",
+      "evaluated_state_digest": "REFERENCE_MISMATCH",
+      "task_revision": "REFERENCE_MISMATCH"
+    }
+  },
+  "unknown_import": {
+    "known": false
+  },
+  "open_microbatch": {
+    "first_group_closed": true,
+    "stored_runs": 1,
+    "batch_groups": 2,
+    "learning_rejection": "learning_not_permitted",
+    "second_still_running": true,
+    "threads_finished": true
+  },
+  "closed_microbatch": {
+    "learning_allowed": [
+      true,
+      true
+    ],
+    "runs": 2,
+    "receipts": 2
+  }
+}

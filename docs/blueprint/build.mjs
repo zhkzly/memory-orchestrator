@@ -59,7 +59,17 @@ function validate(c, checkPaths = true) {
   const retired = new Set((c.deprecations || []).filter((d) => d.id && d.reason && d.user_source && d.revision).map((d) => d.id));
   for (const id of baselineIds) if (!reqIds.has(id) && !retired.has(id)) add("E_MISSING_REQUIREMENT", "requirements." + id, "Retain the confirmed requirement or record an explicit sourced deprecation.");
   for (const id of questionBaseline) if (!questionIds.has(id) && !retired.has(id)) add("E_MISSING_QUESTION", "questions." + id, "Retain the reconstructed user question or record an explicit sourced deprecation.");
+  const coverage = (item) => {
+    const value = item.coverage;
+    if (!object(value)) { add("E_COVERAGE", item.id, "Separate mechanisms, remaining obligations, external responsibilities and evidence."); return; }
+    for (const field of ["implemented", "effect_evidence"]) if (typeof value[field] !== "string" || !value[field].trim()) add("E_COVERAGE", item.id + ".coverage." + field, "Non-empty explanation required.");
+    for (const field of ["remaining", "external", "behavior_evidence"]) if (!Array.isArray(value[field]) || value[field].some((x) => typeof x !== "string" || !x.trim())) add("E_COVERAGE", item.id + ".coverage." + field, "Explicit list required.");
+    if (!["planned", "partial", "implemented"].includes(item.status)) add("E_COVERAGE", item.id + ".status", "Use current mechanism coverage, not obsolete task permission.");
+    if (item.status === "implemented" && (value.remaining?.length || !value.behavior_evidence?.length)) add("E_COVERAGE", item.id, "Implemented cannot hide remaining obligations or omit behavior evidence.");
+    if (item.implementation && item.implementation.state !== item.status) add("E_COVERAGE", item.id, "The two mechanism status labels must agree.");
+  };
   for (const q of c.questions) {
+    coverage(q);
     textRequired(q, ["title", "origin", "gap", "decision", "acceptance", "status"], q.id);
     references(q.requirement_ids, reqIds, q.id + ".requirement_ids", "E_REQUIREMENT_REF", true);
     references(q.node_ids, nodeIds, q.id + ".node_ids", "E_NODE_REF", true);
@@ -70,6 +80,7 @@ function validate(c, checkPaths = true) {
     for (const id of requirement.node_ids || []) if (!nodeIds.has(id)) add("E_NODE_REF", requirement.id, "Unknown node: " + id);
   }
   for (const n of c.nodes) {
+    coverage(n);
     for (const field of ["inputs", "outputs", "writes", "preconditions", "postconditions", "requirements", "invariants"]) {
       if (!Array.isArray(n[field]) || !n[field].length) add("E_NODE_CONTRACT", n.id + "." + field, "Non-empty node contract field required.");
     }
@@ -207,7 +218,7 @@ function validate(c, checkPaths = true) {
       if (generatedPaths.has(item.path)) continue;
       if (!existsSync(path.join(repo, item.path))) add("E_FILE_REF", item.path, "Referenced project file does not exist.");
     }
-    for (const n of c.nodes) for (const ref of n.evidence_refs || []) {
+    for (const n of [...c.nodes, ...c.questions]) for (const ref of [...(n.evidence_refs || []), ...(n.coverage?.behavior_evidence || [])]) {
       if (!/^[a-z]+:/.test(ref) && !existsSync(path.join(repo, ref))) add("E_FILE_REF", n.id, "Missing implementation evidence: " + ref);
     }
   }
@@ -235,7 +246,9 @@ function contextMarkdown(c, digest) {
     "## 节点目录", "", "| ID | 节点 | 职责归属 | 契约 |", "| --- | --- | --- | --- |"
   ];
   for (const n of c.nodes) lines.push("| " + n.id + " | " + n.name + " | " + responsibilityLabel(n.responsibility.owner) + " | " + n.operator.replaceAll("|", "\\|") + " |");
-  lines.push("", "职责详情见节点 responsibility；provided_function 是调用方提供的操作，与具体客户端适配分开。", "", "## 评价规则与待定参数", "");
+  lines.push("", "职责详情见节点 responsibility；provided_function 是调用方提供的操作，与具体客户端适配分开。", "", "## 当前实现覆盖", "", "机制、行为证据和效果证据分别记录；文件存在与测试通过不能推导全部义务完成。", "");
+  for (const n of c.nodes) lines.push("- " + n.id + " [" + n.status + "] " + n.coverage.implemented + " 待完成：" + (n.coverage.remaining.join("；") || "本节点列明的机制暂无待实现项") + "。效果：" + n.coverage.effect_evidence);
+  lines.push("", "## 评价规则与待定参数", "");
   for (const rule of evaluation.fixed_rules) lines.push("- " + rule);
   for (const parameter of evaluation.parameters) lines.push("- 参数 " + parameter.name + "（" + parameter.status + "）：" + parameter.rule);
   lines.push("", "历史数值仅供追溯，不自动成为默认值；详见 runtime.evaluation_policy.historical_examples。", "");
@@ -313,6 +326,10 @@ function selfTest(c) {
     ["candidate directly active", "E_ACTIVE_TRANSITION", (d) => { d.lifecycle.transitions.push({ from: "candidate", to: "active", owner: "N10", guards }); }],
     ["unknown operation", "E_OPERATIONS", (d) => { d.operations.push({ id: "REWRITE_EVERYTHING", rule: "bad fixture" }); }],
     ["unsupported completion claim", "E_IMPLEMENTATION_EVIDENCE", (d) => { d.nodes[0].status = "implemented"; delete d.nodes[0].evidence_refs; }],
+    ["missing obligation coverage", "E_COVERAGE", (d) => { delete d.nodes[0].coverage; }],
+    ["unfinished obligation labelled implemented", "E_COVERAGE", (d) => { d.nodes[0].status = "implemented"; d.nodes[0].coverage = { implemented: "existing mechanism", remaining: ["unfinished obligation"], external: [], behavior_evidence: ["tests/test_memory_store.py"], effect_evidence: "unmeasured" }; }],
+    ["stale question status", "E_COVERAGE", (d) => { d.questions[0].status = "design_retained_implementation_paused"; }],
+    ["completion without behavior evidence", "E_COVERAGE", (d) => { d.nodes[0].status = "implemented"; d.nodes[0].coverage = { implemented: "existing mechanism", remaining: [], external: [], behavior_evidence: [], effect_evidence: "unmeasured" }; }],
     ["empty node data", "E_EMPTY", (d) => { d.nodes = []; }],
     ["missing user question", "E_MISSING_QUESTION", (d) => { d.questions = d.questions.filter((q) => q.id !== "Q17"); }],
     ["missing node implementation", "E_NODE_IMPLEMENTATION", (d) => { delete d.nodes[0].implementation; }],
