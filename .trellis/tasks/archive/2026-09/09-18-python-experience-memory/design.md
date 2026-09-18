@@ -1,6 +1,6 @@
-# 设计阅读入口（v1.4.1）
+# 设计阅读入口（v1.5.0）
 
-产品实施已启动。当前完整设计以 docs/blueprint/project-contract.json 为唯一结构化来源，HTML/context 为生成视图。本文件不另定义节点或默认参数；v1.4.1 仅转换工作阶段。
+产品参考实现已完成。当前完整设计以 docs/blueprint/project-contract.json 为唯一结构化来源，HTML/context 为生成视图。本文件不另定义节点或默认参数；v1.4.1 仅转换工作阶段。
 
 ## 两条输入路径
 

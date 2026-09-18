@@ -127,3 +127,27 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 5: 完成 Python 记忆演化核心参考实现
+<!-- trellis-session: v=2 fp=8ae9caeff71e208d -->
+
+**Date**: 2026-09-18
+**Task**: 完成 Python 记忆演化核心参考实现
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+完成M1–M3：事实与经历、长轨迹与反馈、经验及Skill演化、比较选择和发布回退；126测试通过并修复独立审查问题。SDK可用，真实模型生成的候选未改善而拒绝，保留全部取证。旧TS保留，未接native/CLI/MCP，未做benchmark或推送。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `1d1ee99` | docs: activate Python memory core implementation |
+| `907eca0` | feat: add Python memory storage and scoped context selection |
+| `1b1a869` | feat: implement memory learning, evaluation and version release |
+
+### Status
+
+[OK] **Completed**

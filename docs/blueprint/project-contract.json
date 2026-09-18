@@ -1814,13 +1814,13 @@
       "rule": "只修订文档，不能恢复产品实现。"
     },
     {
-      "role": "当前 Python 核心实施任务",
-      "path": ".trellis/tasks/09-18-python-experience-memory/implement.md",
+      "role": "已归档的 Python 核心实施任务",
+      "path": ".trellis/tasks/archive/2026-09/09-18-python-experience-memory/implement.md",
       "rule": "未来按完整演化交付；仍未授权恢复。"
     },
     {
       "role": "恢复检查点",
-      "path": ".trellis/tasks/09-18-python-experience-memory/resume.md",
+      "path": ".trellis/tasks/archive/2026-09/09-18-python-experience-memory/resume.md",
       "rule": "按用户明确授权与当前实施检查点继续；不使用过期暂停或旧状态字段覆盖最新范围。"
     }
   ],

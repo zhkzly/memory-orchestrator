@@ -1,6 +1,6 @@
 # 参考实现完成检查点
 
-- contract_version：1.5.0；M1–M3 Python 参考实现完成，待按 Trellis 收尾归档。
+- contract_version：1.5.0；M1–M3 Python 参考实现完成，已通过 Trellis 归档。
 - 开工提交1d1ee99；M1提交907eca0；其余实现及证据以本次完整交付提交为准。
 - 入口：examples/memory_evolution/README.md；engine.evolve 负责学习→比较→选择→发布，外部提供实际执行/评分。
 - 最终检查：checks.json；126个行为测试、33个文档负例、6个生成视图检查、编译、editable安装和任务引用检查通过。

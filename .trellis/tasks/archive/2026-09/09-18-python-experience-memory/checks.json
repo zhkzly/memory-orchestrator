@@ -63,5 +63,22 @@
     "tests/test_memory_report.py": "167ceb0cf13abcf534df1731bcab33dcfefbfa4e2215445891caa11ee3bb6818",
     "tests/test_memory_sampling.py": "5acbd2c879229ecfb4b9ea070fdd047e6a962bbca2937d0590e0b83850a4f630",
     "tests/test_memory_store.py": "50003466752a7669306740047322e00534f8fd595b1320b52440edb4e367bd0c"
-  }
+  },
+  "archive_sync": {
+    "note": "Only task paths and packaged source metadata changed after the implementation commit; no Python behavior or prompt wording changed.",
+    "contract_source": {
+      "path": "docs/blueprint/project-contract.json",
+      "version": "1.5.0",
+      "sha256": "cfb5c34e4077c0adad846fdccd49cefbbc29e852ecb7b91314299579021ff085"
+    },
+    "unit_tests": 126,
+    "exit_code": 0,
+    "links_checked": 16,
+    "broken_links": 0,
+    "packaged_data_hashes": {
+      "src/memory_orchestrator/prompts.json": "d86ebfadc88ce27331e7240c1c3b1a724bdcc701c33846159fa595a67dc9aa81",
+      "src/memory_orchestrator/schemas.json": "09eb622efbdcaa9427b421e8cde2a6156d785c8158c5f2ae50fbb53b07826f45"
+    }
+  },
+  "live_artifact_bundle": "research/live-run-artifacts.json"
 }

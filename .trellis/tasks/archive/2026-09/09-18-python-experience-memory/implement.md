@@ -1,6 +1,6 @@
-# 记忆演化核心执行清单（实施中）
+# 记忆演化核心执行清单（参考实现已完成）
 
-文档对齐和草稿清理已完成；本清单把既定节点组织为可验收交付，不另定义演化规则。2026-09-18 用户明确继续，当前 in_progress / implementation_allowed=true，总纲 1.5.0。
+文档对齐和草稿清理已完成；本清单把既定节点组织为可验收交付，不另定义演化规则。2026-09-18 用户明确继续，当前 completed；本次实施已完成，总纲 1.5.0。
 
 ## 开工转换（实施开始时一次完成）
 
@@ -44,14 +44,14 @@
 
 ## 验收命令与证据
 
-以下 Python 用例路径是后续交付目标，目前文件未创建，不能报告已经通过；必须检查实际运行的用例数，0 个用例不算验收。
+以下 Python 用例已经实现并执行；最终 126 项通过，证据在 checks.json 和 research/final-unittest.txt。后续复验仍须检查实际用例数，0 个用例不算验收。
 
 ```bash
 # 开工转换后以及总纲变更时
 node docs/blueprint/build.mjs check
 node docs/blueprint/build.mjs verify
 node docs/blueprint/build.mjs self-test
-python3 .trellis/scripts/task.py validate .trellis/tasks/09-18-python-experience-memory
+python3 .trellis/scripts/task.py validate .trellis/tasks/archive/2026-09/09-18-python-experience-memory
 
 # 每段实现后，覆盖该段及已完成各段的用例
 PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_memory_*.py' -v

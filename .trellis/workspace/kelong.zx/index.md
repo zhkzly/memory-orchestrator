@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 4
+- **Total Sessions**: 5
 - **Last Active**: 2026-09-18
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~129 | Active |
+| `journal-1.md` | ~153 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 5 | 2026-09-18 | 完成 Python 记忆演化核心参考实现 | `1d1ee99`, `907eca0`, `1b1a869` | `codex/vault-controller-maintenance` |
 | 4 | 2026-09-18 | 清理过期草稿并校正 Trellis 范围 | `db20db8`, `d2ad776` | `codex/vault-controller-maintenance` |
 | 3 | 2026-09-18 | 项目总纲收敛：形式化来源与 HTML 阅读视图 | - | `codex/vault-controller-maintenance` |
 | 2 | 2026-09-18 | 纠正推进方向：按关键节点进行参考实现 | - | `codex/vault-controller-maintenance` |

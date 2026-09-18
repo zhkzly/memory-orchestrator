@@ -1,10 +1,12 @@
 # Memory Orchestrator
 
-当前项目设计与恢复入口见 [文档导航](docs/README.md)。[项目总纲 HTML](docs/blueprint/index.html) 展示目标架构；本 README 下文描述现有 CLI 原型，二者不混作已实现能力。
+新的 **Python 记忆演化核心**已提供普通 Python API：事实与经历保存、经验提取、Skill 生成／修订、候选比较、发布和回退。运行方式见 [Python 核心与闭环示例](examples/memory_evolution/README.md)，设计与实现证据见 [项目总纲 HTML](docs/blueprint/index.html) 和 [文档导航](docs/README.md)。原生 Agent 接入与 benchmark 收益尚未完成。
 
-Memory Orchestrator is a CLI-first local memory system for agent workflows. It captures candidate memories, verifies them against evidence, promotes durable items into a Markdown vault, builds task context packs, scores memory-system quality with rubric proxies, and marks stale or unsafe memory records for cleanup.
+下文保留旧 TypeScript CLI 原型的使用说明；Python 核心不依赖该 CLI，也未自动迁移已有记忆。
 
-The CLI is the canonical interface. Harnesses, agent wrappers, cron jobs, and session hooks should call the same commands instead of owning memory policy. Skills are included as optional instructions for agents that need a human-readable workflow layer, but they do not own policy.
+The retained TypeScript prototype is a CLI-first local memory system for agent workflows. It captures candidate memories, verifies them against evidence, promotes durable items into a Markdown vault, builds task context packs, scores memory-system quality with rubric proxies, and marks stale or unsafe memory records for cleanup.
+
+The CLI is the canonical interface for that prototype. Harnesses, agent wrappers, cron jobs, and session hooks should call the same commands instead of owning memory policy. Skills are included as optional instructions for agents that need a human-readable workflow layer, but they do not own policy.
 
 ## Status
 
