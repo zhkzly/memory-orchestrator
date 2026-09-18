@@ -104,3 +104,26 @@
 ### Next Steps
 
 - 从总纲和 resume.md 恢复，按当前节点推进 M1 参考实现；公共边界变化先记录总纲版本。
+
+
+## Session 4: 清理过期草稿并校正 Trellis 范围
+<!-- trellis-session: v=2 fp=80a37838ce99a174 -->
+
+**Date**: 2026-09-18
+**Task**: 清理过期草稿并校正 Trellis 范围
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+保存检查点后清理25个过期文件；旧TS与当前演化总纲保留；后续核心任务暂停且不含旧接口重建；文档与链接检查通过，未运行模型或推送。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `db20db8` | chore: checkpoint evolution design and paused implementation drafts |
+| `d2ad776` | chore: clean obsolete drafts and correct Trellis scope |
+
+### Status
+
+[OK] **Completed**

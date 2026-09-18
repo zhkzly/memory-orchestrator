@@ -3,7 +3,7 @@
   "name": "cleanup-obsolete-drafts",
   "title": "清理过期草稿并保存提交",
   "description": "只清理已被 v1.4 替代的草稿和过期入口，校正 Trellis 当前/后续任务边界，分阶段本地提交；保留旧 TS 与核心演化设计。",
-  "status": "in_progress",
+  "status": "completed",
   "dev_type": "docs",
   "scope": "cleanup",
   "package": null,
@@ -11,7 +11,7 @@
   "creator": "kelong.zx",
   "assignee": "kelong.zx",
   "createdAt": "2026-09-18",
-  "completedAt": null,
+  "completedAt": "2026-09-18",
   "branch": "codex/vault-controller-maintenance",
   "base_branch": "main",
   "worktree_path": null,
@@ -21,10 +21,11 @@
   "children": [],
   "parent": "09-18-experience-learning-architecture",
   "relatedFiles": [],
-  "notes": "",
+  "notes": "完成清理与范围校正；checkpoint db20db8，cleanup d2ad776；旧 TS 保留，核心实现仍暂停。",
   "meta": {
     "implementation_allowed": "false",
     "cleanup_scope": "obsolete-drafts-only",
-    "checkpoint_commit": "db20db8"
+    "checkpoint_commit": "db20db8",
+    "cleanup_commit": "d2ad776"
   }
 }
