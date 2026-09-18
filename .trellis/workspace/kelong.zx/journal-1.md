@@ -151,3 +151,41 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 6: 记忆演化共享边界修复与逐项覆盖
+<!-- trellis-session: v=2 fp=05dd8eb8769b055a -->
+
+**Date**: 2026-09-18
+**Task**: 记忆演化共享边界修复与逐项覆盖
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+按事实身份/闭合、结构投影、对象与尝试粒度收口，修复审查9项及同因采样报告中断；总纲v1.6逐项保留剩余义务。
+
+### Main Changes
+
+- 统一已知本地来源与学习准入，保留partial事件和评分终态政策。
+- 模型接收有界结构证据；唯一快照比较，完整别名发布；报告从已保存事实读取。
+- HTML、schema、提示词、Trellis任务与规范同步，旧TS和用户数据保留。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `41d54de` | fix: align memory evidence boundaries and reporting |
+
+### Testing
+
+- [OK] 最终163项Python测试通过，compileall、文档37负例/6视图检查通过。
+- [OK] 构造demo完成两轮发布/复用与回退；A/B/C独立交叉复核和官方故障注入通过。
+- [OK] 本轮无真实模型、网络、benchmark或原生接入；浏览器视觉验收未完成。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 依父任务resume与总纲coverage选择后续明确交付；不重做已完成修复，不把当前测试当学习收益。
