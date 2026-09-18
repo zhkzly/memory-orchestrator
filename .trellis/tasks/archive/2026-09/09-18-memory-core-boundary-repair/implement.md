@@ -15,7 +15,7 @@ PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src .venv/bin/python -m unittest discover -
 node docs/blueprint/build.mjs check
 node docs/blueprint/build.mjs verify
 node docs/blueprint/build.mjs self-test
-python3 .trellis/scripts/task.py validate .trellis/tasks/09-18-memory-core-boundary-repair
+python3 .trellis/scripts/task.py validate .trellis/tasks/archive/2026-09/09-18-memory-core-boundary-repair
 git diff --check
 ```
 

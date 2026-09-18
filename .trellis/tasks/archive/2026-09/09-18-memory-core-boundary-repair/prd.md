@@ -10,7 +10,7 @@
 - 已知运行/目标/状态不能错绑；原文和已知结构须进入有界证据；同题/微批在规定边界后学习。
 - 多候选允许相同内容，但提案成本不能消失；计划、原始结果、验证结论与报告的统计粒度要分开。
 - 不将缺失、取消或超时直接等同失败；有效产物是否可评分取决于预先明确的协议和独立评价。
-- 对照 [审查报告](../09-18-experience-learning-architecture/research/implementation-coverage-audit-20260918/README.md)，不是重新立项或重建旧产品。
+- 对照 [审查报告](../../../09-18-experience-learning-architecture/research/implementation-coverage-audit-20260918/README.md)，不是重新立项或重建旧产品。
 
 ## 交付与验收
 
