@@ -1,0 +1,18 @@
+{
+  "kind": "live_sdk_transport_smoke_not_learning_evidence",
+  "requested_model": "gpt-5.6-terra",
+  "returned_model": "gpt-5.6-terra",
+  "finish_reason": "stop",
+  "ok": true,
+  "usage": {
+    "input_tokens": 320,
+    "output_tokens": 9,
+    "total_tokens": 329
+  },
+  "budget": {
+    "max_calls": 1,
+    "max_output_tokens": 512,
+    "timeout_seconds": 30,
+    "sdk_retries": 0
+  }
+}
