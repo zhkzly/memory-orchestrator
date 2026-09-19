@@ -263,3 +263,27 @@ GDPevo group007小批诊断：2任务9执行51SDK调用，修正取证与提示�
 ### Next Steps
 
 - 与用户讨论证据单元/反馈粒度/验收边界；不自动继续烧预算或用保留测试调提示词
+
+
+## Session 9: Role-aware trajectory learning rewrite
+<!-- trellis-session: v=2 fp=a8bd385caecb453f -->
+
+**Date**: 2026-09-19
+**Task**: Role-aware trajectory learning rewrite
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+Unified role-aware trajectory input; grounded local summaries, original excerpts, shared token quotas and actual dependency lookup. 366 full tests, 42 checks after user-approved higher budgets, 66 final mutation obligations. No new live model or benchmark claims.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a91d7c2` | docs: define bounded role-aware trajectory rewrite |
+| `26ab29f` | feat: enforce finite teacher token budgets and local summary contracts |
+| `6eacbf7` | feat: rewrite role-aware trajectory learning with bounded summaries |
+
+### Status
+
+[OK] **Completed**
