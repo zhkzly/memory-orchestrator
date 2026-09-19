@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/python-learning.md", "reason": "Python learning, evidence, prompt and compatibility contracts"}
+{"file": ".trellis/spec/backend/project-contract.md", "reason": "Blueprint source and generated-view rules"}
+{"file": ".trellis/spec/backend/validation.md", "reason": "Evidence levels and benchmark boundaries"}
+{"file": ".trellis/spec/guides/system-boundaries.md", "reason": "Current-node and scope boundaries"}
+{"file": ".trellis/tasks/09-19-feedback-grounded-learning/research/design-evidence.md", "reason": "Real failure chain and chosen minimal mechanism"}
