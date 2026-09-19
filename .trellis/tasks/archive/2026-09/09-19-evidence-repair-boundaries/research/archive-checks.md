@@ -1,0 +1,7 @@
+# 归档后的引用校验
+
+实验冻结于f2fda0c，使用总纲hash `2985f0af11ff7f05fbcf6612aa27c7ea0140230fadd79cd88884273c7523afa9`；结束时源码和该总纲与plan一致。
+
+归档仅将总纲内两处实现证据路径从活动task改为archive路径，同步包的source stamp和生成视图。当前文档源hash变为 `a01149e950c39dae0d667d30c11e5e9e229870af82fe1e5a07443629574f059b`。提示词、schema正文、模型配置与产品Python源码均未再改变；不改写实验plan/summary里的历史冻结hash。
+
+归档后render/verify、3项契约/源包检查、Trellis manifest校验与报告链接检查通过。无需重跑真实模型或重复完整391项行为验收。

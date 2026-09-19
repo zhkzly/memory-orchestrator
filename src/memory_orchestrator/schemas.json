@@ -2,7 +2,7 @@
   "source": {
     "path": "docs/blueprint/project-contract.json",
     "version": "1.8.1",
-    "sha256": "2985f0af11ff7f05fbcf6612aa27c7ea0140230fadd79cd88884273c7523afa9"
+    "sha256": "a01149e950c39dae0d667d30c11e5e9e229870af82fe1e5a07443629574f059b"
   },
   "schemas": {
     "ExperienceDraft": {

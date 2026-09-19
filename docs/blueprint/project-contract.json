@@ -758,7 +758,7 @@
           "tests/test_memory_model_budget.py",
           "tests/test_memory_feedback_text.py",
           "tests/test_memory_summary_repair.py",
-          ".trellis/tasks/09-19-evidence-repair-boundaries/research/feedback-text-implementation.md"
+          ".trellis/tasks/archive/2026-09/09-19-evidence-repair-boundaries/research/feedback-text-implementation.md"
         ],
         "effect_evidence": "机制已用实际本地执行、持久化、故障注入和构造用例检查；未报告正式benchmark、提取准确率、未见任务提升或净维护收益。模型归因/语义维护结论仍是假设。"
       }
@@ -992,7 +992,7 @@
           "tests/test_memory_model_budget.py",
           "tests/test_memory_feedback_text.py",
           "tests/test_memory_summary_repair.py",
-          ".trellis/tasks/09-19-evidence-repair-boundaries/research/feedback-text-implementation.md"
+          ".trellis/tasks/archive/2026-09/09-19-evidence-repair-boundaries/research/feedback-text-implementation.md"
         ],
         "effect_evidence": "机制已用实际本地执行、持久化、故障注入和构造用例检查；未报告正式benchmark、提取准确率、未见任务提升或净维护收益。模型归因/语义维护结论仍是假设。"
       }
