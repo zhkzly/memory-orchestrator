@@ -8,5 +8,5 @@
 - 已修：action/result成组和分时选择、可读目录、失败关键词误锚、Actor单条动态预算状态、N07提前披露评价范围与必需检查后果。原始actor源码和messages保留。
 - 全套302 GREEN（73.788秒）/35官方mutation检出且精确恢复；源提交cee5cc4。全量/各原始失败/变体/代码hash在research。
 - 剩余：同订单/SKU/仓库决策链不完整、8组反馈不够定位、Skill仍泛化、过程研究与验收混合、Actor基线不稳定。详见docs/experiments/gdpevo-context-pilot.md及revised-teacher-audit.md。
-- 全部worker与live进程已结束。剩余收尾：证据提交、当前task归档/journal、普通快进push到origin/codex/vault-controller-maintenance并验证远端SHA。
+- 全部worker与live进程已结束。代码cee5cc4、报告/证据2204e39已提交，本任务已归档。会话记录与普通快进push由根代理收尾；不得恢复为继续模型优化或消耗保留probe。
 - GitHub为现有PUBLIC zhkzly/memory-orchestrator；origin分支984ce57是本地祖先，不force、不改main/仓库可见性；当前文件和633个待推送历史blob扫描未发现凭据。

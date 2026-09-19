@@ -226,3 +226,40 @@ O01–O16完整实现与消费者验收；268项检查、68项官方故障变体
 ### Next Steps
 
 - 正式benchmark、语义准确率与净收益尚未测；需独立冻结数据和协议，当前不自动开始客户端接入或大规模实验
+
+
+## Session 8: 公开基准小批量上下文诊断与GitHub交付
+<!-- trellis-session: v=2 fp=5b5d53ac5fe9a001 -->
+
+**Date**: 2026-09-19
+**Task**: 公开基准小批量上下文诊断与GitHub交付
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+GDPevo group007小批诊断：2任务9执行51SDK调用，修正取证与提示词状态交接，仍未测得收益；302测试/35官方变体通过，0发布且保留probe。用户授权GitHub推送。
+
+### Main Changes
+
+- 按工具调用成组保留返回，修正业务exception误锚及补读目录；Actor每轮看到剩余预算；N07提前收到评价范围
+- 保留原始失败与不变评分，记录实体证据链、反馈粒度、泛化Skill、验收语义及不稳定基线等剩余问题
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `cee5cc4` | fix: make memory evidence and model context actionable |
+| `2204e39` | test: record GDPevo context pilot results and remaining gaps |
+
+### Testing
+
+- [OK] 302项完整检查通过，35项官方故障注入检出且精确恢复
+- [OK] 真实SDK51调用，已报409041 tokens另1未知；两轮候选未发布，相同可部署状态令probe明确not_run
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 与用户讨论证据单元/反馈粒度/验收边界；不自动继续烧预算或用保留测试调提示词
