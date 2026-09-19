@@ -5,7 +5,7 @@ test_existing_learn_entrypoint_consumes_returned_episode_id (test_memory_rejecti
 test_handoff_is_idempotent_and_does_not_repeat_execution (test_memory_rejection_learning.RejectedTargetLearningTests.test_handoff_is_idempotent_and_does_not_repeat_execution) ... ERROR
 test_rejected_target_candidate_becomes_one_grounded_adaptation_episode (test_memory_rejection_learning.RejectedTargetLearningTests.test_rejected_target_candidate_becomes_one_grounded_adaptation_episode) ... ERROR
 test_tampered_projection_and_legacy_relabelling_are_rejected (test_memory_rejection_learning.RejectedTargetLearningTests.test_tampered_projection_and_legacy_relabelling_are_rejected) ... ERROR
-test_unknown_or_selected_validation_does_not_create_adaptation (test_memory_rejection_learning.RejectedTargetLearningTests.test_unknown_or_selected_validation_does_not_create_adaptation) ... 
+test_unknown_or_selected_validation_does_not_create_adaptation (test_memory_rejection_learning.RejectedTargetLearningTests.test_unknown_or_selected_validation_does_not_create_adaptation) ...
   test_unknown_or_selected_validation_does_not_create_adaptation (test_memory_rejection_learning.RejectedTargetLearningTests.test_unknown_or_selected_validation_does_not_create_adaptation) (mode='selected') ... ERROR
 
 ======================================================================
