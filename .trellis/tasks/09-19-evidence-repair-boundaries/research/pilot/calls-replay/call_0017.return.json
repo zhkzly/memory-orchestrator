@@ -1,0 +1,64 @@
+{
+  "call_ref": "call_0017",
+  "status": "returned",
+  "response": {
+    "id": "resp_0a83366861a7b4db016aae22c4ab6487d09c20e01205ed5777",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 1222,
+      "prompt_tokens": 10196,
+      "total_tokens": 11418,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 1185,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 6656,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_isy2XVTRJ8ttmoLVUmu2nJ5l",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1003\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            }
+          ],
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 1222,
+    "prompt_tokens": 10196,
+    "total_tokens": 11418,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 1185,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 6656,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 24.098262204002822,
+  "finished_at": "2026-09-19T05:51:24.019304Z"
+}

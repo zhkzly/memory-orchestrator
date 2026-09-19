@@ -8,3 +8,10 @@
 6. 记录根因、修复、真实到达阶段、用量与未知项；本地commit，归档当前task和会话；不推送未授权原始材料。
 
 验收命令使用 `PYTHONPATH=src:tests .venv/bin/python -m unittest ...`；全套使用 `PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -p 'test_memory_*.py'`。不得将假transport的回归token当真实用量。
+
+## 完成记录
+
+- 初次新增reason双正文导致固定42k磁盘包orders返回被挤压；根据首差将两视图改为同源共享选材单位。保留业务断言和原预算，未改LLM语义或评分。
+- 最终用 `-p 'test_*.py'` 连同GDPevo适配一起运行，391/391通过（85.055秒）。独立源码复审通过；总纲/包/生成视图一致。
+- f2fda0c冻结后执行一次revised回放：同一旧学习经历、4次新对照、27次SDK调用，3摘要/1经验/1候选。选择keep_current，0发布。完整用量和门判定见research/replay-summary.json，语义边界见replay-teacher-audit.md。
+- 本轮不继续调参或补跑；学习内容具体性与模型补读选择另作后续问题，不能用未经执行的建议冒充已修复。

@@ -56,7 +56,7 @@
 - 调用方负责实际任务环境、执行 Agent、工具和可信评分/检查能力。框架通过明确的 execute/evaluate 函数调用，不要求调用方重写演化策略。
 - `engine.evolve()` 已连接 learn → compare_candidates → selection → publish；没有候选、证据不足或验证未过时保留相应结果。真实学习运行是否走过这些阶段以及是否得到收益，按逐轮报告确认，不能由入口存在或单元测试数量推导。
 
-最近一次冻结实盘停在第一份摘要的引文/修复容量处，后续阶段没有运行，见 [重写后诊断](../../../docs/experiments/gdpevo-post-rewrite-pilot.md)。它定位局部呈现与调用配置问题，不构成重写归因/Skill/发布逻辑的依据。
+首轮冻结实盘停在第一份摘要的引文/修复容量处，见 [重写后诊断](../../../docs/experiments/gdpevo-post-rewrite-pilot.md)。v1.8.1修复后，[同轨迹回放](../../../docs/experiments/gdpevo-evidence-repair-replay.md)已执行提取/归因/候选和四次对照；目标没有提升、回归分数较低，候选未选中、0发布。输入边界修复与学习内容有效性分别记录，不据此重写其它节点职责。
 
 总纲 coverage 逐项对应实际机制与行为检查；完整索引见 [实现证据](../../../docs/blueprint/implementation-evidence.md)。新采样保存批次成员、评分政策及多标准 TaskAssessment；模型证据包含受预算约束的结构关系。比较按唯一快照执行且保留全部别名义务；报告从原始结果读成绩，准入决定另列。构造执行不证明提取准确率、真实benchmark或净维护收益。
 

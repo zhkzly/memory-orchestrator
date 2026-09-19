@@ -1,0 +1,55 @@
+{
+  "call_ref": "call_0005",
+  "status": "returned",
+  "response": {
+    "id": "resp_058b16f9d3da844c016aae21fbe36487d0948b845300247276",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 1044,
+      "prompt_tokens": 14657,
+      "total_tokens": 15701,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 120,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "content": "{\"status\":\"completed\",\"experiences\":[{\"kind\":\"pitfall\",\"title\":\"Do not treat partial correctness in an ERP dispatch record as sufficient for the remaining classifications\",\"conditions\":[\"A task requires multiple per-order classifications derived from live ERP records.\",\"The output includes inventory, SKU exception, fulfillment-decision, action, customer, and shipping fields.\"],\"scope\":{\"task_family\":\"northwind_erp\",\"applies_when\":[\"Preparing structured dispatch-control JSON from queue data and live ERP sources.\"],\"exclusions\":[\"This does not establish the correct derivation logic for any particular status or decision.\",\"This does not apply as evidence that any specific API query or omitted action caused the errors.\"]},\"observed_facts\":[{\"claim\":\"The task required, for each memo order, inventory status, customer exception, final fulfillment decision, next action, SKU exception lists, and a shipping quote.\",\"evidence_refs\":[\"ev:381ecea52c12123b6912c0e7:270:430\"]},{\"claim\":\"The evaluator marked the order-set/count and customer-exception scoring points as matched.\",\"evidence_refs\":[\"ev:b1564b8f87528965274ffc77:237:285\",\"ev:b1564b8f87528965274ffc77:568:616\"]},{\"claim\":\"The evaluator marked inventory-statuses/shortages and final-decisions scoring points as not matched, and the overall outcome was fail.\",\"evidence_refs\":[\"ev:b1564b8f87528965274ffc77:340:401\",\"ev:b1564b8f87528965274ffc77:670:714\",\"ev:d8d0d6ef08955637f732e689:603:619\"]}],\"guidance\":{\"steps\":[\"Build a per-order evidence worksheet that keeps inventory/shortage and SKU exception derivations separate from customer exceptions, fulfillment decisions, next actions, and shipping quotes.\",\"Before emitting JSON, validate every required classification category for every order against the applicable live records rather than inferring unverified fields from a correct order list or customer exception.\",\"Perform a final field-by-field completeness and consistency pass, then serialize records in order_id order and format currency to two decimals.\"],\"checks\":[\"For each order, confirm that inventory status agrees with the shortage and SKU-exception lists.\",\"Confirm that the final decision and next action are independently supported by the classified order conditions.\",\"Confirm every required output category is populated in the template-compatible JSON, records are sorted by order_id, and currency uses two decimal places.\"]},\"supporting_refs\":[\"ev:381ecea52c12123b6912c0e7:270:430\",\"ev:381ecea52c12123b6912c0e7:533:671\",\"ev:b1564b8f87528965274ffc77:237:285\",\"ev:b1564b8f87528965274ffc77:340:401\",\"ev:b1564b8f87528965274ffc77:568:616\",\"ev:b1564b8f87528965274ffc77:670:714\",\"ev:d8d0d6ef08955637f732e689:603:619\"],\"counterevidence_refs\":[],\"alternatives\":[\"If the task provides an explicit authoritative decision matrix, apply that matrix while still validating its inputs per order.\",\"If only a subset of fields is requested, validate that requested subset rather than requiring the full dispatch-control schema.\"],\"unknowns\":[\"The provided excerpts do not show the complete memo, template, ERP requests or responses, or final artifact, so the precise source of the mismatches is unknown.\",\"The visible evaluator-reason excerpts are partial; they do not establish all failed scoring points or a causal explanation.\",\"This guidance is a candidate task-family practice inferred from one failed episode, not demonstrated cross-task improvement.\"],\"reuse_level\":\"task_family\",\"boundary_refs\":[\"ev:381ecea52c12123b6912c0e7:270:430\",\"ev:381ecea52c12123b6912c0e7:533:671\"]}],\"read_requests\":[],\"missing_evidence\":[\"Complete template and memo contents, live ERP query traces, and the complete submitted JSON would be needed to identify the exact inventory, SKU-list, decision, and action derivation errors.\"],\"reason\":\"A bounded task-family pitfall can be extracted from the explicit task requirements and the visible evaluator matches and mismatches; the available evidence does not support a more specific causal diagnosis.\"}",
+          "tool_calls": null,
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 1044,
+    "prompt_tokens": 14657,
+    "total_tokens": 15701,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 120,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 20.73055644199485,
+  "finished_at": "2026-09-19T05:48:00.029688Z"
+}

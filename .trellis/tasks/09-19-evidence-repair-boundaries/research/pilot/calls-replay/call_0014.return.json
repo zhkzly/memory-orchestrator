@@ -1,0 +1,120 @@
+{
+  "call_ref": "call_0014",
+  "status": "returned",
+  "response": {
+    "id": "resp_02ea57a72e3ecdb5016aae229949a087d08a157c719a940b22",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 198,
+      "prompt_tokens": 3795,
+      "total_tokens": 3993,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 16,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 1536,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_J0VGBfWBatPJFBiuvwy85Wpo",
+              "function": {
+                "arguments": "{\"path\":\"/orders/SO-70000\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_PUFg5FkPySXJKwgePcSVePNo",
+              "function": {
+                "arguments": "{\"path\":\"/orders/SO-70007\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_L8FLtvYtsm6xHw6L8nXCps1G",
+              "function": {
+                "arguments": "{\"path\":\"/orders/SO-70014\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_5mxFYLNfiLMTOddt2jS9sYnF",
+              "function": {
+                "arguments": "{\"path\":\"/orders/SO-70028\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_3f2hspPk0N1nCZSSjyZ5lBx4",
+              "function": {
+                "arguments": "{\"path\":\"/orders/SO-70035\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_T5smXWu43cyY4KUtP3APCrvt",
+              "function": {
+                "arguments": "{\"path\":\"/orders/SO-70049\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_RtXiCTZKeUIonSemXtKrfOJc",
+              "function": {
+                "arguments": "{\"path\":\"/orders/SO-70070\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_l3roFtIgVebFtfJ6otxMkcUN",
+              "function": {
+                "arguments": "{\"path\":\"/orders/SO-70077\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            }
+          ],
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 198,
+    "prompt_tokens": 3795,
+    "total_tokens": 3993,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 16,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 1536,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 4.9996101330034435,
+  "finished_at": "2026-09-19T05:50:21.751010Z"
+}

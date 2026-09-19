@@ -1,0 +1,584 @@
+{
+  "call_ref": "call_0021",
+  "status": "returned",
+  "response": {
+    "id": "resp_0f4db42590f866ff016aae233bbc8887d09707ae5af0056a73",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 2160,
+      "prompt_tokens": 7253,
+      "total_tokens": 9413,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 69,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 3584,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_kviUgHdLXO361Ah3DxhULg0u",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1042\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_k6PjnwvsF8KVo3YEbPqB8pns",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1042\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_VmhfO9iQygymrslDqE4SAYK6",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1042\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_nYhkInWTfm4EsR2q9RPm3HxU",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1035\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Qb4U8YFcwLu4oXWtti56oW21",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1035\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_0jh741Jae1gh1C7Vaz44aReI",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1035\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_qGMA5eMnoMGDtEsGuWVHcVAy",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1050\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_7KUZ8wYgOrId1oxPBv5tE3mH",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1050\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_w6acqStRO1qhnRBAYV1HZpbo",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1050\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Vd1CAUT5D9UrhPtzCCRaxxPO",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1034\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_NE5BbnJmPfIRq3azBPlYULmF",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1034\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_zZ5KrfL4BdFLXwdIxPaJF8wj",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1034\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_eSr9eJL9lushVbezwZ4cslkD",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1018\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Q9aDP3XFhO2bT5GGxU7EUVQf",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1018\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_9kfJBwmZhdEDPztkfcoFGfbP",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1018\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_4lhVmoEoc4AKVP23vv559orY",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1037\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_G14jMDT0wsB45Qijxo56cybg",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1037\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_QzhHhxbsNomJaf3esCGl2l8g",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1037\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_y4xx6hy2Hf2JsQtSvIkLyyE0",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1029\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_owLMO1NNRplBGXltER4JPuNN",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1029\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_NhX2LztvOAVGyrxXmTGNTzVl",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1029\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_e2fo1CWpQHVBmAgXxIkVBtzB",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1004\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_eSTmKX83Sfc5HBrwHwbCx2dP",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1004\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Y8C9fIFacHEAQb7eIIpkrzAl",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1004\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_HI7pDgb7oqB0vDf7NFkCIL7w",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1025\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_BOU3xFyW39TYuFXuZFcj3wIA",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1025\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_DIEZYpAvs0tGmNUi9kfIugiz",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1025\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_LAJl623fRNmmGSmt3V4OowRi",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1003\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_zHchj8Fr36vZZGvXFm4lx7S2",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1003\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_EyuG255YNclcxm4sla96REt1",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1003\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_kEvlmBOtp3mrnqP8lNSw8avo",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1010\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_2zjCkSZoafLwvL6umvDe6pIy",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1010\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_ULBisNcEHWlVlEuqGMBnYbI3",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1010\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_m8Zon8fDLB8WrShCAeaMh2o4",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1038\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_BGDZAwq6bcjEjcPM9Gbr6ilo",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1038\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_IZ1yyUhVtnjiKoYbpTx401Aw",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1038\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_9hibT8KxshFYTUhMWy6WEBr1",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1014\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_ktFosueuvhaqq16VnCpxdqai",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1014\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_qKcukCJmNuQXQlqDoGyAfV0J",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1014\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_bD3xuIu7ZxBXEAFhd78VjALi",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1030\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_mkpLWDVNjw7t2FM82RXkHx1P",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1030\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_DVqZy0Rl7DgDh84UPEy5nSCD",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1030\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_gDCsE6gomb4rlSNye6YXSXXH",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1016\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_gFFYAZeRtfjHdJ4x7D14KBMZ",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1016\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_x1xdsWSfIBhyLcJeNTpEQoPu",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1016\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_cAGnfxTk8R8N5b5ORbcTmEpo",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1005\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_VkakHVL8fIwiS6daOe2I6fNz",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1005\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_qWJAJkHaOjNLmXttxqrYadfH",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1005\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_EbrMVNpm4Cy1eCsAKvxZYjov",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1006\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Nh7DxextqTFL3gi8wSzbjNJA",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1006\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_07zwO2c4UNqzRuWJfiRRzfZY",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1006\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_cU968WQAJk408UkuSJCeG9WP",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1012\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Mc8VDv6DWSnLFD9xobiJcOtT",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1012\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_CJS5k3xBNek52CI7KSlX1w8d",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1012\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_0LgBR7YbUJknUjVdeJ8DzICO",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1048\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_I6EsW51C1jqD2b7llWdGHfVL",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1048\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_0dKGQZIacJyV277hMMTAUq24",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1048\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_LaUgTaYYet5rHsE929pRyr3V",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1019\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_NgSRAl8q6i7zXGQ5Bthoo4cp",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1019\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_vi3oe5sAfnlHG9fBj0q9ovuP",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1019\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_W2iIiZAq1F8zdYkVrMKB7kAw",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1007\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_dRZ0YvFF3kVzpR5k8KifU8Wb",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1007\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_BGSD0qclBrwZeqfjMni1KGtG",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1007\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_vAtf5d3MhSEOpDkB7JY5z6ZO",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"sku\":\"NW-1017\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Xb0uDDe7A4GxS8HR8HK3obhR",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"sku\":\"NW-1017\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_JLoM7tcTCgB8s1ctGGeUaN0Q",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"sku\":\"NW-1017\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            }
+          ],
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 2160,
+    "prompt_tokens": 7253,
+    "total_tokens": 9413,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 69,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 3584,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 71.09847070201067,
+  "finished_at": "2026-09-19T05:53:40.366077Z"
+}

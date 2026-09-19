@@ -1,0 +1,394 @@
+{
+  "study": "same-episode-replay-2026-09-19",
+  "product_commit": "f2fda0cd900c6b7f84a6f5d0c9bfa7131791df95",
+  "dataset_commit": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+  "contract_source": {
+    "path": "docs/blueprint/project-contract.json",
+    "version": "1.8.1",
+    "sha256": "2985f0af11ff7f05fbcf6612aa27c7ea0140230fadd79cd88884273c7523afa9"
+  },
+  "prompt_digests": {
+    "summarize_trace_v1": "25d6c60f0cd68dcf977aa93c34c80b00faaacf8c72654394661686ff7806e6ef",
+    "extract_v1": "c2d206b11ff3f73539eab0b423a7364de039d712f8611ca620f7530a22743733",
+    "diagnose_v1": "2502dc5ae9615f3f1513d28d797b504663a0b86e653bdb96d6287fba1c0044a5",
+    "propose_v1": "28fbcc0726b45961d8685a80b14469fdf9e9769c4888443e639842af8dcca759",
+    "goal_binding_v1": "fcb38317aaf464ab34ddaedca8e64c3c3e50eef34fbb6099ee8a4cd5d8842ee2",
+    "proxy_judge_v1": "5b2f6a55e55332c77124af36d166bc1455809c1a359934b8a35527f63e473e3f",
+    "maintain_experience_v1": "fddb95f6adfc773c4d801f69b7af8496403fabdd1fc8f6a7dabd44629cb9af51"
+  },
+  "planned_budget": {
+    "model": "gpt-5.6-terra",
+    "base_url": "http://localhost:8317/v1",
+    "timeout": 120,
+    "max_calls": 36,
+    "max_total_input_chars": 3000000,
+    "max_output_tokens": 8192
+  },
+  "source_learning": {
+    "reused_task_executions": 1,
+    "new_learning_task_executions": 0,
+    "task_id": "train_001",
+    "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+    "source_actor_calls": 5,
+    "source_actor_tokens": 29681,
+    "note": "Historical learning execution is reused unchanged; these 5 calls and 29681 tokens are excluded from new-call totals."
+  },
+  "actual": {
+    "distinct_development_tasks": 2,
+    "new_comparison_executions": 4,
+    "repeats_per_condition": 1,
+    "heldout_executions": 0,
+    "sdk_calls": 27,
+    "learning_status": "partial",
+    "experience_count": 1,
+    "candidate_count": 1,
+    "comparison_count": 1,
+    "release_count": 0,
+    "evolution_status": "not_selected"
+  },
+  "comparison": [
+    {
+      "request_id": "request_8a79941d7b984b02a3b762379926b6d4",
+      "task": "train_001",
+      "arm": "base",
+      "repeat_index": 0,
+      "execution_status": "completed",
+      "model_calls": 5,
+      "tool_calls": 68,
+      "outcome": "fail",
+      "score": 0.29411764705882354,
+      "earned_weight": 5,
+      "total_weight": 17
+    },
+    {
+      "request_id": "request_0d33211eb2944ca992e462ff3c058450",
+      "task": "train_001",
+      "arm": "candidate",
+      "repeat_index": 0,
+      "execution_status": "completed",
+      "model_calls": 6,
+      "tool_calls": 66,
+      "outcome": "fail",
+      "score": 0.29411764705882354,
+      "earned_weight": 5,
+      "total_weight": 17
+    },
+    {
+      "request_id": "request_49ca5d92ef654eb789ebd5bac2038738",
+      "task": "train_004",
+      "arm": "base",
+      "repeat_index": 0,
+      "execution_status": "completed",
+      "model_calls": 4,
+      "tool_calls": 106,
+      "outcome": "fail",
+      "score": 0.705882,
+      "earned_weight": 12,
+      "total_weight": 17
+    },
+    {
+      "request_id": "request_7919a32d4ea14bd78b7045f0830d320d",
+      "task": "train_004",
+      "arm": "candidate",
+      "repeat_index": 0,
+      "execution_status": "completed",
+      "model_calls": 5,
+      "tool_calls": 62,
+      "outcome": "fail",
+      "score": 0.588235,
+      "earned_weight": 10,
+      "total_weight": 17
+    }
+  ],
+  "validation": {
+    "status": "rejected",
+    "reasons": [
+      "target_gain",
+      "regression_non_decrease",
+      "verification_complete"
+    ],
+    "all_requests_accounted": true,
+    "gate_results": [
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_0ec67b465efd4fc7ba538b907c77657c"
+        ],
+        "gate": "complete_results",
+        "passed": true
+      },
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_0ec67b465efd4fc7ba538b907c77657c"
+        ],
+        "gate": "target_gain",
+        "passed": false
+      },
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_0ec67b465efd4fc7ba538b907c77657c"
+        ],
+        "gate": "regression_non_decrease",
+        "passed": false
+      },
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_0ec67b465efd4fc7ba538b907c77657c"
+        ],
+        "gate": "call_budget",
+        "passed": true
+      },
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_0ec67b465efd4fc7ba538b907c77657c"
+        ],
+        "gate": "scope_bound",
+        "passed": true
+      },
+      {
+        "detail": "Computed from the frozen plan and all recorded request results.",
+        "evidence_refs": [
+          "plan_0ec67b465efd4fc7ba538b907c77657c"
+        ],
+        "gate": "versions_unchanged",
+        "passed": true
+      },
+      {
+        "detail": "Diagnosis obligations, candidate assets and controlled local comparisons must have actual evidence.",
+        "evidence_refs": [
+          "verification_115d489adcb0d7367d1a73f235ce687972626784d70dc37de5f9f32e35269cb1"
+        ],
+        "gate": "verification_complete",
+        "passed": false
+      }
+    ]
+  },
+  "verification": {
+    "status": "fail",
+    "gaps": [],
+    "requirements": [
+      {
+        "evidence_refs": [
+          "request_7919a32d4ea14bd78b7045f0830d320d"
+        ],
+        "gaps": [],
+        "requirement_id": "requirement_002c8b0cd752eef24b5984415774583639ba3c58d64068efa9334f321068c70d",
+        "status": "fail"
+      },
+      {
+        "evidence_refs": [
+          "request_7919a32d4ea14bd78b7045f0830d320d"
+        ],
+        "gaps": [],
+        "requirement_id": "requirement_27837f9e7acc7edb980650e2db8b663e1603e17d79353ba641f95bec51dcc0d3",
+        "status": "fail"
+      },
+      {
+        "evidence_refs": [
+          "request_0d33211eb2944ca992e462ff3c058450"
+        ],
+        "gaps": [],
+        "requirement_id": "requirement_759bd866d168809aa177fe759835156b2e265ac79c4335d6b8acf772700f2b12",
+        "status": "fail"
+      },
+      {
+        "evidence_refs": [
+          "request_0d33211eb2944ca992e462ff3c058450"
+        ],
+        "gaps": [],
+        "requirement_id": "requirement_b994fab53b382914172ca42b097d93c93dc80a362d2ef126ff462589f7ed597c",
+        "status": "fail"
+      }
+    ]
+  },
+  "selection": {
+    "decision": "keep_current",
+    "reasons": [
+      "No accepted candidate."
+    ],
+    "selected_candidate_digest": null
+  },
+  "active": {
+    "baseline_ref": "baseline_f28218779053cc943e45670e54dc735d7349d1854a5175085706177b186b1239",
+    "bootstrap": "empty_unmeasured",
+    "commit": null,
+    "committed_release_ids": [],
+    "generation": 0,
+    "project_id": "gdpevo-group007",
+    "release_id": null,
+    "snapshot_id": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa"
+  },
+  "trajectory": {
+    "cycle_id": "learning_95eb9b406f4d4df2a8f7dae8555003db",
+    "mode": "partial",
+    "planned_coverage": {
+      "dependency_discovered_events": 0,
+      "dependency_omitted_events": 0,
+      "dependency_provided_events": 0,
+      "dependency_support_events": 0,
+      "folded_events": 0,
+      "omitted_events": 126,
+      "projected_events": 12,
+      "raw_body_complete": false,
+      "scan_complete": true,
+      "scan_limit_scope": "selection_events",
+      "scanned_events": 138,
+      "stop_reasons": [
+        "segment_budget"
+      ],
+      "total_events": 138,
+      "truncated_events": 4
+    },
+    "analyzed_event_count": 8,
+    "analyzed_packet_count": 3,
+    "summary_count": 3,
+    "segment_status_counts": {
+      "completed": 3,
+      "failed": 1
+    },
+    "limitations": [
+      "Local model records are unverified interpretations; quoted text alone is original evidence.",
+      "Local analysis stopped after a failed attempt; previous valid records remain available."
+    ],
+    "token_budget": {
+      "count_kind": "documented_estimate",
+      "counter_id": "utf8-json-bytes-div3-v1",
+      "max_input_tokens": 40000,
+      "max_total_input_tokens": 160000,
+      "max_total_output_tokens": 24000,
+      "stages": {
+        "diagnose_v1": {
+          "max_calls": 2,
+          "max_input_tokens": 30000,
+          "max_output_tokens": 3000,
+          "max_total_input_tokens": 45000,
+          "max_total_output_tokens": 4500
+        },
+        "extract_v1": {
+          "max_calls": 2,
+          "max_input_tokens": 16000,
+          "max_output_tokens": 3000,
+          "max_total_input_tokens": 32000,
+          "max_total_output_tokens": 6000
+        },
+        "goal_binding_v1": {
+          "max_calls": 2,
+          "max_input_tokens": 10000,
+          "max_output_tokens": 1200,
+          "max_total_input_tokens": 16000,
+          "max_total_output_tokens": 2400
+        },
+        "maintain_experience_v1": {
+          "max_calls": 1,
+          "max_input_tokens": 12000,
+          "max_output_tokens": 1000,
+          "max_total_input_tokens": 12000,
+          "max_total_output_tokens": 1000
+        },
+        "propose_v1": {
+          "max_calls": 2,
+          "max_input_tokens": 20000,
+          "max_output_tokens": 4000,
+          "max_total_input_tokens": 30000,
+          "max_total_output_tokens": 6000
+        },
+        "summarize_trace_v1": {
+          "max_calls": 4,
+          "max_input_tokens": 12000,
+          "max_output_tokens": 1000,
+          "max_total_input_tokens": 32000,
+          "max_total_output_tokens": 4000
+        }
+      }
+    },
+    "budget_scope": "One model instance/cycle; reservations are not provider-measured token usage."
+  },
+  "new_cost": {
+    "input_chars": 751634,
+    "prompt_tokens": 184668,
+    "completion_tokens": 28931,
+    "total_tokens": 213599,
+    "unknown_usage_calls": 0,
+    "monetary_cost": null,
+    "currency": null,
+    "sum_sdk_elapsed_seconds": 611.4199508159072,
+    "note": "Provider-reported usage. Sum of SDK durations is not total experiment wall time; no price supplied."
+  },
+  "new_cost_by_stage": {
+    "summarize_trace_v1": {
+      "calls": 4,
+      "input_tokens": 25627,
+      "output_tokens": 3014,
+      "total_tokens": 28641,
+      "sdk_elapsed_seconds": 60.95198483398417
+    },
+    "extract_v1": {
+      "calls": 1,
+      "input_tokens": 14657,
+      "output_tokens": 1044,
+      "total_tokens": 15701,
+      "sdk_elapsed_seconds": 20.73055644199485
+    },
+    "diagnose_v1": {
+      "calls": 1,
+      "input_tokens": 16854,
+      "output_tokens": 1213,
+      "total_tokens": 18067,
+      "sdk_elapsed_seconds": 23.736823582992656
+    },
+    "propose_v1": {
+      "calls": 1,
+      "input_tokens": 6330,
+      "output_tokens": 1419,
+      "total_tokens": 7749,
+      "sdk_elapsed_seconds": 28.771863929985557
+    },
+    "execute": {
+      "calls": 20,
+      "input_tokens": 121200,
+      "output_tokens": 22241,
+      "total_tokens": 143441,
+      "sdk_elapsed_seconds": 477.22872202695
+    }
+  },
+  "nonfatal_errors": [
+    {
+      "stage": "summarize_trace_v1",
+      "code": "model_budget_exhausted",
+      "blocking_reason": {
+        "scope": "stage",
+        "dimension": "calls",
+        "consumed": 4,
+        "requested": 1,
+        "limit": 4,
+        "prompt_id": "summarize_trace_v1"
+      },
+      "diagnostics": [
+        {
+          "errors": [
+            {
+              "path": "$.observations[2].excerpts[1]",
+              "ref_id": "ev:36f2e6d655364ce30847ecc4:0:299",
+              "expected": "A provided original fragment and a nonempty exact substring within max_quote_chars",
+              "max_quote_chars": 240
+            }
+          ],
+          "code": "summary_evidence",
+          "message": "Local records need exact excerpts from their own provided packet."
+        }
+      ]
+    }
+  ],
+  "verification_checks": {
+    "frozen_source_hashes_match": 28,
+    "contract_hash_matches": true,
+    "start_return_pairs": 27,
+    "python_tests": 391,
+    "python_tests_seconds": 85.055
+  },
+  "claim_scope": "One diagnostic comparison per condition, no controlled seed or significance/generalization claim. Candidate is not deployed."
+}

@@ -1,0 +1,55 @@
+{
+  "call_ref": "call_0007",
+  "status": "returned",
+  "response": {
+    "id": "resp_038b7a6f1aaece76016aae222883d087d08115b841040af9fc",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 1419,
+      "prompt_tokens": 6330,
+      "total_tokens": 7749,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 193,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "content": "{\"operations\":[{\"op\":\"ADD\",\"proposed_slug\":\"northwind-dispatch-control-field-verification\",\"content\":{\"title\":\"Verify Northwind Dispatch-Control Fields Independently\",\"scope\":{\"task_family\":\"northwind_erp\",\"applies_when\":[\"A Northwind task provides a memo or queue, an answer template, and live ERP records and requests per-order dispatch-control classifications, decisions, actions, SKU exceptions, or shipping quotes.\",\"The task instructions and supplied template define the required fields and allowed output structure.\"],\"exclusions\":[\"Do not apply this procedure's dispatch-control category names or derivation assumptions to allocation/transfer tasks whose memo or template defines different fields or allowed actions.\",\"Do not invent task-specific classification, fulfillment, or shipping rules when they are not established by the task instructions, memo, template, or authoritative live records.\",\"Do not substitute matched customer-exception or order-set results for independent verification of inventory, SKU-exception, decision, action, or quote fields.\"]},\"triggers\":[\"A Northwind expedite or dispatch-control task requires JSON derived from a queue memo, answer template, and live ERP data.\"],\"preconditions\":[\"The task memo and answer template are readable.\",\"Official read-only ERP endpoints are available through the task-supplied base URL.\"],\"steps\":[\"Read the task instructions, memo, and answer template first; enumerate every memo order and every required output field without adding fields not present in the template.\",\"For each memo order, retrieve the authoritative live records needed by the requested fields, including order, product/SKU, customer, inventory or warehouse, and shipping-quote records when the task requires them.\",\"Create a per-order evidence worksheet that records separately: inventory or shortage evidence; SKU-specific exception evidence; customer-exception evidence; fulfillment-decision evidence; next-action evidence; and shipping-quote evidence.\",\"Derive each requested classification, decision, action, exception list, and quote only from the applicable task instructions, memo, template, and retrieved records. Keep evidence and conclusions for these categories separate.\",\"Populate the template-compatible JSON only after every memo order has values or task-supported empty values for every required field.\",\"Perform a final per-field consistency pass: confirm every memo order is represented once, records are sorted by order_id, category values agree with their own evidence, the JSON has exactly the template-required structure, and currency values are rounded to two decimals when required.\",\"Return only the completed JSON artifact.\"],\"exceptions\":[\"If authoritative records or instructions do not establish a required derivation, do not fabricate a task-specific rule; use only the template- and instruction-supported representation for unavailable or inapplicable information.\",\"If the task's template or memo defines a different workflow, categories, or action vocabulary, follow that task's own materials rather than importing dispatch-control categories.\"],\"checks\":[\"Run case:train_001 against the public task and official evaluation outcome to validate template-compatible per-order dispatch-control JSON, independent category derivation, order sorting, and two-decimal currency formatting.\",\"Run case:train_004 against the public task and official evaluation outcome to confirm the procedure does not impose TRAIN_EXPEDITE_A dispatch-control categories where the allocation template and memo differ.\"],\"depends_on\":[],\"declared_conflicts\":[],\"evidence_refs\":[\"ev:381ecea52c12123b6912c0e7:270:430\",\"ev:b1564b8f87528965274ffc77:340:401\",\"ev:b1564b8f87528965274ffc77:670:714\",\"ev:d8d0d6ef08955637f732e689:603:619\"]}}],\"asset_edits\":[],\"reason\":\"The supplied evidence supports a narrowly scoped, reusable procedural addition for the observed TRAIN_EXPEDITE_A workflow: independently collect and verify per-order evidence for inventory/shortage, SKU exceptions, customer exceptions, fulfillment decisions, next actions, and quotes before producing the template JSON. No existing Skills are available to patch. The proposal preserves the required train_004 regression obligation and does not assert unobserved task-specific ERP derivation rules.\",\"evidence_refs\":[\"ev:381ecea52c12123b6912c0e7:270:430\",\"ev:381ecea52c12123b6912c0e7:533:671\",\"ev:b1564b8f87528965274ffc77:237:285\",\"ev:b1564b8f87528965274ffc77:340:401\",\"ev:b1564b8f87528965274ffc77:568:616\",\"ev:b1564b8f87528965274ffc77:670:714\",\"ev:d8d0d6ef08955637f732e689:603:619\"],\"expected_behavior\":\"For the observed TRAIN_EXPEDITE_A workflow, read the memo and output template, gather live evidence needed for each memo order, keep inventory/shortage and SKU-exception classifications distinct from customer exceptions, fulfillment decisions, and next actions, then perform a per-field completeness and consistency pass before returning template-compatible JSON sorted by order_id with two-decimal currency. The procedure must not invent task-specific derivation rules when the authoritative records or instructions do not establish them.\",\"check_plan\":[{\"purpose\":\"target\",\"behavior\":\"On train_001, produce the required template-compatible dispatch-control JSON for every memo order, with classifications and output formatting validated against the task's live records and public inputs.\",\"check_ref\":\"case:train_001\",\"required_evidence\":\"The public target task and its official evaluation outcome are required; private expected answers are not supplied.\"},{\"purpose\":\"regression\",\"behavior\":\"On train_004, preserve the ability to prepare the allocation decision file from its own memo, template, and live ERP records; do not apply TRAIN_EXPEDITE_A-specific output categories where the train_004 template differs.\",\"check_ref\":\"case:train_004\",\"required_evidence\":\"The public regression task and its official evaluation outcome are required; private expected answers are not supplied.\"}]}",
+          "tool_calls": null,
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 1419,
+    "prompt_tokens": 6330,
+    "total_tokens": 7749,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 193,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 28.771863929985557,
+  "finished_at": "2026-09-19T05:48:52.647858Z"
+}

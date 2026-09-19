@@ -1,0 +1,96 @@
+{
+  "call_ref": "call_0019",
+  "status": "returned",
+  "response": {
+    "id": "resp_01cd9d9a6d1316e1016aae2308916487d0bf776f055ffb4e26",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 124,
+      "prompt_tokens": 1250,
+      "total_tokens": 1374,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 9,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_swV5SSxYLz1X3Hn3jiYSkIAE",
+              "function": {
+                "arguments": "{\"path\":\"payloads/allocation_memo.md\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_ILhLhy7T9tQY2bIOCYQhU5Jo",
+              "function": {
+                "arguments": "{\"path\":\"payloads/answer_template.json\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_5KDqHiF9a7hG1ToHwyHpwAv0",
+              "function": {
+                "arguments": "{\"path\":\"prompt.txt\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_snMOQjGWMB1zUX5qQ5BRIYbY",
+              "function": {
+                "arguments": "{\"path\":\"/orders\",\"query\":{\"wave\":\"TRAIN_TRANSFER_B\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_p7Nd6TKkqKBwTwnXjuVU4udw",
+              "function": {
+                "arguments": "{\"path\":\"/warehouses\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            }
+          ],
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 124,
+    "prompt_tokens": 1250,
+    "total_tokens": 1374,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 9,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 3.625870338990353,
+  "finished_at": "2026-09-19T05:52:11.740659Z"
+}
