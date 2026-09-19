@@ -2,15 +2,15 @@
   "schema_version": 1,
   "meta": {
     "id": "memory-orchestrator-project-contract",
-    "version": "1.8.1",
+    "version": "1.9.0",
     "updated": "2026-09-19",
     "title": "Agent 经验学习 · 项目总纲",
     "status": "full-contract-core-implemented",
-    "implementation_status": "v1.8.0机制证据保留；v1.8.1固定Feedback.reason来源、同反馈共享正文额度及局部修复容量已通过391项完整回归，原42k业务断言恢复。实际LLM学习进度和效果单独记录，真实收益未测。",
+    "implementation_status": "v1.8.1机制证据保留；v1.9.0增加被拒target候选评价到下一轮Episode的显式交接，regression/final继续隔离且不自动再次调用模型。当前实现与效果证据分别记录。",
     "language": "zh-CN",
     "authority": "当前目标架构的唯一结构化来源；HTML 由此生成。用户明确的新要求可以修订本文件。",
     "purpose": "参考已有论文与源码，从现成 Agent 的执行经历积累经验，生成和演化 Skill，并以版本化方式检查、发布和复用。",
-    "revision_source": "用户要求按LLM/framework职责继续小修；框架提供固定字段来源与明确容量，LLM语义摘要/归因/必要性/提案及原准入保持。"
+    "revision_source": "用户确认整体演化流程应在候选拒绝后保存新经历并进入下一轮；要求保持简单，不增加无限自动重试。"
   },
   "scope": {
     "in": [
@@ -51,7 +51,7 @@
     {
       "symbol": "a_(t+1)",
       "meaning": "发布选择",
-      "expression": "合格且被选中 → 新版本；否则保持 a_t。库版本 v、Skill 修订 r、任务轮次 t 与总纲版本相互独立。"
+      "expression": "合格且被选中 → 新版本；否则保持 a_t。被拒候选的target执行可产生next_episode_ids供显式下一轮学习，不改变active；regression/final不写回。库版本 v、Skill 修订 r、任务轮次 t 与总纲版本相互独立。"
     },
     {
       "symbol": "G_t",
@@ -347,7 +347,7 @@
     {
       "id": "EpisodeRecord",
       "title": "已有或新取得的经历",
-      "fields": "episode_id / project_id / task{description,id?,revision?} / source / events / source_snapshot_ref|null / context_ref|null / feedback_refs[] / gaps；源身份未知合法。 可用trace_ref引用不可变JSONL归档；空events不代表没有磁盘事件。"
+      "fields": "episode_id / project_id / task{description,id?,revision?} / source / events / source_snapshot_ref|null / context_ref|null / feedback_refs[] / gaps；源身份未知合法。 可用trace_ref引用不可变JSONL归档；空events不代表没有磁盘事件。source.kind=rejected_target_evaluation只允许由rejected candidate target的EvaluationReturn+Validation+keep_current Selection确定性投影；其余comparison/final材料不能改名进入学习。"
     },
     {
       "id": "EvaluationPlan",
@@ -875,7 +875,9 @@
         "SamplingBatchPlan",
         "RunGroupPlan",
         "RunBundle",
-        "GroupReceipt"
+        "GroupReceipt",
+        "ValidationRecord",
+        "SelectionRecord"
       ],
       "outputs": [
         "EvidencePacket",
@@ -889,7 +891,8 @@
       ],
       "preconditions": [
         "按实际材料构造证据包；反馈/源快照/context 可以缺失，缺口必须显式。",
-        "本地计划/执行记录只在来源已知时必需：用途允许学习、实际组/微批已闭合；外部导入无计划时不伪造记录。"
+        "本地计划/执行记录只在来源已知时必需：用途允许学习、实际组/微批已闭合；外部导入无计划时不伪造记录。",
+        "被拒评价只接受framework生成的rejected_target_evaluation Episode：candidate+target、Validation rejected且target_gain失败、Selection keep_current、执行和评分已知；其它臂/划分保持评价专用。"
       ],
       "postconditions": [
         "输出有范围的经验及支持/反例引用；允许零条或多条。"
@@ -923,7 +926,8 @@
           "有界提取/补读、失败签名检索、语义重复/冲突/撤回维护实际写回并被后续检索消费；正反证据、边界和原记录保留。",
           "learn统一通过_learning_packet构造学习输入：先按角色、调用和目标绑定生成轨迹计划，再选择可容纳的直接提取分支或显式阶段token预算内的局部整理分支；不先走旧全局抽样。参数省略只采用同一算法默认值，不切回旧算法。quote精确匹配已给正文，摘要不进入事实引用白名单。",
           "框架仅提供完整Feedback与原reason字段两种可追溯视图，LLM仍负责语义摘要/经验/归因/必要性和提案。引文只匹配所给fragment.text并使用同视图ref；不得借旧ref引用另一视图文字或parse reason重造原文。字段正文纳入原packet/角色/token预算，缺正文仍可用原完整反馈。",
-          "同一episode/check_id的full/reason视图组成一个selection unit，共享原单条反馈正文上限（max_fragment_chars与适用feedback角色上限取较小值）。full先取reason字段之前的精确原文前缀，最多占共享额度一半；前缀过长则取原full中的outcome精确子范围，仍超半额时正文优先给reason，并仅在目录容量允许时保留full原文定位。reason使用剩余额度；所有正文、来源元数据和目录仍计入既有整包预算。"
+          "同一episode/check_id的full/reason视图组成一个selection unit，共享原单条反馈正文上限（max_fragment_chars与适用feedback角色上限取较小值）。full先取reason字段之前的精确原文前缀，最多占共享额度一半；前缀过长则取原full中的outcome精确子范围，仍超半额时正文优先给reason，并仅在目录容量允许时保留full原文定位。reason使用剩余额度；所有正文、来源元数据和目录仍计入既有整包预算。",
+          "上一轮keep_current可显式交接next_episode_ids；lineage重新核对EvaluationPlan/Result/Return、rejected Validation和Selection，只准target candidate的已知执行。下一轮仍由调用方提供新StructuredModel和预算，不在本节点自动循环。"
         ],
         "checks": [
           "无需受控运行组也能提取；不能为了 schema 填假记录。",
@@ -935,7 +939,8 @@
           "本轮行为证据见tests/test_memory_trajectory.py、test_memory_trajectory_learning.py、test_memory_model_budget.py及implementation-evidence；不能把机制检查当语义准确率或学习收益。",
           "原Feedback引用及历史覆盖保持；reason字段视图引用、UTF-8范围与实际正文一致，同一反馈不重复计数。",
           "显式只允许一个视图时不拉入兄弟视图；已有单视图裁剪/回读保持，双视图共享是固定呈现规则，不新增配置。",
-          "原42k GDPevo业务证据断言保留并通过；实际序列化metadata与目录也计预算，不把正文共享误称总成本为零。"
+          "原42k GDPevo业务证据断言保留并通过；实际序列化metadata与目录也计预算，不把正文共享误称总成本为零。",
+          "直接把comparison request/return伪装为provided_material或execution_function仍拒绝；只有确定性投影Episode可进入下一轮，重复交接幂等。"
         ],
         "errors": [
           "引用未提供正文/错误项目→拒绝该草稿。",
@@ -963,7 +968,7 @@
           "ExperienceMaintenanceDraft",
           "LocalSummaryDraft"
         ],
-        "evidence_boundary": "Python参考实现及所列真实fixture派生行为检查；v1.8.0证据保留。v1.8.1最终test_*.py391/391通过（85.055s），新增反馈21项及修复容量4项为其中/相关检查，不相加；原42k磁盘业务断言保留并恢复。准确来源与机制回归不证明真实模型引用正确、完整学习流程成功、候选有效或净收益；实际运行另报告。"
+        "evidence_boundary": "Python参考实现及所列真实fixture派生行为检查；v1.8.0/v1.8.1证据保留。v1.9.0只证明拒绝target评价能安全生成下一轮Episode ID且隔离其它划分，不证明下一轮模型一定改进或候选最终可发布。"
       },
       "responsibility": {
         "owner": "memory_system",
@@ -992,6 +997,7 @@
           "tests/test_memory_model_budget.py",
           "tests/test_memory_feedback_text.py",
           "tests/test_memory_summary_repair.py",
+          "tests/test_memory_rejection_learning.py",
           ".trellis/tasks/archive/2026-09/09-19-evidence-repair-boundaries/research/feedback-text-implementation.md"
         ],
         "effect_evidence": "机制已用实际本地执行、持久化、故障注入和构造用例检查；未报告正式benchmark、提取准确率、未见任务提升或净维护收益。模型归因/语义维护结论仍是假设。"
@@ -1218,18 +1224,23 @@
         "EvaluationResult",
         "ValidationRecord",
         "UsageRecord",
-        "SelectionRecord"
+        "SelectionRecord",
+        "EpisodeRecord",
+        "Feedback"
       ],
       "writes": [
         "validation_records",
-        "usage_records"
+        "usage_records",
+        "episode_records",
+        "feedback_records"
       ],
       "preconditions": [
         "先固定案例、重复次数、执行/评价函数身份、预算、准入与候选选择规则；没有运行时隐含默认。"
       ],
       "postconditions": [
         "全结果汇总后按冻结规则判定，保留精确版本/案例/协议绑定；检查期间不写回被测库。",
-        "接受判定与最终选中分别记录，选择集合/规则冻结；只有被选中的通过候选可发布。"
+        "接受判定与最终选中分别记录，选择集合/规则冻结；只有被选中的通过候选可发布。",
+        "keep_current且target_gain失败时，只把已知candidate target执行投影为下一轮Episode/Feedback并返回next_episode_ids；active不变，regression/transfer/final不写回。"
       ],
       "on_unknown": "缺少实际评价能力/证据或请求未闭合则 needs_evidence；回调返回一个分数不等于证明执行正确。",
       "requirements": [
@@ -1249,19 +1260,21 @@
       "status": "implemented",
       "implementation": {
         "owner": "memory_system",
-        "signature": "compare_candidates(...); resume_comparison(...) -> ValidationRecord and SelectionRecord",
+        "signature": "compare_candidates(...); resume_comparison(...) -> ValidationRecord and SelectionRecord; rejected target -> next_episode_ids",
         "steps": [
           "系统先检查候选结构、允许修改、范围、依赖和资产，再制定比较计划。",
           "持久化每个 case/base-or-candidate/repeat 请求，固定版本与协议；以普通函数进行实际执行/评价。可组合的 evaluator 也必须返回同样的可追溯结果。",
           "基线/候选使用相同案例和声明的可比条件；具体环境由提供函数负责，核心记录能力与缺口。",
           "保存全部通过、失败、异常、未知及成本，按任务而非最好一次汇总；保留必要的组合检查。",
           "根据预先选定规则决定接受/拒绝/不足，比较多个候选并选择；检查结果只能支持其所测范围。",
-          "全部别名/诊断检查义务并集改变实际请求；旧/新原质量集独立守门，脚本/组合/未知阻发布；局部依赖完整对照生产可消费measured_effect，固定候选排序与恢复。"
+          "全部别名/诊断检查义务并集改变实际请求；旧/新原质量集独立守门，脚本/组合/未知阻发布；局部依赖完整对照生产可消费measured_effect，固定候选排序与恢复。",
+          "比较拒绝后不在本轮重试模型；framework从确切Validation/Selection/Evaluation记录投影candidate target Episode和adaptation Feedback，返回稳定next_episode_ids。下一轮由调用方显式启动。"
         ],
         "checks": [
           "评价调用形式不改变次数/迁移/回归要求。",
           "方案比较属于系统，调用方不必重新拼装演化逻辑。",
-          "缺失 actor/context 可以空，但 case/request/snapshot/plan 必须绑定。"
+          "缺失 actor/context 可以空，但 case/request/snapshot/plan 必须绑定。",
+          "base、regression、transfer、unknown/未完成结果、selected候选不能产生next_episode_ids；target交接后不再支持未见验证声明。"
         ],
         "errors": [
           "无协议或无提供函数→不启动该次比较。",
@@ -1282,7 +1295,9 @@
           "ExecutionView",
           "ContrastPlan",
           "ContrastResult",
-          "ComparisonSegment"
+          "ComparisonSegment",
+          "EpisodeRecord",
+          "Feedback"
         ],
         "evidence_boundary": "Python参考实现与所列构造行为测试；不等于原生Agent接入、模型学习收益或未见任务泛化。实际演化入口为engine.evolve。"
       },
@@ -1295,10 +1310,12 @@
         "tests/test_memory_evaluation.py",
         "src/memory_orchestrator/outcomes.py",
         "src/memory_orchestrator/verification.py",
-        "src/memory_orchestrator/relations.py"
+        "src/memory_orchestrator/relations.py",
+        "src/memory_orchestrator/lineage.py",
+        "src/memory_orchestrator/engine.py"
       ],
       "coverage": {
-        "implemented": "全部别名/诊断检查义务并集改变实际请求；旧/新原质量集独立守门，脚本/组合/未知阻发布；局部依赖完整对照生产可消费measured_effect，固定候选排序与恢复。",
+        "implemented": "全部别名/诊断检查义务并集改变实际请求；旧/新原质量集独立守门，脚本/组合/未知阻发布；局部依赖完整对照生产可消费measured_effect，固定候选排序与恢复。 被拒target candidate执行按冻结评价闭包投影为下一轮Episode，active与当前Selection不变；regression/transfer/final和unknown保持隔离。",
         "remaining": [],
         "external": [
           "case_set、评价器、数据划分和重置语义由提供方负责"
@@ -1308,6 +1325,7 @@
           "tests/test_memory_verification.py",
           "tests/test_memory_comparison_recovery.py",
           "tests/test_memory_release.py",
+          "tests/test_memory_rejection_learning.py",
           "docs/blueprint/implementation-evidence.md"
         ],
         "effect_evidence": "机制已用实际本地执行、持久化、故障注入和构造用例检查；未报告正式benchmark、提取准确率、未见任务提升或净维护收益。模型归因/语义维护结论仍是假设。"
@@ -1580,7 +1598,7 @@
     {
       "id": "I12",
       "title": "评价权限与全成本",
-      "rule": "在线先测当前题再更新；冻结测试不更新；计入提炼、失败候选、验证和补救，未来答案不前泄。",
+      "rule": "在线先测当前题再更新；冻结测试不更新；计入提炼、失败候选、验证和补救，未来答案不前泄。被拒target评价只能在Selection完成后投影到下一轮；regression/transfer/final及私有criteria不流入学习。",
       "enforcement": "协议与结果审计"
     },
     {
@@ -1704,6 +1722,16 @@
       "from": "N09",
       "to": "N10",
       "record": "ValidationRecord"
+    },
+    {
+      "from": "N09",
+      "to": "N04",
+      "record": "EpisodeRecord"
+    },
+    {
+      "from": "N09",
+      "to": "N06",
+      "record": "Feedback"
     },
     {
       "from": "N10",
@@ -2203,6 +2231,11 @@
       "version": "1.8.1",
       "date": "2026-09-19",
       "reason": "保留full Feedback旧引用，新增reason原字符串固定来源及summary revision3披露；同反馈full/reason为一个选择单位，共享原正文额度并保留精确metadata/outcome/目录范围。summary单次输入12k，其余累计/调用/准入不变。最终391项全套通过，原42k业务断言保留并恢复；历史选择回归及修复过程保存在任务blueprint-sync.md，真实学习收益仍未测。"
+    },
+    {
+      "version": "1.9.0",
+      "date": "2026-09-19",
+      "reason": "补齐单轮评价拒绝到下一轮学习的显式数据交接：只允许rejected candidate target评价投影为可学习Episode；base/regression/transfer/final/unknown保持评价专用。evolve返回next_episode_ids，调用方以新预算启动下一轮，不在同一验证周期自动重试。"
     }
   ],
   "deprecations": [],
@@ -3427,7 +3460,7 @@
     ],
     "split_policy": [
       "adaptation：执行、提炼与提案可见该阶段协议允许的轨迹/反馈；gold 默认对 Actor 不可见。",
-      "selection 与 regression：用于候选选择和回归门；默认只把 accepted/rejected/unknown 返回提案控制器，私有答案、测试正文和详细轨迹不流入提炼器。所有查询次数记录。",
+      "selection 与 regression：用于候选选择和回归门；当前轮不把私有答案、测试正文或详细轨迹流入提炼器。Selection完成且keep_current时，仅rejected candidate target的公开执行/评分可确定性投影为下一轮Episode；regression/transfer/final继续隔离。所有查询次数记录。",
       "反复用于候选选择的集合已经参与适应，不能称最终未见集；限候选/查询预算并版本化验证集合。",
       "final：冻结库、检索策略、模型配置和所有提示词；只报告不学习、不择优回写。按任务族/来源去重并披露重叠。",
       "online / frozen / frozen_microbatch 分报；在线每题反馈可供之后任务用，但不能前泄未来材料。",
@@ -3606,7 +3639,7 @@
       ]
     },
     "current_delivery": {
-      "scope": "完成既定Python记忆演化全部机制；执行证据、未知效果与暂缓客户端接入分别呈现",
+      "scope": "完成既定Python记忆演化机制及被拒target到下一轮Episode的显式交接；执行证据、未知效果与暂缓客户端接入分别呈现",
       "in": [
         "普通事实记忆",
         "已有经历导入",
@@ -3619,7 +3652,8 @@
         "多标准/代理反馈与语义经验维护",
         "诊断检查计划的实际执行、Skill组合测量与附属脚本检查",
         "预置库/中断恢复、完整维护计量与三模式实验入口",
-        "角色分层、统一学习输入、局部摘要与完整模型请求累计token预算（机制已验收，效果未知）"
+        "角色分层、统一学习输入、局部摘要与完整模型请求累计token预算（机制已验收，效果未知）",
+        "被拒candidate target评价的受控Episode投影和next_episode_ids交接；下一轮由调用方显式启动"
       ],
       "out": [
         "Codex/Claude 具体适配",
@@ -8044,7 +8078,8 @@
               "kind": {
                 "enum": [
                   "provided_material",
-                  "execution_function"
+                  "execution_function",
+                  "rejected_target_evaluation"
                 ]
               },
               "reference": {

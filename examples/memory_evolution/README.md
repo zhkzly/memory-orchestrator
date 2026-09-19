@@ -34,7 +34,8 @@ from memory_orchestrator.report import report
 3. `sample_tasks()` 在调用前保存全部计划与输入。支持同题多次和固定快照微批；每次执行、取消、异常和未知都计入分母。回调负责环境重置与硬超时，核心的线程池不提供进程隔离。
 4. `learn()` 检查来源资格，逐步索引轨迹、关联缺标目标、检索失败模式，再统一经过角色分层与调用组计划。足够短的处理后视图直接提取；长轨迹按阶段预算生成局部记录与精确短引文，再执行经验提取、语义维护、必要性判断、归因和提案。补读与格式修复受同一模型实例的显式预算控制。事实记忆不由 reward 改写。返回的 `candidate_ids` 是 proposal ID，可用 `store.get('candidates', id)` 读取完整候选。
 5. `compare_candidates()` 固定案例、协议、候选集合和检查义务，执行旧版／候选对照、附属脚本检查及适用的局部组合对照。`ValidationRecord` 表示是否通过，`SelectionRecord` 表示最终选择。缺材料、缺执行或未知不能冒充检查通过。
-6. `publish()` 核对项目、完整资产、确切候选、验证／选择关系和 base/generation 后切换 active。`rollback()` 只回到同项目的已提交发布历史，并产生新代次。下一次召回使用新的 active；正在执行的任务仍用原快照。
+6. `evolve()` 遇到被拒的candidate target时不原地重试，而把确切评价执行投影成下一轮adaptation Episode，返回`next_episode_ids`。base/regression/transfer/final/unknown不进入；调用方用新的模型预算显式调用下一轮。
+7. `publish()` 核对项目、完整资产、确切候选、验证／选择关系和 base/generation 后切换 active。`rollback()` 只回到同项目的已提交发布历史，并产生新代次。下一次召回使用新的 active；正在执行的任务仍用原快照。
 
 记录保存后可以查询，但不一定可以学习。对于本地采样，`learn()` 会检查计划中的全部槽位、实际终态记录和完成回执；`frozen_microbatch` 还检查调用前冻结的全部成员组。父经历、相关经验和同内容历史经验合并使用同一资格判断。未知外部导入可以保留，不要求伪造本地运行计划；已知本地矛盾不能降为未知以绕过检查。
 
@@ -42,7 +43,17 @@ from memory_orchestrator.report import report
 
 完整参数和可运行调用见 [demo.py](demo.py)。采样次数、候选数、准入门槛、模型及证据预算均来自显式配置；本例数值不是库的全局默认。
 
-调用方可直接使用 `evolve()` 串起步骤 4–6，由核心选择并发布通过的候选；无需自己重写演化决策。只需积累候选、暂缺评价材料时使用 `learn()`。
+调用方可直接使用 `evolve()` 串起步骤 4–7，由核心选择并发布通过的候选；无需自己重写演化决策。只需积累候选、暂缺评价材料时使用 `learn()`。
+
+一次`evolve()`始终只消费一个Teacher预算。若返回`status="not_selected"`且`next_episode_ids`非空，调用方可以创建新的`StructuredModel`并再次调用：
+
+```python
+first = evolve(...)
+if first["next_episode_ids"]:
+    second = evolve(store, first["next_episode_ids"], new_model, ...)
+```
+
+这不会修改上一轮Validation/Selection，也不会把回归或最终测试轨迹变成训练材料。
 
 ## 轨迹学习输入与预算
 

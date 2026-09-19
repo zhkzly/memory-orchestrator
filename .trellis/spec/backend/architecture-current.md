@@ -55,6 +55,7 @@
 - 框架负责索引/选择/补读、原文引用、请求预算与记账、受限修改操作、对照协议、版本选择、发布和回退；不依据某次评分硬编码业务经验。
 - 调用方负责实际任务环境、执行 Agent、工具和可信评分/检查能力。框架通过明确的 execute/evaluate 函数调用，不要求调用方重写演化策略。
 - `engine.evolve()` 已连接 learn → compare_candidates → selection → publish；没有候选、证据不足或验证未过时保留相应结果。真实学习运行是否走过这些阶段以及是否得到收益，按逐轮报告确认，不能由入口存在或单元测试数量推导。
+- 当候选因target_gain失败且Selection保持当前版本时，`evolve()`不会原地再次调用模型；它把确切candidate target评价投影成下一轮可学习Episode，并返回`next_episode_ids`。调用方显式开启新轮次。base/regression/transfer/final/unknown保持评价专用，active与当前验证记录不变。
 
 首轮冻结实盘停在第一份摘要的引文/修复容量处，见 [重写后诊断](../../../docs/experiments/gdpevo-post-rewrite-pilot.md)。v1.8.1修复后，[同轨迹回放](../../../docs/experiments/gdpevo-evidence-repair-replay.md)已执行提取/归因/候选和四次对照；目标没有提升、回归分数较低，候选未选中、0发布。输入边界修复与学习内容有效性分别记录，不据此重写其它节点职责。
 

@@ -1,0 +1,117 @@
+test_base_and_regression_requests_never_enter_next_learning_ids (test_memory_rejection_learning.RejectedTargetLearningTests.test_base_and_regression_requests_never_enter_next_learning_ids) ... ERROR
+test_blocked_comparison_has_no_handoff (test_memory_rejection_learning.RejectedTargetLearningTests.test_blocked_comparison_has_no_handoff) ... ok
+test_evolve_returns_next_episode_ids_without_automatic_second_model_cycle (test_memory_rejection_learning.RejectedTargetLearningTests.test_evolve_returns_next_episode_ids_without_automatic_second_model_cycle) ... FAIL
+test_existing_learn_entrypoint_consumes_returned_episode_id (test_memory_rejection_learning.RejectedTargetLearningTests.test_existing_learn_entrypoint_consumes_returned_episode_id) ... ERROR
+test_handoff_is_idempotent_and_does_not_repeat_execution (test_memory_rejection_learning.RejectedTargetLearningTests.test_handoff_is_idempotent_and_does_not_repeat_execution) ... ERROR
+test_rejected_target_candidate_becomes_one_grounded_adaptation_episode (test_memory_rejection_learning.RejectedTargetLearningTests.test_rejected_target_candidate_becomes_one_grounded_adaptation_episode) ... ERROR
+test_tampered_projection_and_legacy_relabelling_are_rejected (test_memory_rejection_learning.RejectedTargetLearningTests.test_tampered_projection_and_legacy_relabelling_are_rejected) ... ERROR
+test_unknown_or_selected_validation_does_not_create_adaptation (test_memory_rejection_learning.RejectedTargetLearningTests.test_unknown_or_selected_validation_does_not_create_adaptation) ... ok
+
+======================================================================
+ERROR: test_base_and_regression_requests_never_enter_next_learning_ids (test_memory_rejection_learning.RejectedTargetLearningTests.test_base_and_regression_requests_never_enter_next_learning_ids)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 81, in test_base_and_regression_requests_never_enter_next_learning_ids
+    episode_ids = self.capture()
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 49, in capture
+    return capture_rejected_target_episodes(self.store, copy.deepcopy(self.data['comparison']))
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py", line 258, in capture_rejected_target_episodes
+    episode, feedback, _ = _rejected_target_records(store, result['execution_ref'])
+                           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py", line 207, in _rejected_target_records
+    return validate('EpisodeRecord', episode), validate('Feedback', feedback), context
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/schemas.py", line 114, in validate
+    raise DomainError("SCHEMA_INVALID", f"Invalid {schema_name}", {"errors": errors})
+memory_orchestrator.schemas.DomainError: Invalid EpisodeRecord
+
+======================================================================
+ERROR: test_existing_learn_entrypoint_consumes_returned_episode_id (test_memory_rejection_learning.RejectedTargetLearningTests.test_existing_learn_entrypoint_consumes_returned_episode_id)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 137, in test_existing_learn_entrypoint_consumes_returned_episode_id
+    episode_id = self.capture()[0]
+                 ~~~~~~~~~~~~^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 49, in capture
+    return capture_rejected_target_episodes(self.store, copy.deepcopy(self.data['comparison']))
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py", line 258, in capture_rejected_target_episodes
+    episode, feedback, _ = _rejected_target_records(store, result['execution_ref'])
+                           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py", line 207, in _rejected_target_records
+    return validate('EpisodeRecord', episode), validate('Feedback', feedback), context
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/schemas.py", line 114, in validate
+    raise DomainError("SCHEMA_INVALID", f"Invalid {schema_name}", {"errors": errors})
+memory_orchestrator.schemas.DomainError: Invalid EpisodeRecord
+
+======================================================================
+ERROR: test_handoff_is_idempotent_and_does_not_repeat_execution (test_memory_rejection_learning.RejectedTargetLearningTests.test_handoff_is_idempotent_and_does_not_repeat_execution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 88, in test_handoff_is_idempotent_and_does_not_repeat_execution
+    first = self.capture()
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 49, in capture
+    return capture_rejected_target_episodes(self.store, copy.deepcopy(self.data['comparison']))
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py", line 258, in capture_rejected_target_episodes
+    episode, feedback, _ = _rejected_target_records(store, result['execution_ref'])
+                           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py", line 207, in _rejected_target_records
+    return validate('EpisodeRecord', episode), validate('Feedback', feedback), context
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/schemas.py", line 114, in validate
+    raise DomainError("SCHEMA_INVALID", f"Invalid {schema_name}", {"errors": errors})
+memory_orchestrator.schemas.DomainError: Invalid EpisodeRecord
+
+======================================================================
+ERROR: test_rejected_target_candidate_becomes_one_grounded_adaptation_episode (test_memory_rejection_learning.RejectedTargetLearningTests.test_rejected_target_candidate_becomes_one_grounded_adaptation_episode)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 53, in test_rejected_target_candidate_becomes_one_grounded_adaptation_episode
+    episode_ids = self.capture()
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 49, in capture
+    return capture_rejected_target_episodes(self.store, copy.deepcopy(self.data['comparison']))
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py", line 258, in capture_rejected_target_episodes
+    episode, feedback, _ = _rejected_target_records(store, result['execution_ref'])
+                           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py", line 207, in _rejected_target_records
+    return validate('EpisodeRecord', episode), validate('Feedback', feedback), context
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/schemas.py", line 114, in validate
+    raise DomainError("SCHEMA_INVALID", f"Invalid {schema_name}", {"errors": errors})
+memory_orchestrator.schemas.DomainError: Invalid EpisodeRecord
+
+======================================================================
+ERROR: test_tampered_projection_and_legacy_relabelling_are_rejected (test_memory_rejection_learning.RejectedTargetLearningTests.test_tampered_projection_and_legacy_relabelling_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 119, in test_tampered_projection_and_legacy_relabelling_are_rejected
+    episode_id = self.capture()[0]
+                 ~~~~~~~~~~~~^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 49, in capture
+    return capture_rejected_target_episodes(self.store, copy.deepcopy(self.data['comparison']))
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py", line 258, in capture_rejected_target_episodes
+    episode, feedback, _ = _rejected_target_records(store, result['execution_ref'])
+                           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py", line 207, in _rejected_target_records
+    return validate('EpisodeRecord', episode), validate('Feedback', feedback), context
+           ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/schemas.py", line 114, in validate
+    raise DomainError("SCHEMA_INVALID", f"Invalid {schema_name}", {"errors": errors})
+memory_orchestrator.schemas.DomainError: Invalid EpisodeRecord
+
+======================================================================
+FAIL: test_evolve_returns_next_episode_ids_without_automatic_second_model_cycle (test_memory_rejection_learning.RejectedTargetLearningTests.test_evolve_returns_next_episode_ids_without_automatic_second_model_cycle)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 175, in test_evolve_returns_next_episode_ids_without_automatic_second_model_cycle
+    self.assertEqual(result['status'], 'not_selected')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'error' != 'not_selected'
+- error
++ not_selected
+
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.185s
+
+FAILED (failures=1, errors=5)

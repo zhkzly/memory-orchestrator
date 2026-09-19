@@ -33,6 +33,7 @@ Python 核心使用 `PYTHONPATH=src .venv/bin/python -m unittest discover -s tes
 - 冻结：测试时不更新记忆。
 - 候选选择用的验证集不是最终未见测试集；报告逐题救回和回归。
 - 所有执行、提炼、失败候选、验证及补救成本均入账。
+- target评价在Selection完成后若被明确转为下一轮adaptation Episode，该target从此不再作为未见验证证据；regression/transfer/final及其详细轨迹不写回学习。交接只返回Episode ID，不在同一验证周期自动重试模型或改门槛。
 
 ## Trellis 接入验证
 

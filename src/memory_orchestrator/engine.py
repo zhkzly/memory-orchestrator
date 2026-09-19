@@ -1,5 +1,5 @@
 """One explicit evolution cycle; callers supply execution, not release decisions."""
-from .evaluation import compare_candidates
+from .evaluation import capture_rejected_target_episodes, compare_candidates
 from .learning import learn
 from .release import publish
 from .schemas import DomainError, new_id
@@ -15,7 +15,8 @@ def evolve(store, episode_ids, model, *, learning_policy, case_set, protocol,
     from .verification import verification_catalog
     learning = learn(store, episode_ids, model, policy=learning_policy,
                      verification_catalog=verification_catalog(case_set,verification))
-    result = {'learning': learning, 'comparison': None, 'release': None, 'status': learning['status']}
+    result = {'learning': learning, 'comparison': None, 'release': None,
+              'next_episode_ids': [], 'status': learning['status']}
     if not learning['candidate_ids']:
         return result
     candidates = [store.get('candidates', identifier) for identifier in learning['candidate_ids']]
@@ -30,6 +31,8 @@ def evolve(store, episode_ids, model, *, learning_policy, case_set, protocol,
             result['status']='blocked';return result
         selection = store.get('selections', comparison['selection_id'])
         if selection['decision'] != 'selected':
+            stage = 'rejection_handoff'
+            result['next_episode_ids'] = capture_rejected_target_episodes(store, comparison)
             result['status'] = 'not_selected'
             return result
         selected_entry = next(entry for entry in selection['candidate_validations']

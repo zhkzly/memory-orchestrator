@@ -1,8 +1,8 @@
 {
   "source": {
     "path": "docs/blueprint/project-contract.json",
-    "version": "1.8.1",
-    "sha256": "a01149e950c39dae0d667d30c11e5e9e229870af82fe1e5a07443629574f059b"
+    "version": "1.9.0",
+    "sha256": "5864a65cac2295e4359a662d24a779bfa815ca6c0b857bb73ad9869e62ca4cf7"
   },
   "schemas": {
     "ExperienceDraft": {
@@ -4213,7 +4213,8 @@
             "kind": {
               "enum": [
                 "provided_material",
-                "execution_function"
+                "execution_function",
+                "rejected_target_evaluation"
               ]
             },
             "reference": {

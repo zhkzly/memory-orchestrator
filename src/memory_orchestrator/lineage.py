@@ -28,6 +28,9 @@ def _agree(name, values):
 
 def resolve_episode_source(store, episode):
     """Read and compare known facts, without requiring a lifecycle receipt."""
+    if episode['source']['kind'] == 'rejected_target_evaluation':
+        from .evaluation import resolve_rejected_target_episode
+        return resolve_rejected_target_episode(store, episode)
     source_reference = episode['source']['reference']
     attempt = _optional(store, 'callback_attempts', source_reference)
     reference = (attempt or {}).get('run_id') or source_reference
@@ -169,6 +172,12 @@ def require_learning_source(store, episode):
         if current['episode_id'] in visited:
             return resolve_episode_source(store, current)
         visited.add(current['episode_id'])
+        if current['source']['kind'] == 'rejected_target_evaluation':
+            source = resolve_episode_source(store, current)
+            _require(source.get('learning_authorized') is True,
+                     'Rejected target evaluation lacks explicit learning authorization.',
+                     episode_id=current['episode_id'])
+            return source
         reference = current['source']['reference']
         # Comparison returns have a real validation purpose without pretending
         # to be sampling runs. Importing the exact known ID cannot erase it.

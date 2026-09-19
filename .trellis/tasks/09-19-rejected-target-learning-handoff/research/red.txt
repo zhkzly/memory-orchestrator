@@ -1,0 +1,18 @@
+test_memory_rejection_learning (unittest.loader._FailedTest.test_memory_rejection_learning) ... ERROR
+
+======================================================================
+ERROR: test_memory_rejection_learning (unittest.loader._FailedTest.test_memory_rejection_learning)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_memory_rejection_learning
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/unittest/loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_rejection_learning.py", line 10, in <module>
+    from memory_orchestrator.evaluation import capture_rejected_target_episodes
+ImportError: cannot import name 'capture_rejected_target_episodes' from 'memory_orchestrator.evaluation' (/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/evaluation.py)
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

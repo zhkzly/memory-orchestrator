@@ -1,8 +1,19 @@
 # 完整 Python 记忆演化实现证据
 
-本页保留 v1.7.0 的历史交付，并记录 v1.8.0 的轨迹学习入口重写及 v1.8.1 的证据输入修复。原 K01–K14、Q01–Q28、N01–N11 均保留。具体 Codex/Claude 适配、CLI/MCP 和目录同步仍按原约定暂缓，旧 TypeScript 和用户数据保留。
+本页保留 v1.7.0 的历史交付，并记录 v1.8.0 的轨迹学习入口重写、v1.8.1 的证据输入修复及 v1.9.0 的拒绝候选学习交接。原 K01–K14、Q01–Q28、N01–N11 均保留。具体 Codex/Claude 适配、CLI/MCP 和目录同步仍按原约定暂缓，旧 TypeScript 和用户数据保留。
 
 调用入口与参数见 [Python 使用说明](../../examples/memory_evolution/README.md)。`evolve()` 组织学习、候选比较、选择与发布；提供方负责实际执行环境和评分依据。核心不要求调用方重写演化决策。
+
+## v1.9.0：被拒target进入显式下一轮
+
+真实v1.8.1回放产生候选并完成四次对照，但Selection为keep_current；此前`engine.evolve()`直接返回，评价轨迹只保存在`evaluation_returns`，无法作为下一轮`learn()`的Episode。v1.9.0增加一条受控交接：
+
+- 仅candidate臂、case split=target、Validation rejected且target_gain失败、Selection keep_current、执行和评分完整的评价返回可投影；active保持。
+- Episode保留公开task、candidate snapshot、实际事件与artifact；adaptation Feedback保留target score/outcome及target_gain失败，不携带私有criteria或regression内容。
+- source.kind=`rejected_target_evaluation`由lineage重新核对完整计划/结果/返回/验证/选择和字节投影。普通provided_material/execution_function继续禁止引用comparison return。
+- `evolve()`只返回稳定`next_episode_ids`，不自动开启第二个Teacher预算。调用方以新StructuredModel显式启动下一轮；regression/transfer/final/unknown及selected候选不投影。
+
+真实GDPevo拒绝记录派生10项验收通过；相关评价/采样/学习/发布156项通过；最终完整Python回归 **401项通过、8项skip（85.154秒）**，Python编译、总纲生成/源包一致和故障注入另行记录。测试证明确定性交接、隔离和既有learn消费，不证明第二轮模型会产生更好Skill；本轮未自动发起新的真实模型调用。
 
 ## v1.8.1：区分模型语义与框架输入职责
 

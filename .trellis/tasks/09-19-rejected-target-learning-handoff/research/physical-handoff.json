@@ -1,0 +1,48 @@
+{
+  "kind": "deterministic_physical_handoff_on_store_copy",
+  "model_calls": 0,
+  "benchmark_calls": 0,
+  "before": {
+    "active": {
+      "baseline_ref": "baseline_f28218779053cc943e45670e54dc735d7349d1854a5175085706177b186b1239",
+      "bootstrap": "empty_unmeasured",
+      "commit": null,
+      "committed_release_ids": [],
+      "generation": 0,
+      "project_id": "gdpevo-group007",
+      "release_id": null,
+      "snapshot_id": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa"
+    },
+    "episodes": 1,
+    "feedback": 5,
+    "returns": 4
+  },
+  "after": {
+    "active": {
+      "baseline_ref": "baseline_f28218779053cc943e45670e54dc735d7349d1854a5175085706177b186b1239",
+      "bootstrap": "empty_unmeasured",
+      "commit": null,
+      "committed_release_ids": [],
+      "generation": 0,
+      "project_id": "gdpevo-group007",
+      "release_id": null,
+      "snapshot_id": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa"
+    },
+    "episodes": 2,
+    "feedback": 6,
+    "returns": 4
+  },
+  "next_episode_ids": [
+    "episode_efa45b4d93084ea46b9288a411793a22"
+  ],
+  "second_next_episode_ids": [
+    "episode_efa45b4d93084ea46b9288a411793a22"
+  ],
+  "source_kind": "rejected_target_evaluation",
+  "source_evaluation_return": "attempt_914f313765537f8be6cbdcc2a2185b046fef6612cef2c188ee2203b3414f451a",
+  "task_id": "train_001",
+  "event_count": 134,
+  "feedback_count": 1,
+  "active_unchanged": true,
+  "idempotent": true
+}

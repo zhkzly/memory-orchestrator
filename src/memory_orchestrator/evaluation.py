@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import math
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -57,6 +58,222 @@ def _raw(value):
 def _error(exc):
     return {"type": type(exc).__name__, "message": str(exc),
             "code": getattr(exc, "code", None), "details": _raw(getattr(exc, "details", None))}
+
+
+def _rejected_target_context(store, execution_ref):
+    """Resolve one immutable rejected target execution without relabeling other validation material."""
+    execution = store.get('evaluation_returns', execution_ref)
+    results = [row for row in store.list('evaluation_results')
+               if row.get('execution_ref') == execution_ref]
+    _require(len(results) == 1, 'rejection_binding', 'Evaluation return needs one exact result')
+    result = results[0]
+    plans = [row for row in store.list('evaluation_plans', execution['project_id'])
+             if any(req['request_id'] == result['request_id'] for req in row['requests'])]
+    _require(len(plans) == 1, 'rejection_binding', 'Evaluation request needs one frozen plan')
+    plan = plans[0]
+    requests = [row for row in plan['requests'] if row['request_id'] == result['request_id']]
+    _require(len(requests) == 1, 'rejection_binding', 'Evaluation request is absent or duplicated')
+    request = requests[0]
+    validations = [row for row in store.list('validations', execution['project_id'])
+                   if row['plan_id'] == plan['plan_id']]
+    _require(len(validations) == 1, 'rejection_binding', 'Rejected plan needs one ValidationRecord')
+    validation = validations[0]
+    selections = [row for row in store.list('selections', execution['project_id'])
+                  if any(item['validation_ref'] == validation['validation_id']
+                         for item in row['candidate_validations'])]
+    _require(len(selections) == 1, 'rejection_binding', 'Rejected validation needs one SelectionRecord')
+    selection = selections[0]
+    candidate_rows = [row for row in selection['candidate_validations']
+                      if row['validation_ref'] == validation['validation_id']]
+    _require(len(candidate_rows) == 1, 'rejection_binding', 'Selection has an ambiguous validation binding')
+    candidate_row = candidate_rows[0]
+    cases_record = store.get('case_sets', plan['case_set_ref'])
+    cases = cases_record['value']
+    case_rows = [row for row in cases['cases'] if row['id'] == request['case_ref']]
+    _require(len(case_rows) == 1, 'rejection_binding', 'Evaluation request needs one frozen public case')
+    case = case_rows[0]
+    _require(digest(plan) == validation['plan_hash'] and digest(cases) == plan['case_set_hash'],
+             'rejection_binding', 'Plan or case set changed after validation')
+    _require(validation['project_id'] == plan['project_id'] == execution['project_id']
+             and selection['project_id'] == plan['project_id']
+             and validation['candidate_digest'] == plan['candidate_digest']
+             and candidate_row['candidate_digest'] == plan['candidate_digest']
+             and validation['all_requests_accounted'] is True,
+             'rejection_binding', 'Rejected records disagree on project or candidate')
+    _require(validation['status'] == candidate_row['status'] == 'rejected'
+             and selection['decision'] == 'keep_current'
+             and selection['selected_candidate_digest'] is None
+             and selection['selected_validation_ref'] is None,
+             'rejection_ineligible', 'Only a rejected keep-current decision can create adaptation material')
+    _require(selection['base_digest'] == plan['base_digest']
+             and selection['expected_generation'] == plan['expected_generation'],
+             'rejection_binding', 'Selection no longer describes the frozen plan base')
+    active = store.active(plan['project_id'])
+    _require(active['snapshot_id'] == selection['base_digest']
+             and active['generation'] == selection['expected_generation'],
+             'rejection_ineligible', 'A later active version prevents retrospective adaptation projection')
+    _require(request['arm'] == 'candidate' and request['snapshot_digest'] == plan['candidate_digest']
+             and case['split'] == 'target',
+             'rejection_ineligible', 'Only rejected candidate target requests can enter the next learning cycle')
+    stored_results = [row for row in validation['results'] if row['request_id'] == request['request_id']]
+    _require(stored_results == [result], 'rejection_binding', 'Validation does not contain this exact result')
+    target_failures = [row['gate'] for row in validation['gate_results']
+                       if row['passed'] is not True and row['gate'] == 'target_gain']
+    _require(target_failures == ['target_gain'], 'rejection_ineligible',
+             'A regression-only or unrelated rejection cannot train from the target trace')
+    _require(result['execution_status'] == 'completed' and result['evaluator_status'] == 'ok'
+             and result['outcome'] != 'unknown' and result['score'] is not None
+             and result['source'] in ('executable', 'human'),
+             'rejection_ineligible', 'Incomplete or unknown evaluation results cannot train the next cycle')
+    _require(execution['stage'] == 'execute' and execution['request'] == request and execution['error'] is None,
+             'rejection_binding', 'Execution return is not the exact successful planned request')
+    from .verification import public_case
+    expected_inputs = [request, store.snapshot(request['snapshot_digest']), public_case(case)]
+    _require(execution.get('inputs') == expected_inputs, 'rejection_binding',
+             'Execution inputs differ from the frozen candidate and public target case')
+    returned = execution.get('returned')
+    _require(isinstance(returned, dict) and returned.get('execution_status') == 'completed'
+             and isinstance(returned.get('events'), list) and 'artifact' in returned,
+             'rejection_ineligible', 'Rejected target needs a completed event trace and artifact')
+    return {'execution': execution, 'result': result, 'plan': plan, 'request': request,
+            'validation': validation, 'selection': selection, 'case': case}
+
+
+def _rejected_target_records(store, execution_ref):
+    """Project a verified comparison return into one exact learning Episode and Feedback."""
+    context = _rejected_target_context(store, execution_ref)
+    execution, returned = context['execution'], context['execution']['returned']
+    request, case = context['request'], context['case']
+    validation, selection, result = context['validation'], context['selection'], context['result']
+    episode_id = 'episode_' + digest(
+        ['rejected_target_evaluation', selection['selection_id'], request['request_id']])[:32]
+    raw_events = returned['events']
+    raw_ids = [row.get('event_id') for row in raw_events if isinstance(row, dict)]
+    _require(len(raw_ids) == len(raw_events) and all(isinstance(ref, str) and ref for ref in raw_ids)
+             and len(raw_ids) == len(set(raw_ids)), 'rejection_trace',
+             'Evaluation events need unique string IDs')
+    mapping = {ref: f'evaluation_{index}' for index, ref in enumerate(raw_ids)}
+    task = case['task']
+    events = [{'event_id': 'instruction', 'kind': 'instruction',
+        'text': json.dumps(task, ensure_ascii=False, sort_keys=True, separators=(',', ':')),
+        'source_ref': f'{execution_ref}#/inputs/2/task', 'call_id': None,
+        'task_revision': task['revision'], 'task_id': task['task_id'], 'source_role': 'user'}]
+    optional = ('task_id', 'goal_id', 'source_role', 'parent_episode_id', 'resources')
+    for index, raw in enumerate(raw_events):
+        _require(isinstance(raw.get('text'), str), 'rejection_trace',
+                 'Evaluation event text must be a string')
+        item = {'event_id': mapping[raw['event_id']], 'kind': raw.get('kind', 'observation'),
+                'text': raw['text'], 'source_ref': f'{execution_ref}#/returned/events/{index}',
+                'call_id': raw.get('call_id'), 'task_revision': raw.get('task_revision')}
+        for key in optional:
+            if key in raw:
+                item[key] = copy.deepcopy(raw[key])
+        parent = raw.get('parent_event_id')
+        if parent is not None:
+            _require(parent in mapping, 'rejection_trace',
+                     'Evaluation event parent is absent from the trace')
+            item['parent_event_id'] = mapping[parent]
+        events.append(item)
+    events.append({'event_id': 'result', 'kind': 'result',
+        'text': json.dumps({'artifact': returned['artifact'], 'error': None}, ensure_ascii=False,
+                           sort_keys=True, separators=(',', ':')),
+        'source_ref': f'{execution_ref}#/returned/artifact', 'call_id': None,
+        'task_revision': task['revision'], 'task_id': task['task_id'],
+        'source_role': 'environment'})
+    check_id = 'feedback_' + digest(
+        ['rejected_target_evaluation', selection['selection_id'], request['request_id']])[:32]
+    failed_gates = [row['gate'] for row in validation['gate_results']
+                    if row['passed'] is not True and row['gate'] == 'target_gain']
+    reason = {'kind': 'rejected_target_candidate', 'selection_id': selection['selection_id'],
+              'validation_id': validation['validation_id'], 'validation_status': validation['status'],
+              'failed_gates': failed_gates, 'request_id': request['request_id'],
+              'score': result['score'], 'outcome': result['outcome'],
+              'evaluation_gaps': result['gaps'],
+              'scope_note': 'This target is now adaptation material; it is not unseen validation evidence.'}
+    feedback = {'check_id': check_id, 'run_id': request['request_id'],
+        'criterion_id': 'candidate_rejection', 'task_revision': task['revision'],
+        'evaluated_state_digest': digest(returned['artifact']), 'evaluator_status': 'ok',
+        'outcome': result['outcome'], 'score': result['score'],
+        'source': 'external' if result['source'] == 'executable' else result['source'],
+        'visibility': 'adaptation',
+        'evidence_refs': [execution_ref, result['request_id'], validation['validation_id'],
+                          selection['selection_id']],
+        'reason': json.dumps(reason, ensure_ascii=False, sort_keys=True, separators=(',', ':')),
+        'checked_at': validation['evidence_cutoff'], 'received_at': validation['evidence_cutoff'],
+        'subject_ref': episode_id, 'project_id': context['plan']['project_id'],
+        'binding_status': 'bound', 'request_ref': request['request_id'],
+        'attempt_ref': execution_ref, 'execution_ref': execution_ref}
+    episode = {'episode_id': episode_id, 'project_id': context['plan']['project_id'],
+        'task': {'description': task['description'], 'task_id': task['task_id'],
+                 'revision': task['revision']},
+        'source': {'kind': 'rejected_target_evaluation', 'reference': execution_ref},
+        'events': events, 'source_snapshot_ref': request['snapshot_digest'], 'context_ref': None,
+        'feedback_refs': [check_id],
+        'gaps': ['Promoted from a rejected target candidate evaluation; no new task execution occurred.',
+                 'The target is adaptation material after this handoff and cannot support an unseen-task claim.',
+                 'Evaluation did not preserve a ContextManifest; exact Skill consumption remains unknown.'],
+        'created_at': validation['evidence_cutoff']}
+    return validate('EpisodeRecord', episode), validate('Feedback', feedback), context
+
+
+def resolve_rejected_target_episode(store, episode):
+    """Recheck a promoted Episode against its immutable evaluation source."""
+    _require(episode.get('source', {}).get('kind') == 'rejected_target_evaluation',
+             'rejection_binding', 'Expected a rejected-target evaluation Episode')
+    expected, _, context = _rejected_target_records(store, episode['source']['reference'])
+    _require(episode == expected, 'rejection_binding',
+             'Promoted Episode differs from the exact evaluation projection')
+    returned = context['execution']['returned']
+    return {'known': True, 'run_id': context['request']['request_id'],
+            'project_id': episode['project_id'], 'task_revision': context['case']['task']['revision'],
+            'snapshot_digest': context['request']['snapshot_digest'],
+            'artifact_digest': digest(returned['artifact']), 'run': None, 'group': None,
+            'execution': context['execution'], 'batch': None, 'binding_error': None,
+            'callback_attempt': None, 'source_reference': episode['source']['reference'],
+            'evaluation_return': context['execution'], 'learning_authorized': True}
+
+
+def capture_rejected_target_episodes(store, comparison):
+    """Materialize exact rejected target traces for an explicit later learning cycle."""
+    if comparison.get('status') != 'completed' or not comparison.get('selection_id'):
+        return []
+    selection = store.get('selections', comparison['selection_id'])
+    if selection['decision'] != 'keep_current':
+        return []
+    _require(set(comparison.get('validation_ids', [])) == {
+        item['validation_ref'] for item in selection['candidate_validations']},
+        'rejection_binding', 'Comparison validations differ from the SelectionRecord')
+    validation_ids = set(comparison['validation_ids'])
+    plan_ids = set(comparison.get('plan_ids', []))
+    expected_plan_ids = {store.get('validations', identifier)['plan_id'] for identifier in validation_ids}
+    _require(plan_ids == expected_plan_ids, 'rejection_binding',
+             'Comparison plan IDs differ from its exact ValidationRecords')
+    episode_ids = []
+    for validation_id in sorted(validation_ids):
+        validation = store.get('validations', validation_id)
+        if validation['status'] != 'rejected':
+            continue
+        if not any(row['gate'] == 'target_gain' and row['passed'] is not True
+                   for row in validation['gate_results']):
+            continue
+        _require(validation['plan_id'] in plan_ids, 'rejection_binding',
+                 'Comparison plan IDs omit a rejected validation')
+        plan = store.get('evaluation_plans', validation['plan_id'])
+        cases = store.get('case_sets', plan['case_set_ref'])['value']['cases']
+        splits = {row['id']: row['split'] for row in cases}
+        results = {row['request_id']: row for row in validation['results']}
+        for request in plan['requests']:
+            if request['arm'] != 'candidate' or splits.get(request['case_ref']) != 'target':
+                continue
+            result = results.get(request['request_id'])
+            if (result is None or result.get('execution_status') != 'completed'
+                    or result.get('evaluator_status') != 'ok' or result.get('outcome') == 'unknown'
+                    or result.get('score') is None or not result.get('execution_ref')):
+                continue
+            episode, feedback, _ = _rejected_target_records(store, result['execution_ref'])
+            store.add_episode(episode, [feedback])
+            episode_ids.append(episode['episode_id'])
+    return sorted(set(episode_ids))
 
 
 def _check_protocol(protocol, case_set, candidate_count, max_parallel):

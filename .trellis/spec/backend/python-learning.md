@@ -44,3 +44,4 @@ Python 记忆核心范围由总纲 v1.8.1 和当前任务控制。M1–M3 是历
 - 同一反馈的full/reason视图是一个选材单元，共享原反馈正文额度；默认full仅给reason前的元数据原文，元数据超过半额度时缩为outcome的精确原文，额度再小时优先reason并保留full目录。字段位置来自原文，不硬编码实例字符数。单视图allowed_refs不能拉入另一视图；额外引用元数据仍计实际包大小，不能把两份同源表示变成两份最高优先级长正文。
 - 区分语义任务与机械约束：摘要/经验/归因/必要性/候选内容由模型提出；引用、容量、受限修改和准入由代码检查。真实修复容量必须用原请求、拒绝稿、诊断及当前限制一起计数；不能只确认第一次输入装得下。显式单次限额可按证据校准，累计和调用次数不随失败自动放宽。
 - 比较磁盘与内存轨迹的分组语义时，明确容量足以容纳二者不同的来源元数据；相同紧字节额度不保证正文选择相同。保留独立的紧预算与按需读取验收，不能为了等价断言删除实际来源计费。
+- 被拒候选不在原validation内自动重试。只有candidate+target、Validation rejected且target_gain失败、Selection keep_current、执行/评分完整时，framework可将EvaluationReturn确定性投影为source.kind=rejected_target_evaluation的Episode及adaptation Feedback。base/regression/transfer/final/unknown不投影，普通外部导入不能改名绕过。evolve只返回next_episode_ids；下一轮由调用方用新StructuredModel、预算和案例协议显式启动，active不变。
