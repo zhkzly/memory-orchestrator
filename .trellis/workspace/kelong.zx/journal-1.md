@@ -458,3 +458,27 @@ Unified role-aware trajectory input; grounded local summaries, original excerpts
 ### Next Steps
 
 - 简历可写版本化Skill演化、外部验证、0增益/回归识别和拒绝轨迹回流；不可宣称性能提升或稳定因果。
+
+
+## Session 15: 反馈闭环与 Skill 适用性优化
+<!-- trellis-session: v=2 fp=b254ecc3baaf6245 -->
+
+**Date**: 2026-09-20
+**Task**: 反馈闭环与 Skill 适用性优化
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+保留既有分层轨迹入口；回流原criterion反馈并用artifact digest绑定被评输出，阻止task+score泛化成可复用Skill；新增机器scope selector并在train004执行排除。383项回归通过，8317当前无监听故未宣称真实Teacher效果。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `efd6ebb` | feat: require feedback-grounded skill updates |
+| `298fe86` | docs: explain feedback-grounded learning boundaries |
+| `ecd2416` | chore: record feedback grounding task |
+
+### Status
+
+[OK] **Completed**

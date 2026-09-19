@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 14
-- **Last Active**: 2026-09-19
+- **Total Sessions**: 15
+- **Last Active**: 2026-09-20
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~460 | Active |
+| `journal-1.md` | ~484 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 15 | 2026-09-20 | 反馈闭环与 Skill 适用性优化 | `efd6ebb`, `298fe86`, `ecd2416` | `codex/vault-controller-maintenance` |
 | 14 | 2026-09-19 | 定位checklist型Skill无增益与回归根因 | `2ce0093` | `codex/vault-controller-maintenance` |
 | 13 | 2026-09-19 | 被拒target候选进入下一轮学习 | `d3302db` | `codex/vault-controller-maintenance` |
 | 12 | 2026-09-19 | 定位候选拒绝后未补读的两层边界 | `947e7c3` | `codex/vault-controller-maintenance` |
