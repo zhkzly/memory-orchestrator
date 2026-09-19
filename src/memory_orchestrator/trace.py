@@ -154,9 +154,11 @@ def ensure_trace_index(store, trace_ref, limits):
                     for offset in range(0, len(text), 1024):
                         chunk = text[offset:offset + 1024]
                         connection.execute("INSERT INTO chunks VALUES(?,?,?)", (text_start + offset, len(chunk), hashlib.sha256(chunk).hexdigest()))
-                    from .evidence import _kind
+                    from .evidence import _kind, _failure_position, _RECOVERY
                     base = "ev:" + digest([manifest["project_id"], manifest["episode_id"], "event", event["event_id"]])[:24]
-                    match = re.search(r"error|fail(?:ed|ure)?|exception|错误|失败|丢失|不通过|recovery|retry|修复|恢复|重试", event["text"], re.I)
+                    signal = _failure_position(event['text'])
+                    recovery = _RECOVERY.search(event['text'])
+                    if signal is None and recovery: signal = recovery.start()
                     metadata = {"base_ref": base, "episode_id": manifest["episode_id"], "event_id": event["event_id"],
                         "kind": _kind(event), "source_kind": event["kind"], "namespace": "event",
                         "raw_ref": event.get("source_ref") or f"episode:{manifest['episode_id']}/event:{event['event_id']}",
@@ -164,7 +166,7 @@ def ensure_trace_index(store, trace_ref, limits):
                         "position": state["event_count"], "source_event": True,
                         **{k: event.get(k) for k in ("task_revision", "task_id", "goal_id", "source_role", "call_id", "parent_event_id", "parent_episode_id")},
                         "resources": event.get("resources", []), "text_start": text_start, "text_bytes": len(text),
-                        "failure_byte": len(event["text"][:match.start()].encode()) if match else None,
+                        "failure_byte": len(event["text"][:signal].encode()) if signal is not None else None,
                         "failure_terms": sorted(set(re.findall(r"\b[A-Z][A-Z0-9_]{2,}(?:ERROR|FAIL|MISMATCH|MISSING)[A-Z0-9_]*\b|\b[A-Z][A-Za-z]+Error\b", event["text"]))),
                         "source_record": {"trace_ref": trace_ref,
                             "raw_range": {"start_byte": line_start, "end_byte_exclusive": original.tell()},
@@ -294,13 +296,27 @@ class TraceRecords(Mapping):
         for ref in focus:
             try: selected[ref] = self[ref]
             except KeyError: continue
-        # Query indexed metadata before touching any body, bounded for each source.
+        # Query a bounded spread of source positions before touching any body.
+        # Do not prefilter all actions before the returns that explain them.
         for row in self.memory.values():
             if len(selected) >= limit: break
             selected.setdefault(row["base_ref"], row)
-        for condition in ("kind IN ('task','feedback','recovery','counterexample') OR json_extract(metadata,'$.failure_byte') IS NOT NULL", "kind='action'", "1"):
-            for reader in self.readers:
-                for row in reader.rows(condition, limit=max(0, limit-len(selected))): selected.setdefault(row["base_ref"], row)
+        from collections import deque
+        from .evidence import _temporal_positions
+        streams = deque((reader, iter(_temporal_positions(reader.checkpoint['event_count'], limit))) for reader in self.readers)
+        while streams and len(selected) < limit:
+            reader, positions = streams.popleft()
+            try: position = next(positions)
+            except StopIteration: continue
+            for condition in ("position>=? AND (kind IN ('task','feedback','recovery','counterexample') OR json_extract(metadata,'$.failure_byte') IS NOT NULL)",
+                              "position>=?"):
+                for row in reader.rows(condition, (position,), limit=1):
+                    if len(selected) >= limit: break
+                    selected.setdefault(row['base_ref'], row)
+                    if row['call_id'] is not None:
+                        for other in reader.rows('call_id=?', (row['call_id'],), limit=min(2, limit - len(selected))):
+                            selected.setdefault(other['base_ref'], other)
+            streams.append((reader, positions))
         return list(selected.values())[:limit]
     def matching(self, *, episode_id=None, call_id=None, resource=None, user_goals=False):
         def matches(row):

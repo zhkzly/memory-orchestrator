@@ -14,7 +14,8 @@ from collections import defaultdict
 from .schemas import DomainError, digest, new_id, validate
 
 
-_FAILURE = re.compile(r"error|fail(?:ed|ure)?|exception|错误|失败|丢失|不通过", re.I)
+_FAILURE = re.compile(r"(?i:\b(?:error|fail(?:ed|ure)?|traceback)\b|\bexception\s*[:(])"
+                      r"|\b[A-Za-z][A-Za-z0-9]*(?:Error|Exception)\b|错误|失败|丢失|不通过")
 _RECOVERY = re.compile(r"recovery|retry|修复|恢复|重试|另一运行", re.I)
 _COUNTER = re.compile(r"counterexample|反例|妨碍", re.I)
 
@@ -25,6 +26,51 @@ def _json(value):
 
 def _unique(values):
     return list(dict.fromkeys(values))
+
+
+def _failure_position(text):
+    """Locate an error hint without treating business identifiers as failures."""
+    for match in _FAILURE.finditer(text):
+        # A serialized no-error field is metadata, not an observed failure.
+        if re.match(r'["\s]*:\s*(?:null|false|0\b|""|\[\]|\{\})', text[match.end():], re.I):
+            continue
+        return match.start()
+    return None
+
+
+def _temporal_positions(length, count):
+    """Bounded breadth across local source order, not a causal-time inference."""
+    if length <= 0 or count <= 0:
+        return
+    from collections import deque
+    yielded = 0
+    for position in _unique([0, length - 1]):
+        if yielded >= count: return
+        yield position; yielded += 1
+    intervals = deque([(1, length - 2)])
+    while intervals and yielded < count:
+        start, end = intervals.popleft()
+        if start > end: continue
+        middle = (start + end) // 2
+        yield middle; yielded += 1
+        intervals.extend(((start, middle - 1), (middle + 1, end)))
+
+
+def _spread(rows):
+    """Round-robin episodes and spread positions inside each source."""
+    from collections import deque
+    groups = defaultdict(list)
+    for row in rows:
+        groups[row['episode_id']].append(row)
+    streams = deque()
+    for key in sorted(groups):
+        values = sorted(groups[key], key=lambda row: (row['position'], row['base_ref']))
+        streams.append(iter([values[i] for i in _temporal_positions(len(values), len(values))]))
+    while streams:
+        iterator = streams.popleft()
+        try: yield next(iterator)
+        except StopIteration: continue
+        streams.append(iterator)
 
 
 def _kind(event):
@@ -212,6 +258,23 @@ def _bytes(record, start, end):
     return record["_reader"].read_range(record, start, end) if "_reader" in record else record["text"].encode("utf-8")[start:end]
 
 
+def _trace_hint(record):
+    if '_verified_hint' in record: return record['_verified_hint']
+    failure = record.get('failure_byte')
+    record['_verified_hint'] = None
+    if failure is None: return None
+    start = max(0, failure - 32)
+    raw = _bytes(record, start, min(_byte_length(record), failure + 160))
+    while raw and raw[0] & 0xC0 == 0x80: start += 1; raw = raw[1:]
+    text = raw.decode('utf-8', errors='ignore')
+    position = _failure_position(text)
+    recovery = _RECOVERY.search(text)
+    if position is None and recovery: position = recovery.start()
+    if position is not None:
+        record['_verified_hint'] = start + len(text[:position].encode('utf-8'))
+    return record['_verified_hint']
+
+
 def _piece(record, start, end, *, body=True):
     item = {"ref_id": f"{record['base_ref']}:{start}:{end}", "episode_id": record["episode_id"],
             "event_id": record["event_id"], "kind": record["kind"], "raw_ref": record["raw_ref"],
@@ -226,7 +289,10 @@ def _piece(record, start, end, *, body=True):
 def _pieces(record, width, extra):
     if "_reader" in record:
         length = _byte_length(record)
-        starts = ([max(0, record["failure_byte"] - width // 4)] if record["failure_byte"] is not None else [])
+        # Older indexes carry a broad lexical hint. It is rechecked before use;
+        # raw archives and previously saved checkpoints are not rewritten.
+        failure = _trace_hint(record)
+        starts = ([max(0, failure - width // 4)] if failure is not None else [])
         starts += [0, max(0, length-width), *[i*width for i in range(1, min(extra+1, math.ceil(length/width)))]]
         for start in _unique(starts):
             raw = _bytes(record, start, min(length, start + width*4 + 4))
@@ -235,8 +301,10 @@ def _pieces(record, width, extra):
             yield {**_piece(record, start, start + len(text.encode()), body=False), "text": text}
         return
     text = record["text"]
-    match = _FAILURE.search(text) or _RECOVERY.search(text)
-    starts = ([max(0, match.start() - width // 4)] if match else []) + [0, max(0, len(text) - width)]
+    failure = _failure_position(text)
+    recovery = _RECOVERY.search(text)
+    anchor = failure if failure is not None else recovery.start() if recovery else None
+    starts = ([max(0, anchor - width // 4)] if anchor is not None else []) + [0, max(0, len(text) - width)]
     starts += [i * width for i in range(1, min(extra + 1, math.ceil(len(text) / width)))]
     for start in _unique(starts):
         end = min(len(text), start + width)
@@ -470,6 +538,48 @@ def _fits(packet, limits, reserve=0):
     return len(serialized) <= limits["max_chars"] - reserve and estimate <= limits["token_budget"]
 
 
+def _metadata_candidates(index, focus, cap):
+    registry = index['records']
+    if hasattr(registry, 'select_metadata'):
+        return registry.select_metadata({'focus': focus}, cap)
+    selected = {ref: registry[ref] for ref in sorted(focus)}
+    important = [row for row in registry.values() if row['kind'] in ('task', 'feedback', 'recovery', 'counterexample')
+                 or _failure_position(row.get('text', '')) is not None]
+    for pool in (important, list(registry.values())):
+        for row in _spread(pool):
+            if len(selected) >= cap: break
+            selected.setdefault(row['base_ref'], row)
+    return list(selected.values())
+
+
+def _selection_units(index, candidates, focus, cap):
+    """Choose calls by identity and local phase, not all requests before results."""
+    from itertools import islice
+    terminals = {ep['episode_id']: len(ep['events']) - 1 for ep in index['episodes'] if ep['events']}
+    terminals.update({reader.manifest['episode_id']: reader.checkpoint['event_count'] - 1
+                      for reader in index.get('trace_readers', [])})
+    seen, units = set(), []
+    for row in candidates:
+        key = (row['episode_id'], row['call_id']) if row['call_id'] is not None else (row['base_ref'],)
+        if key in seen: continue
+        seen.add(key)
+        members = (list(islice(_matching(index, episode_id=row['episode_id'], call_id=row['call_id']), cap))
+                   if row['call_id'] is not None else [row])
+        if not members: continue
+        def priority(item):
+            if item['base_ref'] in focus: return -1
+            if item['kind'] in ('task', 'feedback'): return 0
+            if item['source_event'] and item['position'] == terminals.get(item['episode_id']): return 0
+            if item['kind'] in ('recovery', 'counterexample'): return 1
+            if (_trace_hint(item) if '_reader' in item else _failure_position(item.get('text', ''))) is not None: return 1
+            return 2
+        units.append({'base_ref': row['base_ref'], 'episode_id': row['episode_id'],
+                      'position': min(item['position'] for item in members), 'members': members,
+                      'priority': min(map(priority, members))})
+    return [unit for priority in sorted({u['priority'] for u in units})
+            for unit in _spread([u for u in units if u['priority'] == priority])]
+
+
 def build_packet(index, *, limits, focus_refs=(), dependency_limits=None):
     """Select exact snippets; metadata and the read catalog count toward the budget."""
     _limits(limits)
@@ -497,59 +607,85 @@ def build_packet(index, *, limits, focus_refs=(), dependency_limits=None):
         "fragments": [], "readable_ref_catalog": [], "omitted_refs": [], "gaps": gaps,
         "coverage": {}, "token_budget": limits["token_budget"], "token_count_source": "estimated",
     }
-    def rank(record):
-        if record["base_ref"] in focus:
-            return -1
-        if (record["kind"] in ("task", "feedback", "recovery", "counterexample")
-                or record.get("failure_byte") is not None or _FAILURE.search(record.get("text", ""))):
-            return 0
-        if record["kind"] == "action":
-            return 1
-        return 2
-    registry = index["records"]
     metadata_cap = max(1, limits["max_chars"] // 350 + limits["max_catalog_refs"])
-    if hasattr(registry, "select_metadata"):
-        candidates = registry.select_metadata({"focus": focus}, metadata_cap)
-    else:
-        from heapq import nsmallest
-        candidates = nsmallest(metadata_cap, registry.values(), key=lambda r: (rank(r), r["position"], r["base_ref"]))
-    ordered = sorted(candidates, key=lambda r: (rank(r), r["position"], r["base_ref"]))
-    # Only bounded metadata candidates have bodies read. Additional body ranges
-    # are fetched lazily while filling the bounded read catalog.
-    pieces = {r["base_ref"]: next(_pieces(r, limits["max_fragment_chars"], 0)) for r in ordered}
+    candidates = _metadata_candidates(index, focus, metadata_cap)
+    units = _selection_units(index, candidates, focus, metadata_cap)
+    pieces = {}
+    def piece(row):
+        if row['base_ref'] not in pieces:
+            pieces[row['base_ref']] = next(_pieces(row, limits['max_fragment_chars'], 0))
+        return pieces[row['base_ref']]
     reserve = min(limits["max_chars"] // 4, limits["max_catalog_refs"] * 450)
-    for record in ordered:
-        fragment = pieces[record["base_ref"]]
+    def place(unit, reserve, *, locator_only=False):
         proposed = copy.deepcopy(packet)
-        proposed["fragments"].append(fragment)
+        provided = {f['ref_id'] for f in proposed['fragments']}
+        readable = {r['ref_id'] for r in proposed['readable_ref_catalog']}
+        members = unit['members']
+        actions = [row for row in members if row['source_kind'] == 'action']
+        results = [row for row in members if row['source_kind'] in ('result', 'observation')]
+        if locator_only and (not actions or not results): return None
+        for row in members:
+            fragment = piece(row)
+            if fragment['ref_id'] in provided: continue
+            if locator_only and row in results:
+                if fragment['ref_id'] not in readable:
+                    proposed['readable_ref_catalog'].append(_catalog(fragment))
+                    readable.add(fragment['ref_id'])
+            else:
+                proposed['fragments'].append(fragment); provided.add(fragment['ref_id'])
+        proposed['readable_ref_catalog'] = [r for r in proposed['readable_ref_catalog'] if r['ref_id'] not in provided]
+        if len(proposed['readable_ref_catalog']) > limits['max_catalog_refs']: return None
         _refresh(proposed, index)
-        if _fits(proposed, limits, reserve):
-            packet = proposed
+        return proposed if _fits(proposed, limits, reserve) else None
+    for unit in units:
+        proposed = place(unit, reserve)
+        if proposed is None:
+            proposed = place(unit, reserve, locator_only=True)
+        if proposed is not None: packet = proposed
     if not packet["fragments"]:
-        for record in ordered:
+        for row in candidates:
             candidate = copy.deepcopy(packet)
-            candidate["fragments"] = [pieces[record["base_ref"]]]
+            candidate["fragments"] = [piece(row)]
             _refresh(candidate, index)
             if _fits(candidate, limits):
                 packet = candidate
                 break
     if not packet["fragments"]:
         raise DomainError("evidence_budget_exhausted", "No source fragment fits with its required provenance.")
-    # First expose omitted events, then additional ranges of already-read events.
+    # Partial provided bodies are actionable navigation anchors. Give their
+    # continuations before offering unrelated opaque request IDs.
     supplied = {f["ref_id"] for f in packet["fragments"]}
+    selected_rows = {_resolve(index, fragment['ref_id'], body=False)[0]['base_ref']:
+                     _resolve(index, fragment['ref_id'], body=False)[0] for fragment in packet['fragments']}
     def catalog_candidates():
-        yield from pieces.values()
-        for row in ordered:
-            yield from _pieces(row, limits["max_fragment_chars"], limits["max_catalog_refs"])
+        streams = []
+        from collections import deque
+        ordered_rows = sorted(selected_rows.values(), key=lambda row:
+            (0 if row['kind'] in ('task', 'feedback') else 1 if row['source_kind'] != 'action' else 2, row['position']))
+        for row in ordered_rows:
+            if not any(f['ref_id'].startswith(row['base_ref'] + ':') and len(f['text'].encode('utf-8')) == _byte_length(row)
+                       for f in packet['fragments']):
+                streams.append(iter(_pieces(row, limits['max_fragment_chars'], limits['max_catalog_refs'])))
+        pending = deque(streams)
+        while pending:
+            iterator = pending.popleft()
+            try: yield next(iterator)
+            except StopIteration: continue
+            pending.append(iterator)
     for fragment in catalog_candidates():
         if len(packet["readable_ref_catalog"]) >= limits["max_catalog_refs"]: break
-        if fragment["ref_id"] in supplied or len(packet["readable_ref_catalog"]) >= limits["max_catalog_refs"]:
+        if fragment['ref_id'] in supplied or fragment['ref_id'] in {r['ref_id'] for r in packet['readable_ref_catalog']}:
             continue
         proposed = copy.deepcopy(packet)
         proposed["readable_ref_catalog"].append(_catalog(fragment))
         _refresh(proposed, index)
         if _fits(proposed, limits):
             packet = proposed
+    # Further calls can be advertised only with a visible action/return anchor;
+    # request and response locators no longer compete in separate ranked lists.
+    for unit in units:
+        proposed = place(unit, 0, locator_only=True)
+        if proposed is not None: packet = proposed
     packet = validate_packet(packet, index)
     index["read_stats"] = {key: sum(r.stats[key] for r in index.get("trace_readers", []))
                            for key in ("body_bytes", "range_reads")}

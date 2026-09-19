@@ -495,6 +495,7 @@ def learn(store, episode_ids, model, *, policy, verification_catalog=None):
             _check_verification_refs(value, public_checks)
 
         diagnosis = call(stage, {
+            "evaluation_scope": policy["evaluation_scope"],
             "experiences": extraction["experiences"], "evidence_packets": [packet],
             "source_provenance": [_source_provenance(store, ep, contexts) for ep in episodes],
             "target_snapshot": {"snapshot_id": base["snapshot_id"], "project_id": project, "skills": view},

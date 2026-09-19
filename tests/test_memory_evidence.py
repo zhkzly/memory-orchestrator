@@ -153,11 +153,30 @@ class EvidenceTests(unittest.TestCase):
         self.assertLessEqual(len(json.dumps(packet, ensure_ascii=False, sort_keys=True, separators=(",", ":"))), 8000)
         available = {x["ref_id"] for x in packet["fragments"] + packet["readable_ref_catalog"]}
         self.assertLess(len(packet["relations"]["calls"]), len(index["call_pairs"]))
-        self.assertTrue(any(x["coverage"] == "partial" for x in packet["relations"]["calls"]))
         for relation in packet["relations"]["calls"]:
             self.assertTrue(set(relation["action_refs"] + relation["result_refs"]) <= available)
         for locator in packet["readable_ref_catalog"]:
             with self.assertRaises(DomainError): validate_citations({"evidence_refs": [locator["ref_id"]]}, packet)
+        # Grouped selection need not strand a return merely to create partial
+        # metadata. A narrower consumer projection (as with goal windows) must
+        # still describe an actually hidden counterpart as partial.
+        from memory_orchestrator.evidence import _refresh
+        hidden = next(row for row in packet['relations']['calls'] if row['result_refs'])
+        for key in ('fragments', 'readable_ref_catalog'):
+            packet[key] = [item for item in packet[key] if not (
+                item['structure']['call_id'] == hidden['call_id']
+                and item['structure']['source_kind'] in ('result', 'observation'))]
+        _refresh(packet, index)
+        validate_packet(packet, index)
+        self.assertEqual(next(row['coverage'] for row in packet['relations']['calls'] if row['call_id'] == hidden['call_id']), 'partial')
+
+    def test_business_exception_fields_and_null_error_are_not_failure_anchors(self):
+        from memory_orchestrator.evidence import _failure_position
+        self.assertIsNone(_failure_position('{"customer_exception":"none","error":null}'))
+        self.assertIsNone(_failure_position('Customer requests a same-week exception despite account flags.'))
+        self.assertIsNotNone(_failure_position('ValueError: invalid amount'))
+        self.assertIsNotNone(_failure_position('ERROR: tool invocation failed'))
+        self.assertIsNotNone(_failure_position('{"error":"access denied"}'))
 
     def test_goal_transition_needs_its_visible_basis(self):
         ep = episode()
