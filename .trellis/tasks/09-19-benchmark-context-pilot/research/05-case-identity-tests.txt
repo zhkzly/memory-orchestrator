@@ -1,0 +1,27 @@
+test_request_case_identity_is_bound_before_scoring (test_gdpevo_dataset.GDPevoDatasetTests.test_request_case_identity_is_bound_before_scoring) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.015s
+
+OK
+test_request_case_identity_is_bound_before_scoring (test_gdpevo_dataset.GDPevoDatasetTests.test_request_case_identity_is_bound_before_scoring) ... FAIL
+
+======================================================================
+FAIL: test_request_case_identity_is_bound_before_scoring (test_gdpevo_dataset.GDPevoDatasetTests.test_request_case_identity_is_bound_before_scoring)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_dataset.py", line 90, in test_request_case_identity_is_bound_before_scoring
+    with self.assertRaises(DomainError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: DomainError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.042s
+
+FAILED (failures=1)
+test_request_case_identity_is_bound_before_scoring (test_gdpevo_dataset.GDPevoDatasetTests.test_request_case_identity_is_bound_before_scoring) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.013s
+
+OK

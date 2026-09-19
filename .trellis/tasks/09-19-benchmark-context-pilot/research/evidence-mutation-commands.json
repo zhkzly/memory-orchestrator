@@ -1,0 +1,65 @@
+[
+  {
+    "id": "call_group",
+    "target": "src/memory_orchestrator/evidence.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_context.GDPevoContextTests.test_selected_business_requests_keep_their_actual_return_reachable -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/evidence.py\"); s=p.read_text(); before=\"        if not members: continue\\n        def priority(item):\"; after=\"        members = [row]\\n        if not members: continue\\n        def priority(item):\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "prepared_not_run"
+  },
+  {
+    "id": "temporal_coverage",
+    "target": "src/memory_orchestrator/evidence.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_context.GDPevoContextTests.test_failed_business_categories_have_actual_return_evidence -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/evidence.py\"); s=p.read_text(); before=\"for i in _temporal_positions(len(values), len(values))\"; after=\"for i in range(len(values))\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "prepared_not_run"
+  },
+  {
+    "id": "catalog_continuation",
+    "target": "src/memory_orchestrator/evidence.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_context.GDPevoContextTests.test_catalog_offers_returns_and_selected_template_continuation -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/evidence.py\"); s=p.read_text(); before=\"streams.append(iter(_pieces(row, limits['\\''max_fragment_chars'\\''], limits['\\''max_catalog_refs'\\''])))\"; after=\"pass\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "prepared_not_run"
+  },
+  {
+    "id": "business_not_error",
+    "target": "src/memory_orchestrator/evidence.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_business_exception_fields_and_null_error_are_not_failure_anchors -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/evidence.py\"); s=p.read_text(); before=\"for match in _FAILURE.finditer(text):\"; after=\"for match in re.finditer(r'\\''error|fail(?:ed|ure)?|exception|错误|失败|丢失|不通过'\\'', text, re.I):\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "prepared_not_run"
+  },
+  {
+    "id": "real_error_retained",
+    "target": "src/memory_orchestrator/evidence.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_business_exception_fields_and_null_error_are_not_failure_anchors -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/evidence.py\"); s=p.read_text(); before=\"    for match in _FAILURE.finditer(text):\"; after=\"    return None\\n    for match in _FAILURE.finditer(text):\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "prepared_not_run"
+  },
+  {
+    "id": "old_hint_revalidation",
+    "target": "src/memory_orchestrator/evidence.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_context.GDPevoContextTests.test_real_trajectory_disk_index_keeps_the_same_useful_call_categories -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/evidence.py\"); s=p.read_text(); before=\"failure = _trace_hint(record)\"; after=\"failure = record.get('\\''failure_byte'\\'')\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "prepared_not_run"
+  },
+  {
+    "id": "disk_candidate_coverage",
+    "target": "src/memory_orchestrator/trace.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_context.GDPevoContextTests.test_real_trajectory_disk_index_keeps_the_same_useful_call_categories -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/trace.py\"); s=p.read_text(); before=\"    def select_metadata(self, query, limit):\\n        focus = set(query.get(\\\"focus\\\", [])); selected = {}\\n        for ref in focus:\\n            try: selected[ref] = self[ref]\\n            except KeyError: continue\\n        # Query a bounded spread of source positions before touching any body.\\n        # Do not prefilter all actions before the returns that explain them.\\n        for row in self.memory.values():\\n            if len(selected) >= limit: break\\n            selected.setdefault(row[\\\"base_ref\\\"], row)\\n        from collections import deque\\n        from .evidence import _temporal_positions\\n        streams = deque((reader, iter(_temporal_positions(reader.checkpoint['\\''event_count'\\''], limit))) for reader in self.readers)\\n        while streams and len(selected) < limit:\\n            reader, positions = streams.popleft()\\n            try: position = next(positions)\\n            except StopIteration: continue\\n            for condition in (\\\"position>=? AND (kind IN ('\\''task'\\'','\\''feedback'\\'','\\''recovery'\\'','\\''counterexample'\\'') OR json_extract(metadata,'\\''$.failure_byte'\\'') IS NOT NULL)\\\",\\n                              \\\"position>=?\\\"):\\n                for row in reader.rows(condition, (position,), limit=1):\\n                    if len(selected) >= limit: break\\n                    selected.setdefault(row['\\''base_ref'\\''], row)\\n                    if row['\\''call_id'\\''] is not None:\\n                        for other in reader.rows('\\''call_id=?'\\'', (row['\\''call_id'\\''],), limit=min(2, limit - len(selected))):\\n                            selected.setdefault(other['\\''base_ref'\\''], other)\\n            streams.append((reader, positions))\\n        return list(selected.values())[:limit]\"; after=\"    def select_metadata(self, query, limit):\\n        selected = {}\\n        for row in self.memory.values():\\n            if len(selected) >= limit: break\\n            selected.setdefault(row['\\''base_ref'\\''], row)\\n        for condition in (\\\"kind IN ('\\''task'\\'','\\''feedback'\\'','\\''recovery'\\'','\\''counterexample'\\'') OR json_extract(metadata,'\\''$.failure_byte'\\'') IS NOT NULL\\\", \\\"kind='\\''action'\\''\\\", \\\"1\\\"):\\n            for reader in self.readers:\\n                for row in reader.rows(condition, limit=max(0, limit-len(selected))):\\n                    selected.setdefault(row['\\''base_ref'\\''], row)\\n        return list(selected.values())[:limit]\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "prepared_not_run"
+  },
+  {
+    "id": "complete_char_budget",
+    "target": "src/memory_orchestrator/evidence.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_context.GDPevoContextTests.test_actual_budget_raw_ranges_and_all_scoring_points_remain_intact -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/evidence.py\"); s=p.read_text(); before=\"len(serialized) <= limits[\\\"max_chars\\\"] - reserve\"; after=\"True\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "prepared_not_run"
+  },
+  {
+    "id": "catalog_not_fact",
+    "target": "src/memory_orchestrator/evidence.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_context.GDPevoContextTests.test_catalog_offers_returns_and_selected_template_continuation -v",
+    "mutate": "python3 -c 'from pathlib import Path; p=Path(\"src/memory_orchestrator/evidence.py\"); s=p.read_text(); before=\"if ref not in provided)\"; after=\"if False)\"; assert s.count(before)==1, s.count(before); p.write_text(s.replace(before,after,1))'",
+    "status": "prepared_not_run"
+  }
+]

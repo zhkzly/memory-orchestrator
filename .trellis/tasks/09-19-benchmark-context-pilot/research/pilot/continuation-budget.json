@@ -1,0 +1,15 @@
+{
+  "previous_ledger": "calls",
+  "previous_calls": 6,
+  "previous_input_chars": 173673,
+  "new_ledger": "calls-continued",
+  "config": {
+    "model": "gpt-5.6-terra",
+    "base_url": "http://localhost:8317/v1",
+    "timeout": 120,
+    "max_calls": 90,
+    "max_total_input_chars": 2826327,
+    "max_output_tokens": 8192
+  },
+  "reason": "First extraction hit the declared 45-second transport timeout; preserve identical payload and allow one capacity probe before prompt changes."
+}

@@ -1,0 +1,72 @@
+{
+  "call_ref": "call_0028",
+  "status": "returned",
+  "response": {
+    "id": "resp_05acd0c98e24e677016aadd6f5325087d0ae400b0ecd41f608",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 77,
+      "prompt_tokens": 1253,
+      "total_tokens": 1330,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 9,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_Gx0KWsjVptvOIFuZV0NVgmpz",
+              "function": {
+                "arguments": "{\"path\":\"input/payloads/answer_template.json\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_dkTqufS7wGqmGBawZhmdCdY5",
+              "function": {
+                "arguments": "{\"path\":\"input/payloads/expedite_queue_memo.json\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            }
+          ],
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 77,
+    "prompt_tokens": 1253,
+    "total_tokens": 1330,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 9,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 3.3191527380113257,
+  "finished_at": "2026-09-19T00:27:35.984312Z"
+}

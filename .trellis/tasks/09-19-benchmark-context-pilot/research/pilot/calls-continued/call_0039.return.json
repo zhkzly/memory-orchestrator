@@ -1,0 +1,504 @@
+{
+  "call_ref": "call_0039",
+  "status": "returned",
+  "response": {
+    "id": "resp_022cf90cdabc685c016aadd7ac95d087d095f40b789072cd55",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 1494,
+      "prompt_tokens": 4132,
+      "total_tokens": 5626,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 263,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_1X4fqokzKUuBtGTG5rVPUot7",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2027\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_AnC968Em8UiEYiJuKbJHkm1e",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2006\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_2q8jrBfozOSeek0kjPVBmIbi",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2033\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_IeaGQGFmJ4TGLr8cGTgcXdKR",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2016\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_5nH6ZcYZy6z42YRI5oeLsfyE",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2034\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_UosgkCm8LGwPSTUW8YQ1Im1R",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2002\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_CoFTEmlqBk19JlghfJZq8uHh",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2014\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_pT5vKaSeshtH5vv2hZEYTkei",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2005\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Rl3lQxPdTttq6CjlHqs5jFGK",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2001\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Emwr7Y0KNh857yyVKcAH8Ayk",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2023\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_oQAFvp2I0zNjGPsTqabBetk8",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2029\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_WGsNdhKadSYxTatxWivNJ3T9",
+              "function": {
+                "arguments": "{\"path\":\"/customers/CUST-2030\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_KIGSwO3883q6UQZ5NmrAZi3f",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1042\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_x1BmWkV73WnLqkCXG0tYGhsQ",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1035\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_uoXyQjcG3vcOFU45FOot1Zq6",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1050\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_0dljAewPH7uSEw8bdMYG3gnk",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1034\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_yPWoQAJ0GLbvBhjjVcAt8K5q",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1018\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_pZpgVyyE8XQwzXzVysNHMx8s",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1037\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_FGqh6jwJXdbNl02lcxhuC8uY",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1029\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_fJ1YThmJFIPdBvDy9c8eVSre",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1004\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_grX00GcHc5GeZts09wdBd85R",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1025\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_npATJf267x2qy1gy7xaW6Ksm",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1003\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_w35zaY8S7EugfOKcUN6uvQ9p",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1010\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_FTgk3iyYahE9u1kY80OqeAqJ",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1038\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_nyqLldgHIEcuJ8bzFNG3rAwe",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1014\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_ejgAh3YLb55mUxQzOlEpnHvH",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1030\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_uNoLFv6CwJm2gDOeksX68aun",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1016\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_TuXAztWv6YZeChG5MOXnBDQ9",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1005\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_6GmTgJ4rUgtaZzvTmvCaRzY3",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1006\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_XpDFTlQc8S16O0zTw8PlTryD",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1012\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_NQK7iHIBopaHeIRaCI8kIRh5",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1048\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Q1TFQvxj2E6mhcCJLm9dP35J",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1019\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_cGLGJjRHMQCyfwDbxx78RINn",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1007\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Q1N10NozlF8kn6Os6TS6Wcna",
+              "function": {
+                "arguments": "{\"path\":\"/products/NW-1017\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_sc5gyzajVXtUZONIvbN06juY",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1042\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_PCS0mtNNCc5bpBB3yhC3sj2U",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1035\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_mtUL7iLzEgmMivauwVsDjzdH",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1050\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_M1qxZhgiB60qQ8rPT34h5c9N",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1034\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_b5dQAg5JT0hc4Ftp2BNKvrlQ",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1018\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_jZf8e9DSACnIoGwGU7KT4CW7",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1037\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_lgMi95N98GWaitcwwZ1rjomN",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1029\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_PVm81YU6ZVv8S9CURoyjZPvc",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1004\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_tgKEzo5DZkfFkPThGSqBEoAO",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1025\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Dl24nmHBq0Uobi8rPjnnEClx",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1003\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_zhouTThhobnE0G8hg8b1MbM7",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1010\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_vJrqfop638qo042bO3vY4dlJ",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1038\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_UuREVPuDrjQ2deN7eNa74VPZ",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1014\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Nip1slef8HK6hNbDRRyQNleg",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1030\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_QL0Pa6yNgzf9Ic1PRc78icAg",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1016\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_j5R5nXUbfIEfb97peNQFDLDZ",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1005\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_mb3hBTMxEphpFPbLbF2zqGSb",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1006\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Mvzkv1bJbqYhBnuQkbXgRKU5",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1012\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_vHeaHGXMKKSxrLkFnAoUfQeq",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1048\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Yy8jXK4sYAurJmech70j9nAW",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1019\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_W4Ddou3PYAGm2A0ULzkK5kGC",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1007\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_ouSnpku15cWBjaaSgwBSDPvp",
+              "function": {
+                "arguments": "{\"path\":\"/inventory\",\"query\":{\"sku\":\"NW-1017\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            }
+          ],
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 1494,
+    "prompt_tokens": 4132,
+    "total_tokens": 5626,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 263,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 28.94487640800071,
+  "finished_at": "2026-09-19T00:31:04.855419Z"
+}

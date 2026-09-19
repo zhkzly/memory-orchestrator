@@ -1,0 +1,4 @@
+# Local synchronization state is recreated; JSON plans/returns remain evidence.
+.calls.lock
+.write.lock
+sampling-locks/

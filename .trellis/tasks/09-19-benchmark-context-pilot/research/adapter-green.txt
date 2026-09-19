@@ -1,0 +1,22 @@
+test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen (test_gdpevo_sdk.LedgerTests.test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen) ... ok
+test_interrupted_and_failed_transports_remain_unknown_attempts (test_gdpevo_sdk.LedgerTests.test_interrupted_and_failed_transports_remain_unknown_attempts) ... ok
+test_business_get_matches_real_filtered_data_and_returns_copies (test_gdpevo_dataset.GDPevoDatasetTests.test_business_get_matches_real_filtered_data_and_returns_copies) ... ok
+test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) ... ok
+test_official_positive_and_missing_field_negative_keep_exact_score (test_gdpevo_dataset.GDPevoDatasetTests.test_official_positive_and_missing_field_negative_keep_exact_score) ... ok
+test_read_input_only_allows_current_public_files (test_gdpevo_dataset.GDPevoDatasetTests.test_read_input_only_allows_current_public_files) ... ok
+test_request_case_identity_is_bound_before_scoring (test_gdpevo_dataset.GDPevoDatasetTests.test_request_case_identity_is_bound_before_scoring) ... ok
+test_source_commit_is_an_actual_precondition (test_gdpevo_dataset.GDPevoDatasetTests.test_source_commit_is_an_actual_precondition) ... ok
+test_task_preserves_full_public_prompt_without_private_paths (test_gdpevo_dataset.GDPevoDatasetTests.test_task_preserves_full_public_prompt_without_private_paths) ... ok
+test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero (test_gdpevo_dataset.GDPevoDatasetTests.test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero) ... ok
+test_call_budget_and_global_budget_do_not_fabricate_success (test_gdpevo_actor.ActorTests.test_call_budget_and_global_budget_do_not_fabricate_success) ... ok
+test_final_context_is_pinned_and_cross_version_manifest_is_rejected (test_gdpevo_actor.ActorTests.test_final_context_is_pinned_and_cross_version_manifest_is_rejected) ... ok
+test_gold_unknown_tool_and_judge_are_rejected_without_dispatch (test_gdpevo_actor.ActorTests.test_gold_unknown_tool_and_judge_are_rejected_without_dispatch) ... ok
+test_normal_stop_preserves_non_json_without_host_repair (test_gdpevo_actor.ActorTests.test_normal_stop_preserves_non_json_without_host_repair) ... ok
+test_oversized_tool_json_is_rejected_whole_not_silently_cut (test_gdpevo_actor.ActorTests.test_oversized_tool_json_is_rejected_whole_not_silently_cut) ... ok
+test_real_public_prompt_and_parallel_tool_pairs_reach_the_next_sdk_call (test_gdpevo_actor.ActorTests.test_real_public_prompt_and_parallel_tool_pairs_reach_the_next_sdk_call) ... ok
+test_timeout_length_and_malformed_sdk_envelope_keep_terminal_state (test_gdpevo_actor.ActorTests.test_timeout_length_and_malformed_sdk_envelope_keep_terminal_state) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.206s
+
+OK

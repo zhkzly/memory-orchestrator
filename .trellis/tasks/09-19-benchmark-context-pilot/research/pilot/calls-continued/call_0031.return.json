@@ -1,0 +1,120 @@
+{
+  "call_ref": "call_0031",
+  "status": "returned",
+  "response": {
+    "id": "resp_0197d9c37ce7dce8016aadd718709087d08d10c4db77b31cb4",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 820,
+      "prompt_tokens": 8541,
+      "total_tokens": 9361,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 442,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 3584,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_Xf4WMf1OhiHvHHmJk9HVMVXs",
+              "function": {
+                "arguments": "{\"path\":\"/shipping/quote\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"destination_zip\":\"38247\",\"weight_lb\":1646.28,\"speed\":\"overnight\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_BvST1GcFnxNgbrDQHAYUMb2n",
+              "function": {
+                "arguments": "{\"path\":\"/shipping/quote\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"destination_zip\":\"46038\",\"weight_lb\":728.64,\"speed\":\"two_day\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_bexgJXNwd3abwH53f46CG8yF",
+              "function": {
+                "arguments": "{\"path\":\"/shipping/quote\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"destination_zip\":\"93680\",\"weight_lb\":694.39,\"speed\":\"ground\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_gxTT15uPI1rrp6HAtHhJpWhV",
+              "function": {
+                "arguments": "{\"path\":\"/shipping/quote\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"destination_zip\":\"94920\",\"weight_lb\":409.36,\"speed\":\"two_day\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_p2Ac5k1tf8NCfCObuy32ADBT",
+              "function": {
+                "arguments": "{\"path\":\"/shipping/quote\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"destination_zip\":\"43629\",\"weight_lb\":1295.94,\"speed\":\"two_day\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_4cMl21TPSbAnslxcDfz3OlRf",
+              "function": {
+                "arguments": "{\"path\":\"/shipping/quote\",\"query\":{\"warehouse_id\":\"WH_WEST\",\"destination_zip\":\"69394\",\"weight_lb\":883.63,\"speed\":\"overnight\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_UJ8nG74A3DAQjEaBoVPcH9Q2",
+              "function": {
+                "arguments": "{\"path\":\"/shipping/quote\",\"query\":{\"warehouse_id\":\"WH_NORTH\",\"destination_zip\":\"02128\",\"weight_lb\":261.36,\"speed\":\"ground\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Xz6G0npFgrUawHXmxXDIhd2T",
+              "function": {
+                "arguments": "{\"path\":\"/shipping/quote\",\"query\":{\"warehouse_id\":\"WH_CENTRAL\",\"destination_zip\":\"47404\",\"weight_lb\":317.76,\"speed\":\"two_day\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            }
+          ],
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 820,
+    "prompt_tokens": 8541,
+    "total_tokens": 9361,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 442,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 3584,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 16.432901054009562,
+  "finished_at": "2026-09-19T00:28:24.333576Z"
+}

@@ -1,0 +1,7 @@
+test_identical_deployable_states_skip_but_changed_state_reaches_probe (test_gdpevo_probe.ProbeTests.test_identical_deployable_states_skip_but_changed_state_reaches_probe) ... {"stage": "probe", "status": "not_run", "reason": "identical_deployable_memory"}
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.036s
+
+OK

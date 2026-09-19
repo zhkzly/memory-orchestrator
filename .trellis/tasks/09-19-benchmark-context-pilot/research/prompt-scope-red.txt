@@ -1,0 +1,15 @@
+test_diagnosis_gets_scope_before_it_commits_verification_obligations (test_gdpevo_prompt_scope.PromptScopeTests.test_diagnosis_gets_scope_before_it_commits_verification_obligations) ... FAIL
+
+======================================================================
+FAIL: test_diagnosis_gets_scope_before_it_commits_verification_obligations (test_gdpevo_prompt_scope.PromptScopeTests.test_diagnosis_gets_scope_before_it_commits_verification_obligations)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_prompt_scope.py", line 27, in test_diagnosis_gets_scope_before_it_commits_verification_obligations
+    self.assertEqual(observed['inputs'].get('evaluation_scope'), LEARNING['evaluation_scope'])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None != 'local CSV repair; target and regression, no transfer claim'
+
+----------------------------------------------------------------------
+Ran 1 test in 1.147s
+
+FAILED (failures=1)

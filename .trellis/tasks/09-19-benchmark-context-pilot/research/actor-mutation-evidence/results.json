@@ -1,0 +1,258 @@
+{
+  "target": "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+  "baseline_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+  "results": [
+    {
+      "case": "public_file_scope",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_gold_unknown_tool_and_judge_are_rejected_without_dispatch -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py public_file_scope",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_gold_unknown_tool_and_judge_are_rejected_without_dispatch -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py public_file_scope"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "business_get_scope",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_gold_unknown_tool_and_judge_are_rejected_without_dispatch -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py business_get_scope",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_gold_unknown_tool_and_judge_are_rejected_without_dispatch -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py business_get_scope"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "tool_id_pairing",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_real_public_prompt_and_parallel_tool_pairs_reach_the_next_sdk_call -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py tool_id_pairing",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_real_public_prompt_and_parallel_tool_pairs_reach_the_next_sdk_call -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py tool_id_pairing"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "input_budget",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_complete_payload_budget_blocks_dispatch_without_removing_context -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py input_budget",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_complete_payload_budget_blocks_dispatch_without_removing_context -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py input_budget"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "tool_budget",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_tool_batch_over_budget_executes_none_and_keeps_attempts -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py tool_budget",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_tool_batch_over_budget_executes_none_and_keeps_attempts -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py tool_budget"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "asset_read_consumption",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_only_an_actual_selected_asset_read_records_consumption -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py asset_read_consumption",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_only_an_actual_selected_asset_read_records_consumption -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py asset_read_consumption"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "selected_asset_scope",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_only_an_actual_selected_asset_read_records_consumption -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py selected_asset_scope",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_only_an_actual_selected_asset_read_records_consumption -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py selected_asset_scope"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "length_termination",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_timeout_length_and_malformed_sdk_envelope_keep_terminal_state -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py length_termination",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_timeout_length_and_malformed_sdk_envelope_keep_terminal_state -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py length_termination"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "stop_raw_artifact",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_normal_stop_preserves_non_json_without_host_repair -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py stop_raw_artifact",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_normal_stop_preserves_non_json_without_host_repair -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py stop_raw_artifact"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "host_state_visible",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_recorded_six_round_pattern_discloses_remaining_budget_without_inventing_answer -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py host_state_visible",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_recorded_six_round_pattern_discloses_remaining_budget_without_inventing_answer -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py host_state_visible"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "remaining_call_count",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_recorded_five_round_submission_keeps_one_unused_model_call_visible -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py remaining_call_count",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_recorded_five_round_submission_keeps_one_unused_model_call_visible -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py remaining_call_count"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "no_stale_state_history",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_recorded_six_round_pattern_discloses_remaining_budget_without_inventing_answer -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py no_stale_state_history",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_recorded_six_round_pattern_discloses_remaining_budget_without_inventing_answer -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py no_stale_state_history"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "host_state_input_budget",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_dynamic_host_state_is_included_in_the_complete_input_budget -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py host_state_input_budget",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_dynamic_host_state_is_included_in_the_complete_input_budget -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py host_state_input_budget"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    },
+    {
+      "case": "sdk_id_type_first",
+      "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_malformed_list_tool_id_keeps_partial_trace_without_dispatch -v",
+      "mutate": "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py sdk_id_type_first",
+      "command": [
+        "python3",
+        "/home/kelong/ai-workbench/tools/mutation_license.py",
+        "--target",
+        "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/actor.py",
+        "--tests",
+        "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:.:tests .venv/bin/python -m unittest test_gdpevo_actor.ActorTests.test_malformed_list_tool_id_keeps_partial_trace_without_dispatch -v",
+        "--mutate",
+        "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/actor-mutations.py sdk_id_type_first"
+      ],
+      "exit_code": 0,
+      "restored_sha256": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+      "restored": true
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+test_diagnosis_gets_scope_before_it_commits_verification_obligations (test_gdpevo_prompt_scope.PromptScopeTests.test_diagnosis_gets_scope_before_it_commits_verification_obligations) ... ok
+test_actual_budget_raw_ranges_and_all_scoring_points_remain_intact (test_gdpevo_context.GDPevoContextTests.test_actual_budget_raw_ranges_and_all_scoring_points_remain_intact) ... ok
+test_catalog_offers_returns_and_selected_template_continuation (test_gdpevo_context.GDPevoContextTests.test_catalog_offers_returns_and_selected_template_continuation) ... ok
+test_failed_business_categories_have_actual_return_evidence (test_gdpevo_context.GDPevoContextTests.test_failed_business_categories_have_actual_return_evidence) ... ok
+test_real_trajectory_disk_index_keeps_the_same_useful_call_categories (test_gdpevo_context.GDPevoContextTests.test_real_trajectory_disk_index_keeps_the_same_useful_call_categories) ... ok
+test_selected_business_requests_keep_their_actual_return_reachable (test_gdpevo_context.GDPevoContextTests.test_selected_business_requests_keep_their_actual_return_reachable) ... ok
+test_embedded_model_drafts_resolve_and_match_their_canonical_definitions (test_memory_contract.EmbeddedContractTests.test_embedded_model_drafts_resolve_and_match_their_canonical_definitions) ... ok
+test_validation_embeds_the_same_evaluation_result_contract (test_memory_contract.EmbeddedContractTests.test_validation_embeds_the_same_evaluation_result_contract) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 8.349s
+
+OK

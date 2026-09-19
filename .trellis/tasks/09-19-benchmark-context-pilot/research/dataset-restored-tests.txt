@@ -1,0 +1,13 @@
+test_business_get_matches_real_filtered_data_and_returns_copies (test_gdpevo_dataset.GDPevoDatasetTests.test_business_get_matches_real_filtered_data_and_returns_copies) ... ok
+test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) ... ok
+test_official_positive_and_missing_field_negative_keep_exact_score (test_gdpevo_dataset.GDPevoDatasetTests.test_official_positive_and_missing_field_negative_keep_exact_score) ... ok
+test_read_input_only_allows_current_public_files (test_gdpevo_dataset.GDPevoDatasetTests.test_read_input_only_allows_current_public_files) ... ok
+test_request_case_identity_is_bound_before_scoring (test_gdpevo_dataset.GDPevoDatasetTests.test_request_case_identity_is_bound_before_scoring) ... ok
+test_source_commit_is_an_actual_precondition (test_gdpevo_dataset.GDPevoDatasetTests.test_source_commit_is_an_actual_precondition) ... ok
+test_task_preserves_full_public_prompt_without_private_paths (test_gdpevo_dataset.GDPevoDatasetTests.test_task_preserves_full_public_prompt_without_private_paths) ... ok
+test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero (test_gdpevo_dataset.GDPevoDatasetTests.test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.136s
+
+OK

@@ -1,0 +1,29 @@
+{
+  "id": "benchmark-context-pilot",
+  "name": "benchmark-context-pilot",
+  "title": "小批量公开基准与模型上下文诊断",
+  "description": "在公开GDPevo任务的小批量真实执行中审计记忆系统各模型节点的提示词、上下文和反馈，保留原始失败证据，修复实测根因并同配置复测。",
+  "status": "in_progress",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "kelong.zx",
+  "assignee": "kelong.zx",
+  "createdAt": "2026-09-19",
+  "completedAt": null,
+  "branch": "codex/vault-controller-maintenance",
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "09-18-experience-learning-architecture",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "user_approved": "true",
+    "implementation_allowed": "true"
+  }
+}

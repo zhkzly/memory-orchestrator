@@ -1,0 +1,8 @@
+test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen (test_gdpevo_sdk.LedgerTests.test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen) ... ok
+test_full_real_messages_and_tools_count_before_dispatch (test_gdpevo_sdk.LedgerTests.test_full_real_messages_and_tools_count_before_dispatch) ... ok
+test_interrupted_and_failed_transports_remain_unknown_attempts (test_gdpevo_sdk.LedgerTests.test_interrupted_and_failed_transports_remain_unknown_attempts) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.032s
+
+OK

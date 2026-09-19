@@ -1,0 +1,1580 @@
+{
+  "prompt_id": "extract_v1",
+  "sequence": 1,
+  "inputs": {
+    "task_requirements": [
+      {
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "task_id": "train_001",
+        "revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+        "provided_requirement_refs": [
+          "ev:c1696f5b953ae79d628669fa:0:672",
+          "ev:48e961e8ac7e62958cb0b953:0:1131"
+        ]
+      }
+    ],
+    "evidence_packet": {
+      "context_refs": [
+        "context_f054e01de6924981b61097e8ef350f98"
+      ],
+      "coverage": {
+        "incomplete_reasons": [
+          "Catalog and original ranges are bounded; unlisted material remains in the source index."
+        ],
+        "mandatory_roles_present": [
+          "action",
+          "feedback",
+          "observation",
+          "task"
+        ],
+        "omitted_episode_refs": [],
+        "selected_event_count": 20,
+        "total_event_count": 136
+      },
+      "episode_bindings": [
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "relation": "same_task",
+          "task_ref": "train_001",
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "relation": "unknown",
+          "task_ref": null,
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        }
+      ],
+      "episode_refs": [
+        "episode_5372955c6e834dd29b562bab352f4912"
+      ],
+      "feedback_ids": [
+        "feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome"
+      ],
+      "fragments": [
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "task",
+          "kind": "task",
+          "range": {
+            "end_byte_exclusive": 672,
+            "start_byte": 0
+          },
+          "raw_hash": "d837cf71a80804308e4f2c61be85b3adfaebee9c64e4df331014d16b7bf3fa27",
+          "raw_ref": "episode:episode_5372955c6e834dd29b562bab352f4912/requirement:task",
+          "ref_id": "ev:c1696f5b953ae79d628669fa:0:672",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "requirement",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "instruction",
+            "source_position": -1,
+            "source_role": null,
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "Northwind Components operations has an expedite queue for wave TRAIN_EXPEDITE_A. Use the local queue memo in input/payloads/expedite_queue_memo.json and the shared Northwind ERP API to prepare the dispatch-control answer.\n\nShared API entry point: `<TASK_ENV_BASE_URL>`\n\nFor each order in the memo, classify the inventory status, customer exception, final fulfillment decision, next action, SKU exception lists, and shipping quote. Use the live API records for orders, products, customers, inventory, warehouses, and shipping quotes. Return only JSON matching input/payloads/answer_template.json.\n\nKeep records sorted by order_id. Currency must be rounded to two decimals.\n"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome",
+          "kind": "feedback",
+          "range": {
+            "end_byte_exclusive": 1964,
+            "start_byte": 164
+          },
+          "raw_hash": "ad3dcffaf61d653f585b3883c6ff531637ad96eac6efa9f9ec5a03bb389ada40",
+          "raw_ref": "feedback:feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome",
+          "ref_id": "ev:8145045941e4f6f8e14f8c9f:164:1964",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 136,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "cc7920d99:feedback:task_outcome\",\"checked_at\":\"2026-09-18T23:37:46.340841Z\",\"criterion_id\":\"task_outcome\",\"evaluated_state_digest\":\"860b76043744cf25809491291ecabcef68daeab4ff30b0e6adcf960d14853c35\",\"evaluator_status\":\"ok\",\"evidence_refs\":[\"attempt_359ee9e25ed29d333284d0d3f1908e4ce3ad1989f75d0830e69898821d44408b\"],\"execution_ref\":\"run_af2c81d1463e48f3a931a8ebc78239e6\",\"feedback_plan_ref\":\"feedback_plan_9a85e09850c142c8a58145bcc7920d99\",\"outcome\":\"fail\",\"project_id\":\"gdpevo-group007\",\"reason\":\"{\\\"evidence\\\":[{\\\"candidate_sha256\\\":\\\"68cd68c922ca18dcc72572e17bd2c3f0729c4bc082e358829e53b1cdf993c63b\\\",\\\"group_id\\\":\\\"task_group_007\\\",\\\"kind\\\":\\\"gdpevo_official_evaluator\\\",\\\"result\\\":{\\\"earned_weight\\\":5,\\\"score\\\":0.29411764705882354,\\\"scoring_points\\\":[{\\\"id\\\":\\\"SP001_order_set_and_count\\\",\\\"matched\\\":true,\\\"normalized_weight\\\":0.058823529411764705,\\\"weight\\\":1},{\\\"id\\\":\\\"SP002_inventory_statuses_and_shortages\\\",\\\"matched\\\":false,\\\"normalized_weight\\\":0.17647058823529413,\\\"weight\\\":3},{\\\"id\\\":\\\"SP003_inactive_and_low_stock_sku_sets\\\",\\\"matched\\\":false,\\\"normalized_weight\\\":0.11764705882352941,\\\"weight\\\":2},{\\\"id\\\":\\\"SP004_customer_exceptions\\\",\\\"matched\\\":true,\\\"normalized_weight\\\":0.11764705882352941,\\\"weight\\\":2},{\\\"id\\\":\\\"SP005_final_decisions\\\",\\\"matched\\\":false,\\\"normalized_weight\\\":0.17647058823529413,\\\"weight\\\":3},{\\\"id\\\":\\\"SP006_next_actions\\\",\\\"matched\\\":false,\\\"normalized_weight\\\":0.11764705882352941,\\\"weight\\\":2},{\\\"id\\\":\\\"SP007_shipping_quotes\\\",\\\"matched\\\":true,\\\"normalized_weight\\\":0.11764705882352941,\\\"weight\\\":2},{\\\"id\\\":\\\"SP008_summary_rollups\\\",\\\"matched\\\":false,\\\"normalized_weight\\\":0.11764705882352941,\\\"weight\\\":2}],\\\"total_weight\\\":17},\\\"returncode\\\":0,\\\"scorer_sha256\\\":\\\"a3848ca0e4a9d00536c8e675515b16d5008bf883dfe98dfafb2d87568db35f5d\\\",\\\"source_commit\\\":"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "instruction",
+          "kind": "task",
+          "range": {
+            "end_byte_exclusive": 1131,
+            "start_byte": 0
+          },
+          "raw_hash": "b2103cf15c5cbe87d7a9ee09eb979ae70c82c00820e020b0d4d0010ae2f49444",
+          "raw_ref": "sampling_input_065f198082844e5596aa11f2fc0f0e3f#/public_case/task",
+          "ref_id": "ev:48e961e8ac7e62958cb0b953:0:1131",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "instruction",
+            "source_position": 0,
+            "source_role": "user",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"description\":\"Northwind Components operations has an expedite queue for wave TRAIN_EXPEDITE_A. Use the local queue memo in input/payloads/expedite_queue_memo.json and the shared Northwind ERP API to prepare the dispatch-control answer.\\n\\nShared API entry point: `<TASK_ENV_BASE_URL>`\\n\\nFor each order in the memo, classify the inventory status, customer exception, final fulfillment decision, next action, SKU exception lists, and shipping quote. Use the live API records for orders, products, customers, inventory, warehouses, and shipping quotes. Return only JSON matching input/payloads/answer_template.json.\\n\\nKeep records sorted by order_id. Currency must be rounded to two decimals.\\n\",\"input_files\":{\"payloads/answer_template.json\":4000,\"payloads/expedite_queue_memo.json\":1562,\"prompt.txt\":672},\"project_id\":\"gdpevo-group007\",\"revision\":\"56d60ae4ae5e067d1ec0ee1f850622e69f422179\",\"shared_environment_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:env\",\"source_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:train_001:input\",\"task_family\":\"northwind_erp\",\"task_id\":\"train_001\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "result",
+          "kind": "observation",
+          "range": {
+            "end_byte_exclusive": 1800,
+            "start_byte": 0
+          },
+          "raw_hash": "bad1c2a9a4fc811887b2ef6924324c2a4146c5428c2186c0e892a302749abe95",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6",
+          "ref_id": "ev:61f74f6376eeced1c9b49802:0:1800",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 135,
+            "source_role": "environment",
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"artifact\": {\"records\": [{\"customer_exception\": \"none\", \"final_decision\": \"backorder\", \"inactive_skus\": [], \"inventory_status\": \"shortage\", \"low_stock_skus\": [], \"next_action\": \"create_backorder\", \"order_id\": \"SO-70000\", \"shipping_quote\": {\"service_days\": 1, \"total_cost_usd\": 5678.96, \"zone_distance\": 3}, \"shortage_skus\": [\"NW-1003\", \"NW-1011\", \"NW-1049\"]}, {\"customer_exception\": \"review_required\", \"final_decision\": \"manual_review\", \"inactive_skus\": [], \"inventory_status\": \"ready\", \"low_stock_skus\": [], \"next_action\": \"send_account_review\", \"order_id\": \"SO-70007\", \"shipping_quote\": {\"service_days\": 2, \"total_cost_usd\": 1686.55, \"zone_distance\": 4}, \"shortage_skus\": []}, {\"customer_exception\": \"review_required\", \"final_decision\": \"backorder\", \"inactive_skus\": [], \"inventory_status\": \"shortage\", \"low_stock_skus\": [], \"next_action\": \"create_backorder\", \"order_id\": \"SO-70014\", \"shipping_quote\": {\"service_days\": 2, \"total_cost_usd\": 938.16, \"zone_distance\": 9}, \"shortage_skus\": [\"NW-1000\", \"NW-1051\"]}, {\"customer_exception\": \"account_blocked\", \"final_decision\": \"reject_hold\", \"inactive_skus\": [], \"inventory_status\": \"shortage\", \"low_stock_skus\": [], \"next_action\": \"hold_credit_or_fraud\", \"order_id\": \"SO-70028\", \"shipping_quote\": {\"service_days\": 2, \"total_cost_usd\": 998.75, \"zone_distance\": 9}, \"shortage_skus\": [\"NW-1003\"]}, {\"customer_exception\": \"review_required\", \"final_decision\": \"manual_review\", \"inactive_skus\": [\"NW-1048\"], \"inventory_status\": \"inactive_and_shortage\", \"low_stock_skus\": [\"NW-1014\"], \"next_action\": \"escalate_product_master\", \"order_id\": \"SO-70035\", \"shipping_quote\": {\"service_days\": 2, \"total_cost_usd\": 2953.39, \"zone_distance\": 2}, \"shortage_skus\": [\"NW-1032\", \"NW-1048\"]}, {\"customer_exception\": \"none\", \"final_decision\": \"backorder\", \"inactive_skus\": ["
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_0",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 142,
+            "start_byte": 0
+          },
+          "raw_hash": "09a9010959fd25fbca9b5f7a86c62f13d9f822b72f19db81c76693e6d7131c69",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:0",
+          "ref_id": "ev:6eab87fd26d4df463901034f:0:142",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m0:call_d7EbrC4RZb7W4IuTy8ES8jqa",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 1,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"path\\\":\\\"input/payloads/answer_template.json\\\"}\",\"provider_tool_call_id\":\"call_d7EbrC4RZb7W4IuTy8ES8jqa\",\"tool\":\"read_input\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_1",
+          "kind": "observation",
+          "range": {
+            "end_byte_exclusive": 1800,
+            "start_byte": 0
+          },
+          "raw_hash": "07d573059f1e2594640eb7f82dd7cafadcf56dc45afe8ddd82f9beaf5c8810b5",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:1",
+          "ref_id": "ev:db68fa286a2bd9c677a87234:0:1800",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m0:call_d7EbrC4RZb7W4IuTy8ES8jqa",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 2,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"path\":\"payloads/answer_template.json\",\"status\":\"ok\",\"text\":\"{\\n  \\\"description\\\": \\\"Required JSON output shape for the TRAIN_EXPEDITE_A expedite queue decision task.\\\",\\n  \\\"required_top_level_keys\\\": [\\n    \\\"wave_id\\\",\\n    \\\"records\\\",\\n    \\\"summary\\\"\\n  ],\\n  \\\"fields\\\": {\\n    \\\"wave_id\\\": {\\n      \\\"type\\\": \\\"string\\\",\\n      \\\"required_value\\\": \\\"TRAIN_EXPEDITE_A\\\"\\n    },\\n    \\\"records\\\": {\\n      \\\"type\\\": \\\"list\\\",\\n      \\\"ordering\\\": \\\"sort ascending by order_id\\\",\\n      \\\"item_required_keys\\\": [\\n        \\\"order_id\\\",\\n        \\\"inventory_status\\\",\\n        \\\"customer_exception\\\",\\n        \\\"final_decision\\\",\\n        \\\"next_action\\\",\\n        \\\"shortage_skus\\\",\\n        \\\"inactive_skus\\\",\\n        \\\"low_stock_skus\\\",\\n        \\\"shipping_quote\\\"\\n      ],\\n      \\\"item_fields\\\": {\\n        \\\"order_id\\\": {\\n          \\\"type\\\": \\\"string\\\",\\n          \\\"source\\\": \\\"queue memo order_id\\\"\\n        },\\n        \\\"inventory_status\\\": {\\n          \\\"type\\\": \\\"enum\\\",\\n          \\\"allowed_values\\\": [\\n            \\\"ready\\\",\\n            \\\"low_stock\\\",\\n            \\\"shortage\\\",\\n            \\\"inactive_sku\\\",\\n            \\\"inactive_and_shortage\\\"\\n          ]\\n        },\\n        \\\"customer_exception\\\": {\\n          \\\"type\\\": \\\"enum\\\",\\n          \\\"allowed_values\\\": [\\n            \\\"none\\\",\\n            \\\"review_required\\\",\\n            \\\"account_blocked\\\",\\n            \\\"fraud_watch\\\",\\n            \\\"credit_watch\\\"\\n          ]\\n        },\\n        \\\"final_decision\\\": {\\n          \\\"type\\\": \\\"enum\\\",\\n          \\\"allowed_values\\\": [\\n            \\\"ship_now\\\",\\n            \\\"delayed_release\\\",\\n            \\\"manual_review\\\",\\n            \\\"backorder\\\",\\n            \\\"reject_hold\\\"\\n          ]\\n        },\\n        \\\"next_action\\\": {\\n          \\\"type\\\": \\\"enum\\\""
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_132",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 1800,
+            "start_byte": 0
+          },
+          "raw_hash": "7a8747a06b6a0f99dad5a73cabf1c91773bd14bb1b2c27626d744005dbe3855e",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:132",
+          "ref_id": "ev:c1beb529272c01606977dcca:0:1800",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m4:call_gD0s06IOKtKVwTFlH4HAyyVh",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 133,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"answer\\\":{\\\"wave_id\\\":\\\"TRAIN_EXPEDITE_A\\\",\\\"records\\\":[{\\\"order_id\\\":\\\"SO-70000\\\",\\\"inventory_status\\\":\\\"shortage\\\",\\\"customer_exception\\\":\\\"none\\\",\\\"final_decision\\\":\\\"backorder\\\",\\\"next_action\\\":\\\"create_backorder\\\",\\\"shortage_skus\\\":[\\\"NW-1003\\\",\\\"NW-1011\\\",\\\"NW-1049\\\"],\\\"inactive_skus\\\":[],\\\"low_stock_skus\\\":[],\\\"shipping_quote\\\":{\\\"zone_distance\\\":3,\\\"service_days\\\":1,\\\"total_cost_usd\\\":5678.96}},{\\\"order_id\\\":\\\"SO-70007\\\",\\\"inventory_status\\\":\\\"ready\\\",\\\"customer_exception\\\":\\\"review_required\\\",\\\"final_decision\\\":\\\"manual_review\\\",\\\"next_action\\\":\\\"send_account_review\\\",\\\"shortage_skus\\\":[],\\\"inactive_skus\\\":[],\\\"low_stock_skus\\\":[],\\\"shipping_quote\\\":{\\\"zone_distance\\\":4,\\\"service_days\\\":2,\\\"total_cost_usd\\\":1686.55}},{\\\"order_id\\\":\\\"SO-70014\\\",\\\"inventory_status\\\":\\\"shortage\\\",\\\"customer_exception\\\":\\\"review_required\\\",\\\"final_decision\\\":\\\"backorder\\\",\\\"next_action\\\":\\\"create_backorder\\\",\\\"shortage_skus\\\":[\\\"NW-1000\\\",\\\"NW-1051\\\"],\\\"inactive_skus\\\":[],\\\"low_stock_skus\\\":[],\\\"shipping_quote\\\":{\\\"zone_distance\\\":9,\\\"service_days\\\":2,\\\"total_cost_usd\\\":938.16}},{\\\"order_id\\\":\\\"SO-70028\\\",\\\"inventory_status\\\":\\\"shortage\\\",\\\"customer_exception\\\":\\\"account_blocked\\\",\\\"final_decision\\\":\\\"reject_hold\\\",\\\"next_action\\\":\\\"hold_credit_or_fraud\\\",\\\"shortage_skus\\\":[\\\"NW-1003\\\"],\\\"inactive_skus\\\":[],\\\"low_stock_skus\\\":[],\\\"shipping_quote\\\":{\\\"zone_distance\\\":9,\\\"service_days\\\":2,\\\"total_cost_usd\\\":998.75}},{\\\"order_id\\\":\\\"SO-70035\\\",\\\"inventory_status\\\":\\\"inactive_and_shortage\\\",\\\"customer_exception\\\":\\\"review_required\\\",\\\"final_decision\\\":\\\"manual_review\\\",\\\"next_action\\\":\\\"escalate_product_master\\\",\\\"shortage_skus\\\":[\\\"NW-1032\\\",\\\"NW-1048\\\"],\\\"inactive_skus\\\":[\\\"NW-1048\\\"],\\\"low_stock_skus\\\":[\\\"NW-1014\\\"],\\\"shipping_quote\\\":{\\\"zone_distance\\\":2,\\\"service_"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_133",
+          "kind": "observation",
+          "range": {
+            "end_byte_exclusive": 32,
+            "start_byte": 0
+          },
+          "raw_hash": "687e755a954f5a7bfd1db6a1d248a33eb78b68afc2e10a5835ddefb5e4e8a7b8",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:133",
+          "ref_id": "ev:7773843ca829827cb2c543e8:0:32",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m4:call_gD0s06IOKtKVwTFlH4HAyyVh",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 134,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"status\":\"ok\",\"submitted\":true}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_66",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 126,
+            "start_byte": 0
+          },
+          "raw_hash": "dffd856cbee75334b8337d376615d4d1bd553b4051246de024a1d0fcfb267f2d",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:66",
+          "ref_id": "ev:36f540fcc803cd93b7d97e19:0:126",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m2:call_ziTK6fldm2po5jwoNI9y5nCz",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 67,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"path\\\":\\\"/products/NW-1047\\\"}\",\"provider_tool_call_id\":\"call_ziTK6fldm2po5jwoNI9y5nCz\",\"tool\":\"business_get\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_67",
+          "kind": "observation",
+          "range": {
+            "end_byte_exclusive": 204,
+            "start_byte": 0
+          },
+          "raw_hash": "e59517a76078c2eba287e9e2a789d5220d1987fc3eb6e5e96c45a0321b0c1d78",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:67",
+          "ref_id": "ev:7626a13a8d88110431e88794:0:204",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m2:call_ziTK6fldm2po5jwoNI9y5nCz",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 68,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"data\":{\"active\":true,\"category\":\"power\",\"name\":\"Thermal Block V-92\",\"overstock_threshold\":136,\"safety_stock\":36,\"sku\":\"NW-1047\",\"supplier_id\":\"SUP-011\",\"unit_cost\":185.3,\"weight_lb\":2.93},\"status\":\"ok\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_32",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 129,
+            "start_byte": 0
+          },
+          "raw_hash": "34ec708a4fb8c692d609dd192ac6bc630478e3f908f9b0119b36092043415e62",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:32",
+          "ref_id": "ev:797900a31f8381a700ed1289:0:129",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m2:call_eaCSWlW7hhYQ5JQiIFLXcx4s",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 33,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"path\\\":\\\"/customers/CUST-2027\\\"}\",\"provider_tool_call_id\":\"call_eaCSWlW7hhYQ5JQiIFLXcx4s\",\"tool\":\"business_get\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_33",
+          "kind": "observation",
+          "range": {
+            "end_byte_exclusive": 157,
+            "start_byte": 0
+          },
+          "raw_hash": "7204885a24e24c1bd4d33c7388d1986a888b4bb69ffb1dc91a4fa479c0438498",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:33",
+          "ref_id": "ev:3efd0c83d79e22795acc2832:0:157",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m2:call_eaCSWlW7hhYQ5JQiIFLXcx4s",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 34,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"data\":{\"account_status\":\"active\",\"customer_id\":\"CUST-2027\",\"margin_band\":\"low\",\"name\":\"Helio Transit\",\"risk_flag\":\"none\",\"tier\":\"strategic\"},\"status\":\"ok\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_98",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 183,
+            "start_byte": 0
+          },
+          "raw_hash": "476179d69584ee8aa03cf06f80128492470b437b02366cf2f8ef558c912c13f4",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:98",
+          "ref_id": "ev:fef821799d04029fa71d7b86:0:183",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m3:call_LFt5As4rq4DMaHNTqhwMgy6Y",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 99,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"path\\\":\\\"/inventory\\\",\\\"query\\\":{\\\"warehouse_id\\\":\\\"WH_CENTRAL\\\",\\\"sku\\\":\\\"NW-1004\\\"}}\",\"provider_tool_call_id\":\"call_LFt5As4rq4DMaHNTqhwMgy6Y\",\"tool\":\"business_get\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_99",
+          "kind": "observation",
+          "range": {
+            "end_byte_exclusive": 145,
+            "start_byte": 0
+          },
+          "raw_hash": "19c4bd951c8c03dc1d00f2ef473891cdf23a4a53673be822f22363350f3f44f7",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:99",
+          "ref_id": "ev:f42bf32e9ba676a02caad579:0:145",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m3:call_LFt5As4rq4DMaHNTqhwMgy6Y",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 100,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"data\":[{\"last_count_date\":\"2026-05-03\",\"on_hand\":192,\"quarantined\":0,\"reserved\":33,\"sku\":\"NW-1004\",\"warehouse_id\":\"WH_CENTRAL\"}],\"status\":\"ok\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_16",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 125,
+            "start_byte": 0
+          },
+          "raw_hash": "2eed507e190e98c5465b115607fbb86e145766ee2ae01cd29599d04111754a34",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:16",
+          "ref_id": "ev:d7088fe839e0df5b9c3dd2fc:0:125",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m1:call_gIRsKV21kF1DdeOfyHgBNDxZ",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 17,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"path\\\":\\\"/orders/SO-70049\\\"}\",\"provider_tool_call_id\":\"call_gIRsKV21kF1DdeOfyHgBNDxZ\",\"tool\":\"business_get\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_17",
+          "kind": "observation",
+          "range": {
+            "end_byte_exclusive": 490,
+            "start_byte": 0
+          },
+          "raw_hash": "69e088629a23c07d1cb6ca392b84593c620246e672b3f829e2bb261491ada8b5",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:17",
+          "ref_id": "ev:6bdff11dcb30baf772284eca:0:490",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m1:call_gIRsKV21kF1DdeOfyHgBNDxZ",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 18,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"data\":{\"customer_id\":\"CUST-2027\",\"destination_zip\":\"69394\",\"lines\":[{\"line_id\":1,\"quantity\":11,\"sku\":\"NW-1053\",\"unit_price\":406.61},{\"line_id\":2,\"quantity\":31,\"sku\":\"NW-1029\",\"unit_price\":517.63},{\"line_id\":3,\"quantity\":4,\"sku\":\"NW-1009\",\"unit_price\":89.73},{\"line_id\":4,\"quantity\":4,\"sku\":\"NW-1034\",\"unit_price\":141.71}],\"order_id\":\"SO-70049\",\"priority\":\"normal\",\"required_date\":\"2026-05-14\",\"shipping_speed\":\"overnight\",\"warehouse_id\":\"WH_WEST\",\"wave\":\"TRAIN_EXPEDITE_A\"},\"status\":\"ok\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_48",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 126,
+            "start_byte": 0
+          },
+          "raw_hash": "0470ed0c2252f0adeee007495f7e1cf22f0e8ea3c9fbb777abe0bb2997c35103",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:48",
+          "ref_id": "ev:ccc30d13ce65fca92da193b4:0:126",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m2:call_bKMepWVZ6sQn4AsHojSU238R",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 49,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"path\\\":\\\"/products/NW-1011\\\"}\",\"provider_tool_call_id\":\"call_bKMepWVZ6sQn4AsHojSU238R\",\"tool\":\"business_get\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_49",
+          "kind": "observation",
+          "range": {
+            "end_byte_exclusive": 204,
+            "start_byte": 0
+          },
+          "raw_hash": "51cc07a6457aaf76c47cfb72429cd0d7d94ec1bc7468157d6ecfd1a62d87a204",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:49",
+          "ref_id": "ev:9f25ae8c176f0bebb8f207f0:0:204",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m2:call_bKMepWVZ6sQn4AsHojSU238R",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 50,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"data\":{\"active\":true,\"category\":\"power\",\"name\":\"Power Module L-48\",\"overstock_threshold\":115,\"safety_stock\":14,\"sku\":\"NW-1011\",\"supplier_id\":\"SUP-009\",\"unit_cost\":185.89,\"weight_lb\":5.82},\"status\":\"ok\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_82",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 183,
+            "start_byte": 0
+          },
+          "raw_hash": "5779d6fd17ac7d0e3e65573fe5bfb651a9f8645942d4211870a404e63fc64534",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:82",
+          "ref_id": "ev:9c830067d72272be02684ebd:0:183",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m3:call_VjXAO0FyzhQE7D5hvWephctV",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 83,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"path\\\":\\\"/inventory\\\",\\\"query\\\":{\\\"warehouse_id\\\":\\\"WH_CENTRAL\\\",\\\"sku\\\":\\\"NW-1047\\\"}}\",\"provider_tool_call_id\":\"call_VjXAO0FyzhQE7D5hvWephctV\",\"tool\":\"business_get\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_83",
+          "kind": "observation",
+          "range": {
+            "end_byte_exclusive": 145,
+            "start_byte": 0
+          },
+          "raw_hash": "6b33211bd71af9d45bf8a3b4337b2765c2f5b741030f9f5ad6382fbc07d9b4f0",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:83",
+          "ref_id": "ev:3385106477d553b8801efe08:0:145",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m3:call_VjXAO0FyzhQE7D5hvWephctV",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 84,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"data\":[{\"last_count_date\":\"2026-04-01\",\"on_hand\":88,\"quarantined\":28,\"reserved\":15,\"sku\":\"NW-1047\",\"warehouse_id\":\"WH_CENTRAL\"}],\"status\":\"ok\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_114",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 183,
+            "start_byte": 0
+          },
+          "raw_hash": "9259270eab6730b9490ea3b4a41027275663459578dc56d5bf8938cfbffcfd6c",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:114",
+          "ref_id": "ev:112cc8fd739389842d91bc41:0:183",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m3:call_dWTzl57JdgxON7d1N4TxOvUf",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 115,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"path\\\":\\\"/inventory\\\",\\\"query\\\":{\\\"warehouse_id\\\":\\\"WH_CENTRAL\\\",\\\"sku\\\":\\\"NW-1016\\\"}}\",\"provider_tool_call_id\":\"call_dWTzl57JdgxON7d1N4TxOvUf\",\"tool\":\"business_get\"}"
+        },
+        {
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "event_id": "observation_8",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 125,
+            "start_byte": 0
+          },
+          "raw_hash": "086609547432f5cec01342b24309c12650f2f55672bb7382cb1acd0e29861e44",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:8",
+          "ref_id": "ev:9df6a7c03c165d10dc3183a2:0:125",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m1:call_HiDNnVqx0bPqDW7ioj7oumvR",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 9,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"path\\\":\\\"/orders/SO-70007\\\"}\",\"provider_tool_call_id\":\"call_HiDNnVqx0bPqDW7ioj7oumvR\",\"tool\":\"business_get\"}"
+        }
+      ],
+      "gaps": [
+        "Related-memory lookup found no in-budget matches; this does not establish absence of counterexamples.",
+        "episode_5372955c6e834dd29b562bab352f4912: Execution did not report both reset-state and environment identity; independent comparability unknown.",
+        "episode_5372955c6e834dd29b562bab352f4912: source=execution_function; reported material is not independent verification.",
+        "Token estimate = ceil(UTF-8 JSON bytes / 3); not a tokenizer measurement."
+      ],
+      "omitted_refs": [
+        "ev:8145045941e4f6f8e14f8c9f:0:1800",
+        "ev:db68fa286a2bd9c677a87234:2740:4540",
+        "ev:61f74f6376eeced1c9b49802:1303:3103",
+        "ev:c1beb529272c01606977dcca:1511:3311",
+        "ev:8145045941e4f6f8e14f8c9f:2371:4171",
+        "ev:db68fa286a2bd9c677a87234:1800:3600",
+        "ev:61f74f6376eeced1c9b49802:1800:3103",
+        "ev:c1beb529272c01606977dcca:1800:3311",
+        "ev:8145045941e4f6f8e14f8c9f:1800:3600",
+        "ev:db68fa286a2bd9c677a87234:3600:4540",
+        "ev:8145045941e4f6f8e14f8c9f:3600:4171",
+        "ev:3593f5bc8c202804745cd4a0:0:144",
+        "ev:8cd637298875d3d4b7716b4a:0:299"
+      ],
+      "packet_id": "packet_92bc1cedf37a4ba8ac987478b09838e3",
+      "project_id": "gdpevo-group007",
+      "projection_version": 2,
+      "readable_ref_catalog": [
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 1800,
+            "start_byte": 0
+          },
+          "raw_hash": "ad3dcffaf61d653f585b3883c6ff531637ad96eac6efa9f9ec5a03bb389ada40",
+          "raw_ref": "feedback:feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome",
+          "ref_id": "ev:8145045941e4f6f8e14f8c9f:0:1800",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 136,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 4540,
+            "start_byte": 2740
+          },
+          "raw_hash": "07d573059f1e2594640eb7f82dd7cafadcf56dc45afe8ddd82f9beaf5c8810b5",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:1",
+          "ref_id": "ev:db68fa286a2bd9c677a87234:2740:4540",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m0:call_d7EbrC4RZb7W4IuTy8ES8jqa",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 2,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 3103,
+            "start_byte": 1303
+          },
+          "raw_hash": "bad1c2a9a4fc811887b2ef6924324c2a4146c5428c2186c0e892a302749abe95",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6",
+          "ref_id": "ev:61f74f6376eeced1c9b49802:1303:3103",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 135,
+            "source_role": "environment",
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 3311,
+            "start_byte": 1511
+          },
+          "raw_hash": "7a8747a06b6a0f99dad5a73cabf1c91773bd14bb1b2c27626d744005dbe3855e",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:132",
+          "ref_id": "ev:c1beb529272c01606977dcca:1511:3311",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m4:call_gD0s06IOKtKVwTFlH4HAyyVh",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 133,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 4171,
+            "start_byte": 2371
+          },
+          "raw_hash": "ad3dcffaf61d653f585b3883c6ff531637ad96eac6efa9f9ec5a03bb389ada40",
+          "raw_ref": "feedback:feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome",
+          "ref_id": "ev:8145045941e4f6f8e14f8c9f:2371:4171",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 136,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 3600,
+            "start_byte": 1800
+          },
+          "raw_hash": "07d573059f1e2594640eb7f82dd7cafadcf56dc45afe8ddd82f9beaf5c8810b5",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:1",
+          "ref_id": "ev:db68fa286a2bd9c677a87234:1800:3600",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m0:call_d7EbrC4RZb7W4IuTy8ES8jqa",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 2,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 3103,
+            "start_byte": 1800
+          },
+          "raw_hash": "bad1c2a9a4fc811887b2ef6924324c2a4146c5428c2186c0e892a302749abe95",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6",
+          "ref_id": "ev:61f74f6376eeced1c9b49802:1800:3103",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 135,
+            "source_role": "environment",
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 3311,
+            "start_byte": 1800
+          },
+          "raw_hash": "7a8747a06b6a0f99dad5a73cabf1c91773bd14bb1b2c27626d744005dbe3855e",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:132",
+          "ref_id": "ev:c1beb529272c01606977dcca:1800:3311",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m4:call_gD0s06IOKtKVwTFlH4HAyyVh",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 133,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 3600,
+            "start_byte": 1800
+          },
+          "raw_hash": "ad3dcffaf61d653f585b3883c6ff531637ad96eac6efa9f9ec5a03bb389ada40",
+          "raw_ref": "feedback:feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome",
+          "ref_id": "ev:8145045941e4f6f8e14f8c9f:1800:3600",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 136,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 4540,
+            "start_byte": 3600
+          },
+          "raw_hash": "07d573059f1e2594640eb7f82dd7cafadcf56dc45afe8ddd82f9beaf5c8810b5",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:1",
+          "ref_id": "ev:db68fa286a2bd9c677a87234:3600:4540",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m0:call_d7EbrC4RZb7W4IuTy8ES8jqa",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 2,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 4171,
+            "start_byte": 3600
+          },
+          "raw_hash": "ad3dcffaf61d653f585b3883c6ff531637ad96eac6efa9f9ec5a03bb389ada40",
+          "raw_ref": "feedback:feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome",
+          "ref_id": "ev:8145045941e4f6f8e14f8c9f:3600:4171",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 136,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 144,
+            "start_byte": 0
+          },
+          "raw_hash": "b4fe90123123450ed446ad39af26a5a5800dfd17e1402d6455961b93a684985d",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:115",
+          "ref_id": "ev:3593f5bc8c202804745cd4a0:0:144",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m3:call_dWTzl57JdgxON7d1N4TxOvUf",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 116,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+          "range": {
+            "end_byte_exclusive": 299,
+            "start_byte": 0
+          },
+          "raw_hash": "85b8f7f7b4bb6cf846a4230bde589fb64b0d34df0fd2e811b83b61b43d651b33",
+          "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:9",
+          "ref_id": "ev:8cd637298875d3d4b7716b4a:0:299",
+          "structure": {
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m1:call_HiDNnVqx0bPqDW7ioj7oumvR",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 10,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        }
+      ],
+      "relations": {
+        "calls": [
+          {
+            "action_refs": [
+              "ev:6eab87fd26d4df463901034f:0:142"
+            ],
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m0:call_d7EbrC4RZb7W4IuTy8ES8jqa",
+            "coverage": "complete",
+            "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+            "result_refs": [
+              "ev:db68fa286a2bd9c677a87234:0:1800"
+            ],
+            "status": "paired"
+          },
+          {
+            "action_refs": [
+              "ev:9df6a7c03c165d10dc3183a2:0:125"
+            ],
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m1:call_HiDNnVqx0bPqDW7ioj7oumvR",
+            "coverage": "complete",
+            "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+            "result_refs": [
+              "ev:8cd637298875d3d4b7716b4a:0:299"
+            ],
+            "status": "paired"
+          },
+          {
+            "action_refs": [
+              "ev:d7088fe839e0df5b9c3dd2fc:0:125"
+            ],
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m1:call_gIRsKV21kF1DdeOfyHgBNDxZ",
+            "coverage": "complete",
+            "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+            "result_refs": [
+              "ev:6bdff11dcb30baf772284eca:0:490"
+            ],
+            "status": "paired"
+          },
+          {
+            "action_refs": [
+              "ev:ccc30d13ce65fca92da193b4:0:126"
+            ],
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m2:call_bKMepWVZ6sQn4AsHojSU238R",
+            "coverage": "complete",
+            "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+            "result_refs": [
+              "ev:9f25ae8c176f0bebb8f207f0:0:204"
+            ],
+            "status": "paired"
+          },
+          {
+            "action_refs": [
+              "ev:797900a31f8381a700ed1289:0:129"
+            ],
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m2:call_eaCSWlW7hhYQ5JQiIFLXcx4s",
+            "coverage": "complete",
+            "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+            "result_refs": [
+              "ev:3efd0c83d79e22795acc2832:0:157"
+            ],
+            "status": "paired"
+          },
+          {
+            "action_refs": [
+              "ev:36f540fcc803cd93b7d97e19:0:126"
+            ],
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m2:call_ziTK6fldm2po5jwoNI9y5nCz",
+            "coverage": "complete",
+            "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+            "result_refs": [
+              "ev:7626a13a8d88110431e88794:0:204"
+            ],
+            "status": "paired"
+          },
+          {
+            "action_refs": [
+              "ev:fef821799d04029fa71d7b86:0:183"
+            ],
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m3:call_LFt5As4rq4DMaHNTqhwMgy6Y",
+            "coverage": "complete",
+            "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+            "result_refs": [
+              "ev:f42bf32e9ba676a02caad579:0:145"
+            ],
+            "status": "paired"
+          },
+          {
+            "action_refs": [
+              "ev:9c830067d72272be02684ebd:0:183"
+            ],
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m3:call_VjXAO0FyzhQE7D5hvWephctV",
+            "coverage": "complete",
+            "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+            "result_refs": [
+              "ev:3385106477d553b8801efe08:0:145"
+            ],
+            "status": "paired"
+          },
+          {
+            "action_refs": [
+              "ev:112cc8fd739389842d91bc41:0:183"
+            ],
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m3:call_dWTzl57JdgxON7d1N4TxOvUf",
+            "coverage": "complete",
+            "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+            "result_refs": [
+              "ev:3593f5bc8c202804745cd4a0:0:144"
+            ],
+            "status": "paired"
+          },
+          {
+            "action_refs": [
+              "ev:c1beb529272c01606977dcca:0:1800"
+            ],
+            "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m4:call_gD0s06IOKtKVwTFlH4HAyyVh",
+            "coverage": "complete",
+            "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+            "result_refs": [
+              "ev:7773843ca829827cb2c543e8:0:32"
+            ],
+            "status": "paired"
+          }
+        ],
+        "goals": [
+          {
+            "basis_refs": [],
+            "coverage": "complete",
+            "event_ref": "ev:48e961e8ac7e62958cb0b953:0:1131",
+            "goal_id": "train_001",
+            "relation": "continues",
+            "revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+          }
+        ],
+        "parents": []
+      },
+      "source_snapshot_refs": [
+        "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa"
+      ],
+      "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+      "token_budget": 24000,
+      "token_count_source": "estimated"
+    },
+    "available_feedback": [
+      {
+        "check_id": "feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome",
+        "subject_ref": "episode_5372955c6e834dd29b562bab352f4912",
+        "project_id": "gdpevo-group007",
+        "criterion_id": "task_outcome",
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+        "evaluated_state_digest": "860b76043744cf25809491291ecabcef68daeab4ff30b0e6adcf960d14853c35",
+        "binding_status": "bound",
+        "source": "external",
+        "visibility": "adaptation",
+        "evaluator_status": "ok",
+        "outcome": "fail",
+        "score": 0.29411764705882354,
+        "checked_at": "2026-09-18T23:37:46.340841Z",
+        "received_at": "2026-09-18T23:37:46.340841Z",
+        "provided_refs": [
+          "ev:8145045941e4f6f8e14f8c9f:164:1964"
+        ],
+        "readable_refs": [
+          "ev:8145045941e4f6f8e14f8c9f:0:1800",
+          "ev:8145045941e4f6f8e14f8c9f:2371:4171",
+          "ev:8145045941e4f6f8e14f8c9f:1800:3600",
+          "ev:8145045941e4f6f8e14f8c9f:3600:4171"
+        ],
+        "read_status": "provided_ranges_only"
+      }
+    ],
+    "related_experiences": [],
+    "readable_ref_catalog": [
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 1800,
+          "start_byte": 0
+        },
+        "raw_hash": "ad3dcffaf61d653f585b3883c6ff531637ad96eac6efa9f9ec5a03bb389ada40",
+        "raw_ref": "feedback:feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome",
+        "ref_id": "ev:8145045941e4f6f8e14f8c9f:0:1800",
+        "structure": {
+          "call_id": null,
+          "goal_id": null,
+          "namespace": "feedback",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "feedback",
+          "source_position": 136,
+          "source_role": null,
+          "task_id": null
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 4540,
+          "start_byte": 2740
+        },
+        "raw_hash": "07d573059f1e2594640eb7f82dd7cafadcf56dc45afe8ddd82f9beaf5c8810b5",
+        "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:1",
+        "ref_id": "ev:db68fa286a2bd9c677a87234:2740:4540",
+        "structure": {
+          "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m0:call_d7EbrC4RZb7W4IuTy8ES8jqa",
+          "goal_id": null,
+          "namespace": "event",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "result",
+          "source_position": 2,
+          "source_role": "tool",
+          "task_id": "train_001"
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 3103,
+          "start_byte": 1303
+        },
+        "raw_hash": "bad1c2a9a4fc811887b2ef6924324c2a4146c5428c2186c0e892a302749abe95",
+        "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6",
+        "ref_id": "ev:61f74f6376eeced1c9b49802:1303:3103",
+        "structure": {
+          "call_id": null,
+          "goal_id": null,
+          "namespace": "event",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "result",
+          "source_position": 135,
+          "source_role": "environment",
+          "task_id": null
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 3311,
+          "start_byte": 1511
+        },
+        "raw_hash": "7a8747a06b6a0f99dad5a73cabf1c91773bd14bb1b2c27626d744005dbe3855e",
+        "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:132",
+        "ref_id": "ev:c1beb529272c01606977dcca:1511:3311",
+        "structure": {
+          "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m4:call_gD0s06IOKtKVwTFlH4HAyyVh",
+          "goal_id": null,
+          "namespace": "event",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "action",
+          "source_position": 133,
+          "source_role": "agent",
+          "task_id": "train_001"
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 4171,
+          "start_byte": 2371
+        },
+        "raw_hash": "ad3dcffaf61d653f585b3883c6ff531637ad96eac6efa9f9ec5a03bb389ada40",
+        "raw_ref": "feedback:feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome",
+        "ref_id": "ev:8145045941e4f6f8e14f8c9f:2371:4171",
+        "structure": {
+          "call_id": null,
+          "goal_id": null,
+          "namespace": "feedback",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "feedback",
+          "source_position": 136,
+          "source_role": null,
+          "task_id": null
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 3600,
+          "start_byte": 1800
+        },
+        "raw_hash": "07d573059f1e2594640eb7f82dd7cafadcf56dc45afe8ddd82f9beaf5c8810b5",
+        "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:1",
+        "ref_id": "ev:db68fa286a2bd9c677a87234:1800:3600",
+        "structure": {
+          "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m0:call_d7EbrC4RZb7W4IuTy8ES8jqa",
+          "goal_id": null,
+          "namespace": "event",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "result",
+          "source_position": 2,
+          "source_role": "tool",
+          "task_id": "train_001"
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 3103,
+          "start_byte": 1800
+        },
+        "raw_hash": "bad1c2a9a4fc811887b2ef6924324c2a4146c5428c2186c0e892a302749abe95",
+        "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6",
+        "ref_id": "ev:61f74f6376eeced1c9b49802:1800:3103",
+        "structure": {
+          "call_id": null,
+          "goal_id": null,
+          "namespace": "event",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "result",
+          "source_position": 135,
+          "source_role": "environment",
+          "task_id": null
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 3311,
+          "start_byte": 1800
+        },
+        "raw_hash": "7a8747a06b6a0f99dad5a73cabf1c91773bd14bb1b2c27626d744005dbe3855e",
+        "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:132",
+        "ref_id": "ev:c1beb529272c01606977dcca:1800:3311",
+        "structure": {
+          "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m4:call_gD0s06IOKtKVwTFlH4HAyyVh",
+          "goal_id": null,
+          "namespace": "event",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "action",
+          "source_position": 133,
+          "source_role": "agent",
+          "task_id": "train_001"
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 3600,
+          "start_byte": 1800
+        },
+        "raw_hash": "ad3dcffaf61d653f585b3883c6ff531637ad96eac6efa9f9ec5a03bb389ada40",
+        "raw_ref": "feedback:feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome",
+        "ref_id": "ev:8145045941e4f6f8e14f8c9f:1800:3600",
+        "structure": {
+          "call_id": null,
+          "goal_id": null,
+          "namespace": "feedback",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "feedback",
+          "source_position": 136,
+          "source_role": null,
+          "task_id": null
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 4540,
+          "start_byte": 3600
+        },
+        "raw_hash": "07d573059f1e2594640eb7f82dd7cafadcf56dc45afe8ddd82f9beaf5c8810b5",
+        "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:1",
+        "ref_id": "ev:db68fa286a2bd9c677a87234:3600:4540",
+        "structure": {
+          "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m0:call_d7EbrC4RZb7W4IuTy8ES8jqa",
+          "goal_id": null,
+          "namespace": "event",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "result",
+          "source_position": 2,
+          "source_role": "tool",
+          "task_id": "train_001"
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 4171,
+          "start_byte": 3600
+        },
+        "raw_hash": "ad3dcffaf61d653f585b3883c6ff531637ad96eac6efa9f9ec5a03bb389ada40",
+        "raw_ref": "feedback:feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome",
+        "ref_id": "ev:8145045941e4f6f8e14f8c9f:3600:4171",
+        "structure": {
+          "call_id": null,
+          "goal_id": null,
+          "namespace": "feedback",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "feedback",
+          "source_position": 136,
+          "source_role": null,
+          "task_id": null
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 144,
+          "start_byte": 0
+        },
+        "raw_hash": "b4fe90123123450ed446ad39af26a5a5800dfd17e1402d6455961b93a684985d",
+        "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:115",
+        "ref_id": "ev:3593f5bc8c202804745cd4a0:0:144",
+        "structure": {
+          "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m3:call_dWTzl57JdgxON7d1N4TxOvUf",
+          "goal_id": null,
+          "namespace": "event",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "result",
+          "source_position": 116,
+          "source_role": "tool",
+          "task_id": "train_001"
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      {
+        "available": true,
+        "episode_id": "episode_5372955c6e834dd29b562bab352f4912",
+        "range": {
+          "end_byte_exclusive": 299,
+          "start_byte": 0
+        },
+        "raw_hash": "85b8f7f7b4bb6cf846a4230bde589fb64b0d34df0fd2e811b83b61b43d651b33",
+        "raw_ref": "run_af2c81d1463e48f3a931a8ebc78239e6:events:9",
+        "ref_id": "ev:8cd637298875d3d4b7716b4a:0:299",
+        "structure": {
+          "call_id": "run_af2c81d1463e48f3a931a8ebc78239e6:m1:call_HiDNnVqx0bPqDW7ioj7oumvR",
+          "goal_id": null,
+          "namespace": "event",
+          "parent_episode_id": null,
+          "parent_event_id": null,
+          "source_kind": "result",
+          "source_position": 10,
+          "source_role": "tool",
+          "task_id": "train_001"
+        },
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      }
+    ],
+    "extraction_limits": {
+      "max_experiences": 3,
+      "max_read_requests": 3,
+      "max_evidence_expansions": 1,
+      "remaining_evidence_expansions": 1
+    }
+  },
+  "blocks": {
+    "task_requirements": {
+      "chars": 246,
+      "type": "list",
+      "items": 1
+    },
+    "evidence_packet": {
+      "chars": 42802,
+      "type": "dict",
+      "items": 17
+    },
+    "available_feedback": {
+      "chars": 886,
+      "type": "list",
+      "items": 1
+    },
+    "related_experiences": {
+      "chars": 2,
+      "type": "list",
+      "items": 0
+    },
+    "readable_ref_catalog": {
+      "chars": 8459,
+      "type": "list",
+      "items": 13
+    },
+    "extraction_limits": {
+      "chars": 112,
+      "type": "dict",
+      "items": 4
+    }
+  },
+  "prompt_digest": "a6b5c38e95602384941327e8f04c74796de32751a36ca1e7908f0b0a768a9056",
+  "status": "returned",
+  "result": {
+    "value": {
+      "experiences": [
+        {
+          "alternatives": [
+            "若任务提供了明确的服务端批量校验或字段级判定接口，可在本地交叉核验之外使用该接口定位不一致字段。"
+          ],
+          "boundary_refs": [
+            "ev:8145045941e4f6f8e14f8c9f:164:1964"
+          ],
+          "conditions": [
+            "任务要求根据多个实时业务实体生成逐订单分类、决策、行动和汇总字段",
+            "提交接口仅返回已接收状态，未提供字段级正确性确认"
+          ],
+          "counterevidence_refs": [],
+          "guidance": {
+            "checks": [
+              "不要把提交接口的 accepted/submitted 状态当作内容正确性的证据。",
+              "对库存、SKU 例外、决策、行动和 summary 分别做字段组核验；这些字段组在本次评估中未匹配。",
+              "确认库存计算使用订单实际 warehouse_id；单个库存查询本身不足以证明所有订单和 SKU 的分类正确。"
+            ],
+            "steps": [
+              "先从答案模板提取全部必填字段、允许枚举值、排序规则和汇总要求。",
+              "为每个订单建立可审计的中间表：订单行需求、所属仓库的可用库存、产品 active 与 safety_stock 属性、客户风险/账户状态、以及运价查询结果。",
+              "在中间表上独立计算 shortage_skus、inactive_skus、low_stock_skus 和 inventory_status；再依据任务定义把库存与客户例外映射为 final_decision 和 next_action。",
+              "在输出前逐项复核每条记录的派生字段与 SKU 列表，并从已核对的记录重新计算 summary，而不是手工补写汇总。",
+              "最后执行完整性检查：订单集合与排序、每个必填键、枚举合法性、空列表、数值两位小数，以及明细与汇总的一致性。"
+            ]
+          },
+          "kind": "pitfall",
+          "observed_facts": [
+            {
+              "claim": "任务要求为队列中的每张订单给出库存状态、客户例外、最终履约决策、下一行动、SKU 例外列表和运价，并要求记录按 order_id 排序、货币保留两位小数。",
+              "evidence_refs": [
+                "ev:c1696f5b953ae79d628669fa:0:672",
+                "ev:db68fa286a2bd9c677a87234:0:1800"
+              ]
+            },
+            {
+              "claim": "提交工具返回了 submitted=true，但外部评估结果为 fail，得分为 0.29411764705882354。",
+              "evidence_refs": [
+                "ev:7773843ca829827cb2c543e8:0:32",
+                "ev:8145045941e4f6f8e14f8c9f:164:1964"
+              ]
+            },
+            {
+              "claim": "评估显示订单集合与数量、客户例外、运价三个评分点匹配；库存状态与短缺、inactive/low-stock SKU 集合、最终决策、下一行动和汇总评分点未匹配。",
+              "evidence_refs": [
+                "ev:8145045941e4f6f8e14f8c9f:164:1964"
+              ]
+            }
+          ],
+          "reuse_level": "task_family",
+          "scope": {
+            "applies_when": [
+              "需要按订单整合订单、产品、客户、库存、仓库和运价数据",
+              "输出同时包含明细记录与汇总统计"
+            ],
+            "exclusions": [
+              "只要求原样转录单一数据源且没有派生分类或汇总的任务"
+            ],
+            "task_family": "northwind_erp"
+          },
+          "supporting_refs": [
+            "ev:c1696f5b953ae79d628669fa:0:672",
+            "ev:db68fa286a2bd9c677a87234:0:1800",
+            "ev:8145045941e4f6f8e14f8c9f:164:1964",
+            "ev:7773843ca829827cb2c543e8:0:32"
+          ],
+          "title": "逐订单汇总任务中不能只校验输出结构和部分字段",
+          "unknowns": [
+            "已提供反馈没有说明每一条具体错误记录或完整的业务判定规则，因此无法从该证据确定错误究竟来自库存算式、规则映射、数据覆盖范围还是汇总逻辑。",
+            "证据包覆盖不完整，未能核验执行过程中是否读取了所有相关订单、产品、客户、库存、仓库和运价记录。"
+          ]
+        }
+      ],
+      "missing_evidence": [],
+      "read_requests": [],
+      "reason": "已提供的任务文本、模板片段、提交结果和字段级外部评分足以提炼一项受限于 Northwind ERP 多源派生输出任务的复用性避坑经验。",
+      "status": "completed"
+    },
+    "usage": [
+      {
+        "usage_id": "modelcall_3282182a666549d4987fcdaa5788575e",
+        "prompt_id": "extract_v1",
+        "attempt": 1,
+        "input_chars": 62078,
+        "output_chars": 1973,
+        "input_tokens": 20307,
+        "output_tokens": 1108,
+        "total_tokens": 21415,
+        "monetary_cost": null,
+        "currency": null,
+        "price_version": null,
+        "measurement": "provider_reported",
+        "model": "gpt-5.6-terra",
+        "request_id": "resp_00133abe2f5f4ea5016aadd69e037887d0b1f38d701cb25a8d",
+        "elapsed_seconds": 21.893934498992166,
+        "status": "completed"
+      }
+    ],
+    "raw_response": {
+      "text": "{\"status\":\"completed\",\"experiences\":[{\"kind\":\"pitfall\",\"title\":\"逐订单汇总任务中不能只校验输出结构和部分字段\",\"conditions\":[\"任务要求根据多个实时业务实体生成逐订单分类、决策、行动和汇总字段\",\"提交接口仅返回已接收状态，未提供字段级正确性确认\"],\"scope\":{\"task_family\":\"northwind_erp\",\"applies_when\":[\"需要按订单整合订单、产品、客户、库存、仓库和运价数据\",\"输出同时包含明细记录与汇总统计\"],\"exclusions\":[\"只要求原样转录单一数据源且没有派生分类或汇总的任务\"]},\"observed_facts\":[{\"claim\":\"任务要求为队列中的每张订单给出库存状态、客户例外、最终履约决策、下一行动、SKU 例外列表和运价，并要求记录按 order_id 排序、货币保留两位小数。\",\"evidence_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:0:1800\"]},{\"claim\":\"提交工具返回了 submitted=true，但外部评估结果为 fail，得分为 0.29411764705882354。\",\"evidence_refs\":[\"ev:7773843ca829827cb2c543e8:0:32\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]},{\"claim\":\"评估显示订单集合与数量、客户例外、运价三个评分点匹配；库存状态与短缺、inactive/low-stock SKU 集合、最终决策、下一行动和汇总评分点未匹配。\",\"evidence_refs\":[\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]}],\"guidance\":{\"steps\":[\"先从答案模板提取全部必填字段、允许枚举值、排序规则和汇总要求。\",\"为每个订单建立可审计的中间表：订单行需求、所属仓库的可用库存、产品 active 与 safety_stock 属性、客户风险/账户状态、以及运价查询结果。\",\"在中间表上独立计算 shortage_skus、inactive_skus、low_stock_skus 和 inventory_status；再依据任务定义把库存与客户例外映射为 final_decision 和 next_action。\",\"在输出前逐项复核每条记录的派生字段与 SKU 列表，并从已核对的记录重新计算 summary，而不是手工补写汇总。\",\"最后执行完整性检查：订单集合与排序、每个必填键、枚举合法性、空列表、数值两位小数，以及明细与汇总的一致性。\"],\"checks\":[\"不要把提交接口的 accepted/submitted 状态当作内容正确性的证据。\",\"对库存、SKU 例外、决策、行动和 summary 分别做字段组核验；这些字段组在本次评估中未匹配。\",\"确认库存计算使用订单实际 warehouse_id；单个库存查询本身不足以证明所有订单和 SKU 的分类正确。\"]},\"supporting_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:0:1800\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\",\"ev:7773843ca829827cb2c543e8:0:32\"],\"counterevidence_refs\":[],\"alternatives\":[\"若任务提供了明确的服务端批量校验或字段级判定接口，可在本地交叉核验之外使用该接口定位不一致字段。\"],\"unknowns\":[\"已提供反馈没有说明每一条具体错误记录或完整的业务判定规则，因此无法从该证据确定错误究竟来自库存算式、规则映射、数据覆盖范围还是汇总逻辑。\",\"证据包覆盖不完整，未能核验执行过程中是否读取了所有相关订单、产品、客户、库存、仓库和运价记录。\"],\"reuse_level\":\"task_family\",\"boundary_refs\":[\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]}],\"read_requests\":[],\"missing_evidence\":[],\"reason\":\"已提供的任务文本、模板片段、提交结果和字段级外部评分足以提炼一项受限于 Northwind ERP 多源派生输出任务的复用性避坑经验。\"}",
+      "finish_reason": "stop",
+      "usage": {
+        "input_tokens": 20307,
+        "output_tokens": 1108,
+        "total_tokens": 21415,
+        "monetary_cost": null,
+        "currency": null,
+        "price_version": null
+      },
+      "model": "gpt-5.6-terra",
+      "request_id": "resp_00133abe2f5f4ea5016aadd69e037887d0b1f38d701cb25a8d"
+    },
+    "attempts": [
+      {
+        "attempt": 1,
+        "finish_reason": "stop",
+        "raw_response": {
+          "text": "{\"status\":\"completed\",\"experiences\":[{\"kind\":\"pitfall\",\"title\":\"逐订单汇总任务中不能只校验输出结构和部分字段\",\"conditions\":[\"任务要求根据多个实时业务实体生成逐订单分类、决策、行动和汇总字段\",\"提交接口仅返回已接收状态，未提供字段级正确性确认\"],\"scope\":{\"task_family\":\"northwind_erp\",\"applies_when\":[\"需要按订单整合订单、产品、客户、库存、仓库和运价数据\",\"输出同时包含明细记录与汇总统计\"],\"exclusions\":[\"只要求原样转录单一数据源且没有派生分类或汇总的任务\"]},\"observed_facts\":[{\"claim\":\"任务要求为队列中的每张订单给出库存状态、客户例外、最终履约决策、下一行动、SKU 例外列表和运价，并要求记录按 order_id 排序、货币保留两位小数。\",\"evidence_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:0:1800\"]},{\"claim\":\"提交工具返回了 submitted=true，但外部评估结果为 fail，得分为 0.29411764705882354。\",\"evidence_refs\":[\"ev:7773843ca829827cb2c543e8:0:32\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]},{\"claim\":\"评估显示订单集合与数量、客户例外、运价三个评分点匹配；库存状态与短缺、inactive/low-stock SKU 集合、最终决策、下一行动和汇总评分点未匹配。\",\"evidence_refs\":[\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]}],\"guidance\":{\"steps\":[\"先从答案模板提取全部必填字段、允许枚举值、排序规则和汇总要求。\",\"为每个订单建立可审计的中间表：订单行需求、所属仓库的可用库存、产品 active 与 safety_stock 属性、客户风险/账户状态、以及运价查询结果。\",\"在中间表上独立计算 shortage_skus、inactive_skus、low_stock_skus 和 inventory_status；再依据任务定义把库存与客户例外映射为 final_decision 和 next_action。\",\"在输出前逐项复核每条记录的派生字段与 SKU 列表，并从已核对的记录重新计算 summary，而不是手工补写汇总。\",\"最后执行完整性检查：订单集合与排序、每个必填键、枚举合法性、空列表、数值两位小数，以及明细与汇总的一致性。\"],\"checks\":[\"不要把提交接口的 accepted/submitted 状态当作内容正确性的证据。\",\"对库存、SKU 例外、决策、行动和 summary 分别做字段组核验；这些字段组在本次评估中未匹配。\",\"确认库存计算使用订单实际 warehouse_id；单个库存查询本身不足以证明所有订单和 SKU 的分类正确。\"]},\"supporting_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:0:1800\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\",\"ev:7773843ca829827cb2c543e8:0:32\"],\"counterevidence_refs\":[],\"alternatives\":[\"若任务提供了明确的服务端批量校验或字段级判定接口，可在本地交叉核验之外使用该接口定位不一致字段。\"],\"unknowns\":[\"已提供反馈没有说明每一条具体错误记录或完整的业务判定规则，因此无法从该证据确定错误究竟来自库存算式、规则映射、数据覆盖范围还是汇总逻辑。\",\"证据包覆盖不完整，未能核验执行过程中是否读取了所有相关订单、产品、客户、库存、仓库和运价记录。\"],\"reuse_level\":\"task_family\",\"boundary_refs\":[\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]}],\"read_requests\":[],\"missing_evidence\":[],\"reason\":\"已提供的任务文本、模板片段、提交结果和字段级外部评分足以提炼一项受限于 Northwind ERP 多源派生输出任务的复用性避坑经验。\"}",
+          "finish_reason": "stop",
+          "usage": {
+            "input_tokens": 20307,
+            "output_tokens": 1108,
+            "total_tokens": 21415,
+            "monetary_cost": null,
+            "currency": null,
+            "price_version": null
+          },
+          "model": "gpt-5.6-terra",
+          "request_id": "resp_00133abe2f5f4ea5016aadd69e037887d0b1f38d701cb25a8d"
+        }
+      }
+    ]
+  }
+}

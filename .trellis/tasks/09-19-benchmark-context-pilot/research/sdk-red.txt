@@ -1,0 +1,23 @@
+test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen (test_gdpevo_sdk.LedgerTests.test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen) ... ERROR
+test_interrupted_and_failed_transports_remain_unknown_attempts (test_gdpevo_sdk.LedgerTests.test_interrupted_and_failed_transports_remain_unknown_attempts) ... ERROR
+
+======================================================================
+ERROR: test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen (test_gdpevo_sdk.LedgerTests.test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_sdk.py", line 11, in test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen
+    from examples.gdpevo_pilot.sdk import CallLedger
+ModuleNotFoundError: No module named 'examples.gdpevo_pilot'
+
+======================================================================
+ERROR: test_interrupted_and_failed_transports_remain_unknown_attempts (test_gdpevo_sdk.LedgerTests.test_interrupted_and_failed_transports_remain_unknown_attempts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_sdk.py", line 39, in test_interrupted_and_failed_transports_remain_unknown_attempts
+    from examples.gdpevo_pilot.sdk import CallLedger
+ModuleNotFoundError: No module named 'examples.gdpevo_pilot'
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.001s
+
+FAILED (errors=2)

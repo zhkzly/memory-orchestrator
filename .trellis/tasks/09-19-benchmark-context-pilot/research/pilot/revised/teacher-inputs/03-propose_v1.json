@@ -1,0 +1,357 @@
+{
+  "prompt_id": "propose_v1",
+  "sequence": 3,
+  "inputs": {
+    "change_intent": {
+      "abstain_reason": "",
+      "check_plan": [
+        {
+          "behavior": "On train_001, produce template-conformant, order_id-sorted JSON after retrieving the required live data and performing explicit record-level derivation and summary consistency review; the official outcome should improve the previously unmatched inventory/SKU, decision/action, and summary field groups while preserving matched order-set, customer-exception, and shipping-quote behavior.",
+          "check_ref": "case:train_001",
+          "purpose": "target",
+          "required_evidence": "Run the trusted public target case and inspect its official outcome; no field-level expected-answer material is supplied."
+        },
+        {
+          "behavior": "On train_004, retain task-specific template reading and evidence-table workflow without importing train_001-specific dispatch enums or rules into the allocation task.",
+          "check_ref": "case:train_004",
+          "purpose": "regression",
+          "required_evidence": "Run the trusted public regression case and inspect its outcome; no private expected-answer material is supplied."
+        },
+        {
+          "behavior": "Verify that the proposed procedure is actually followed: template and local memo are read; live order, product, customer, inventory, warehouse, and quote data needed by the task are collected; per-record derivations precede summary recomputation; and submission status is not treated as correctness validation.",
+          "check_ref": null,
+          "purpose": "distinguish",
+          "required_evidence": "An execution trace or structured work artifact showing these retrieval and review steps is required; no trusted check material for this procedural distinction is supplied."
+        }
+      ],
+      "evidence_refs": [
+        "ev:c1696f5b953ae79d628669fa:0:672",
+        "ev:db68fa286a2bd9c677a87234:0:1800",
+        "ev:8145045941e4f6f8e14f8c9f:164:1964",
+        "ev:7773843ca829827cb2c543e8:0:32",
+        "ev:6bdff11dcb30baf772284eca:0:490",
+        "ev:f42bf32e9ba676a02caad579:0:145",
+        "ev:3385106477d553b8801efe08:0:145"
+      ],
+      "expected_behavior": "For the observed GDPevo train_001-style ERP dispatch workflow, read the answer template and queue memo, retrieve and organize required live data by order and actual warehouse, explicitly derive SKU exception sets and inventory status before mapping customer and inventory conditions to decisions/actions, recompute summary from finalized records, and validate output completeness and consistency before submission. A submitted response is treated only as acceptance of the payload, not correctness evidence. The procedure is scoped to local procedural improvement for train_001, with train_004 used only as a regression check and no general-transfer claim.",
+      "hypotheses": [
+        {
+          "alternatives": [
+            "The mismatch may instead reflect an unobserved business-rule interpretation, incomplete record retrieval, or an incorrect inventory availability calculation; the supplied feedback does not identify erroneous records or formulas.",
+            "The selected evidence only partially covers execution, so it does not establish whether all relevant live records were queried or how every output field was derived."
+          ],
+          "claim": "A reusable procedure that first builds an order-by-order evidence table from the memo, template, and required live records, then derives inventory/SKU exceptions, decisions/actions, and summary from that table may address the field groups that did not match in train_001.",
+          "counterevidence_refs": [],
+          "supporting_refs": [
+            "ev:c1696f5b953ae79d628669fa:0:672",
+            "ev:db68fa286a2bd9c677a87234:0:1800",
+            "ev:8145045941e4f6f8e14f8c9f:164:1964"
+          ]
+        },
+        {
+          "alternatives": [
+            "The actor may already have performed unrecorded local validation; the evidence shows submission success and later evaluation failure but does not show the actor's full internal review process."
+          ],
+          "claim": "Treating a successful submission response as transport confirmation rather than correctness confirmation may prevent premature completion in this workflow.",
+          "counterevidence_refs": [],
+          "supporting_refs": [
+            "ev:7773843ca829827cb2c543e8:0:32",
+            "ev:8145045941e4f6f8e14f8c9f:164:1964"
+          ]
+        }
+      ],
+      "necessity": {
+        "allow_add": true,
+        "behavior_delta": "Instead of proceeding from collected records directly to a submitted payload, add a local procedure requiring an auditable per-order derivation table, actual-warehouse inventory checks, independent SKU/status derivation, decision/action mapping after derivation, summary recomputation from finalized records, and a final completeness/consistency review. Submission acknowledgement is explicitly separated from correctness validation.",
+        "capability_gap": "The base snapshot contains no Skills. The observed task requires coordinated multi-entity retrieval, derived inventory/SKU classification, decision/action mapping, and summary rollups, while the available evidence shows no supplied reusable procedural capability for that workflow.",
+        "compared_skill_refs": [],
+        "evidence_refs": [
+          "ev:c1696f5b953ae79d628669fa:0:672",
+          "ev:db68fa286a2bd9c677a87234:0:1800",
+          "ev:8145045941e4f6f8e14f8c9f:164:1964",
+          "ev:7773843ca829827cb2c543e8:0:32"
+        ],
+        "repeatable": true,
+        "unknowns": [
+          "No existing Skill bodies are present in the supplied snapshot, so there is no existing rule to patch or compare directly.",
+          "The feedback identifies unmatched field groups but not the specific incorrect records, complete business-rule semantics, or exact calculation error.",
+          "The evidence package has partial coverage and does not establish whether all required live records were retrieved or whether unobserved validation occurred.",
+          "The required procedural-distinction evidence is not represented by a supplied trusted check; its null check reference blocks release until such evidence is available."
+        ],
+        "verdict": "proceed"
+      },
+      "route": "skill_patch",
+      "targets": []
+    },
+    "base_snapshot_digest": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa",
+    "allowed_skill_contents": {},
+    "editable_fields_and_asset_paths": {
+      "skill_ids": [],
+      "rule_ids": {},
+      "asset_roots": [
+        "scripts",
+        "references",
+        "templates"
+      ],
+      "current_assets": {}
+    },
+    "operation_constraints": {
+      "allowed_operations": [
+        "ADD",
+        "PATCH",
+        "RETIRE",
+        "NOOP"
+      ],
+      "allowed_evidence_refs": [
+        "ev:c1696f5b953ae79d628669fa:0:672",
+        "ev:8145045941e4f6f8e14f8c9f:164:1964",
+        "ev:48e961e8ac7e62958cb0b953:0:1131",
+        "ev:61f74f6376eeced1c9b49802:0:1800",
+        "ev:6eab87fd26d4df463901034f:0:142",
+        "ev:db68fa286a2bd9c677a87234:0:1800",
+        "ev:c1beb529272c01606977dcca:0:1800",
+        "ev:7773843ca829827cb2c543e8:0:32",
+        "ev:36f540fcc803cd93b7d97e19:0:126",
+        "ev:7626a13a8d88110431e88794:0:204",
+        "ev:797900a31f8381a700ed1289:0:129",
+        "ev:3efd0c83d79e22795acc2832:0:157",
+        "ev:fef821799d04029fa71d7b86:0:183",
+        "ev:f42bf32e9ba676a02caad579:0:145",
+        "ev:d7088fe839e0df5b9c3dd2fc:0:125",
+        "ev:6bdff11dcb30baf772284eca:0:490",
+        "ev:ccc30d13ce65fca92da193b4:0:126",
+        "ev:9f25ae8c176f0bebb8f207f0:0:204",
+        "ev:9c830067d72272be02684ebd:0:183",
+        "ev:3385106477d553b8801efe08:0:145",
+        "ev:112cc8fd739389842d91bc41:0:183",
+        "ev:9df6a7c03c165d10dc3183a2:0:125"
+      ],
+      "known_readonly_skill_ids": [],
+      "max_operations": 4,
+      "max_skills": 12,
+      "max_asset_bytes": 20000,
+      "project_id": "gdpevo-group007",
+      "atomic_operation_count": "Each PATCH edit, ADD, RETIRE and asset edit counts once.",
+      "rule_anchors": "Rule IDs refer to the original expected_revision; newly added rules cannot be targeted in this patch."
+    },
+    "evaluation_scope": "Local procedural improvement for the observed GDPevo train_001 workflow; train_004 is a regression check. No general transfer claim. The actor can query official read-only business GET endpoints, read public input files and selected Skill assets, and submit an answer. It cannot execute scripts or access grading materials. Only the trusted checks in verification_catalog are supplied in this pilot.",
+    "learning_limits": {
+      "max_input_chars": 120000,
+      "max_output_chars": 30000,
+      "max_output_tokens": 6000,
+      "max_total_input_chars": 480000,
+      "max_calls": 8,
+      "max_format_repairs": 1
+    },
+    "verification_catalog": [
+      {
+        "check_ref": "case:train_001",
+        "purpose": "target",
+        "description": "Check the public task: {\"description\":\"Northwind Components operations has an expedite queue for wave TRAIN_EXPEDITE_A. Use the local queue memo in input/payloads/expedite_queue_memo.json and the shared Northwind ERP API to prepare the dispatch-control answer.\\n\\nShared API entry point: `<TASK_ENV_BASE_URL>`\\n\\nFor each order in the memo, classify the inventory status, customer exception, final fulfillment decision, next action, SKU exception lists, and shipping quote. Use the live API records for orders, products, customers, inventory, warehouses, and shipping quotes. Return only JSON matching input/payloads/answer_template.json.\\n\\nKeep records sorted by order_id. Currency must be rounded to two decimals.\\n\",\"input_files\":{\"payloads/answer_template.json\":4000,\"payloads/expedite_queue_memo.json\":1562,\"prompt.txt\":672},\"project_id\":\"gdpevo-group007\",\"revision\":\"56d60ae4ae5e067d1ec0ee1f850622e69f422179\",\"shared_environment_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:env\",\"source_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:train_001:input\",\"task_family\":\"northwind_erp\",\"task_id\":\"train_001\"}",
+        "evidence_kind": "task",
+        "case_ids": [
+          "train_001"
+        ],
+        "asset_test_ids": []
+      },
+      {
+        "check_ref": "case:train_004",
+        "purpose": "regression",
+        "description": "Check the public task: {\"description\":\"Northwind Components needs the allocation desk decision file for order wave TRAIN_TRANSFER_B.\\n\\nUse the shared ERP API described in the task group environment README. Use the API base URL supplied by the runner as `<TASK_ENV_BASE_URL>`. Inspect the live ERP records for the wave, customers, products, warehouses, and inventory as needed. A short desk memo is available in input/payloads/allocation_memo.md.\\n\\nReturn a single JSON object matching input/payloads/answer_template.json. The decision file should classify every order line in TRAIN_TRANSFER_B as one of the allowed actions, include transfer requests where internal movement can clear the shortage, identify account-blocked orders, and summarize the wave.\\n\",\"input_files\":{\"payloads/allocation_memo.md\":975,\"payloads/answer_template.json\":3342,\"prompt.txt\":714},\"project_id\":\"gdpevo-group007\",\"revision\":\"56d60ae4ae5e067d1ec0ee1f850622e69f422179\",\"shared_environment_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:env\",\"source_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:train_004:input\",\"task_family\":\"northwind_erp\",\"task_id\":\"train_004\"}",
+        "evidence_kind": "task",
+        "case_ids": [
+          "train_004"
+        ],
+        "asset_test_ids": []
+      }
+    ]
+  },
+  "blocks": {
+    "change_intent": {
+      "chars": 5633,
+      "type": "dict",
+      "items": 8
+    },
+    "base_snapshot_digest": {
+      "chars": 66,
+      "type": "str",
+      "items": null
+    },
+    "allowed_skill_contents": {
+      "chars": 2,
+      "type": "dict",
+      "items": 0
+    },
+    "editable_fields_and_asset_paths": {
+      "chars": 110,
+      "type": "dict",
+      "items": 4
+    },
+    "operation_constraints": {
+      "chars": 1242,
+      "type": "dict",
+      "items": 9
+    },
+    "evaluation_scope": {
+      "chars": 401,
+      "type": "str",
+      "items": null
+    },
+    "learning_limits": {
+      "chars": 155,
+      "type": "dict",
+      "items": 6
+    },
+    "verification_catalog": {
+      "chars": 2723,
+      "type": "list",
+      "items": 2
+    }
+  },
+  "prompt_digest": "28fbcc0726b45961d8685a80b14469fdf9e9769c4888443e639842af8dcca759",
+  "status": "returned",
+  "result": {
+    "value": {
+      "asset_edits": [],
+      "check_plan": [
+        {
+          "behavior": "On train_001, produce template-conformant, order_id-sorted JSON after retrieving the required live data and performing explicit record-level derivation and summary consistency review; the official outcome should improve the previously unmatched inventory/SKU, decision/action, and summary field groups while preserving matched order-set, customer-exception, and shipping-quote behavior.",
+          "check_ref": "case:train_001",
+          "purpose": "target",
+          "required_evidence": "Run the trusted public target case and inspect its official outcome; no field-level expected-answer material is supplied."
+        },
+        {
+          "behavior": "On train_004, retain task-specific template reading and evidence-table workflow without importing train_001-specific dispatch enums or rules into the allocation task.",
+          "check_ref": "case:train_004",
+          "purpose": "regression",
+          "required_evidence": "Run the trusted public regression case and inspect its outcome; no private expected-answer material is supplied."
+        },
+        {
+          "behavior": "Verify that the proposed procedure is actually followed: template and local memo are read; live order, product, customer, inventory, warehouse, and quote data needed by the task are collected; per-record derivations precede summary recomputation; and submission status is not treated as correctness validation.",
+          "check_ref": null,
+          "purpose": "distinguish",
+          "required_evidence": "An execution trace or structured work artifact showing these retrieval and review steps is required; no trusted check material for this procedural distinction is supplied."
+        }
+      ],
+      "evidence_refs": [
+        "ev:c1696f5b953ae79d628669fa:0:672",
+        "ev:db68fa286a2bd9c677a87234:0:1800",
+        "ev:8145045941e4f6f8e14f8c9f:164:1964",
+        "ev:7773843ca829827cb2c543e8:0:32"
+      ],
+      "expected_behavior": "For the observed GDPevo train_001-style ERP dispatch workflow, read the answer template and queue memo, retrieve and organize required live data by order and actual warehouse, explicitly derive SKU exception sets and inventory status before mapping customer and inventory conditions to decisions/actions, recompute summary from finalized records, and validate output completeness and consistency before submission. A submitted response is treated only as acceptance of the payload, not correctness evidence. The procedure is scoped to local procedural improvement for train_001, with train_004 used only as a regression check and no general-transfer claim.",
+      "operations": [
+        {
+          "content": {
+            "checks": [
+              "Run case:train_001 and inspect its official outcome for template-conformant, order_id-sorted JSON after live retrieval, record-level derivation, and summary consistency review; the outcome should improve the previously unmatched inventory/SKU, decision/action, and summary field groups while preserving matched order-set, customer-exception, and shipping-quote behavior.",
+              "Run case:train_004 as a regression check and inspect its outcome to confirm that its task-specific template reading and evidence-table workflow remains intact without importing train_001 expedite dispatch enums or rules.",
+              "A procedural-distinction check requires an execution trace or structured work artifact showing template and memo reading, needed live retrievals, per-record derivations before summary recomputation, and separation of submission status from correctness validation; no trusted check material is currently supplied for this requirement."
+            ],
+            "declared_conflicts": [],
+            "depends_on": [],
+            "evidence_refs": [
+              "ev:c1696f5b953ae79d628669fa:0:672",
+              "ev:db68fa286a2bd9c677a87234:0:1800",
+              "ev:8145045941e4f6f8e14f8c9f:164:1964",
+              "ev:7773843ca829827cb2c543e8:0:32"
+            ],
+            "exceptions": [
+              "If the supplied task template or memo defines different field names, allowed values, or calculations, follow that task-specific contract while retaining the evidence-table, derivation-before-decision, and summary-recomputation sequence.",
+              "This procedure does not establish unprovided business-rule semantics, missing live records, or an exact cause for previously unmatched fields."
+            ],
+            "preconditions": [
+              "Read the supplied answer template and queue memo before deriving records.",
+              "Use only task-authorized read-only data retrieval and the task-defined output contract.",
+              "The memo, template, or live records must provide the fields needed to derive each required output field; otherwise preserve the task's handling of unavailable data rather than inventing values."
+            ],
+            "scope": {
+              "applies_when": [
+                "The task requests a dispatch-control JSON response for an expedite order queue.",
+                "A local queue memo and answer template identify the required output and order set.",
+                "Official read-only ERP endpoints are available for order, product, customer, inventory, warehouse, and shipping-quote retrieval."
+              ],
+              "exclusions": [
+                "Allocation-desk tasks, including train_004-style transfer classification, retain their task-specific memo, template, and workflow.",
+                "Do not import expedite-specific decision enums, inventory rules, or action mappings into allocation tasks.",
+                "Do not treat transport acceptance of a submitted payload as evidence that its business results are correct."
+              ],
+              "task_family": "northwind_erp"
+            },
+            "steps": [
+              "Read the answer template to identify required record fields, summary fields, ordering, JSON shape, and formatting constraints; then read the queue memo to establish the target order set and task-specific instructions.",
+              "Create a per-order evidence table keyed by order_id. For every memo order, retrieve and record the live order, relevant product/SKU data, customer data, actual warehouse data, inventory data for the actual warehouse, and the required shipping quote data.",
+              "For each order, derive SKU exception lists and inventory status from the recorded line-level and actual-warehouse evidence before selecting a fulfillment decision or next action.",
+              "Map the finalized customer condition and derived inventory/SKU conditions to the task-defined decision and action. Keep the derivation evidence separate from the selected output values so each record can be reviewed.",
+              "Populate each output record from the finalized per-order derivation, including its shipping quote, and sort records by order_id as required by the template.",
+              "Recompute all summary fields from the finalized output records rather than from intermediate retrieval notes.",
+              "Perform a final completeness and consistency review: every memo order is represented once, required record and summary fields are present, record ordering and currency formatting follow the template, SKU/status/decision/action values agree with each record's evidence, and summaries agree with finalized records.",
+              "Submit only the template-conformant JSON. Treat any submission acknowledgement as payload transport confirmation; use the record-level and summary review, plus applicable trusted checks, for correctness validation."
+            ],
+            "title": "ERP expedite dispatch evidence-table procedure",
+            "triggers": [
+              "Preparing a Northwind ERP expedite dispatch-control answer from a queue memo and live ERP records."
+            ]
+          },
+          "op": "ADD",
+          "proposed_slug": "erp-expedite-dispatch-evidence-table"
+        }
+      ],
+      "reason": "The base snapshot contains no reusable Skills, while the supplied evidence supports a local, repeatable procedural addition for the observed train_001 dispatch workflow. The addition preserves the required train_004 regression obligation and retains the unbound procedural-distinction obligation as blocking pending trusted material."
+    },
+    "usage": [
+      {
+        "usage_id": "modelcall_972422838acd498c96463f1fd22ca083",
+        "prompt_id": "propose_v1",
+        "attempt": 1,
+        "input_chars": 20818,
+        "output_chars": 7351,
+        "input_tokens": 5640,
+        "output_tokens": 1499,
+        "total_tokens": 7139,
+        "monetary_cost": null,
+        "currency": null,
+        "price_version": null,
+        "measurement": "provider_reported",
+        "model": "gpt-5.6-terra",
+        "request_id": "resp_0a5f1266f918cfe2016aadd6d80b7887d0a0f0e154c24c4184",
+        "elapsed_seconds": 29.166212064010324,
+        "status": "completed"
+      }
+    ],
+    "raw_response": {
+      "text": "{\"operations\":[{\"op\":\"ADD\",\"proposed_slug\":\"erp-expedite-dispatch-evidence-table\",\"content\":{\"title\":\"ERP expedite dispatch evidence-table procedure\",\"scope\":{\"task_family\":\"northwind_erp\",\"applies_when\":[\"The task requests a dispatch-control JSON response for an expedite order queue.\",\"A local queue memo and answer template identify the required output and order set.\",\"Official read-only ERP endpoints are available for order, product, customer, inventory, warehouse, and shipping-quote retrieval.\"],\"exclusions\":[\"Allocation-desk tasks, including train_004-style transfer classification, retain their task-specific memo, template, and workflow.\",\"Do not import expedite-specific decision enums, inventory rules, or action mappings into allocation tasks.\",\"Do not treat transport acceptance of a submitted payload as evidence that its business results are correct.\"]},\"triggers\":[\"Preparing a Northwind ERP expedite dispatch-control answer from a queue memo and live ERP records.\"],\"preconditions\":[\"Read the supplied answer template and queue memo before deriving records.\",\"Use only task-authorized read-only data retrieval and the task-defined output contract.\",\"The memo, template, or live records must provide the fields needed to derive each required output field; otherwise preserve the task's handling of unavailable data rather than inventing values.\"],\"steps\":[\"Read the answer template to identify required record fields, summary fields, ordering, JSON shape, and formatting constraints; then read the queue memo to establish the target order set and task-specific instructions.\",\"Create a per-order evidence table keyed by order_id. For every memo order, retrieve and record the live order, relevant product/SKU data, customer data, actual warehouse data, inventory data for the actual warehouse, and the required shipping quote data.\",\"For each order, derive SKU exception lists and inventory status from the recorded line-level and actual-warehouse evidence before selecting a fulfillment decision or next action.\",\"Map the finalized customer condition and derived inventory/SKU conditions to the task-defined decision and action. Keep the derivation evidence separate from the selected output values so each record can be reviewed.\",\"Populate each output record from the finalized per-order derivation, including its shipping quote, and sort records by order_id as required by the template.\",\"Recompute all summary fields from the finalized output records rather than from intermediate retrieval notes.\",\"Perform a final completeness and consistency review: every memo order is represented once, required record and summary fields are present, record ordering and currency formatting follow the template, SKU/status/decision/action values agree with each record's evidence, and summaries agree with finalized records.\",\"Submit only the template-conformant JSON. Treat any submission acknowledgement as payload transport confirmation; use the record-level and summary review, plus applicable trusted checks, for correctness validation.\"],\"exceptions\":[\"If the supplied task template or memo defines different field names, allowed values, or calculations, follow that task-specific contract while retaining the evidence-table, derivation-before-decision, and summary-recomputation sequence.\",\"This procedure does not establish unprovided business-rule semantics, missing live records, or an exact cause for previously unmatched fields.\"],\"checks\":[\"Run case:train_001 and inspect its official outcome for template-conformant, order_id-sorted JSON after live retrieval, record-level derivation, and summary consistency review; the outcome should improve the previously unmatched inventory/SKU, decision/action, and summary field groups while preserving matched order-set, customer-exception, and shipping-quote behavior.\",\"Run case:train_004 as a regression check and inspect its outcome to confirm that its task-specific template reading and evidence-table workflow remains intact without importing train_001 expedite dispatch enums or rules.\",\"A procedural-distinction check requires an execution trace or structured work artifact showing template and memo reading, needed live retrievals, per-record derivations before summary recomputation, and separation of submission status from correctness validation; no trusted check material is currently supplied for this requirement.\"],\"depends_on\":[],\"declared_conflicts\":[],\"evidence_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:0:1800\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\",\"ev:7773843ca829827cb2c543e8:0:32\"]}}],\"asset_edits\":[],\"reason\":\"The base snapshot contains no reusable Skills, while the supplied evidence supports a local, repeatable procedural addition for the observed train_001 dispatch workflow. The addition preserves the required train_004 regression obligation and retains the unbound procedural-distinction obligation as blocking pending trusted material.\",\"evidence_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:0:1800\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\",\"ev:7773843ca829827cb2c543e8:0:32\"],\"expected_behavior\":\"For the observed GDPevo train_001-style ERP dispatch workflow, read the answer template and queue memo, retrieve and organize required live data by order and actual warehouse, explicitly derive SKU exception sets and inventory status before mapping customer and inventory conditions to decisions/actions, recompute summary from finalized records, and validate output completeness and consistency before submission. A submitted response is treated only as acceptance of the payload, not correctness evidence. The procedure is scoped to local procedural improvement for train_001, with train_004 used only as a regression check and no general-transfer claim.\",\"check_plan\":[{\"purpose\":\"target\",\"behavior\":\"On train_001, produce template-conformant, order_id-sorted JSON after retrieving the required live data and performing explicit record-level derivation and summary consistency review; the official outcome should improve the previously unmatched inventory/SKU, decision/action, and summary field groups while preserving matched order-set, customer-exception, and shipping-quote behavior.\",\"check_ref\":\"case:train_001\",\"required_evidence\":\"Run the trusted public target case and inspect its official outcome; no field-level expected-answer material is supplied.\"},{\"purpose\":\"regression\",\"behavior\":\"On train_004, retain task-specific template reading and evidence-table workflow without importing train_001-specific dispatch enums or rules into the allocation task.\",\"check_ref\":\"case:train_004\",\"required_evidence\":\"Run the trusted public regression case and inspect its outcome; no private expected-answer material is supplied.\"},{\"purpose\":\"distinguish\",\"behavior\":\"Verify that the proposed procedure is actually followed: template and local memo are read; live order, product, customer, inventory, warehouse, and quote data needed by the task are collected; per-record derivations precede summary recomputation; and submission status is not treated as correctness validation.\",\"check_ref\":null,\"required_evidence\":\"An execution trace or structured work artifact showing these retrieval and review steps is required; no trusted check material for this procedural distinction is supplied.\"}]}",
+      "finish_reason": "stop",
+      "usage": {
+        "input_tokens": 5640,
+        "output_tokens": 1499,
+        "total_tokens": 7139,
+        "monetary_cost": null,
+        "currency": null,
+        "price_version": null
+      },
+      "model": "gpt-5.6-terra",
+      "request_id": "resp_0a5f1266f918cfe2016aadd6d80b7887d0a0f0e154c24c4184"
+    },
+    "attempts": [
+      {
+        "attempt": 1,
+        "finish_reason": "stop",
+        "raw_response": {
+          "text": "{\"operations\":[{\"op\":\"ADD\",\"proposed_slug\":\"erp-expedite-dispatch-evidence-table\",\"content\":{\"title\":\"ERP expedite dispatch evidence-table procedure\",\"scope\":{\"task_family\":\"northwind_erp\",\"applies_when\":[\"The task requests a dispatch-control JSON response for an expedite order queue.\",\"A local queue memo and answer template identify the required output and order set.\",\"Official read-only ERP endpoints are available for order, product, customer, inventory, warehouse, and shipping-quote retrieval.\"],\"exclusions\":[\"Allocation-desk tasks, including train_004-style transfer classification, retain their task-specific memo, template, and workflow.\",\"Do not import expedite-specific decision enums, inventory rules, or action mappings into allocation tasks.\",\"Do not treat transport acceptance of a submitted payload as evidence that its business results are correct.\"]},\"triggers\":[\"Preparing a Northwind ERP expedite dispatch-control answer from a queue memo and live ERP records.\"],\"preconditions\":[\"Read the supplied answer template and queue memo before deriving records.\",\"Use only task-authorized read-only data retrieval and the task-defined output contract.\",\"The memo, template, or live records must provide the fields needed to derive each required output field; otherwise preserve the task's handling of unavailable data rather than inventing values.\"],\"steps\":[\"Read the answer template to identify required record fields, summary fields, ordering, JSON shape, and formatting constraints; then read the queue memo to establish the target order set and task-specific instructions.\",\"Create a per-order evidence table keyed by order_id. For every memo order, retrieve and record the live order, relevant product/SKU data, customer data, actual warehouse data, inventory data for the actual warehouse, and the required shipping quote data.\",\"For each order, derive SKU exception lists and inventory status from the recorded line-level and actual-warehouse evidence before selecting a fulfillment decision or next action.\",\"Map the finalized customer condition and derived inventory/SKU conditions to the task-defined decision and action. Keep the derivation evidence separate from the selected output values so each record can be reviewed.\",\"Populate each output record from the finalized per-order derivation, including its shipping quote, and sort records by order_id as required by the template.\",\"Recompute all summary fields from the finalized output records rather than from intermediate retrieval notes.\",\"Perform a final completeness and consistency review: every memo order is represented once, required record and summary fields are present, record ordering and currency formatting follow the template, SKU/status/decision/action values agree with each record's evidence, and summaries agree with finalized records.\",\"Submit only the template-conformant JSON. Treat any submission acknowledgement as payload transport confirmation; use the record-level and summary review, plus applicable trusted checks, for correctness validation.\"],\"exceptions\":[\"If the supplied task template or memo defines different field names, allowed values, or calculations, follow that task-specific contract while retaining the evidence-table, derivation-before-decision, and summary-recomputation sequence.\",\"This procedure does not establish unprovided business-rule semantics, missing live records, or an exact cause for previously unmatched fields.\"],\"checks\":[\"Run case:train_001 and inspect its official outcome for template-conformant, order_id-sorted JSON after live retrieval, record-level derivation, and summary consistency review; the outcome should improve the previously unmatched inventory/SKU, decision/action, and summary field groups while preserving matched order-set, customer-exception, and shipping-quote behavior.\",\"Run case:train_004 as a regression check and inspect its outcome to confirm that its task-specific template reading and evidence-table workflow remains intact without importing train_001 expedite dispatch enums or rules.\",\"A procedural-distinction check requires an execution trace or structured work artifact showing template and memo reading, needed live retrievals, per-record derivations before summary recomputation, and separation of submission status from correctness validation; no trusted check material is currently supplied for this requirement.\"],\"depends_on\":[],\"declared_conflicts\":[],\"evidence_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:0:1800\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\",\"ev:7773843ca829827cb2c543e8:0:32\"]}}],\"asset_edits\":[],\"reason\":\"The base snapshot contains no reusable Skills, while the supplied evidence supports a local, repeatable procedural addition for the observed train_001 dispatch workflow. The addition preserves the required train_004 regression obligation and retains the unbound procedural-distinction obligation as blocking pending trusted material.\",\"evidence_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:0:1800\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\",\"ev:7773843ca829827cb2c543e8:0:32\"],\"expected_behavior\":\"For the observed GDPevo train_001-style ERP dispatch workflow, read the answer template and queue memo, retrieve and organize required live data by order and actual warehouse, explicitly derive SKU exception sets and inventory status before mapping customer and inventory conditions to decisions/actions, recompute summary from finalized records, and validate output completeness and consistency before submission. A submitted response is treated only as acceptance of the payload, not correctness evidence. The procedure is scoped to local procedural improvement for train_001, with train_004 used only as a regression check and no general-transfer claim.\",\"check_plan\":[{\"purpose\":\"target\",\"behavior\":\"On train_001, produce template-conformant, order_id-sorted JSON after retrieving the required live data and performing explicit record-level derivation and summary consistency review; the official outcome should improve the previously unmatched inventory/SKU, decision/action, and summary field groups while preserving matched order-set, customer-exception, and shipping-quote behavior.\",\"check_ref\":\"case:train_001\",\"required_evidence\":\"Run the trusted public target case and inspect its official outcome; no field-level expected-answer material is supplied.\"},{\"purpose\":\"regression\",\"behavior\":\"On train_004, retain task-specific template reading and evidence-table workflow without importing train_001-specific dispatch enums or rules into the allocation task.\",\"check_ref\":\"case:train_004\",\"required_evidence\":\"Run the trusted public regression case and inspect its outcome; no private expected-answer material is supplied.\"},{\"purpose\":\"distinguish\",\"behavior\":\"Verify that the proposed procedure is actually followed: template and local memo are read; live order, product, customer, inventory, warehouse, and quote data needed by the task are collected; per-record derivations precede summary recomputation; and submission status is not treated as correctness validation.\",\"check_ref\":null,\"required_evidence\":\"An execution trace or structured work artifact showing these retrieval and review steps is required; no trusted check material for this procedural distinction is supplied.\"}]}",
+          "finish_reason": "stop",
+          "usage": {
+            "input_tokens": 5640,
+            "output_tokens": 1499,
+            "total_tokens": 7139,
+            "monetary_cost": null,
+            "currency": null,
+            "price_version": null
+          },
+          "model": "gpt-5.6-terra",
+          "request_id": "resp_0a5f1266f918cfe2016aadd6d80b7887d0a0f0e154c24c4184"
+        }
+      }
+    ]
+  }
+}

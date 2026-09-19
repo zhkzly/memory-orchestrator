@@ -1,0 +1,1967 @@
+{
+  "status": "completed",
+  "evolution": {
+    "learning": {
+      "cycle_id": "learning_2c980cd14cf3423889808b657bd15fab",
+      "project_id": "gdpevo-group007",
+      "base_digest": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa",
+      "contract_source": {
+        "path": "docs/blueprint/project-contract.json",
+        "version": "1.7.1",
+        "sha256": "3a8255b5a94249be66529f98f55152c4dbccbc7772198760bdf64fa9b3538aa6"
+      },
+      "model_limits": {
+        "max_input_chars": 120000,
+        "max_output_chars": 30000,
+        "max_output_tokens": 6000,
+        "max_total_input_chars": 480000,
+        "max_calls": 8,
+        "max_format_repairs": 1
+      },
+      "expected_generation": 0,
+      "requested_episode_ids": [
+        "episode_5372955c6e834dd29b562bab352f4912"
+      ],
+      "source_episode_ids": [
+        "episode_5372955c6e834dd29b562bab352f4912"
+      ],
+      "experience_ids": [
+        "experience_8c4765b49fb840d395b089f8726f7835"
+      ],
+      "candidate_ids": [
+        "proposal_2579f1a8197242d58613759723d9b4fc"
+      ],
+      "diagnosis_id": "diagnosis_9fdec386335d4c8eaaec53b01573c07b",
+      "usage_ids": [
+        "modelcall_3282182a666549d4987fcdaa5788575e",
+        "modelcall_4bd4308134a5462eac3d08b42d02a12b",
+        "modelcall_972422838acd498c96463f1fd22ca083"
+      ],
+      "report_ids": [
+        "modelreport_6d34ee6b0a1d4d96ae15303cd33e5cc3",
+        "modelreport_15b944a191384d5bb3a610a5aaa91a28",
+        "modelreport_32ca331b1dd14f91a3970a7f5c68926d"
+      ],
+      "errors": [],
+      "goal_binding_ids": [],
+      "maintenance_review_ids": [],
+      "candidate_slots": [
+        {
+          "slot": 0,
+          "status": "candidate",
+          "candidate_id": "proposal_2579f1a8197242d58613759723d9b4fc"
+        }
+      ],
+      "status": "proposed",
+      "policy": {
+        "packet": {
+          "max_chars": 42000,
+          "max_fragment_chars": 1800,
+          "max_catalog_refs": 24,
+          "token_budget": 24000
+        },
+        "expanded_packet": {
+          "max_chars": 60000,
+          "max_fragment_chars": 3000,
+          "max_catalog_refs": 24,
+          "token_budget": 34000
+        },
+        "max_expansions": 1,
+        "max_experiences": 3,
+        "max_read_requests": 3,
+        "max_related_experiences": 4,
+        "max_related_episodes": 6,
+        "max_related_chars": 12000,
+        "candidate_count": 1,
+        "max_operations": 4,
+        "max_skills": 12,
+        "max_asset_bytes": 20000,
+        "necessity": {
+          "max_compared_skills": 12
+        },
+        "maintenance": {
+          "max_chars": 18000,
+          "max_pairs": 6,
+          "max_actions": 4
+        },
+        "goal_binding": {
+          "max_events": 6,
+          "max_bindings": 6,
+          "max_read_requests": 2,
+          "max_expansions": 1,
+          "max_catalog_goals": 12,
+          "packet": {
+            "max_chars": 18000,
+            "max_fragment_chars": 1800,
+            "max_catalog_refs": 16,
+            "token_budget": 10000
+          }
+        },
+        "evaluation_scope": "Local procedural improvement for the observed GDPevo train_001 workflow; train_004 is a regression check. No general transfer claim. The actor can query official read-only business GET endpoints, read public input files and selected Skill assets, and submit an answer. It cannot execute scripts or access grading materials. Only the trusted checks in verification_catalog are supplied in this pilot."
+      },
+      "created_at": "2026-09-19T00:26:05.081216Z",
+      "retrieval": {
+        "failure_signature": {
+          "coverage": {
+            "complete": true,
+            "omitted_evidence_occurrences": 0,
+            "omitted_feature_occurrences": 0
+          },
+          "criterion_ids": [
+            "task_outcome"
+          ],
+          "error_codes": [],
+          "evidence_refs": [
+            "ev:8145045941e4f6f8e14f8c9f"
+          ],
+          "operation": null,
+          "origin": "observed_fields",
+          "resource_kinds": [],
+          "symptom_terms": []
+        },
+        "selected_record_ids": [],
+        "signature_hits": 0
+      },
+      "trace_checkpoint_ids": [],
+      "reason": null,
+      "completed_at": "2026-09-19T00:27:32.587690Z",
+      "read_stats": {
+        "body_bytes": 0,
+        "range_reads": 0,
+        "metadata_rows": 0
+      }
+    },
+    "comparison": {
+      "comparison_id": "comparison_e48166a5510546eca6fe57bc5f1e0df3",
+      "plan_ids": [
+        "plan_cac51333b49b4c799adf8b4405bc53f1"
+      ],
+      "validation_ids": [
+        "validation_604958ff15934a40954e7ad240cdae68"
+      ],
+      "selection_id": "selection_f5ec4221622b44258bbe4577535c1db0",
+      "usage_ids": [
+        "attempt_237eb1589c1a30946d82817e80e55d884f5938ffbbbacacd5015c7bfde7bc555:usage:0",
+        "attempt_2eb6a368888f3a603da6dcc01fdb0aab16132b6ddd0898acf53d56403d60682b:usage:0",
+        "attempt_5fd5592b56d414ccba741f509686a09d842a3fe2e2e02c46ec942b3fb19de7c2:usage:0",
+        "attempt_82b9e108424d828384aeb054fbd3dc2f1b5bc80b1bb21fa40ecd8ef083ce1a7b:usage:0",
+        "attempt_8e5ed13d789f1bdf4a56dc9a25e70f460d49012bd7ce8e0167f7e70e6b855549:usage:0",
+        "attempt_9cefe8d42973800a718eb40c732126a3e79509c966fac51175da32464f9d1a37:usage:0",
+        "attempt_a5bea92676d97dcd86bdf8b542c338309fc2961bfaa2b1effeea9ebea75a353c:usage:0",
+        "attempt_ff00df13b1b47c58558036a1c9131344d4049d1da13e2e020335f3ae9e20fc57:usage:0"
+      ],
+      "status": "completed",
+      "blocked": []
+    },
+    "release": null,
+    "status": "not_selected"
+  },
+  "report": {
+    "report_id": "report_5c98352d4c8445f0b8b191157c6248f8",
+    "project_id": "gdpevo-group007",
+    "created_at": "2026-09-19T00:34:20.297187Z",
+    "evidence_kind": "caller execution/evaluation records; not automatic independent truth",
+    "evaluation_requests": 4,
+    "outcomes": {
+      "pass": 0,
+      "fail": 4,
+      "unknown": 0
+    },
+    "execution_status_counts": {
+      "completed": 4,
+      "cancelled": 0,
+      "timeout": 0,
+      "budget_exhausted": 0,
+      "adapter_error": 0,
+      "unknown": 0
+    },
+    "observed_success_rate": 0.0,
+    "coverage": 1.0,
+    "identification_bounds": [
+      0.0,
+      0.0
+    ],
+    "any_success": false,
+    "all_success": false,
+    "comparisons": [
+      {
+        "plan_id": "plan_cac51333b49b4c799adf8b4405bc53f1",
+        "project_id": "gdpevo-group007",
+        "validation_id": "validation_604958ff15934a40954e7ad240cdae68",
+        "validation_status": "rejected",
+        "validations": [
+          {
+            "validation_id": "validation_604958ff15934a40954e7ad240cdae68",
+            "status": "rejected",
+            "binding_errors": []
+          }
+        ],
+        "base_digest": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa",
+        "candidate_digest": "7aa2f28222eceda5cd5ddb35fc2cfdf38f2571a16e3c8b3282ad740c10c72aae",
+        "case_set_ref": "cases_1d5666af77264a7c82d38b823a0e6d41",
+        "case_set_hash": "9c8d56e38b8b8ad847985e94f9500ae2a8e91ec02f00ce4e1c0a7b7c669582c2",
+        "protocol_ref": "protocol_35845caa2da048da8f2e17956f929af2",
+        "protocol_hash": "5a25c972c59eff7aab9a64639034c49e8043e760f336b0f21a640c6544ab4832",
+        "purpose": "validation",
+        "update_mode": "none",
+        "scoring_policy": "available_artifact",
+        "proposal_ids": [
+          "proposal_2579f1a8197242d58613759723d9b4fc"
+        ],
+        "acceptance_scope": "local development repair",
+        "quality_case_refs": [
+          "train_001",
+          "train_004"
+        ],
+        "repeat_count": 1,
+        "planned_requests": 4,
+        "recorded_results": 4,
+        "missing_request_ids": [],
+        "mismatched_request_ids": [],
+        "by_split": {
+          "target": [
+            {
+              "case_id": "train_001",
+              "split": "target",
+              "case_role": "quality",
+              "base": 0.29411764705882354,
+              "base_range": 0.0,
+              "candidate": 0.29411764705882354,
+              "candidate_range": 0.0,
+              "gain": 0.0,
+              "base_known_repeats": 1,
+              "base_outcomes": {
+                "pass": 0,
+                "fail": 1,
+                "unknown": 0
+              },
+              "base_any_success": false,
+              "base_all_success": false,
+              "base_execution_status_counts": {
+                "completed": 1,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "candidate_known_repeats": 1,
+              "candidate_outcomes": {
+                "pass": 0,
+                "fail": 1,
+                "unknown": 0
+              },
+              "candidate_any_success": false,
+              "candidate_all_success": false,
+              "candidate_execution_status_counts": {
+                "completed": 1,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "observed_change": "unchanged"
+            }
+          ],
+          "regression": [
+            {
+              "case_id": "train_004",
+              "split": "regression",
+              "case_role": "quality",
+              "base": 0.294118,
+              "base_range": 0.0,
+              "candidate": 0.117647,
+              "candidate_range": 0.0,
+              "gain": -0.176471,
+              "base_known_repeats": 1,
+              "base_outcomes": {
+                "pass": 0,
+                "fail": 1,
+                "unknown": 0
+              },
+              "base_any_success": false,
+              "base_all_success": false,
+              "base_execution_status_counts": {
+                "completed": 1,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "candidate_known_repeats": 1,
+              "candidate_outcomes": {
+                "pass": 0,
+                "fail": 1,
+                "unknown": 0
+              },
+              "candidate_any_success": false,
+              "candidate_all_success": false,
+              "candidate_execution_status_counts": {
+                "completed": 1,
+                "cancelled": 0,
+                "timeout": 0,
+                "budget_exhausted": 0,
+                "adapter_error": 0,
+                "unknown": 0
+              },
+              "observed_change": "regressed"
+            }
+          ],
+          "transfer": []
+        }
+      }
+    ],
+    "comparison_summary": {
+      "planned_requests": 4,
+      "by_mode": [
+        {
+          "purpose": "validation",
+          "update_mode": "none",
+          "scoring_policy": "available_artifact",
+          "group_unit": "case_and_arm",
+          "group_count": 4,
+          "planned_requests": 4,
+          "outcomes": {
+            "pass": 0,
+            "fail": 4,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 4,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 0.0,
+          "coverage": 1.0,
+          "identification_bounds": [
+            0.0,
+            0.0
+          ],
+          "any_success": false,
+          "all_success": false,
+          "any_success_groups": {
+            "true": 0,
+            "false": 4,
+            "unknown": 0
+          },
+          "all_success_groups": {
+            "true": 0,
+            "false": 4,
+            "unknown": 0
+          }
+        }
+      ],
+      "outcomes": {
+        "pass": 0,
+        "fail": 4,
+        "unknown": 0
+      },
+      "execution_status_counts": {
+        "completed": 4,
+        "cancelled": 0,
+        "timeout": 0,
+        "budget_exhausted": 0,
+        "adapter_error": 0,
+        "unknown": 0
+      },
+      "observed_success_rate": 0.0,
+      "coverage": 1.0,
+      "identification_bounds": [
+        0.0,
+        0.0
+      ],
+      "any_success": false,
+      "all_success": false
+    },
+    "pooled_rate_note": "Overall success rate mixes base and candidate requests; it is not an improvement estimate.",
+    "sampling_slots": 1,
+    "sampling": {
+      "groups": [
+        {
+          "group_id": "group_1af778d84c4e44ba9c8e3ad4585dbbe8",
+          "purpose": "learning",
+          "update_mode": "task_barrier",
+          "scoring_policy": "available_artifact",
+          "snapshot_digest": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa",
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "planned_slots": 1,
+          "recorded_runs": 1,
+          "missing_run_ids": [],
+          "recorded_receipts": 1,
+          "receipt_refs": [
+            "group_1af778d84c4e44ba9c8e3ad4585dbbe8:receipt"
+          ],
+          "results": [
+            {
+              "run_id": "run_af2c81d1463e48f3a931a8ebc78239e6",
+              "outcome": "fail",
+              "score": 0.29411764705882354,
+              "assessment_ref": "assessment_5affa46931e14330822bc58ad08617cf",
+              "feedback_plan_ref": "feedback_plan_9a85e09850c142c8a58145bcc7920d99",
+              "assessment_source": "referenced",
+              "criterion_ids": [
+                "task_outcome"
+              ],
+              "missing_criterion_ids": [],
+              "criterion_coverage": 1.0,
+              "score_bounds": [
+                0.29411764705882354,
+                0.29411764705882354
+              ],
+              "feedback_sources": [
+                "external"
+              ],
+              "feedback_refs": [
+                "feedback_plan_9a85e09850c142c8a58145bcc7920d99:feedback:task_outcome"
+              ],
+              "execution_status": "completed"
+            }
+          ],
+          "outcomes": {
+            "pass": 0,
+            "fail": 1,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 1,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 0.0,
+          "coverage": 1.0,
+          "identification_bounds": [
+            0.0,
+            0.0
+          ],
+          "any_success": false,
+          "all_success": false
+        }
+      ],
+      "by_mode": [
+        {
+          "purpose": "learning",
+          "update_mode": "task_barrier",
+          "scoring_policy": "available_artifact",
+          "group_unit": "same_task_run_group",
+          "group_count": 1,
+          "planned_requests": 1,
+          "outcomes": {
+            "pass": 0,
+            "fail": 1,
+            "unknown": 0
+          },
+          "execution_status_counts": {
+            "completed": 1,
+            "cancelled": 0,
+            "timeout": 0,
+            "budget_exhausted": 0,
+            "adapter_error": 0,
+            "unknown": 0
+          },
+          "observed_success_rate": 0.0,
+          "coverage": 1.0,
+          "identification_bounds": [
+            0.0,
+            0.0
+          ],
+          "any_success": false,
+          "all_success": false,
+          "any_success_groups": {
+            "true": 0,
+            "false": 1,
+            "unknown": 0
+          },
+          "all_success_groups": {
+            "true": 0,
+            "false": 1,
+            "unknown": 0
+          }
+        }
+      ]
+    },
+    "maintenance": {
+      "by_stage": {
+        "evaluate": {
+          "measurements": 20,
+          "local_seconds": 0.15497380400483962,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 20,
+          "errors": 0
+        },
+        "index": {
+          "measurements": 3,
+          "local_seconds": 0.11911142598546576,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 3,
+          "errors": 0
+        },
+        "execute": {
+          "measurements": 12,
+          "local_seconds": 0.08991032501216978,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 12,
+          "errors": 0
+        },
+        "prepare": {
+          "measurements": 1,
+          "local_seconds": 0.01767036299861502,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 1,
+          "errors": 0
+        },
+        "extract": {
+          "measurements": 2,
+          "local_seconds": 0.023542288996395655,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 2,
+          "errors": 0
+        },
+        "select": {
+          "measurements": 6,
+          "local_seconds": 0.05819322199386079,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 6,
+          "errors": 0
+        },
+        "recover": {
+          "measurements": 11,
+          "local_seconds": 0.016986143033136614,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 11,
+          "errors": 0
+        },
+        "propose": {
+          "measurements": 1,
+          "local_seconds": 0.014769040993996896,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 1,
+          "errors": 0
+        },
+        "validate_overhead": {
+          "measurements": 3,
+          "local_seconds": 0.015978295996319503,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 3,
+          "errors": 0
+        },
+        "diagnose": {
+          "measurements": 1,
+          "local_seconds": 0.021752491986262612,
+          "missing_time_measurements": 0,
+          "unpriced_measurements": 1,
+          "errors": 0
+        }
+      },
+      "measurement_ids": [
+        "stage_04dc1a4d87a04f56aa3fd26a402e4a11",
+        "stage_09923eb85c9f4a408e89101da4b3ea5a",
+        "stage_10dd9bd8fea7446d88e64c73299ccdcb",
+        "stage_13cfab1f850a413c834f1209955a56b0",
+        "stage_172c3b8c807e431fa1c3dbf80805267b",
+        "stage_1d92d10db9944c659f227b9edba4e477",
+        "stage_21690f4eabcd4abdbd8b11d8201fd4c5",
+        "stage_24c3c625a3b646bfa91be9a192a74bc2",
+        "stage_264bbbce416343adbca5c4bbfa269b1f",
+        "stage_29abd46381614c0abaedf1482c62e156",
+        "stage_2d1e87c9a5744c88aa14d779dc136868",
+        "stage_316542bab1ec4dd7ac614ed203c83d66",
+        "stage_32df4898971048198b9eb37d349c064b",
+        "stage_338bf5a5117641da96e4c7ebb445a31c",
+        "stage_3b303da6e9a7437db41dfff6b378ce84",
+        "stage_3ffb911045254001b7ad141f47f1563d",
+        "stage_484a36126542445d9a033b2cbfb8a8b2",
+        "stage_485281b679b64a419bd309c1bff5b5c9",
+        "stage_48dc70f319274321b7ae73a8512a6188",
+        "stage_4d7fcf234f9d4f99b06ef866e84caaee",
+        "stage_513bf1581e6449929cb7ed7eb599db2c",
+        "stage_540f73fff16b45f481b7b6e2a3691493",
+        "stage_55ec53ef08a745c487daff200d276784",
+        "stage_5677a84b158b4cd6a1ecc123b316fabb",
+        "stage_5de4a103054b43aab14784e660965327",
+        "stage_5e1a451a8d154d468d78b145f120e23c",
+        "stage_62e3ceff98dd4e358101092b54ca8f37",
+        "stage_699b501ecc3541f3b6cccd482f046a69",
+        "stage_6dac0220d5d145b685876caa944bd7d7",
+        "stage_6e571f9f0ead4764bf4ec049d3af7584",
+        "stage_757390ad34114ffc9b3ff26363d9c4d9",
+        "stage_7680e4088637446ab0228f4837a24ec9",
+        "stage_76f940fa2073406c95ec5e7743908714",
+        "stage_77d9306f468e4b2ebc10ce28766f6743",
+        "stage_7a383ad7826846ee8677a000cbcc21b4",
+        "stage_813a272962ad4e3aa19bb9b019028e30",
+        "stage_81f543d26b3a4515ba14a8753bf9f8ae",
+        "stage_8768c2b284a3425a8057b09035e6292f",
+        "stage_8edbf7cfd59d49cdb0fd2c4adaf11e25",
+        "stage_8f19149b7fea43018eda1fbe2afacd3e",
+        "stage_93b5fb7bc3224c61928b79b053f86dce",
+        "stage_93de90ad684b4108badc60a16d3da992",
+        "stage_9c84c7b4d3ec44619201ce0c9438b30b",
+        "stage_9d9a8811ff6a4e789980aec8ef642aa4",
+        "stage_a1e6129bac0c44bcb6676b50a28b4fbb",
+        "stage_a500615f1caa457682fbcb0fabf73730",
+        "stage_a820a2b1c1854b51b094f66a5b0fe68b",
+        "stage_add96f43f8e54e0981c639e8ab12b1cc",
+        "stage_ae65c9fdfdd14404927eaad2487a1282",
+        "stage_b487f6144b0b4f1bb696738d47e7be31",
+        "stage_b72691672abc4ff2a76fe39a4ce354f3",
+        "stage_bd7d1051436d4d989f9b329bb46ab19e",
+        "stage_c1ba12cc0b5c445bb3cb1851cd31138b",
+        "stage_c35d226669c543dbaea17a47625c6cfd",
+        "stage_c3af70b980ae458697787c8a680b73fc",
+        "stage_c798c33aaa354127be41c96e9ae65c6a",
+        "stage_d81655dce11a4f0a9c62b9e3e1f6cea6",
+        "stage_e8825d6fd8b34d9daa8de005047d68bc",
+        "stage_f1eb786f0a8b491f9e79cda71ba030b5",
+        "stage_f6ae23c19e904470badb06d6108e7b92"
+      ],
+      "known_cost_subtotals": {},
+      "complete_cost_totals": null,
+      "note": "Local maintenance measurements exclude declared delegated calls; provider usage is reported separately. Missing prices are unknown."
+    },
+    "report_measurement_ref": "stage_5c55e078c9c449fbb0df49a5afb73584",
+    "measurement_scope": "Cost totals cover listed completed records; this report's own timing is appended on return and addressed by report_measurement_ref.",
+    "batch_wall_time": {
+      "sampling": [
+        {
+          "batch_id": "sampling_batch_3f1c501bd41c404ab8ee9dacd83f908d",
+          "segment_ids": [
+            "sampling_segment_5de63ab75f654f51a0348ca04cbdc120"
+          ],
+          "known_active_wall_seconds": 84.19232212299539,
+          "missing_segments": 0,
+          "complete_active_wall_seconds": 84.19232212299539,
+          "statuses": {
+            "completed": 1
+          }
+        }
+      ],
+      "comparison": [
+        {
+          "comparison_id": "comparison_e48166a5510546eca6fe57bc5f1e0df3",
+          "segment_ids": [
+            "comparison_segment_704c0245f37c472a9c5faa7e1cbffc9e"
+          ],
+          "known_active_wall_seconds": 407.6202028300031,
+          "missing_segments": 0,
+          "complete_active_wall_seconds": 407.6202028300031,
+          "statuses": {
+            "completed": 1
+          }
+        }
+      ],
+      "sampling_receipts": [
+        {
+          "batch_id": "sampling_batch_3f1c501bd41c404ab8ee9dacd83f908d",
+          "end_to_end_seconds": 84.196582,
+          "finished_at": "2026-09-18T23:37:46.399795Z",
+          "first_started_at": "2026-09-18T23:36:22.203213Z",
+          "group_ids": [
+            "group_1af778d84c4e44ba9c8e3ad4585dbbe8"
+          ],
+          "known_segment_seconds": 84.19232212299539,
+          "missing_segment_count": 0,
+          "project_id": "gdpevo-group007",
+          "receipt_id": "sampling_batch_3f1c501bd41c404ab8ee9dacd83f908d:receipt",
+          "receipt_refs": [
+            "group_1af778d84c4e44ba9c8e3ad4585dbbe8:receipt"
+          ],
+          "segment_ids": [
+            "sampling_segment_5de63ab75f654f51a0348ca04cbdc120"
+          ]
+        }
+      ]
+    },
+    "library_history": [
+      {
+        "generation": 0,
+        "snapshot_digest": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa",
+        "kind": "baseline",
+        "release_ref": null,
+        "skill_count": 0,
+        "rule_count": 0,
+        "asset_bytes": 0,
+        "added_skill_ids": [],
+        "removed_skill_ids": []
+      }
+    ],
+    "memory_progress": {
+      "maintenance": {
+        "review_counts": {},
+        "origin": "model_proxy",
+        "applied_revocations": 0,
+        "active_duplicate_groups": [],
+        "unresolved_conflict_groups": []
+      },
+      "goal_binding_statuses": {},
+      "derived_goal_bindings": 0,
+      "trace_count": 0,
+      "archived_trace_bytes": 0,
+      "indexed_events": 0,
+      "incomplete_traces": [],
+      "signature_retrieval_hits": 0,
+      "range_reads": 0,
+      "decoded_body_bytes_read": 0,
+      "necessity_verdicts": {
+        "proceed": 1
+      },
+      "judgment_origin": "Model judgments are not semantic accuracy measurements; unlabeled accuracy remains unknown."
+    },
+    "consumption_layers": {
+      "provided_manifest_counts": {
+        "skill_f289f56b7130f0a234d5b065@b6581252325b7f7c50322787de22bae89229d8fa91d46718225a38eae04d084e": 2
+      },
+      "observed_events": [],
+      "observed_level_counts": {},
+      "effect_records": [],
+      "note": "Provided, reported read, reported behavior and measured conditional effects are distinct; absent level is unclassified, not inferred use."
+    },
+    "unique_case_identity_count": 2,
+    "known_task_ids": [
+      "train_001"
+    ],
+    "episodes_with_unknown_task_id": 0,
+    "distinct_known_task_count": 1,
+    "episode_count": 1,
+    "candidate_counts": {
+      "unique_snapshots": 1,
+      "proposal_records": 1,
+      "compared_snapshots": 1
+    },
+    "proposal_attempts": {
+      "planned_slots": 1,
+      "slot_status_counts": {
+        "candidate": 1
+      },
+      "finished_slots": 1,
+      "note": "Proposal slots are not unique snapshots or model repair calls; usage records count physical calls."
+    },
+    "proposal_snapshots": [
+      {
+        "proposal_id": "proposal_2579f1a8197242d58613759723d9b4fc",
+        "candidate_digest": "7aa2f28222eceda5cd5ddb35fc2cfdf38f2571a16e3c8b3282ad740c10c72aae"
+      }
+    ],
+    "validation_attempt_counts": {
+      "accepted": 0,
+      "rejected": 1,
+      "unknown": 0
+    },
+    "snapshot_validation_statuses": {
+      "7aa2f28222eceda5cd5ddb35fc2cfdf38f2571a16e3c8b3282ad740c10c72aae": [
+        "rejected"
+      ]
+    },
+    "usage": {
+      "unique_calls": 13,
+      "by_stage": {
+        "execute": 5,
+        "evaluate": 5,
+        "extract": 1,
+        "propose": 1,
+        "diagnose": 1
+      },
+      "known_cost_subtotals": {},
+      "missing_cost_calls": 13,
+      "complete_cost_totals": null,
+      "sum_run_time": 578.505959757982,
+      "known_run_time_subtotal": 578.505959757982,
+      "missing_time_calls": 0,
+      "tokens": {
+        "known_subtotals": {
+          "input_tokens": 173464,
+          "output_tokens": 28338,
+          "total_tokens": 201802
+        },
+        "known_calls": {
+          "input_tokens": 8,
+          "output_tokens": 8,
+          "total_tokens": 8
+        },
+        "missing_calls": {
+          "input_tokens": 5,
+          "output_tokens": 5,
+          "total_tokens": 5
+        },
+        "complete_totals": {
+          "input_tokens": null,
+          "output_tokens": null,
+          "total_tokens": null
+        }
+      },
+      "usage_ids": [
+        "attempt_0fff432fb1c6e572962443767712ef6fddbf976ef13e835c813a51f4e3f5f46a:usage:0",
+        "attempt_237eb1589c1a30946d82817e80e55d884f5938ffbbbacacd5015c7bfde7bc555:usage:0",
+        "attempt_2eb6a368888f3a603da6dcc01fdb0aab16132b6ddd0898acf53d56403d60682b:usage:0",
+        "attempt_359ee9e25ed29d333284d0d3f1908e4ce3ad1989f75d0830e69898821d44408b:usage:0",
+        "attempt_5fd5592b56d414ccba741f509686a09d842a3fe2e2e02c46ec942b3fb19de7c2:usage:0",
+        "attempt_82b9e108424d828384aeb054fbd3dc2f1b5bc80b1bb21fa40ecd8ef083ce1a7b:usage:0",
+        "attempt_8e5ed13d789f1bdf4a56dc9a25e70f460d49012bd7ce8e0167f7e70e6b855549:usage:0",
+        "attempt_9cefe8d42973800a718eb40c732126a3e79509c966fac51175da32464f9d1a37:usage:0",
+        "attempt_a5bea92676d97dcd86bdf8b542c338309fc2961bfaa2b1effeea9ebea75a353c:usage:0",
+        "attempt_ff00df13b1b47c58558036a1c9131344d4049d1da13e2e020335f3ae9e20fc57:usage:0",
+        "modelcall_3282182a666549d4987fcdaa5788575e",
+        "modelcall_4bd4308134a5462eac3d08b42d02a12b",
+        "modelcall_972422838acd498c96463f1fd22ca083"
+      ],
+      "callback_attempts": 10,
+      "unreturned_attempt_ids": [],
+      "unfinished_learning_cycle_ids": [],
+      "unaccounted_evaluation_requests": 0,
+      "unaccounted_sampling_slots": 0,
+      "incomplete_sampling_slots": 0
+    },
+    "committed_release_ids": []
+  },
+  "ledger": {
+    "calls": 45,
+    "input_chars": 1339730,
+    "records": [
+      {
+        "call_ref": "call_0001",
+        "stage": "extract_v1_capacity_probe",
+        "subject": "exact-replay-of-calls/call_0006",
+        "input_chars": 61087,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1055,
+          "prompt_tokens": 20090,
+          "total_tokens": 21145,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 164,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 19200,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 20.938862379989587
+      },
+      {
+        "call_ref": "call_0002",
+        "stage": "extract_v1",
+        "subject": "continued:teacher",
+        "input_chars": 61087,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1230,
+          "prompt_tokens": 20092,
+          "total_tokens": 21322,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 98,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 24.65090425100061
+      },
+      {
+        "call_ref": "call_0003",
+        "stage": "diagnose_v1",
+        "subject": "continued:teacher",
+        "input_chars": 62390,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1189,
+          "prompt_tokens": 19621,
+          "total_tokens": 20810,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 23.734728018011083
+      },
+      {
+        "call_ref": "call_0004",
+        "stage": "propose_v1",
+        "subject": "continued:teacher",
+        "input_chars": 19938,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1228,
+          "prompt_tokens": 5386,
+          "total_tokens": 6614,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 51,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 23.524117123990436
+      },
+      {
+        "call_ref": "call_0005",
+        "stage": "execute",
+        "subject": "request_4a56fe8fba5942ec8f2b13bfbd4c5684",
+        "input_chars": 4592,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 96,
+          "prompt_tokens": 1186,
+          "total_tokens": 1282,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 11,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 5.14859349001199
+      },
+      {
+        "call_ref": "call_0006",
+        "stage": "execute",
+        "subject": "request_4a56fe8fba5942ec8f2b13bfbd4c5684",
+        "input_chars": 13466,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 199,
+          "prompt_tokens": 3097,
+          "total_tokens": 3296,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 17,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 5.740985216005356
+      },
+      {
+        "call_ref": "call_0007",
+        "stage": "execute",
+        "subject": "request_4a56fe8fba5942ec8f2b13bfbd4c5684",
+        "input_chars": 18984,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 607,
+          "prompt_tokens": 4395,
+          "total_tokens": 5002,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 45,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 2560,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 12.39888177200919
+      },
+      {
+        "call_ref": "call_0008",
+        "stage": "execute",
+        "subject": "request_4a56fe8fba5942ec8f2b13bfbd4c5684",
+        "input_chars": 30935,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 905,
+          "prompt_tokens": 6753,
+          "total_tokens": 7658,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 238,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 3584,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 17.939571169001283
+      },
+      {
+        "call_ref": "call_0009",
+        "stage": "execute",
+        "subject": "request_4a56fe8fba5942ec8f2b13bfbd4c5684",
+        "input_chars": 40307,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1034,
+          "prompt_tokens": 8679,
+          "total_tokens": 9713,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 656,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 6656,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 20.405831208991003
+      },
+      {
+        "call_ref": "call_0010",
+        "stage": "execute",
+        "subject": "request_4a56fe8fba5942ec8f2b13bfbd4c5684",
+        "input_chars": 45236,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1021,
+          "prompt_tokens": 9715,
+          "total_tokens": 10736,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 908,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 7680,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 20.781100934007554
+      },
+      {
+        "call_ref": "call_0011",
+        "stage": "execute",
+        "subject": "request_06fe310d5c374761926e5b461d8e355b",
+        "input_chars": 8653,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 98,
+          "prompt_tokens": 2038,
+          "total_tokens": 2136,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 13,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 3.260710943999584
+      },
+      {
+        "call_ref": "call_0012",
+        "stage": "execute",
+        "subject": "request_06fe310d5c374761926e5b461d8e355b",
+        "input_chars": 17527,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 212,
+          "prompt_tokens": 3949,
+          "total_tokens": 4161,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 14,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 1536,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 5.33736565100844
+      },
+      {
+        "call_ref": "call_0013",
+        "stage": "execute",
+        "subject": "request_06fe310d5c374761926e5b461d8e355b",
+        "input_chars": 23621,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 695,
+          "prompt_tokens": 5353,
+          "total_tokens": 6048,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 133,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 14.392881822990603
+      },
+      {
+        "call_ref": "call_0014",
+        "stage": "execute",
+        "subject": "request_06fe310d5c374761926e5b461d8e355b",
+        "input_chars": 35572,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1242,
+          "prompt_tokens": 7711,
+          "total_tokens": 8953,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 219,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 4608,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 24.67652230898966
+      },
+      {
+        "call_ref": "call_0015",
+        "stage": "execute",
+        "subject": "request_06fe310d5c374761926e5b461d8e355b",
+        "input_chars": 49262,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 2398,
+          "prompt_tokens": 10545,
+          "total_tokens": 12943,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1587,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 6656,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 44.955588114011334
+      },
+      {
+        "call_ref": "call_0016",
+        "stage": "execute",
+        "subject": "request_15e9065b573644a39c9211c391d78a6c",
+        "input_chars": 4625,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 125,
+          "prompt_tokens": 1183,
+          "total_tokens": 1308,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 10,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 3.957335711005726
+      },
+      {
+        "call_ref": "call_0017",
+        "stage": "execute",
+        "subject": "request_15e9065b573644a39c9211c391d78a6c",
+        "input_chars": 18060,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 904,
+          "prompt_tokens": 4246,
+          "total_tokens": 5150,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 202,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 18.10382165099145
+      },
+      {
+        "call_ref": "call_0018",
+        "stage": "execute",
+        "subject": "request_15e9065b573644a39c9211c391d78a6c",
+        "input_chars": 33047,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 677,
+          "prompt_tokens": 7186,
+          "total_tokens": 7863,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 105,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 3584,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 13.886459685993032
+      },
+      {
+        "call_ref": "call_0019",
+        "stage": "execute",
+        "subject": "request_15e9065b573644a39c9211c391d78a6c",
+        "input_chars": 48082,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 3800,
+          "prompt_tokens": 10795,
+          "total_tokens": 14595,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1262,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 6656,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 71.12180232700484
+      },
+      {
+        "call_ref": "call_0020",
+        "stage": "execute",
+        "subject": "request_13f2b0d87ac940da953ea54e6d1ef765",
+        "input_chars": 8686,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 101,
+          "prompt_tokens": 2035,
+          "total_tokens": 2136,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 9,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 5.011860315004014
+      },
+      {
+        "call_ref": "call_0021",
+        "stage": "execute",
+        "subject": "request_13f2b0d87ac940da953ea54e6d1ef765",
+        "input_chars": 16355,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 36,
+          "prompt_tokens": 3570,
+          "total_tokens": 3606,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 7,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 1536,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 1.926871117000701
+      },
+      {
+        "call_ref": "call_0022",
+        "stage": "execute",
+        "subject": "request_13f2b0d87ac940da953ea54e6d1ef765",
+        "input_chars": 22172,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 913,
+          "prompt_tokens": 5104,
+          "total_tokens": 6017,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 211,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 2560,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 25.238708270000643
+      },
+      {
+        "call_ref": "call_0023",
+        "stage": "execute",
+        "subject": "request_13f2b0d87ac940da953ea54e6d1ef765",
+        "input_chars": 37159,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 652,
+          "prompt_tokens": 8044,
+          "total_tokens": 8696,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 81,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 4608,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 13.118208668005536
+      },
+      {
+        "call_ref": "call_0024",
+        "stage": "execute",
+        "subject": "request_13f2b0d87ac940da953ea54e6d1ef765",
+        "input_chars": 52172,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 4396,
+          "prompt_tokens": 11653,
+          "total_tokens": 16049,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1863,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 7680,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 80.55669687299815
+      },
+      {
+        "call_ref": "call_0025",
+        "stage": "extract_v1",
+        "subject": "revised:teacher",
+        "input_chars": 62161,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1108,
+          "prompt_tokens": 20307,
+          "total_tokens": 21415,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 90,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 21.884494094992988
+      },
+      {
+        "call_ref": "call_0026",
+        "stage": "diagnose_v1",
+        "subject": "revised:teacher",
+        "input_chars": 60423,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1222,
+          "prompt_tokens": 19682,
+          "total_tokens": 20904,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 36.17096504199435
+      },
+      {
+        "call_ref": "call_0027",
+        "stage": "propose_v1",
+        "subject": "revised:teacher",
+        "input_chars": 20901,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1499,
+          "prompt_tokens": 5640,
+          "total_tokens": 7139,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 61,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 29.157470271995408
+      },
+      {
+        "call_ref": "call_0028",
+        "stage": "execute",
+        "subject": "request_27d0d59897614bedb34b20dddea953e2",
+        "input_chars": 4923,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 77,
+          "prompt_tokens": 1253,
+          "total_tokens": 1330,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 9,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 3.3191527380113257
+      },
+      {
+        "call_ref": "call_0029",
+        "stage": "execute",
+        "subject": "request_27d0d59897614bedb34b20dddea953e2",
+        "input_chars": 12842,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 194,
+          "prompt_tokens": 2980,
+          "total_tokens": 3174,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 12,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 4.969432701007463
+      },
+      {
+        "call_ref": "call_0030",
+        "stage": "execute",
+        "subject": "request_27d0d59897614bedb34b20dddea953e2",
+        "input_chars": 18361,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1398,
+          "prompt_tokens": 4278,
+          "total_tokens": 5676,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 190,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 2560,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 26.89709748000314
+      },
+      {
+        "call_ref": "call_0031",
+        "stage": "execute",
+        "subject": "request_27d0d59897614bedb34b20dddea953e2",
+        "input_chars": 39632,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 820,
+          "prompt_tokens": 8541,
+          "total_tokens": 9361,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 442,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 3584,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 16.432901054009562
+      },
+      {
+        "call_ref": "call_0032",
+        "stage": "execute",
+        "subject": "request_27d0d59897614bedb34b20dddea953e2",
+        "input_chars": 44561,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 2265,
+          "prompt_tokens": 9577,
+          "total_tokens": 11842,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1460,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 7680,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 42.471991340004024
+      },
+      {
+        "call_ref": "call_0033",
+        "stage": "execute",
+        "subject": "request_2e228a08a1ed4b3f9c896532bfd2c5f4",
+        "input_chars": 9733,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 66,
+          "prompt_tokens": 2218,
+          "total_tokens": 2284,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 2.682839421002427
+      },
+      {
+        "call_ref": "call_0034",
+        "stage": "execute",
+        "subject": "request_2e228a08a1ed4b3f9c896532bfd2c5f4",
+        "input_chars": 17652,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 206,
+          "prompt_tokens": 3945,
+          "total_tokens": 4151,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 24,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 1536,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 8.723815411009127
+      },
+      {
+        "call_ref": "call_0035",
+        "stage": "execute",
+        "subject": "request_2e228a08a1ed4b3f9c896532bfd2c5f4",
+        "input_chars": 23171,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 701,
+          "prompt_tokens": 5243,
+          "total_tokens": 5944,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 123,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 3584,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 16.01284723400022
+      },
+      {
+        "call_ref": "call_0036",
+        "stage": "execute",
+        "subject": "request_2e228a08a1ed4b3f9c896532bfd2c5f4",
+        "input_chars": 35697,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1193,
+          "prompt_tokens": 7707,
+          "total_tokens": 8900,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 202,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 4608,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 24.0725880569953
+      },
+      {
+        "call_ref": "call_0037",
+        "stage": "execute",
+        "subject": "request_2e228a08a1ed4b3f9c896532bfd2c5f4",
+        "input_chars": 48949,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1717,
+          "prompt_tokens": 10452,
+          "total_tokens": 12169,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 922,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 6656,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 32.801941085999715
+      },
+      {
+        "call_ref": "call_0038",
+        "stage": "execute",
+        "subject": "request_6dfb8c37194e437191520edabc8eb7c7",
+        "input_chars": 4956,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 109,
+          "prompt_tokens": 1250,
+          "total_tokens": 1359,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 9,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 4.434911728007137
+      },
+      {
+        "call_ref": "call_0039",
+        "stage": "execute",
+        "subject": "request_6dfb8c37194e437191520edabc8eb7c7",
+        "input_chars": 17404,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1494,
+          "prompt_tokens": 4132,
+          "total_tokens": 5626,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 263,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 28.94487640800071
+      },
+      {
+        "call_ref": "call_0040",
+        "stage": "execute",
+        "subject": "request_6dfb8c37194e437191520edabc8eb7c7",
+        "input_chars": 47353,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 4587,
+          "prompt_tokens": 10659,
+          "total_tokens": 15246,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 2050,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 3584,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 84.22869062700192
+      },
+      {
+        "call_ref": "call_0041",
+        "stage": "execute",
+        "subject": "request_0e7d1f612efd40378b65ed1d0e246ae2",
+        "input_chars": 9766,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 75,
+          "prompt_tokens": 2215,
+          "total_tokens": 2290,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 3.003988455006038
+      },
+      {
+        "call_ref": "call_0042",
+        "stage": "execute",
+        "subject": "request_0e7d1f612efd40378b65ed1d0e246ae2",
+        "input_chars": 16448,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 38,
+          "prompt_tokens": 3569,
+          "total_tokens": 3607,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 9,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 1536,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 2.583949790991028
+      },
+      {
+        "call_ref": "call_0043",
+        "stage": "execute",
+        "subject": "request_0e7d1f612efd40378b65ed1d0e246ae2",
+        "input_chars": 22265,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 875,
+          "prompt_tokens": 5103,
+          "total_tokens": 5978,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 173,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 2560,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 18.126344777992927
+      },
+      {
+        "call_ref": "call_0044",
+        "stage": "execute",
+        "subject": "request_0e7d1f612efd40378b65ed1d0e246ae2",
+        "input_chars": 37252,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 612,
+          "prompt_tokens": 8043,
+          "total_tokens": 8655,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 40,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 4608,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 13.173673204990337
+      },
+      {
+        "call_ref": "call_0045",
+        "stage": "execute",
+        "subject": "request_0e7d1f612efd40378b65ed1d0e246ae2",
+        "input_chars": 52265,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 4007,
+          "prompt_tokens": 11652,
+          "total_tokens": 15659,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 1476,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 7680,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 73.89176607500121
+      }
+    ],
+    "known_token_subtotals": {
+      "prompt_tokens": 330872,
+      "completion_tokens": 49076,
+      "total_tokens": 379948
+    },
+    "complete_token_totals": {
+      "prompt_tokens": 330872,
+      "completion_tokens": 49076,
+      "total_tokens": 379948
+    },
+    "unknown_usage_calls": 0,
+    "monetary_cost": null,
+    "cost_note": "No price was supplied for this pilot; no price is inferred from tokens."
+  }
+}

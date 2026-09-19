@@ -1,0 +1,104 @@
+[
+  {
+    "id": "physical_call_budget",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_sdk.LedgerTests.test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen -v",
+      "--target",
+      "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/sdk.py",
+      "--mutate",
+      "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/root-mutations.py mutate physical_call_budget"
+    ],
+    "before_sha256": "edd55ea9b9af866e95b4f727d8cdc28df423d5978545031fb0b747e7d8b74777",
+    "after_sha256": "edd55ea9b9af866e95b4f727d8cdc28df423d5978545031fb0b747e7d8b74777",
+    "exit_code": 0,
+    "restored": true
+  },
+  {
+    "id": "complete_input_budget",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_sdk.LedgerTests.test_full_real_messages_and_tools_count_before_dispatch -v",
+      "--target",
+      "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/sdk.py",
+      "--mutate",
+      "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/root-mutations.py mutate complete_input_budget"
+    ],
+    "before_sha256": "edd55ea9b9af866e95b4f727d8cdc28df423d5978545031fb0b747e7d8b74777",
+    "after_sha256": "edd55ea9b9af866e95b4f727d8cdc28df423d5978545031fb0b747e7d8b74777",
+    "exit_code": 0,
+    "restored": true
+  },
+  {
+    "id": "unknown_usage",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_sdk.LedgerTests.test_interrupted_and_failed_transports_remain_unknown_attempts -v",
+      "--target",
+      "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/sdk.py",
+      "--mutate",
+      "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/root-mutations.py mutate unknown_usage"
+    ],
+    "before_sha256": "edd55ea9b9af866e95b4f727d8cdc28df423d5978545031fb0b747e7d8b74777",
+    "after_sha256": "edd55ea9b9af866e95b4f727d8cdc28df423d5978545031fb0b747e7d8b74777",
+    "exit_code": 0,
+    "restored": true
+  },
+  {
+    "id": "hidden_reasoning",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_sdk.LedgerTests.test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen -v",
+      "--target",
+      "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/sdk.py",
+      "--mutate",
+      "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/root-mutations.py mutate hidden_reasoning"
+    ],
+    "before_sha256": "edd55ea9b9af866e95b4f727d8cdc28df423d5978545031fb0b747e7d8b74777",
+    "after_sha256": "edd55ea9b9af866e95b4f727d8cdc28df423d5978545031fb0b747e7d8b74777",
+    "exit_code": 0,
+    "restored": true
+  },
+  {
+    "id": "diagnosis_scope",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_prompt_scope.PromptScopeTests.test_diagnosis_gets_scope_before_it_commits_verification_obligations -v",
+      "--target",
+      "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/root-mutations.py mutate diagnosis_scope"
+    ],
+    "before_sha256": "cc07120bef95edecd357c52f06a12035dfda0c56bdb28a2e531e730cf7429854",
+    "after_sha256": "cc07120bef95edecd357c52f06a12035dfda0c56bdb28a2e531e730cf7429854",
+    "exit_code": 0,
+    "restored": true
+  },
+  {
+    "id": "obligation_disclosure",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_gdpevo_prompt_scope.PromptScopeTests.test_diagnosis_gets_scope_before_it_commits_verification_obligations -v",
+      "--target",
+      "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/prompts.json",
+      "--mutate",
+      "python3 /home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/.trellis/tasks/09-19-benchmark-context-pilot/research/root-mutations.py mutate obligation_disclosure"
+    ],
+    "before_sha256": "5f011d90775905c3abf11c8e40781fe20eb904290bf20c7896af3382e10458b8",
+    "after_sha256": "5f011d90775905c3abf11c8e40781fe20eb904290bf20c7896af3382e10458b8",
+    "exit_code": 0,
+    "restored": true
+  }
+]

@@ -1,0 +1,96 @@
+{
+  "call_ref": "call_0016",
+  "status": "returned",
+  "response": {
+    "id": "resp_09785d2b5698ca60016aadce467f6887d0b0c5552df6a1957e",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 125,
+      "prompt_tokens": 1183,
+      "total_tokens": 1308,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 10,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_TNZq33j32UrCsAnJIUzSsLau",
+              "function": {
+                "arguments": "{\"path\":\"payloads/allocation_memo.md\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_iUfCG2yGaYAmwIHF0qxe29i6",
+              "function": {
+                "arguments": "{\"path\":\"payloads/answer_template.json\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_Em5qfWtf2fN8WzvjZTGA4Spb",
+              "function": {
+                "arguments": "{\"path\":\"prompt.txt\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_9ahk888iTM6JrY0mUvoBEoOn",
+              "function": {
+                "arguments": "{\"path\":\"/orders\",\"query\":{\"wave\":\"TRAIN_TRANSFER_B\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_NfyJjXRs5nt3NKfBzSR3IP8T",
+              "function": {
+                "arguments": "{\"path\":\"/warehouses\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            }
+          ],
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 125,
+    "prompt_tokens": 1183,
+    "total_tokens": 1308,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 10,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 3.957335711005726,
+  "finished_at": "2026-09-18T23:50:33.934939Z"
+}

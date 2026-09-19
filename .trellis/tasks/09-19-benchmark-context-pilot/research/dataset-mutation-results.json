@@ -1,0 +1,117 @@
+[
+  {
+    "name": "01-public-input-traversal",
+    "old": "        parsed=PurePosixPath(path)\n",
+    "replacement": "        if path.startswith('../') and (self._task_dir(task_id)/'input'/path).is_file():\n            return (self._task_dir(task_id)/'input'/path).read_text(encoding='utf-8')\n        parsed=PurePosixPath(path)\n",
+    "test": "test_read_input_only_allows_current_public_files",
+    "target": "examples/gdpevo_pilot/dataset.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests:. .venv/bin/python -m unittest test_gdpevo_dataset.GDPevoDatasetTests.test_read_input_only_allows_current_public_files -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests:. .venv/bin/python -m unittest test_gdpevo_dataset.GDPevoDatasetTests.test_read_input_only_allows_current_public_files -v >> .trellis/tasks/09-19-benchmark-context-pilot/research/01-public-input-traversal-tests.txt 2>&1",
+      "--target",
+      "examples/gdpevo_pilot/dataset.py",
+      "--mutate",
+      "python3 /tmp/gdpevo-dataset-mutate.py 01-public-input-traversal"
+    ],
+    "exit_code": 0,
+    "before_sha256": "fdf5f12d09fd4f96f1bf787e4ebd812c4433cabbb80e56d4c752828d1ddc03b3",
+    "after_sha256": "fdf5f12d09fd4f96f1bf787e4ebd812c4433cabbb80e56d4c752828d1ddc03b3",
+    "stdout": "✅ 执照发放:examples/gdpevo_pilot/dataset.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "name": "02-unknown-route-denial",
+    "old": "else:raise DomainError('benchmark_endpoint','This endpoint is not an implemented official business GET.')",
+    "replacement": "else:return {'unexpected_endpoint_accepted': route}",
+    "test": "test_judge_files_and_documented_but_unimplemented_routes_are_denied",
+    "target": "examples/gdpevo_pilot/dataset.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests:. .venv/bin/python -m unittest test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests:. .venv/bin/python -m unittest test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied -v >> .trellis/tasks/09-19-benchmark-context-pilot/research/02-unknown-route-denial-tests.txt 2>&1",
+      "--target",
+      "examples/gdpevo_pilot/dataset.py",
+      "--mutate",
+      "python3 /tmp/gdpevo-dataset-mutate.py 02-unknown-route-denial"
+    ],
+    "exit_code": 0,
+    "before_sha256": "fdf5f12d09fd4f96f1bf787e4ebd812c4433cabbb80e56d4c752828d1ddc03b3",
+    "after_sha256": "fdf5f12d09fd4f96f1bf787e4ebd812c4433cabbb80e56d4c752828d1ddc03b3",
+    "stdout": "✅ 执照发放:examples/gdpevo_pilot/dataset.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "name": "03-grade-candidate-not-gold",
+    "old": "['bash',str(script),str(candidate)]",
+    "replacement": "['bash',str(script),str(gold)]",
+    "test": "test_official_positive_and_missing_field_negative_keep_exact_score",
+    "target": "examples/gdpevo_pilot/dataset.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests:. .venv/bin/python -m unittest test_gdpevo_dataset.GDPevoDatasetTests.test_official_positive_and_missing_field_negative_keep_exact_score -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests:. .venv/bin/python -m unittest test_gdpevo_dataset.GDPevoDatasetTests.test_official_positive_and_missing_field_negative_keep_exact_score -v >> .trellis/tasks/09-19-benchmark-context-pilot/research/03-grade-candidate-not-gold-tests.txt 2>&1",
+      "--target",
+      "examples/gdpevo_pilot/dataset.py",
+      "--mutate",
+      "python3 /tmp/gdpevo-dataset-mutate.py 03-grade-candidate-not-gold"
+    ],
+    "exit_code": 0,
+    "before_sha256": "fdf5f12d09fd4f96f1bf787e4ebd812c4433cabbb80e56d4c752828d1ddc03b3",
+    "after_sha256": "fdf5f12d09fd4f96f1bf787e4ebd812c4433cabbb80e56d4c752828d1ddc03b3",
+    "stdout": "✅ 执照发放:examples/gdpevo_pilot/dataset.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "name": "04-score-not-exit-code",
+    "old": "passed=math.isclose(round(score,6),1.0,abs_tol=1e-6)",
+    "replacement": "passed=completed.returncode==0",
+    "test": "test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero",
+    "target": "examples/gdpevo_pilot/dataset.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests:. .venv/bin/python -m unittest test_gdpevo_dataset.GDPevoDatasetTests.test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests:. .venv/bin/python -m unittest test_gdpevo_dataset.GDPevoDatasetTests.test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero -v >> .trellis/tasks/09-19-benchmark-context-pilot/research/04-score-not-exit-code-tests.txt 2>&1",
+      "--target",
+      "examples/gdpevo_pilot/dataset.py",
+      "--mutate",
+      "python3 /tmp/gdpevo-dataset-mutate.py 04-score-not-exit-code"
+    ],
+    "exit_code": 0,
+    "before_sha256": "fdf5f12d09fd4f96f1bf787e4ebd812c4433cabbb80e56d4c752828d1ddc03b3",
+    "after_sha256": "fdf5f12d09fd4f96f1bf787e4ebd812c4433cabbb80e56d4c752828d1ddc03b3",
+    "stdout": "✅ 执照发放:examples/gdpevo_pilot/dataset.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "name": "05-case-identity",
+    "old": "_require(request[field]==full_case.get('id'),'benchmark_binding','Scoring request belongs to a different case.')",
+    "replacement": "_require(True,'benchmark_binding','Scoring request belongs to a different case.')",
+    "test": "test_request_case_identity_is_bound_before_scoring",
+    "target": "examples/gdpevo_pilot/dataset.py",
+    "tests": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests:. .venv/bin/python -m unittest test_gdpevo_dataset.GDPevoDatasetTests.test_request_case_identity_is_bound_before_scoring -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests:. .venv/bin/python -m unittest test_gdpevo_dataset.GDPevoDatasetTests.test_request_case_identity_is_bound_before_scoring -v >> .trellis/tasks/09-19-benchmark-context-pilot/research/05-case-identity-tests.txt 2>&1",
+      "--target",
+      "examples/gdpevo_pilot/dataset.py",
+      "--mutate",
+      "python3 /tmp/gdpevo-dataset-mutate.py 05-case-identity"
+    ],
+    "exit_code": 0,
+    "before_sha256": "fdf5f12d09fd4f96f1bf787e4ebd812c4433cabbb80e56d4c752828d1ddc03b3",
+    "after_sha256": "fdf5f12d09fd4f96f1bf787e4ebd812c4433cabbb80e56d4c752828d1ddc03b3",
+    "stdout": "✅ 执照发放:examples/gdpevo_pilot/dataset.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  }
+]

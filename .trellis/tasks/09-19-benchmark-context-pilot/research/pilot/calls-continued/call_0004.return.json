@@ -1,0 +1,55 @@
+{
+  "call_ref": "call_0004",
+  "status": "returned",
+  "response": {
+    "id": "resp_033d5f37cf8fb8ae016aadcd7f718c87d0ae44c631cac1cda0",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 1228,
+      "prompt_tokens": 5386,
+      "total_tokens": 6614,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 51,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "content": "{\"operations\":[{\"op\":\"ADD\",\"proposed_slug\":\"northwind-erp-derived-field-reconciliation\",\"content\":{\"title\":\"Reconcile dependent derived fields for Northwind ERP dispatch-control tasks\",\"scope\":{\"task_family\":\"northwind_erp\",\"applies_when\":[\"The current task requires a dispatch-control answer covering multiple orders and derived inventory, customer, decision/action, exception-list, shipping, or summary fields.\",\"The task supplies a current answer template, queue or desk memo, and live read-only ERP records.\"],\"exclusions\":[\"Do not apply task-specific inventory enums, decision mappings, transfer rules, or summary definitions from one task to another when the current template, memo, or source records differ.\",\"Do not infer unavailable source records or grading expectations.\",\"This guidance is limited to the observed GDPevo train_001 dispatch-control workflow; train_004 is used only to check that the procedure does not impose dispatch-control rules on allocation work.\"]},\"triggers\":[\"A Northwind ERP task requests multi-record classifications or rollups.\",\"Inventory-related fields feed downstream decisions or actions.\",\"The answer must conform to a supplied JSON template.\"],\"preconditions\":[\"Read the current task prompt, answer template, and applicable queue or desk memo.\",\"Use the task-provided ERP environment and live records needed by the current task.\",\"Identify the required output records and their required sort order from the current template and task instructions.\"],\"steps\":[\"Create a per-order working table from the memo’s required order set. Preserve each order identifier and all source fields needed for later classifications.\",\"For each order, retrieve and record the applicable live order, product, customer, inventory, warehouse, and shipping data required by the current task.\",\"Derive each SKU exception category from its applicable records before assigning the order’s inventory status. Keep the supporting per-SKU values in the working table.\",\"Derive customer classification from the current task’s source records and rules.\",\"Only after inventory and customer classifications are complete, derive the final decision and next action using the current task’s template, memo, and source-specific rules.\",\"Populate shipping quote and other independent fields from the applicable live records.\",\"Build the output records from the finalized working table, then sort them by the required order key.\",\"Recount every summary rollup from the finalized output records rather than from intermediate notes.\",\"Before submission, validate required fields, allowed current-template enums, required empty lists, sort order, currency rounding to two decimals, and agreement between SKU exceptions, inventory status, decision/action, and summary fields.\"],\"exceptions\":[\"When the current template or memo defines a task-specific classification or decision rule, follow that rule instead of any prior-task convention.\",\"If live data needed for a required derivation cannot be retrieved, do not fabricate a classification or rollup; follow the task’s stated handling requirements.\",\"Do not impose dispatch-control-specific enums or decision rules on allocation tasks.\"],\"checks\":[\"For case:train_001, produce template-conformant sorted records and validate that every exception SKU, inventory status, decision/action pair, and summary rollup agrees with the finalized record set and live task data.\",\"For case:train_004, use a per-line or per-order working representation and validate derived shortage, transfer, account-block, action, and summary fields without imposing dispatch-control-specific enums or decision rules.\"],\"depends_on\":[],\"declared_conflicts\":[],\"evidence_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:c1beb529272c01606977dcca:0:1800\",\"ev:db68fa286a2bd9c677a87234:143:1943\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]}}],\"asset_edits\":[],\"reason\":\"The current snapshot has no Skills, while the observed train_001 artifact matched the order set/count, customer exceptions, and shipping quotes but had unmatched inventory-related fields, decisions/actions, and rollups. This adds a narrowly scoped, reusable reconciliation procedure that preserves current-task rules and includes the required target and regression checks.\",\"evidence_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:c1beb529272c01606977dcca:0:1800\",\"ev:db68fa286a2bd9c677a87234:143:1943\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\"],\"expected_behavior\":\"For the observed GDPevo Northwind ERP dispatch-control workflow, gather task-required live records into a per-order working table; derive SKU exceptions before inventory status, derive decisions and actions after inventory and customer classifications, and recount rollups from finalized records. Validate current-template fields, ordering, enums, empty lists, and currency formatting before submission, without assuming universal rules across Northwind task variants.\",\"check_plan\":[{\"purpose\":\"target\",\"check_ref\":\"case:train_001\",\"behavior\":\"Produce template-conformant sorted dispatch-control records and validate agreement among exception SKU lists, inventory status, decision/action pairs, summary rollups, finalized records, and live task data.\",\"required_evidence\":\"The public train_001 task, its template and queue memo, the ERP environment, and its official evaluator are required; no private expected answer is claimed.\"},{\"purpose\":\"regression\",\"check_ref\":\"case:train_004\",\"behavior\":\"Use a per-line or per-order working representation for allocation and validate derived shortage, transfer, account-block, action, and summary fields without applying dispatch-control-specific enums or decision rules.\",\"required_evidence\":\"The public train_004 task, its template and memo, the ERP environment, and its task evaluator are required.\"}]}",
+          "tool_calls": null,
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 1228,
+    "prompt_tokens": 5386,
+    "total_tokens": 6614,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 51,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 23.524117123990436,
+  "finished_at": "2026-09-18T23:47:34.452086Z"
+}

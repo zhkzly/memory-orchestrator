@@ -1,0 +1,55 @@
+{
+  "call_ref": "call_0025",
+  "status": "returned",
+  "response": {
+    "id": "resp_00133abe2f5f4ea5016aadd69e037887d0b1f38d701cb25a8d",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 1108,
+      "prompt_tokens": 20307,
+      "total_tokens": 21415,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 90,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "content": "{\"status\":\"completed\",\"experiences\":[{\"kind\":\"pitfall\",\"title\":\"逐订单汇总任务中不能只校验输出结构和部分字段\",\"conditions\":[\"任务要求根据多个实时业务实体生成逐订单分类、决策、行动和汇总字段\",\"提交接口仅返回已接收状态，未提供字段级正确性确认\"],\"scope\":{\"task_family\":\"northwind_erp\",\"applies_when\":[\"需要按订单整合订单、产品、客户、库存、仓库和运价数据\",\"输出同时包含明细记录与汇总统计\"],\"exclusions\":[\"只要求原样转录单一数据源且没有派生分类或汇总的任务\"]},\"observed_facts\":[{\"claim\":\"任务要求为队列中的每张订单给出库存状态、客户例外、最终履约决策、下一行动、SKU 例外列表和运价，并要求记录按 order_id 排序、货币保留两位小数。\",\"evidence_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:0:1800\"]},{\"claim\":\"提交工具返回了 submitted=true，但外部评估结果为 fail，得分为 0.29411764705882354。\",\"evidence_refs\":[\"ev:7773843ca829827cb2c543e8:0:32\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]},{\"claim\":\"评估显示订单集合与数量、客户例外、运价三个评分点匹配；库存状态与短缺、inactive/low-stock SKU 集合、最终决策、下一行动和汇总评分点未匹配。\",\"evidence_refs\":[\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]}],\"guidance\":{\"steps\":[\"先从答案模板提取全部必填字段、允许枚举值、排序规则和汇总要求。\",\"为每个订单建立可审计的中间表：订单行需求、所属仓库的可用库存、产品 active 与 safety_stock 属性、客户风险/账户状态、以及运价查询结果。\",\"在中间表上独立计算 shortage_skus、inactive_skus、low_stock_skus 和 inventory_status；再依据任务定义把库存与客户例外映射为 final_decision 和 next_action。\",\"在输出前逐项复核每条记录的派生字段与 SKU 列表，并从已核对的记录重新计算 summary，而不是手工补写汇总。\",\"最后执行完整性检查：订单集合与排序、每个必填键、枚举合法性、空列表、数值两位小数，以及明细与汇总的一致性。\"],\"checks\":[\"不要把提交接口的 accepted/submitted 状态当作内容正确性的证据。\",\"对库存、SKU 例外、决策、行动和 summary 分别做字段组核验；这些字段组在本次评估中未匹配。\",\"确认库存计算使用订单实际 warehouse_id；单个库存查询本身不足以证明所有订单和 SKU 的分类正确。\"]},\"supporting_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:0:1800\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\",\"ev:7773843ca829827cb2c543e8:0:32\"],\"counterevidence_refs\":[],\"alternatives\":[\"若任务提供了明确的服务端批量校验或字段级判定接口，可在本地交叉核验之外使用该接口定位不一致字段。\"],\"unknowns\":[\"已提供反馈没有说明每一条具体错误记录或完整的业务判定规则，因此无法从该证据确定错误究竟来自库存算式、规则映射、数据覆盖范围还是汇总逻辑。\",\"证据包覆盖不完整，未能核验执行过程中是否读取了所有相关订单、产品、客户、库存、仓库和运价记录。\"],\"reuse_level\":\"task_family\",\"boundary_refs\":[\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]}],\"read_requests\":[],\"missing_evidence\":[],\"reason\":\"已提供的任务文本、模板片段、提交结果和字段级外部评分足以提炼一项受限于 Northwind ERP 多源派生输出任务的复用性避坑经验。\"}",
+          "tool_calls": null,
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 1108,
+    "prompt_tokens": 20307,
+    "total_tokens": 21415,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 90,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 21.884494094992988,
+  "finished_at": "2026-09-19T00:26:27.119378Z"
+}

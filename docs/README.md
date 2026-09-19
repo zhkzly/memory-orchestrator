@@ -8,6 +8,7 @@
 | --- | --- |
 | 使用 Python 核心 | [调用方式与本地闭环示例](../examples/memory_evolution/README.md) |
 | 核对完整交付 | [16项实现与证据](blueprint/implementation-evidence.md) |
+| 看真实小批量问题 | [GDPevo上下文诊断与剩余问题](experiments/gdpevo-context-pilot.md) |
 | 人读宏观设计 | [项目总纲 HTML](blueprint/index.html) |
 | 核对之前的关键思考 | [28 项问题与实现决定](blueprint/index.html#questions) |
 | 看并行、reward、提取和发布 | [执行与评价](blueprint/index.html#runtime) |

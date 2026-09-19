@@ -1,0 +1,6 @@
+{"file": "docs/blueprint/context.md", "reason": "Current full implementation and boundaries"}
+{"file": ".trellis/spec/backend/python-learning.md", "reason": "Model/context and storage invariants"}
+{"file": ".trellis/spec/backend/validation.md", "reason": "Actual evidence and scoring boundaries"}
+{"file": ".trellis/tasks/09-19-benchmark-context-pilot/prd.md", "reason": "User-requested small pilot and prompt focus"}
+{"file": ".trellis/tasks/09-19-benchmark-context-pilot/design.md", "reason": "Current ownership and data isolation"}
+{"file": ".trellis/tasks/09-19-benchmark-context-pilot/implement.md", "reason": "Execution order and finite budget"}

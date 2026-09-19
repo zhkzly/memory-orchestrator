@@ -147,6 +147,18 @@ def main(root, source, stage, *, budget=None):
         selected = json.loads((root / 'revised' / 'result.json').read_text())
         if selected.get('status') != 'completed':
             raise DomainError('pilot_probe', 'Development stage must close before the frozen probe.')
+        deployable = {}
+        for label, origin in [('base', root / 'prelearning-store'), ('memory', root / 'revised/store')]:
+            state = Store(origin)
+            deployable[label] = {'snapshot_digest': state.active(PROJECT)['snapshot_id'],
+                                 'facts': state.facts(PROJECT), 'relations': state.list('relations', PROJECT)}
+        if deployable['base'] == deployable['memory']:
+            result = {'status': 'not_run', 'reason': 'identical_deployable_memory',
+                      'deployable_states': deployable, 'reserved_task_accessed': False,
+                      'planned_probe_conditions': 2, 'executed_probe_conditions': 0, 'ledger': ledger.summary()}
+            save_json(path / 'result.json', result)
+            print(json.dumps({'stage': stage, 'status': 'not_run', 'reason': result['reason']}, ensure_ascii=False), flush=True)
+            return result
         results = []
         for label, origin in [('base', root / 'prelearning-store'), ('memory', root / 'revised/store')]:
             shutil.copytree(origin, path / label)

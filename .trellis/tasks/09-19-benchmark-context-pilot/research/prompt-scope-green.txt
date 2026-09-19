@@ -1,0 +1,6 @@
+test_diagnosis_gets_scope_before_it_commits_verification_obligations (test_gdpevo_prompt_scope.PromptScopeTests.test_diagnosis_gets_scope_before_it_commits_verification_obligations) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.072s
+
+OK

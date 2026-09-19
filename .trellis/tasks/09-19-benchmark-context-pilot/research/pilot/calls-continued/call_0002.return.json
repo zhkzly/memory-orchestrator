@@ -1,0 +1,55 @@
+{
+  "call_ref": "call_0002",
+  "status": "returned",
+  "response": {
+    "id": "resp_024084705bb31278016aadcd4f47c487d0b2adf62fdd8fe9b4",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 1230,
+      "prompt_tokens": 20092,
+      "total_tokens": 21322,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 98,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "content": "{\"status\":\"completed\",\"experiences\":[{\"kind\":\"pitfall\",\"title\":\"Do not submit ERP dispatch classifications without an end-to-end field-level reconciliation\",\"conditions\":[\"A task requires deriving multiple per-order classifications and a summary from live ERP data.\",\"The output schema includes inventory-derived SKU lists, fulfillment decisions, next actions, and rollups.\"],\"scope\":{\"task_family\":\"northwind_erp\",\"applies_when\":[\"Preparing structured dispatch-control JSON from queue records and ERP API data.\",\"Several output fields depend on combining order, product, inventory, customer, warehouse, and shipping data.\"],\"exclusions\":[\"Do not infer that a particular decision rule is wrong from this evidence; the underlying API responses and derivation steps are not fully provided.\",\"This does not apply to tasks that only request retrieval of a single record without derived classifications.\"]},\"observed_facts\":[{\"claim\":\"The task required sorted per-order records containing inventory status, customer exception, fulfillment decision, next action, SKU exception lists, shipping quote, and a summary, using local memo data and live ERP records.\",\"evidence_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:143:1943\"]},{\"claim\":\"The submitted artifact received a failing outcome with score 0.29411764705882354; the evaluator marked order set/count, customer exceptions, and shipping quotes as matched, but marked inventory statuses/shortages, inactive/low-stock SKU sets, final decisions, next actions, and summary rollups as unmatched.\",\"evidence_refs\":[\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]},{\"claim\":\"The agent read the answer template and queue memo, then queried several individual order endpoints before submitting an artifact.\",\"evidence_refs\":[\"ev:6eab87fd26d4df463901034f:0:142\",\"ev:b2c3c6251b774e3b8834359e:0:146\",\"ev:d240ebe4b5ecccab589b60a2:0:125\",\"ev:9df6a7c03c165d10dc3183a2:0:125\",\"ev:cc12fa862076c5fb340742b7:0:125\",\"ev:51bebe72db0fc14db2555656:0:125\",\"ev:1a648ac906441ac31ca40ac3:0:125\",\"ev:d7088fe839e0df5b9c3dd2fc:0:125\",\"ev:6b0e3889dd5e9ed191720fc1:0:125\",\"ev:c1beb529272c01606977dcca:0:1800\"]}],\"guidance\":{\"steps\":[\"Build a per-order working table before constructing JSON: order lines and quantities, product activity, inventory at the order warehouse, customer status, requested shipping service, and quote inputs/results.\",\"Derive shortage, inactive, and low-stock SKU lists independently from the source records; then derive inventory_status from those completed lists rather than assigning it first.\",\"Apply fulfillment-decision and next-action rules only after both inventory and customer-exception classifications are finalized; reconcile every decision/action pair with its driving conditions.\",\"Construct summary rollups from the finalized records programmatically or by explicit recount, then validate ordering, enum values, required keys, empty arrays, and two-decimal currency formatting against the template.\"],\"checks\":[\"For every order, verify that each SKU in an exception list is supported by the corresponding product/inventory record and that no qualifying SKU is omitted.\",\"Check that inventory_status is consistent with the three SKU exception lists.\",\"Check that final_decision and next_action are consistent with both inventory status and customer exception.\",\"Recompute summary counts from the final records, not from intermediate notes.\",\"Confirm that the output order IDs exactly match the queue memo in ascending order.\"]},\"supporting_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:143:1943\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\"],\"counterevidence_refs\":[],\"alternatives\":[\"If API support permits, retrieve or batch-fetch all required product, inventory, customer, warehouse, and quote data before deriving any output fields.\",\"Use a local validation script or checklist mirroring the answer template before submission.\"],\"unknowns\":[\"The provided packet does not include the full body of most ERP responses or the later product, inventory, customer, warehouse, and quote requests, so the precise source-data or rule error cannot be identified.\",\"The evaluator feedback establishes mismatched field groups but does not identify which individual orders or values were incorrect.\",\"The observed sequence does not prove that the absence of a reconciliation step caused the failure.\"],\"reuse_level\":\"task_family\",\"boundary_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]}],\"read_requests\":[],\"missing_evidence\":[],\"reason\":\"A bounded task-family pitfall can be supported by the task specification, observed retrieval/submission actions, and field-group evaluator feedback; exact business-rule corrections remain unknown.\"}",
+          "tool_calls": null,
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 1230,
+    "prompt_tokens": 20092,
+    "total_tokens": 21322,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 98,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 24.65090425100061,
+  "finished_at": "2026-09-18T23:46:47.078853Z"
+}

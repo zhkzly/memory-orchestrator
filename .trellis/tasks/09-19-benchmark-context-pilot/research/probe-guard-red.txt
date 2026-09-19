@@ -1,0 +1,35 @@
+test_identical_deployable_states_skip_but_changed_state_reaches_probe (test_gdpevo_probe.ProbeTests.test_identical_deployable_states_skip_but_changed_state_reaches_probe) ... 
+  test_identical_deployable_states_skip_but_changed_state_reaches_probe (test_gdpevo_probe.ProbeTests.test_identical_deployable_states_skip_but_changed_state_reaches_probe) (changed=False) ... ERROR
+  test_identical_deployable_states_skip_but_changed_state_reaches_probe (test_gdpevo_probe.ProbeTests.test_identical_deployable_states_skip_but_changed_state_reaches_probe) (changed=True) ... ERROR
+
+======================================================================
+ERROR: test_identical_deployable_states_skip_but_changed_state_reaches_probe (test_gdpevo_probe.ProbeTests.test_identical_deployable_states_skip_but_changed_state_reaches_probe) (changed=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_probe.py", line 41, in test_identical_deployable_states_skip_but_changed_state_reaches_probe
+    result = main(root, '/unused', 'probe')
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/run.py", line 156, in main
+    sampled = sample_tasks(store, [task(dataset, 'test', '001')], execute, dataset.evaluate,
+                                   ~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/examples/gdpevo_pilot/run.py", line 80, in task
+    return {**dataset.task(split, number), 'project_id': PROJECT}
+              ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_probe.py", line 31, in task
+    raise RuntimeError('Reached reserved task')
+RuntimeError: Reached reserved task
+
+======================================================================
+ERROR: test_identical_deployable_states_skip_but_changed_state_reaches_probe (test_gdpevo_probe.ProbeTests.test_identical_deployable_states_skip_but_changed_state_reaches_probe) (changed=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_probe.py", line 26, in test_identical_deployable_states_skip_but_changed_state_reaches_probe
+    current.initialize_project(PROJECT, seed=seed)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/store.py", line 626, in initialize_project
+    raise DomainError("INVALID_ARGUMENT", "A seed requires skills/assets and explicit provenance")
+memory_orchestrator.schemas.DomainError: A seed requires skills/assets and explicit provenance
+
+----------------------------------------------------------------------
+Ran 1 test in 0.017s
+
+FAILED (errors=2)

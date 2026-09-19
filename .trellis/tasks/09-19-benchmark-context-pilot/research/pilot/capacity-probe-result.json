@@ -1,0 +1,38 @@
+{
+  "status": "returned",
+  "source_payload_hash": "40c825e6904a95d3fecf56f52c063a3262f725e30442f30bc5323f0284dfd0fc",
+  "response": {
+    "id": "resp_080c988d1e879984016aadcc3d9e5c87d0b8803785211a7205",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 1055,
+      "prompt_tokens": 20090,
+      "total_tokens": 21145,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 164,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 19200,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "stop",
+        "message": {
+          "role": "assistant",
+          "content": "{\"status\":\"completed\",\"experiences\":[{\"kind\":\"pitfall\",\"title\":\"Validate every derived dispatch field and summary separately from fields that already match\",\"conditions\":[\"A Northwind ERP dispatch-control task requires per-order inventory classifications, fulfillment decisions, actions, exception SKU lists, shipping quotes, and summary rollups.\",\"The answer is assembled from multiple live ERP resource types and a strict output template.\"],\"scope\":{\"task_family\":\"northwind_erp\",\"applies_when\":[\"Preparing structured expedite-queue or dispatch-control JSON from live order, inventory, product, customer, warehouse, and shipping data.\"],\"exclusions\":[\"Do not assume the exact business rules or field mappings transfer to a different ERP task unless its template and policy definitions require the same classifications.\"]},\"observed_facts\":[{\"claim\":\"The task required JSON matching a template, records sorted by order_id, two-decimal currency, and fields covering inventory status, customer exception, decision, action, SKU exception lists, and shipping quote.\",\"evidence_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:143:1943\"]},{\"claim\":\"The external evaluator marked the submitted order set/count, customer exceptions, and shipping quotes as matched, but marked inventory statuses/shortages, inactive/low-stock SKU sets, final decisions, next actions, and summary rollups as unmatched.\",\"evidence_refs\":[\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]},{\"claim\":\"The task outcome was failure with a score of 0.29411764705882354.\",\"evidence_refs\":[\"ev:8145045941e4f6f8e14f8c9f:164:1964\"]}],\"guidance\":{\"steps\":[\"Create a per-order evidence table before composing the final JSON: order lines and quantities, product active state, inventory at the relevant warehouse, customer/account status, and requested shipping service.\",\"Derive shortage, inactive, and low-stock SKU lists from that table first; then derive inventory_status from the resulting lists using the template's allowed enum values.\",\"Derive customer_exception independently from the customer record, then apply the task’s fulfillment-policy precedence to produce final_decision and next_action rather than inferring them solely from the inventory label.\",\"Build summary rollups only after all record-level fields are finalized, calculating them directly from the final record array.\",\"Perform a final schema-and-consistency pass: all memo orders present once in ascending order; enum values allowed; SKU lists agree with inventory_status; decisions/actions agree with the selected exception state; quote fields and currency formatting comply with the template.\"],\"checks\":[\"Compare every derived inventory-related field, decision, action, and summary aggregate against its underlying live records before submission.\",\"Treat correct customer exceptions and shipping quotes as insufficient evidence that the derived inventory and fulfillment-policy fields are correct.\",\"Ensure summary values are recomputed from the submitted records, not from an earlier draft.\"]},\"supporting_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:143:1943\",\"ev:8145045941e4f6f8e14f8c9f:164:1964\"],\"counterevidence_refs\":[],\"alternatives\":[\"If the template or task provides explicit decision-precedence rules, encode and validate those rules directly; otherwise retain per-field provenance and avoid assuming a universal precedence order.\"],\"unknowns\":[\"The provided evidence does not expose the omitted live product, inventory, customer, warehouse, policy, or summary details needed to identify the exact incorrect records or rule applications.\",\"The evidence does not establish whether the errors arose from data retrieval, classification logic, decision precedence, summary calculation, or transcription.\"],\"reuse_level\":\"task_family\",\"boundary_refs\":[\"ev:c1696f5b953ae79d628669fa:0:672\",\"ev:db68fa286a2bd9c677a87234:143:1943\"]}],\"read_requests\":[],\"missing_evidence\":[],\"reason\":\"The evaluator feedback and provided task/template excerpts support a bounded task-family pitfall and validation procedure; exact faulty order-level derivations remain unknown.\"}",
+          "tool_calls": null,
+          "refusal": null
+        }
+      }
+    ],
+    "call_ref": "call_0001",
+    "elapsed_seconds": 20.938862379989587
+  }
+}

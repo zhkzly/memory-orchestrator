@@ -1,0 +1,88 @@
+{
+  "call_ref": "call_0038",
+  "status": "returned",
+  "response": {
+    "id": "resp_01b372469bee8ba0016aadd7a7f75487d08d2206f5b30a9c01",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 109,
+      "prompt_tokens": 1250,
+      "total_tokens": 1359,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 9,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_nXnAtLgjZszQ4MnQ4Tj0Ngbn",
+              "function": {
+                "arguments": "{\"path\":\"payloads/allocation_memo.md\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_oG2ARKm1Q8qiKvJkNQSRrn2h",
+              "function": {
+                "arguments": "{\"path\":\"payloads/answer_template.json\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_wbNPjrxyiwZS98fSLF6E7l0k",
+              "function": {
+                "arguments": "{\"path\":\"/orders\",\"query\":{\"wave\":\"TRAIN_TRANSFER_B\"}}",
+                "name": "business_get"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_2seF5YhoIADUzNhE9ZcNS2hj",
+              "function": {
+                "arguments": "{\"path\":\"/warehouses\"}",
+                "name": "business_get"
+              },
+              "type": "function"
+            }
+          ],
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 109,
+    "prompt_tokens": 1250,
+    "total_tokens": 1359,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 9,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 4.434911728007137,
+  "finished_at": "2026-09-19T00:30:35.899940Z"
+}

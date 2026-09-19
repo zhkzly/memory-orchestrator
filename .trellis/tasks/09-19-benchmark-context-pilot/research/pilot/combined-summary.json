@@ -1,0 +1,1236 @@
+{
+  "actual_model_calls": 51,
+  "stage_counts": {
+    "execute": 43,
+    "extract_v1": 3,
+    "extract_v1_capacity_probe": 1,
+    "diagnose_v1": 2,
+    "propose_v1": 2
+  },
+  "reported_token_subtotals": {
+    "prompt_tokens": 355890,
+    "completion_tokens": 53151,
+    "total_tokens": 409041
+  },
+  "unknown_usage_calls": 1,
+  "input_chars": 1513403,
+  "sum_call_seconds": 1123.8174163740478,
+  "complete_cost": null,
+  "currency": null,
+  "distinct_executed_tasks": 2,
+  "task_executions": 9,
+  "candidate_evaluations": 2,
+  "published_updates": 0,
+  "probe_executions": 0,
+  "probe_reason": "identical deployable snapshot/facts/relations; reserved task was not accessed",
+  "calls": [
+    {
+      "id": "calls/call_0001",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 4592,
+      "elapsed_seconds": 4.723303897000733,
+      "usage": {
+        "completion_tokens": 96,
+        "prompt_tokens": 1186,
+        "total_tokens": 1282,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 11,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls/call_0002",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 13466,
+      "elapsed_seconds": 5.971295277005993,
+      "usage": {
+        "completion_tokens": 203,
+        "prompt_tokens": 3097,
+        "total_tokens": 3300,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 21,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls/call_0003",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 18984,
+      "elapsed_seconds": 14.09202293099952,
+      "usage": {
+        "completion_tokens": 700,
+        "prompt_tokens": 4395,
+        "total_tokens": 5095,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 138,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 2560,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls/call_0004",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 30935,
+      "elapsed_seconds": 24.235200385999633,
+      "usage": {
+        "completion_tokens": 1233,
+        "prompt_tokens": 6753,
+        "total_tokens": 7986,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 226,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 3584,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls/call_0005",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 44609,
+      "elapsed_seconds": 34.95514818500669,
+      "usage": {
+        "completion_tokens": 1843,
+        "prompt_tokens": 9587,
+        "total_tokens": 11430,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1032,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 6656,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls/call_0006",
+      "stage": "extract_v1",
+      "status": "error",
+      "input_chars": 61087,
+      "elapsed_seconds": 45.04629967799701,
+      "usage": null
+    },
+    {
+      "id": "calls-continued/call_0001",
+      "stage": "extract_v1_capacity_probe",
+      "status": "returned",
+      "input_chars": 61087,
+      "elapsed_seconds": 20.938862379989587,
+      "usage": {
+        "completion_tokens": 1055,
+        "prompt_tokens": 20090,
+        "total_tokens": 21145,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 164,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 19200,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0002",
+      "stage": "extract_v1",
+      "status": "returned",
+      "input_chars": 61087,
+      "elapsed_seconds": 24.65090425100061,
+      "usage": {
+        "completion_tokens": 1230,
+        "prompt_tokens": 20092,
+        "total_tokens": 21322,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 98,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0003",
+      "stage": "diagnose_v1",
+      "status": "returned",
+      "input_chars": 62390,
+      "elapsed_seconds": 23.734728018011083,
+      "usage": {
+        "completion_tokens": 1189,
+        "prompt_tokens": 19621,
+        "total_tokens": 20810,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0004",
+      "stage": "propose_v1",
+      "status": "returned",
+      "input_chars": 19938,
+      "elapsed_seconds": 23.524117123990436,
+      "usage": {
+        "completion_tokens": 1228,
+        "prompt_tokens": 5386,
+        "total_tokens": 6614,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 51,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0005",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 4592,
+      "elapsed_seconds": 5.14859349001199,
+      "usage": {
+        "completion_tokens": 96,
+        "prompt_tokens": 1186,
+        "total_tokens": 1282,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 11,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0006",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 13466,
+      "elapsed_seconds": 5.740985216005356,
+      "usage": {
+        "completion_tokens": 199,
+        "prompt_tokens": 3097,
+        "total_tokens": 3296,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 17,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0007",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 18984,
+      "elapsed_seconds": 12.39888177200919,
+      "usage": {
+        "completion_tokens": 607,
+        "prompt_tokens": 4395,
+        "total_tokens": 5002,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 45,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 2560,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0008",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 30935,
+      "elapsed_seconds": 17.939571169001283,
+      "usage": {
+        "completion_tokens": 905,
+        "prompt_tokens": 6753,
+        "total_tokens": 7658,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 238,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 3584,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0009",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 40307,
+      "elapsed_seconds": 20.405831208991003,
+      "usage": {
+        "completion_tokens": 1034,
+        "prompt_tokens": 8679,
+        "total_tokens": 9713,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 656,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 6656,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0010",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 45236,
+      "elapsed_seconds": 20.781100934007554,
+      "usage": {
+        "completion_tokens": 1021,
+        "prompt_tokens": 9715,
+        "total_tokens": 10736,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 908,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 7680,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0011",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 8653,
+      "elapsed_seconds": 3.260710943999584,
+      "usage": {
+        "completion_tokens": 98,
+        "prompt_tokens": 2038,
+        "total_tokens": 2136,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 13,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0012",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 17527,
+      "elapsed_seconds": 5.33736565100844,
+      "usage": {
+        "completion_tokens": 212,
+        "prompt_tokens": 3949,
+        "total_tokens": 4161,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 14,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 1536,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0013",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 23621,
+      "elapsed_seconds": 14.392881822990603,
+      "usage": {
+        "completion_tokens": 695,
+        "prompt_tokens": 5353,
+        "total_tokens": 6048,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 133,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0014",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 35572,
+      "elapsed_seconds": 24.67652230898966,
+      "usage": {
+        "completion_tokens": 1242,
+        "prompt_tokens": 7711,
+        "total_tokens": 8953,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 219,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 4608,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0015",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 49262,
+      "elapsed_seconds": 44.955588114011334,
+      "usage": {
+        "completion_tokens": 2398,
+        "prompt_tokens": 10545,
+        "total_tokens": 12943,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1587,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 6656,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0016",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 4625,
+      "elapsed_seconds": 3.957335711005726,
+      "usage": {
+        "completion_tokens": 125,
+        "prompt_tokens": 1183,
+        "total_tokens": 1308,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 10,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0017",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 18060,
+      "elapsed_seconds": 18.10382165099145,
+      "usage": {
+        "completion_tokens": 904,
+        "prompt_tokens": 4246,
+        "total_tokens": 5150,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 202,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0018",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 33047,
+      "elapsed_seconds": 13.886459685993032,
+      "usage": {
+        "completion_tokens": 677,
+        "prompt_tokens": 7186,
+        "total_tokens": 7863,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 105,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 3584,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0019",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 48082,
+      "elapsed_seconds": 71.12180232700484,
+      "usage": {
+        "completion_tokens": 3800,
+        "prompt_tokens": 10795,
+        "total_tokens": 14595,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1262,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 6656,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0020",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 8686,
+      "elapsed_seconds": 5.011860315004014,
+      "usage": {
+        "completion_tokens": 101,
+        "prompt_tokens": 2035,
+        "total_tokens": 2136,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 9,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0021",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 16355,
+      "elapsed_seconds": 1.926871117000701,
+      "usage": {
+        "completion_tokens": 36,
+        "prompt_tokens": 3570,
+        "total_tokens": 3606,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 7,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 1536,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0022",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 22172,
+      "elapsed_seconds": 25.238708270000643,
+      "usage": {
+        "completion_tokens": 913,
+        "prompt_tokens": 5104,
+        "total_tokens": 6017,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 211,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 2560,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0023",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 37159,
+      "elapsed_seconds": 13.118208668005536,
+      "usage": {
+        "completion_tokens": 652,
+        "prompt_tokens": 8044,
+        "total_tokens": 8696,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 81,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 4608,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0024",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 52172,
+      "elapsed_seconds": 80.55669687299815,
+      "usage": {
+        "completion_tokens": 4396,
+        "prompt_tokens": 11653,
+        "total_tokens": 16049,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1863,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 7680,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0025",
+      "stage": "extract_v1",
+      "status": "returned",
+      "input_chars": 62161,
+      "elapsed_seconds": 21.884494094992988,
+      "usage": {
+        "completion_tokens": 1108,
+        "prompt_tokens": 20307,
+        "total_tokens": 21415,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 90,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0026",
+      "stage": "diagnose_v1",
+      "status": "returned",
+      "input_chars": 60423,
+      "elapsed_seconds": 36.17096504199435,
+      "usage": {
+        "completion_tokens": 1222,
+        "prompt_tokens": 19682,
+        "total_tokens": 20904,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0027",
+      "stage": "propose_v1",
+      "status": "returned",
+      "input_chars": 20901,
+      "elapsed_seconds": 29.157470271995408,
+      "usage": {
+        "completion_tokens": 1499,
+        "prompt_tokens": 5640,
+        "total_tokens": 7139,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 61,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0028",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 4923,
+      "elapsed_seconds": 3.3191527380113257,
+      "usage": {
+        "completion_tokens": 77,
+        "prompt_tokens": 1253,
+        "total_tokens": 1330,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 9,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0029",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 12842,
+      "elapsed_seconds": 4.969432701007463,
+      "usage": {
+        "completion_tokens": 194,
+        "prompt_tokens": 2980,
+        "total_tokens": 3174,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 12,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0030",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 18361,
+      "elapsed_seconds": 26.89709748000314,
+      "usage": {
+        "completion_tokens": 1398,
+        "prompt_tokens": 4278,
+        "total_tokens": 5676,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 190,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 2560,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0031",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 39632,
+      "elapsed_seconds": 16.432901054009562,
+      "usage": {
+        "completion_tokens": 820,
+        "prompt_tokens": 8541,
+        "total_tokens": 9361,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 442,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 3584,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0032",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 44561,
+      "elapsed_seconds": 42.471991340004024,
+      "usage": {
+        "completion_tokens": 2265,
+        "prompt_tokens": 9577,
+        "total_tokens": 11842,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1460,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 7680,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0033",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 9733,
+      "elapsed_seconds": 2.682839421002427,
+      "usage": {
+        "completion_tokens": 66,
+        "prompt_tokens": 2218,
+        "total_tokens": 2284,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0034",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 17652,
+      "elapsed_seconds": 8.723815411009127,
+      "usage": {
+        "completion_tokens": 206,
+        "prompt_tokens": 3945,
+        "total_tokens": 4151,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 24,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 1536,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0035",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 23171,
+      "elapsed_seconds": 16.01284723400022,
+      "usage": {
+        "completion_tokens": 701,
+        "prompt_tokens": 5243,
+        "total_tokens": 5944,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 123,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 3584,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0036",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 35697,
+      "elapsed_seconds": 24.0725880569953,
+      "usage": {
+        "completion_tokens": 1193,
+        "prompt_tokens": 7707,
+        "total_tokens": 8900,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 202,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 4608,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0037",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 48949,
+      "elapsed_seconds": 32.801941085999715,
+      "usage": {
+        "completion_tokens": 1717,
+        "prompt_tokens": 10452,
+        "total_tokens": 12169,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 922,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 6656,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0038",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 4956,
+      "elapsed_seconds": 4.434911728007137,
+      "usage": {
+        "completion_tokens": 109,
+        "prompt_tokens": 1250,
+        "total_tokens": 1359,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 9,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0039",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 17404,
+      "elapsed_seconds": 28.94487640800071,
+      "usage": {
+        "completion_tokens": 1494,
+        "prompt_tokens": 4132,
+        "total_tokens": 5626,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 263,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0040",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 47353,
+      "elapsed_seconds": 84.22869062700192,
+      "usage": {
+        "completion_tokens": 4587,
+        "prompt_tokens": 10659,
+        "total_tokens": 15246,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 2050,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 3584,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0041",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 9766,
+      "elapsed_seconds": 3.003988455006038,
+      "usage": {
+        "completion_tokens": 75,
+        "prompt_tokens": 2215,
+        "total_tokens": 2290,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0042",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 16448,
+      "elapsed_seconds": 2.583949790991028,
+      "usage": {
+        "completion_tokens": 38,
+        "prompt_tokens": 3569,
+        "total_tokens": 3607,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 9,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 1536,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0043",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 22265,
+      "elapsed_seconds": 18.126344777992927,
+      "usage": {
+        "completion_tokens": 875,
+        "prompt_tokens": 5103,
+        "total_tokens": 5978,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 173,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 2560,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0044",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 37252,
+      "elapsed_seconds": 13.173673204990337,
+      "usage": {
+        "completion_tokens": 612,
+        "prompt_tokens": 8043,
+        "total_tokens": 8655,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 40,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 4608,
+          "cached_creation_tokens": 0
+        }
+      }
+    },
+    {
+      "id": "calls-continued/call_0045",
+      "stage": "execute",
+      "status": "returned",
+      "input_chars": 52265,
+      "elapsed_seconds": 73.89176607500121,
+      "usage": {
+        "completion_tokens": 4007,
+        "prompt_tokens": 11652,
+        "total_tokens": 15659,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1476,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": 0,
+          "cached_tokens": 7680,
+          "cached_creation_tokens": 0
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero (test_gdpevo_dataset.GDPevoDatasetTests.test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.070s
+
+OK
+test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero (test_gdpevo_dataset.GDPevoDatasetTests.test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero) ... FAIL
+
+======================================================================
+FAIL: test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero (test_gdpevo_dataset.GDPevoDatasetTests.test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_dataset.py", line 85, in test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero
+    self.assertEqual((scored['outcome'],scored['score']),('fail',0.0))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: ('pass', 0.0) != ('fail', 0.0)
+
+First differing element 0:
+'pass'
+'fail'
+
+- ('pass', 0.0)
+?   ^ ^^
+
++ ('fail', 0.0)
+?   ^ ^^
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.042s
+
+FAILED (failures=1)
+test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero (test_gdpevo_dataset.GDPevoDatasetTests.test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.070s
+
+OK

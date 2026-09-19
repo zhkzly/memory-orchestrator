@@ -1,0 +1,78 @@
+test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.012s
+
+OK
+test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) ... 
+  test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/api/judge') ... FAIL
+  test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/manifest') ... FAIL
+  test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/inventory/NW-1000') ... FAIL
+  test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/warehouses/WH_WEST') ... FAIL
+  test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/purchase_orders/PO-1') ... FAIL
+  test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/../train_tasks/001/output/answer.json') ... FAIL
+
+======================================================================
+FAIL: test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/api/judge')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_dataset.py", line 56, in test_judge_files_and_documented_but_unimplemented_routes_are_denied
+    with self.subTest(path=path),self.assertRaises(DomainError):self.dataset.business_get(path,{})
+                                 ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: DomainError not raised
+
+======================================================================
+FAIL: test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/manifest')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_dataset.py", line 56, in test_judge_files_and_documented_but_unimplemented_routes_are_denied
+    with self.subTest(path=path),self.assertRaises(DomainError):self.dataset.business_get(path,{})
+                                 ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: DomainError not raised
+
+======================================================================
+FAIL: test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/inventory/NW-1000')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_dataset.py", line 56, in test_judge_files_and_documented_but_unimplemented_routes_are_denied
+    with self.subTest(path=path),self.assertRaises(DomainError):self.dataset.business_get(path,{})
+                                 ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: DomainError not raised
+
+======================================================================
+FAIL: test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/warehouses/WH_WEST')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_dataset.py", line 56, in test_judge_files_and_documented_but_unimplemented_routes_are_denied
+    with self.subTest(path=path),self.assertRaises(DomainError):self.dataset.business_get(path,{})
+                                 ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: DomainError not raised
+
+======================================================================
+FAIL: test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/purchase_orders/PO-1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_dataset.py", line 56, in test_judge_files_and_documented_but_unimplemented_routes_are_denied
+    with self.subTest(path=path),self.assertRaises(DomainError):self.dataset.business_get(path,{})
+                                 ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: DomainError not raised
+
+======================================================================
+FAIL: test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) (path='/../train_tasks/001/output/answer.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_dataset.py", line 56, in test_judge_files_and_documented_but_unimplemented_routes_are_denied
+    with self.subTest(path=path),self.assertRaises(DomainError):self.dataset.business_get(path,{})
+                                 ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: DomainError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.013s
+
+FAILED (failures=6)
+test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.013s
+
+OK
