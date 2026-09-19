@@ -424,3 +424,37 @@ Unified role-aware trajectory input; grounded local summaries, original excerpts
 ### Next Steps
 
 - 若要测真实第二轮收益，另开冻结实验：使用next_episode_ids、新StructuredModel预算和新的评价协议；本任务未隐式运行。
+
+
+## Session 14: 定位checklist型Skill无增益与回归根因
+<!-- trellis-session: v=2 fp=028137e6cc1b7073 -->
+
+**Date**: 2026-09-19
+**Task**: 定位checklist型Skill无增益与回归根因
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+只读对比4个真实EvaluationReturn、消息、工具、artifact和逐点评分。train001只改1个订单而失败组仍全错；train004数据覆盖完整，但两个多action订单rollup从has_backorder/needs_transfer变成mixed_actions，SP7丢2分。Skill已提供但只有通用核对清单，无聚合优先级规则。
+
+### Main Changes
+
+- 无产品修改；保存因果层级、替代解释和简历安全表述。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2ce0093` | docs: diagnose checklist skill regression |
+
+### Testing
+
+- [OK] 核对candidate上下文3877字符Skill、工具查询覆盖、artifact 9/7处diff、官方评分点与token/tool成本。无模型/benchmark/test001/gold调用。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 简历可写版本化Skill演化、外部验证、0增益/回归识别和拒绝轨迹回流；不可宣称性能提升或稳定因果。
