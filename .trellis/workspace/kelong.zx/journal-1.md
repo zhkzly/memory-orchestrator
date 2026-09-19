@@ -356,3 +356,37 @@ Unified role-aware trajectory input; grounded local summaries, original excerpts
 ### Next Steps
 
 - 学习内容仍偏核对清单：后续先分析缺业务证据时为何未补读，再考虑提示词、反馈粒度及可验证行为差异；本轮未宣称收益。
+
+
+## Session 12: 定位候选拒绝后未补读的两层边界
+<!-- trellis-session: v=2 fp=238eccaa91f1da3b -->
+
+**Date**: 2026-09-19
+**Task**: 定位候选拒绝后未补读的两层边界
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+只读核对真实extract、summary失败、schema、learning/engine/evaluation和Store。提取时仍有补读预算，但catalog没有ERP business_get且完整材料不可得；schema强制经验和补读二选一，模型合法选择有限pitfall。验证拒绝后engine直接not_selected，4条evaluation_returns未转Episode，故多轮自进化闭环未闭合。
+
+### Main Changes
+
+- 无产品修改；保存前候选证据充分性与验证后新周期两个独立修复方向。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `947e7c3` | docs: diagnose missing reread after candidate rejection |
+
+### Testing
+
+- [OK] 执行ExtractionDraft三分支schema探针；核对catalog 9项、04业务段、Store中1 Episode/1 Run与4 evaluation_returns。未运行模型/benchmark。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 先实现候选前可辨识业务目录与补读充分性；再单独设计仅target/adaptation评价轨迹进入新cycle，保持regression/final隔离。

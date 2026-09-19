@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 11
+- **Total Sessions**: 12
 - **Last Active**: 2026-09-19
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~358 | Active |
+| `journal-1.md` | ~392 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 12 | 2026-09-19 | 定位候选拒绝后未补读的两层边界 | `947e7c3` | `codex/vault-controller-maintenance` |
 | 11 | 2026-09-19 | 区分模型与框架职责并完成证据输入修复回放 | `f2fda0c`, `510e84d` | `codex/vault-controller-maintenance` |
 | 10 | 2026-09-19 | 冻结重写后的真实小批实验与失败诊断 | `2fd6211` | `codex/vault-controller-maintenance` |
 | 9 | 2026-09-19 | Role-aware trajectory learning rewrite | `a91d7c2`, `26ab29f`, `6eacbf7` | `codex/vault-controller-maintenance` |
