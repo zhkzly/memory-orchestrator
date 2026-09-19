@@ -3,7 +3,7 @@
   "name": "skill-regression-root-cause",
   "title": "定位候选Skill无增益与回归根因",
   "description": "只读对比真实base/candidate执行轨迹、工具查询、产物与官方评分点，定位train001无提升和train004丢2分的首个因果差异，并给出简历安全结论。",
-  "status": "in_progress",
+  "status": "completed",
   "dev_type": null,
   "scope": null,
   "package": null,
@@ -11,16 +11,18 @@
   "creator": "kelong.zx",
   "assignee": "kelong.zx",
   "createdAt": "2026-09-19",
-  "completedAt": null,
+  "completedAt": "2026-09-19",
   "branch": "codex/vault-controller-maintenance",
   "base_branch": "main",
   "worktree_path": null,
-  "commit": null,
+  "commit": "2ce0093",
   "pr_url": null,
   "subtasks": [],
   "children": [],
   "parent": null,
-  "relatedFiles": [],
-  "notes": "",
+  "relatedFiles": [
+    ".trellis/tasks/archive/2026-09/09-19-skill-regression-root-cause/research/diagnosis.md"
+  ],
+  "notes": "Read-only causal audit: candidate Skill was supplied but remained a generic checklist. train001 changed one order without rescuing any all-or-nothing scoring group; train004 had complete inventory data but chose mixed_actions for two multi-action order rollups, losing SP7's two points. Single unseeded run does not establish Skill causality.",
   "meta": {}
 }
