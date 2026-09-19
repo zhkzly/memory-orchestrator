@@ -287,3 +287,37 @@ Unified role-aware trajectory input; grounded local summaries, original excerpts
 ### Status
 
 [OK] **Completed**
+
+
+## Session 10: 冻结重写后的真实小批实验与失败诊断
+<!-- trellis-session: v=2 fp=ccacb7f003575f1c -->
+
+**Date**: 2026-09-19
+**Task**: 冻结重写后的真实小批实验与失败诊断
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+新 study 完成 1 次 train001 执行（5/17），6 次真实 SDK 调用、36451 token。首份局部摘要因嵌套 JSON 转义引用不匹配，修复预检 8649 > 8000 后中止；0 经验、候选、对照和发布，保留集未运行。报告及独立审查已归档，产品未变。
+
+### Main Changes
+
+- 保存完整模型调用和失败证据，明确计划与实际分母、单次与累计预算区别。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2fd6211` | experiment: record frozen post-rewrite GDPevo diagnostic |
+
+### Testing
+
+- [OK] 28 个源码和总纲 hash 一致；104 份 JSON 可解析、6 对请求返回；独立结果/报告审查通过；Trellis manifests 与归档链接有效。未重跑产品测试。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 下一版本先修结构化反馈表示与修复请求容量，再运行经验提取及候选对照；本轮未实现这些建议。

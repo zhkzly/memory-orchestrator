@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 9
+- **Total Sessions**: 10
 - **Last Active**: 2026-09-19
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~289 | Active |
+| `journal-1.md` | ~323 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 10 | 2026-09-19 | 冻结重写后的真实小批实验与失败诊断 | `2fd6211` | `codex/vault-controller-maintenance` |
 | 9 | 2026-09-19 | Role-aware trajectory learning rewrite | `a91d7c2`, `26ab29f`, `6eacbf7` | `codex/vault-controller-maintenance` |
 | 8 | 2026-09-19 | 公开基准小批量上下文诊断与GitHub交付 | `cee5cc4`, `2204e39` | `codex/vault-controller-maintenance` |
 | 7 | 2026-09-19 | 完成文档约定的Python记忆演化机制 | `9945c31` | `codex/vault-controller-maintenance` |
