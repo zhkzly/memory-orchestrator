@@ -3,7 +3,7 @@
   "name": "rejected-candidate-no-reread",
   "title": "诊断候选拒绝后未补读的因果边界",
   "description": "只读追踪extract补读决策与candidate验证拒绝的时序，区分LLM选择、框架循环和防止验证集泄漏的边界，提出最小可证伪修正。",
-  "status": "in_progress",
+  "status": "completed",
   "dev_type": null,
   "scope": null,
   "package": null,
@@ -11,16 +11,18 @@
   "creator": "kelong.zx",
   "assignee": "kelong.zx",
   "createdAt": "2026-09-19",
-  "completedAt": null,
+  "completedAt": "2026-09-19",
   "branch": "codex/vault-controller-maintenance",
   "base_branch": "main",
   "worktree_path": null,
-  "commit": null,
+  "commit": "947e7c3",
   "pr_url": null,
   "subtasks": [],
   "children": [],
   "parent": null,
-  "relatedFiles": [],
-  "notes": "",
+  "relatedFiles": [
+    ".trellis/tasks/archive/2026-09/09-19-rejected-candidate-no-reread/research/diagnosis.md"
+  ],
+  "notes": "Read-only diagnosis: pre-candidate evidence expansion was legally skipped under the exclusive ExtractionDraft branches and insufficient catalog; post-rejection comparison traces remain evaluation_returns rather than learning Episodes. Single evolution transaction complete, multi-cycle self-improvement loop not closed.",
   "meta": {}
 }
