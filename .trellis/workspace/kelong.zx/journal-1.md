@@ -390,3 +390,37 @@ Unified role-aware trajectory input; grounded local summaries, original excerpts
 ### Next Steps
 
 - 先实现候选前可辨识业务目录与补读充分性；再单独设计仅target/adaptation评价轨迹进入新cycle，保持regression/final隔离。
+
+
+## Session 13: 被拒target候选进入下一轮学习
+<!-- trellis-session: v=2 fp=c84d24d4ad837724 -->
+
+**Date**: 2026-09-19
+**Task**: 被拒target候选进入下一轮学习
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+实现v1.9.0显式回边：只有rejected candidate target且target_gain失败、keep_current、执行评分完整时投影Episode/Feedback并返回next_episode_ids；regression/transfer/final/base/unknown隔离，active不变且不自动第二次Teacher调用。
+
+### Main Changes
+
+- 新增rejected_target_evaluation来源、严格lineage重建、engine机器可读下一轮ID；同步总纲/schema/使用说明。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `d3302db` | feat: feed rejected target evaluations into next learning cycle |
+
+### Testing
+
+- [OK] 真实GDPevo派生10项、相关156项、完整401项通过（8 skip）；官方mutation和总纲自检通过；真实Store副本Episode 1→2、重复幂等、0模型/benchmark调用。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 若要测真实第二轮收益，另开冻结实验：使用next_episode_ids、新StructuredModel预算和新的评价协议；本任务未隐式运行。
