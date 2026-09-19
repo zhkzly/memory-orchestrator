@@ -321,3 +321,38 @@ Unified role-aware trajectory input; grounded local summaries, original excerpts
 ### Next Steps
 
 - 下一版本先修结构化反馈表示与修复请求容量，再运行经验提取及候选对照；本轮未实现这些建议。
+
+
+## Session 11: 区分模型与框架职责并完成证据输入修复回放
+<!-- trellis-session: v=2 fp=a5eb1d1d1aab6671 -->
+
+**Date**: 2026-09-19
+**Task**: 区分模型与框架职责并完成证据输入修复回放
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+修复Feedback.reason引用与修复容量，首次双视图挤压回归经同源共享额度解决；391项全套通过。冻结后同轨迹真实回放新增27调用/213599 token，3摘要、1经验、1候选、4次正常提交对照；目标5/17到5/17，回归12/17到10/17，keep_current，0发布。
+
+### Main Changes
+
+- 保留旧原文引用，新增reason字段来源并共享正文配额；LLM继续负责经验、归因与候选，验证和发布门不改。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `f2fda0c` | fix: share feedback evidence budgets and preserve source quotes |
+| `510e84d` | experiment: record grounded learning replay and rejected skill |
+
+### Testing
+
+- [OK] 391/391完整Python检查；源包和生成视图一致；官方故障注入、独立代码与Teacher审查通过。真实回放源码/配置冻结且保留全部失败。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 学习内容仍偏核对清单：后续先分析缺业务证据时为何未补读，再考虑提示词、反馈粒度及可验证行为差异；本轮未宣称收益。
