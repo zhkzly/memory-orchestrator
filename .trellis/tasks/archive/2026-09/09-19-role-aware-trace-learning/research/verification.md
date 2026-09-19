@@ -32,6 +32,7 @@ learn → build_trajectory_plan（类型、绑定、调用组、段优先级）�
 - full-suite-final.txt是第二轮失败记录：重复目录输入已从prompt删掉，但预算测试唯一输入夹具尚保留旧字段，因严格prompt_input_mismatch触发关联失败；只迁移夹具，未放松输入校验或恢复重复投影，模型40项和18个变体复验后再跑全套。
 - 原6k提取草案上限低于真实反馈完整请求的6435估计值。先校准形状，随后按用户“上限可以高一点”放宽为局部8k/1k、提取16k/3k，两阶段累计64k/10k，全Teacher12次/160k输入/24k输出。参考配置可调，既有SDK实验记录不改。
 - python compileall、git diff --check、总纲check/render/verify/self-test与source/schema/example一致性均完成；本项目没有独立Python lint/type命令，不虚构对应检查。HTML未宣称浏览器视觉验收。
+- 提交时将源码/测试/文档的空白检查与原始终端证据分开：full-suite-final.txt第182行包含unittest子测试失败时输出的尾随空格，整批检查会提示该行；保留原始失败输出，不为消除提示改写证据。src/tests/docs/examples/.trellis/spec范围的提交空白检查通过。
 
 checklist十项已逐项核对：用户前缀/目标边界见trajectory tests；调用与分析身份见trajectory+learning tests；低信息处理和真实分层消费见实际payload测试；预算见model tests；部分覆盖/补读见learning/report；原学习准入/发布边界由全套回归覆盖；独立review与mutation见同目录原始记录；源/包/生成视图由同源检查覆盖。
 
