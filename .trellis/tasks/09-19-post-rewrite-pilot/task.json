@@ -1,0 +1,28 @@
+{
+  "id": "post-rewrite-pilot",
+  "name": "post-rewrite-pilot",
+  "title": "重写后记忆系统真实小批实验",
+  "description": "冻结46bf5f0与v1.8提示词，在GDPevo开发任务上运行一轮真实学习与候选对照，核查轨迹分层、Skill产物、预算和失败原因；不改核心与评分器。",
+  "status": "in_progress",
+  "dev_type": null,
+  "scope": null,
+  "package": null,
+  "priority": "P2",
+  "creator": "kelong.zx",
+  "assignee": "kelong.zx",
+  "createdAt": "2026-09-19",
+  "completedAt": null,
+  "branch": "codex/vault-controller-maintenance",
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [
+    "docs/experiments/gdpevo-post-rewrite-pilot.md"
+  ],
+  "notes": "Frozen diagnostic complete: 1 task execution, 6 SDK calls, weighted score 5/17. Learning abstained after nested-JSON quote mismatch and an 8649 > 8000 repair-input preflight rejection. No candidate, comparison or release; source hashes unchanged. This task completes diagnosis, not learning-effect validation.",
+  "meta": {}
+}

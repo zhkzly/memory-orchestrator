@@ -1,0 +1,316 @@
+{
+  "study": "post-rewrite-pilot-2026-09-19",
+  "product_commit": "46bf5f0d56e8b07072daca1fbebb87e925a13b14",
+  "dataset_commit": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+  "contract_source": {
+    "path": "docs/blueprint/project-contract.json",
+    "version": "1.8.0",
+    "sha256": "b3a10afb4f75d25d64d4d9cf7b37218e5a3552077befe1afeae9b56fffffce2e"
+  },
+  "prompt_digests": {
+    "summarize_trace_v1": "37d32bd6b9a6cd432011adab2f291445b07078628f65de3907991a8e34883fcd",
+    "extract_v1": "c2d206b11ff3f73539eab0b423a7364de039d712f8611ca620f7530a22743733",
+    "diagnose_v1": "2502dc5ae9615f3f1513d28d797b504663a0b86e653bdb96d6287fba1c0044a5",
+    "propose_v1": "28fbcc0726b45961d8685a80b14469fdf9e9769c4888443e639842af8dcca759",
+    "goal_binding_v1": "fcb38317aaf464ab34ddaedca8e64c3c3e50eef34fbb6099ee8a4cd5d8842ee2",
+    "proxy_judge_v1": "5b2f6a55e55332c77124af36d166bc1455809c1a359934b8a35527f63e473e3f",
+    "maintain_experience_v1": "fddb95f6adfc773c4d801f69b7af8496403fabdd1fc8f6a7dabd44629cb9af51"
+  },
+  "global_sdk": {
+    "model": "gpt-5.6-terra",
+    "base_url": "http://localhost:8317/v1",
+    "timeout": 120,
+    "max_calls": 42,
+    "max_total_input_chars": 3000000,
+    "max_output_tokens": 8192
+  },
+  "planned": {
+    "distinct_development_tasks": 2,
+    "maximum_task_executions": 5,
+    "maximum_sdk_calls": 42
+  },
+  "actual": {
+    "distinct_tasks": 1,
+    "task_executions": 1,
+    "learning_task": "train_001",
+    "regression_executions": 0,
+    "heldout_executions": 0,
+    "sdk_calls": 6,
+    "sdk_calls_by_stage": {
+      "execute": 5,
+      "summarize_trace_v1": 1
+    },
+    "tool_calls": 68,
+    "source_events": 138,
+    "event_kinds": {
+      "instruction": 1,
+      "action": 68,
+      "result": 69
+    },
+    "execution_status": "completed",
+    "task_outcome": "fail",
+    "scoring": {
+      "earned_weight": 5,
+      "score": 0.29411764705882354,
+      "scoring_points": [
+        {
+          "id": "SP001_order_set_and_count",
+          "matched": true,
+          "normalized_weight": 0.058823529411764705,
+          "weight": 1
+        },
+        {
+          "id": "SP002_inventory_statuses_and_shortages",
+          "matched": false,
+          "normalized_weight": 0.17647058823529413,
+          "weight": 3
+        },
+        {
+          "id": "SP003_inactive_and_low_stock_sku_sets",
+          "matched": false,
+          "normalized_weight": 0.11764705882352941,
+          "weight": 2
+        },
+        {
+          "id": "SP004_customer_exceptions",
+          "matched": true,
+          "normalized_weight": 0.11764705882352941,
+          "weight": 2
+        },
+        {
+          "id": "SP005_final_decisions",
+          "matched": false,
+          "normalized_weight": 0.17647058823529413,
+          "weight": 3
+        },
+        {
+          "id": "SP006_next_actions",
+          "matched": false,
+          "normalized_weight": 0.11764705882352941,
+          "weight": 2
+        },
+        {
+          "id": "SP007_shipping_quotes",
+          "matched": true,
+          "normalized_weight": 0.11764705882352941,
+          "weight": 2
+        },
+        {
+          "id": "SP008_summary_rollups",
+          "matched": false,
+          "normalized_weight": 0.11764705882352941,
+          "weight": 2
+        }
+      ],
+      "total_weight": 17
+    },
+    "evolution_status": "abstained",
+    "accepted_summaries": 0,
+    "experience_count": 0,
+    "candidate_count": 0,
+    "comparison_count": 0,
+    "release_count": 0
+  },
+  "cost": {
+    "input_chars": 134902,
+    "input_tokens": 31699,
+    "output_tokens": 4752,
+    "total_tokens": 36451,
+    "unknown_usage_calls": 0,
+    "monetary_cost": null,
+    "currency": null,
+    "sum_sdk_elapsed_seconds": 125.26759498298634,
+    "measurement": "Provider-reported token totals. Elapsed value is sum of SDK call durations, not total experiment wall time. Price not supplied."
+  },
+  "calls": [
+    {
+      "call_ref": "call_0001",
+      "stage": "execute",
+      "input_chars": 4923,
+      "input_tokens": 1253,
+      "output_tokens": 96,
+      "total_tokens": 1349,
+      "elapsed_seconds": 3.8928290310141165,
+      "finish_reasons": [
+        "tool_calls"
+      ]
+    },
+    {
+      "call_ref": "call_0002",
+      "stage": "execute",
+      "input_chars": 13797,
+      "input_tokens": 3164,
+      "output_tokens": 208,
+      "total_tokens": 3372,
+      "elapsed_seconds": 5.9759452719881665,
+      "finish_reasons": [
+        "tool_calls"
+      ]
+    },
+    {
+      "call_ref": "call_0003",
+      "stage": "execute",
+      "input_chars": 19892,
+      "input_tokens": 4568,
+      "output_tokens": 619,
+      "total_tokens": 5187,
+      "elapsed_seconds": 14.063550458988175,
+      "finish_reasons": [
+        "tool_calls"
+      ]
+    },
+    {
+      "call_ref": "call_0004",
+      "stage": "execute",
+      "input_chars": 31842,
+      "input_tokens": 6926,
+      "output_tokens": 1242,
+      "total_tokens": 8168,
+      "elapsed_seconds": 50.58847956301179,
+      "finish_reasons": [
+        "tool_calls"
+      ]
+    },
+    {
+      "call_ref": "call_0005",
+      "stage": "execute",
+      "input_chars": 45535,
+      "input_tokens": 9760,
+      "output_tokens": 1845,
+      "total_tokens": 11605,
+      "elapsed_seconds": 34.951325006986735,
+      "finish_reasons": [
+        "tool_calls"
+      ]
+    },
+    {
+      "call_ref": "call_0006",
+      "stage": "summarize_trace_v1",
+      "input_chars": 18913,
+      "input_tokens": 6028,
+      "output_tokens": 742,
+      "total_tokens": 6770,
+      "elapsed_seconds": 15.795465650997357,
+      "finish_reasons": [
+        "stop"
+      ]
+    }
+  ],
+  "trajectory": {
+    "planned_coverage": {
+      "dependency_discovered_events": 0,
+      "dependency_omitted_events": 0,
+      "dependency_provided_events": 0,
+      "dependency_support_events": 0,
+      "folded_events": 0,
+      "omitted_events": 126,
+      "projected_events": 12,
+      "raw_body_complete": false,
+      "scan_complete": true,
+      "scan_limit_scope": "selection_events",
+      "scanned_events": 138,
+      "stop_reasons": [
+        "segment_budget"
+      ],
+      "total_events": 138,
+      "truncated_events": 4
+    },
+    "sent_packets": 1,
+    "accepted_packet_count": 0,
+    "segment_status_counts": {
+      "failed": 1,
+      "not_analyzed_after_stop": 3
+    }
+  },
+  "blocker": {
+    "initial_diagnostic": "summary_evidence",
+    "exact_quotes": {
+      "checked": 8,
+      "matching": 4,
+      "mismatching": 4,
+      "mismatch_kind": "nested JSON quote escaping; referenced field values are present"
+    },
+    "first_input_estimated_tokens": 6616,
+    "repair": {
+      "fits": false,
+      "estimated_input_tokens": 8649,
+      "effective_output_cap": 1000,
+      "input_chars": 24228,
+      "messages_hash": "137feb4739e2dea05e14af4ad24ca1d72d3d63c70bee8eaf7b5a55eceb34e172",
+      "blocking_reason": {
+        "scope": "stage_request",
+        "dimension": "input_tokens",
+        "consumed": 0,
+        "requested": 8649,
+        "limit": 8000,
+        "prompt_id": "summarize_trace_v1"
+      },
+      "budget": {
+        "counter_id": "utf8-json-bytes-div3-v1",
+        "count_kind": "documented_estimate",
+        "remaining": {
+          "input_tokens": 153972,
+          "output_tokens": 23258,
+          "stages": {
+            "summarize_trace_v1": {
+              "calls": 3,
+              "input_tokens": 25972,
+              "output_tokens": 3258
+            },
+            "extract_v1": {
+              "calls": 2,
+              "input_tokens": 32000,
+              "output_tokens": 6000
+            },
+            "goal_binding_v1": {
+              "calls": 2,
+              "input_tokens": 16000,
+              "output_tokens": 2400
+            },
+            "maintain_experience_v1": {
+              "calls": 1,
+              "input_tokens": 12000,
+              "output_tokens": 1000
+            },
+            "diagnose_v1": {
+              "calls": 2,
+              "input_tokens": 45000,
+              "output_tokens": 4500
+            },
+            "propose_v1": {
+              "calls": 2,
+              "input_tokens": 30000,
+              "output_tokens": 6000
+            }
+          }
+        }
+      }
+    },
+    "error_codes": [
+      "model_budget_exhausted",
+      "trajectory_no_summary"
+    ]
+  },
+  "limitations": {
+    "single_sample": true,
+    "seed_control": "unsupported/unconfirmed",
+    "run_capture_gaps": [
+      "Execution did not report both reset-state and environment identity; independent comparability unknown."
+    ],
+    "comparability": false,
+    "memory_gain": "not measured; no candidate or comparison executed"
+  },
+  "verification": {
+    "source_files_hash_matched": 28,
+    "contract_hash_matched": true,
+    "start_return_pairs": 6,
+    "all_artifact_json_parsed": 104,
+    "credential_value_scan": "no matches"
+  },
+  "evidence": {
+    "plan": "pilot/baseline/plan.json",
+    "result": "pilot/baseline/result.json",
+    "ledger": "pilot/calls-live",
+    "independent_review": "independent-audit.md"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "call_ref": "call_0001",
+  "status": "returned",
+  "response": {
+    "id": "resp_0a2f46dbee1b9c27016aae10eda27087d0b55f8e687dbe9837",
+    "model": "gpt-5.6-terra",
+    "usage": {
+      "completion_tokens": 96,
+      "prompt_tokens": 1253,
+      "total_tokens": 1349,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 11,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cache_write_tokens": 0,
+        "cached_tokens": 0,
+        "cached_creation_tokens": 0
+      }
+    },
+    "choices": [
+      {
+        "finish_reason": "tool_calls",
+        "message": {
+          "role": "assistant",
+          "content": null,
+          "tool_calls": [
+            {
+              "id": "call_xVsy5t4z4jsDWtcS51ghVTpE",
+              "function": {
+                "arguments": "{\"path\":\"input/payloads/answer_template.json\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_RHzYuNzZqRArpKXPoWylvUtc",
+              "function": {
+                "arguments": "{\"path\":\"input/payloads/expedite_queue_memo.json\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            },
+            {
+              "id": "call_FCiApsRhpZqVWydDmeEXlgIX",
+              "function": {
+                "arguments": "{\"path\":\"input/prompt.txt\"}",
+                "name": "read_input"
+              },
+              "type": "function"
+            }
+          ],
+          "refusal": null
+        }
+      }
+    ]
+  },
+  "usage": {
+    "completion_tokens": 96,
+    "prompt_tokens": 1253,
+    "total_tokens": 1349,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 11,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "elapsed_seconds": 3.8928290310141165,
+  "finished_at": "2026-09-19T04:34:56.409670Z"
+}
