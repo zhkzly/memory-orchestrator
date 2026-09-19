@@ -1,8 +1,8 @@
 {
   "source": {
     "path": "docs/blueprint/project-contract.json",
-    "version": "1.7.1",
-    "sha256": "3a8255b5a94249be66529f98f55152c4dbccbc7772198760bdf64fa9b3538aa6"
+    "version": "1.8.0",
+    "sha256": "9ffd4b576515472a67ef6b5a73d79cfe1e5c14cfbe360c5b5be1e3d8849cfa28"
   },
   "schemas": {
     "ExperienceDraft": {
@@ -3318,6 +3318,82 @@
             "additionalProperties": false
           },
           "minItems": 0
+        },
+        "trajectory_summaries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "summary_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source_packet_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "report_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "observations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "enum": [
+                        "task",
+                        "action",
+                        "intention",
+                        "observation",
+                        "outcome"
+                      ]
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
+                    },
+                    "quote_refs": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "minItems": 1,
+                      "uniqueItems": true
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "text",
+                    "quote_refs"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "unknowns": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000
+                }
+              }
+            },
+            "required": [
+              "summary_id",
+              "source_packet_id",
+              "report_ref",
+              "observations",
+              "unknowns"
+            ],
+            "additionalProperties": false,
+            "description": "宿主生成的派生旁注；quote_refs 仅指本包真实 fragments。summary_id/source_packet_id/report_ref 都不是事实证据引用。"
+          },
+          "minItems": 0,
+          "description": "可选派生旁注，不改fragments为原文的语义；缺少此字段表示本包没有局部摘要，不表示绕过统一学习输入构造器。"
         }
       },
       "required": [
@@ -3338,7 +3414,7 @@
         "episode_bindings"
       ],
       "additionalProperties": false,
-      "description": "已读事实和可补读目录分开。导入材料的源快照/上下文/反馈可以为空，gaps 记录缺失；禁止伪造 RunBundle/GroupReceipt。 projection_version=2 的新包保留已知结构和局部关系，所有元数据计入整包预算。无此字段的历史包只按其原有证据读取；补读时从原索引重建，不臆造关系。",
+      "description": "已读事实和可补读目录分开。导入材料的源快照/上下文/反馈可以为空，gaps 记录缺失；禁止伪造 RunBundle/GroupReceipt。 projection_version=2 的新包保留已知结构和局部关系，所有元数据计入整包预算。无此字段的历史包只按其原有证据读取；补读时从原索引重建，不臆造关系。 trajectory_summaries 只帮助导航解释，不替代事实；摘要/报告/目录身份不进入事实引用白名单。",
       "allOf": [
         {
           "if": {
@@ -7669,6 +7745,110 @@
         "origin",
         "evidence_refs",
         "coverage"
+      ]
+    },
+    "LocalSummaryDraft": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "completed",
+            "abstained"
+          ]
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "enum": [
+                  "task",
+                  "action",
+                  "intention",
+                  "observation",
+                  "outcome"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              "excerpts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "ref_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "quote": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "本次fragments正文的精确非空子串；宿主验证，每条excerpt.quote的字符数分别受summary_limits.max_quote_chars约束。"
+                    }
+                  },
+                  "required": [
+                    "ref_id",
+                    "quote"
+                  ],
+                  "additionalProperties": false
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "kind",
+              "text",
+              "excerpts"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          }
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "status",
+        "observations",
+        "unknowns",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "description": "局部轨迹整理草稿，不生成经验或 Skill；条数与quote长度受显式 summary_limits 约束，宿主生成身份/hash/位置并核验原文子串。",
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "abstained"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "observations": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
       ]
     }
   }

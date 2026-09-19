@@ -6,6 +6,7 @@ import json
 import math
 import os
 import re
+import threading
 import time
 
 from .schemas import DomainError, digest, load_contracts, new_id, normalize_usage_measurements, validate
@@ -19,13 +20,47 @@ def _token_count(value):
     return value if type(value) is int and value >= 0 else None
 
 
+def _default_token_estimate(messages):
+    """A disclosed estimate over full messages, not a tokenizer or upper bound."""
+    return math.ceil(len(_json(messages).encode("utf-8")) / 3)
+
+
+def _token_budget(value, counter):
+    required = {"max_input_tokens", "max_total_input_tokens", "max_total_output_tokens", "stages"}
+    if not isinstance(value, dict) or required - value.keys() or value.keys() - required - {"counter_id", "count_kind"}:
+        raise DomainError("invalid_model_budget", "Provide the declared global token limits and prompt stages only.")
+    result = copy.deepcopy(value)
+    if counter is not None and (not result.get("counter_id") or not result.get("count_kind")):
+        raise DomainError("invalid_model_budget", "An injected counter requires explicit counter_id and count_kind.")
+    result.setdefault("counter_id", "utf8-json-bytes-div3-v1")
+    result.setdefault("count_kind", "documented_estimate")
+    if (not isinstance(result["counter_id"], str) or not result["counter_id"].strip()
+            or result["count_kind"] not in ("tokenizer_estimate", "documented_estimate")):
+        raise DomainError("invalid_model_budget", "Counter identity and its estimate method must be explicit.")
+    if counter is None and (result["counter_id"] != "utf8-json-bytes-div3-v1" or result["count_kind"] != "documented_estimate"):
+        raise DomainError("invalid_model_budget", "The default counter is utf8-json-bytes-div3-v1, a documented estimate.")
+    for key in required - {"stages"}:
+        if type(result[key]) is not int or result[key] < 0:
+            raise DomainError("invalid_model_budget", f"token_budget.{key} must be a nonnegative integer.")
+    if not isinstance(result["stages"], dict):
+        raise DomainError("invalid_model_budget", "Token stages must map registered prompt IDs to limits.")
+    fields = {"max_calls", "max_input_tokens", "max_output_tokens", "max_total_input_tokens", "max_total_output_tokens"}
+    prompts = load_contracts()["prompts"]
+    for prompt_id, stage in result["stages"].items():
+        if prompt_id not in prompts or not isinstance(stage, dict) or set(stage) != fields:
+            raise DomainError("invalid_model_budget", "Each token stage needs a registered prompt and all five limits.")
+        if any(type(stage[key]) is not int or stage[key] < 0 for key in fields):
+            raise DomainError("invalid_model_budget", "Stage token and call limits must be nonnegative integers.")
+    return result
+
+
 class StructuredModel:
     """A per-learning-cycle call budget, not a model backend registry.
 
     ``invoke(request)`` returns ``text``, ``finish_reason``, optional ``usage`` and
     model/request identity. All limits are explicitly supplied by the caller.
     """
-    def __init__(self, invoke, *, limits):
+    def __init__(self, invoke, *, limits, token_counter=None):
         names = ("max_input_chars", "max_output_chars", "max_output_tokens",
                  "max_total_input_chars", "max_calls", "max_format_repairs")
         for name in names:
@@ -34,25 +69,41 @@ class StructuredModel:
                 raise DomainError("invalid_model_budget", f"Explicit integer {name} is required.")
         if not callable(invoke):
             raise DomainError("invalid_model_callable", "Provide a callable model operation.")
+        if token_counter is not None and not callable(token_counter):
+            raise DomainError("invalid_model_budget", "token_counter must be a callable or None.")
+        if token_counter is not None and "token_budget" not in limits:
+            raise DomainError("invalid_model_budget", "An injected token counter needs a frozen token_budget identity.")
         self.invoke = invoke
-        self.limits = {key: limits[key] for key in names}
+        self.limits = {key: copy.deepcopy(limits[key]) for key in names}
+        if "token_budget" in limits:
+            self.limits["token_budget"] = _token_budget(limits["token_budget"], token_counter)
+        self._count_tokens = token_counter or _default_token_estimate
+        self._budget_lock = threading.RLock()
+        self._token_spent = {"input": 0, "output": 0}
+        self._stage_spent = {}
+        self._token_overrun = None
         self.calls = 0
         self.input_chars = 0
         self.output_chars = 0
 
     def _visible_limits(self):
-        return {**self.limits, "remaining_calls": self.limits["max_calls"] - self.calls,
+        result = {**copy.deepcopy(self.limits), "remaining_calls": self.limits["max_calls"] - self.calls,
                 "remaining_input_chars": self.limits["max_total_input_chars"] - self.input_chars,
                 "input_measure": "serialized message characters, not measured tokens"}
+        if "token_budget" in self.limits:
+            config = self.limits["token_budget"]
+            result["token_measure"] = "Full rendered messages estimate; reservations are not provider-reported usage."
+            result["remaining_token_budget"] = {
+                "input_tokens": config["max_total_input_tokens"] - self._token_spent["input"],
+                "output_tokens": config["max_total_output_tokens"] - self._token_spent["output"],
+                "stages": {key: {
+                    "calls": stage["max_calls"] - self._stage_spent.get(key, {}).get("calls", 0),
+                    "input_tokens": stage["max_total_input_tokens"] - self._stage_spent.get(key, {}).get("input", 0),
+                    "output_tokens": stage["max_total_output_tokens"] - self._stage_spent.get(key, {}).get("output", 0),
+                } for key, stage in config["stages"].items()}}
+        return result
 
-    def generate(self, prompt_id, inputs, *, check=None):
-        """Run optional pure semantic validation inside the same finite repair loop.
-
-        ``check`` must not persist changes or execute a candidate. It receives a
-        copy; its DomainError is repair feedback, never an extra retry allowance.
-        """
-        if check is not None and not callable(check):
-            raise DomainError("invalid_model_check", "Semantic check must be a pure callable or None.")
+    def _render(self, prompt_id, inputs):
         contracts = load_contracts()
         if prompt_id not in contracts["prompts"]:
             raise DomainError("unknown_prompt", "Prompt must be in the packaged source contract.")
@@ -85,6 +136,119 @@ class StructuredModel:
         user = re.sub(r"\{\{\s*([A-Za-z_][A-Za-z0-9_]*)\s*\}\}", lambda match: _json(values[match[1]]), prompt["user_template"])
         user += "\nHost-enforced call limits (characters are not tokens): " + _json(self._visible_limits())
         messages = [{"role": "system", "content": prompt["system"]}, {"role": "user", "content": user}]
+        return messages, values, schema_id
+
+    def _inspect(self, prompt_id, messages):
+        count = len(_json(messages))
+        try:
+            estimated = self._count_tokens(copy.deepcopy(messages))
+        except Exception as exc:
+            raise DomainError("invalid_model_counter", "Token counter failed before dispatch.",
+                              {"error_type": type(exc).__name__}) from None
+        if type(estimated) is not int or estimated < 0:
+            raise DomainError("invalid_model_counter", "Token counter must return a nonnegative integer.")
+        config = self.limits.get("token_budget")
+        stage = config["stages"].get(prompt_id) if config else None
+        cap = min(self.limits["max_output_tokens"], stage["max_output_tokens"]) if stage else self.limits["max_output_tokens"]
+        reason = None
+        checks = [("global", "calls", self.calls, 1, self.limits["max_calls"]),
+                  ("request", "input_chars", 0, count, self.limits["max_input_chars"]),
+                  ("global", "input_chars", self.input_chars, count, self.limits["max_total_input_chars"])]
+        if config:
+            if self._token_overrun is not None:
+                reason = {"scope": "global", "dimension": "previous_overrun", "original": copy.deepcopy(self._token_overrun)}
+            elif stage is None:
+                reason = {"scope": "stage", "dimension": "unconfigured_stage", "prompt_id": prompt_id}
+            else:
+                spent = self._stage_spent.get(prompt_id, {"calls": 0, "input": 0, "output": 0})
+                checks += [("request", "input_tokens", 0, estimated, config["max_input_tokens"]),
+                           ("global", "input_tokens", self._token_spent["input"], estimated, config["max_total_input_tokens"]),
+                           ("global", "output_tokens", self._token_spent["output"], cap, config["max_total_output_tokens"]),
+                           ("stage", "calls", spent["calls"], 1, stage["max_calls"]),
+                           ("stage_request", "input_tokens", 0, estimated, stage["max_input_tokens"]),
+                           ("stage", "input_tokens", spent["input"], estimated, stage["max_total_input_tokens"]),
+                           ("stage", "output_tokens", spent["output"], cap, stage["max_total_output_tokens"])]
+                if cap == 0:
+                    reason = {"scope": "stage_request", "dimension": "output_tokens", "limit": 0}
+        if reason is None:
+            for scope, dimension, consumed, requested, maximum in checks:
+                if consumed + requested > maximum:
+                    reason = {"scope": scope, "dimension": dimension, "consumed": consumed,
+                              "requested": requested, "limit": maximum, "prompt_id": prompt_id}
+                    break
+        return {"fits": reason is None, "estimated_input_tokens": estimated, "effective_output_cap": cap,
+                "input_chars": count, "messages_hash": digest(messages), "blocking_reason": reason,
+                "budget": None if not config else {
+                    "counter_id": config["counter_id"], "count_kind": config["count_kind"],
+                    "remaining": self._visible_limits()["remaining_token_budget"]}}
+
+    def preview(self, prompt_id, inputs):
+        """Inspect the same complete render used by generate; never reserve or invoke."""
+        with self._budget_lock:
+            messages, _, _ = self._render(prompt_id, inputs)
+            return self._inspect(prompt_id, messages)
+
+    def _reserve(self, prompt_id, inspected):
+        config = self.limits.get("token_budget")
+        if config is None:
+            return None
+        incoming, outgoing = inspected["estimated_input_tokens"], inspected["effective_output_cap"]
+        spent = self._stage_spent.setdefault(prompt_id, {"calls": 0, "input": 0, "output": 0})
+        self._token_spent["input"] += incoming
+        self._token_spent["output"] += outgoing
+        spent["calls"] += 1
+        spent["input"] += incoming
+        spent["output"] += outgoing
+        return {"counter_id": config["counter_id"], "count_kind": config["count_kind"], "stage": prompt_id,
+                "estimated_input_tokens": incoming, "reserved_input_tokens": incoming,
+                "reserved_output_tokens": outgoing, "input_debit": incoming, "output_debit": outgoing,
+                "debit_basis": {"input": "reservation", "output": "reservation"},
+                "budget_status": "reserved_unknown", "messages_hash": inspected["messages_hash"]}
+
+    def _settle(self, entry):
+        if "budget" not in entry:
+            return None
+        with self._budget_lock:
+            record = entry["budget"]
+            config = self.limits["token_budget"]
+            stage = config["stages"][entry["prompt_id"]]
+            spent = self._stage_spent[entry["prompt_id"]]
+            for side in ("input", "output"):
+                actual = entry[side + "_tokens"]
+                if actual is not None:
+                    difference = actual - record[side + "_debit"]
+                    self._token_spent[side] += difference
+                    spent[side] += difference
+                    record[side + "_debit"] = actual
+                    record["debit_basis"][side] = "provider_reported"
+            checks = [("request", "input_tokens", record["input_debit"], config["max_input_tokens"]),
+                      ("stage_request", "input_tokens", record["input_debit"], stage["max_input_tokens"]),
+                      ("request", "output_tokens", record["output_debit"], record["reserved_output_tokens"]),
+                      ("global", "input_tokens", self._token_spent["input"], config["max_total_input_tokens"]),
+                      ("global", "output_tokens", self._token_spent["output"], config["max_total_output_tokens"]),
+                      ("stage", "input_tokens", spent["input"], stage["max_total_input_tokens"]),
+                      ("stage", "output_tokens", spent["output"], stage["max_total_output_tokens"])]
+            for scope, dimension, actual, maximum in checks:
+                if actual > maximum:
+                    reason = {"scope": scope, "dimension": dimension, "actual": actual, "limit": maximum,
+                              "prompt_id": entry["prompt_id"]}
+                    record["budget_status"] = "overrun"
+                    self._token_overrun = reason
+                    return reason
+            record["budget_status"] = "settled" if all(
+                value == "provider_reported" for value in record["debit_basis"].values()) else "reserved_unknown"
+            return None
+
+    def generate(self, prompt_id, inputs, *, check=None):
+        """Run optional pure semantic validation inside the same finite repair loop.
+
+        ``check`` must not persist changes or execute a candidate. It receives a
+        copy; its DomainError is repair feedback, never an extra retry allowance.
+        """
+        if check is not None and not callable(check):
+            raise DomainError("invalid_model_check", "Semantic check must be a pure callable or None.")
+        with self._budget_lock:
+            messages, values, schema_id = self._render(prompt_id, inputs)
         usage, attempts = [], []
 
         def fail(code, message, **details):
@@ -93,13 +257,18 @@ class StructuredModel:
                 "input_chars_consumed": self.input_chars, **details})
 
         for repair in range(self.limits["max_format_repairs"] + 1):
-            count = len(_json(messages))
-            if (self.calls >= self.limits["max_calls"] or count > self.limits["max_input_chars"]
-                    or self.input_chars + count > self.limits["max_total_input_chars"]):
-                fail("model_budget_exhausted", "Call or input-character budget exhausted before the next attempt.",
-                     requested_input_chars=count, limits=copy.deepcopy(self.limits))
-            self.calls += 1
-            self.input_chars += count
+            with self._budget_lock:
+                try:
+                    inspected = self._inspect(prompt_id, messages)
+                except DomainError as exc:
+                    fail(exc.code, exc.message, **exc.details)
+                count = inspected["input_chars"]
+                if not inspected["fits"]:
+                    fail("model_budget_exhausted", "Call or input/output budget exhausted before the next attempt.",
+                         requested_input_chars=count, limits=copy.deepcopy(self.limits), preview=inspected)
+                self.calls += 1
+                self.input_chars += count
+                budget = self._reserve(prompt_id, inspected)
             started = time.monotonic()
             entry = {"usage_id": new_id("modelcall"), "prompt_id": prompt_id,
                      "attempt": repair + 1, "input_chars": count, "output_chars": None,
@@ -107,10 +276,12 @@ class StructuredModel:
                      "monetary_cost": None, "currency": None, "price_version": None,
                      "measurement": "missing", "model": None, "request_id": None,
                      "elapsed_seconds": None, "status": "attempted"}
+            if budget is not None:
+                entry["budget"] = budget
             usage.append(entry)
             try:
                 response = self.invoke({"prompt_id": prompt_id, "messages": copy.deepcopy(messages),
-                                        "max_output_tokens": self.limits["max_output_tokens"]})
+                                        "max_output_tokens": inspected["effective_output_cap"]})
             except Exception as exc:
                 entry.update(status="transport_error", elapsed_seconds=time.monotonic() - started)
                 # SDK transport messages may embed credentials/headers; retain type, not their text.
@@ -158,6 +329,7 @@ class StructuredModel:
                     entry["measurement"] = "partial" if diagnostics else "provider_reported"
             entry["model"] = response.get("model")
             entry["request_id"] = response.get("request_id")
+            overrun = self._settle(entry)
             text = response.get("text")
             if isinstance(text, str):
                 entry["output_chars"] = len(text)
@@ -168,6 +340,9 @@ class StructuredModel:
                 attempts[-1]["raw_response"]["text"] = text[:self.limits["max_output_chars"]]
                 attempts[-1]["raw_response_truncated"] = True
                 attempts[-1]["raw_response_hash"] = digest(text)
+            if overrun is not None:
+                entry["status"] = "budget_overrun"
+                fail("model_budget_exhausted", "Provider usage exceeded the declared token budget.", overrun=overrun)
             if response.get("finish_reason") != "stop":
                 entry["status"] = "truncated" if response.get("finish_reason") == "length" else "incomplete"
                 fail("model_truncated" if entry["status"] == "truncated" else "model_incomplete", "Response did not finish normally.")
