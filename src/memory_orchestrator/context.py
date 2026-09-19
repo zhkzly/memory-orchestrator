@@ -18,6 +18,13 @@ def terms(text):
     return result
 
 
+def _scope_phrases(text, phrases):
+    """Return explicit machine scope phrases found in public task text."""
+    normalized = ' '.join(text.casefold().split())
+    return sorted(phrase for phrase in phrases
+                  if ' '.join(phrase.casefold().split()) in normalized)
+
+
 def select_context(store, task, policy, *, explicit_snapshot=None, purpose='learning'):
     with measure_stage(store, task['project_id'], 'select', purpose=purpose,
                        subject_ref=task.get('task_id')):
@@ -167,12 +174,25 @@ def _select_context(store, task, policy, *, explicit_snapshot=None):
     scores = {}
     for sid, skill in skills.items():
         content = skill['content']
+        selector = content['scope'].get('retrieval')
+        if selector is not None:
+            excluded = _scope_phrases(task['description'], selector['exclude_any'])
+            if excluded:
+                exclusions.append({'skill_id': sid, 'reason': 'scope_exclusion',
+                                   'matched_terms': excluded})
+                continue
+            required = _scope_phrases(task['description'], selector['require_any'])
+            if not required:
+                exclusions.append({'skill_id': sid, 'reason': 'scope_requirement'})
+                continue
+        else:
+            required = []
         family_match = len((requested_family or query) & terms(content['scope']['task_family']))
         trigger_matches = len(query & terms(' '.join(content['triggers'])))
-        if not (family_match or trigger_matches):
+        if not (family_match or trigger_matches or required):
             exclusions.append({'skill_id': sid, 'reason': 'scope_or_trigger'})
         else:
-            scores[sid] = float(trigger_matches + family_match)
+            scores[sid] = float(trigger_matches + family_match + 2 * len(required))
     relations, relation_filters = [], []
     for relation in store.list('relations', project_id=project):
         eligible, reason = relation_applicability(store, relation, task, snapshot)
@@ -233,7 +253,7 @@ def _select_context(store, task, policy, *, explicit_snapshot=None):
                 'supplied_hash': digest(supplied), 'exclusions': exclusions,
                 'fact_refs': fact_refs, 'fact_read_errors': facts['errors'], 'fact_selection': fact_selection,
                 'relation_filters': relation_filters,
-                'selection_method': 'lexical family/trigger overlap; prose conditions remain advisory',
+                'selection_method': 'explicit scope retrieval phrases when present, then lexical family/trigger ranking; prose conditions remain advisory',
                 'budget': {'unit': 'characters', 'limit': budget, 'used': len(supplied),
                            'token_measurement': 'not_measured'},
                 'consumption_observability': 'unknown'}

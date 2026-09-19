@@ -113,11 +113,44 @@ class ContextTests(unittest.TestCase):
         generated['content']['triggers'] = ['A numeric-looking identifier in a declared string column must retain leading zeros.']
         unrelated = skill('vehicle')
         unrelated['content']['scope']['task_family'] = 'vehicle navigation'
+        unrelated['content']['scope']['retrieval'] = {
+            'require_any': ['navigate', 'destination'], 'exclude_any': []}
         unrelated['content']['triggers'] = ['navigate destination route']
         snapshot = self.store.save_snapshot('p', {'csv': generated, 'vehicle': unrelated}, {})
         result = select_context(self.store, {**self.task, 'task_family': 'csv'}, self.policy,
                                 explicit_snapshot=snapshot['snapshot_id'])
         self.assertEqual([s['skill_id'] for s in result['selected_skills']], ['csv'])
+
+    def test_machine_scope_selects_real_target_and_excludes_real_transfer_case(self):
+        fixture = json.loads((Path(__file__).parent / 'fixtures/gdpevo_rejected_target_evaluation.json').read_text())
+        actual = copy.deepcopy(next(iter(fixture['candidate_snapshot']['skills'].values())))
+        actual['project_id'] = 'p'
+        actual['content']['scope']['retrieval'] = {
+            'require_any': ['expedite', 'dispatch-control'],
+            'exclude_any': ['allocation desk', 'transfer'],
+        }
+        snapshot = self.store.save_snapshot('p', {actual['skill_id']: actual}, {})
+        cases = {row['id']: {**row['task'], 'project_id': 'p'} for row in fixture['case_set']['value']['cases']}
+        target = select_context(self.store, cases['train_001'], self.policy,
+                                explicit_snapshot=snapshot['snapshot_id'])
+        regression = select_context(self.store, cases['train_004'], self.policy,
+                                    explicit_snapshot=snapshot['snapshot_id'])
+        self.assertEqual([row['skill_id'] for row in target['selected_skills']], [actual['skill_id']])
+        self.assertEqual(regression['selected_skills'], [])
+        exclusion = next(row for row in regression['exclusions'] if row.get('skill_id') == actual['skill_id'])
+        self.assertEqual(exclusion['reason'], 'scope_exclusion')
+        self.assertEqual(exclusion['matched_terms'], ['allocation desk', 'transfer'])
+
+    def test_machine_scope_requires_a_positive_phrase_before_ranking(self):
+        generated = skill('csv')
+        generated['content']['scope']['retrieval'] = {
+            'require_any': ['csv', 'tabular conversion'], 'exclude_any': []}
+        snapshot = self.store.save_snapshot('p', {'csv': generated}, {})
+        result = select_context(self.store, {**self.task, 'description': 'unrelated schema review'},
+                                self.policy, explicit_snapshot=snapshot['snapshot_id'])
+        self.assertEqual(result['selected_skills'], [])
+        self.assertTrue(any(row.get('skill_id') == 'csv' and row['reason'] == 'scope_requirement'
+                            for row in result['exclusions']))
 
 
 if __name__ == '__main__':

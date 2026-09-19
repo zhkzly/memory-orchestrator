@@ -50,6 +50,16 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual(skill['content'], content())
         self.assertEqual(skill_view(snapshot)[skill['skill_id']]['rules'][0]['rule_id'], 'R1')
 
+    def test_new_skill_requires_machine_executable_scope_selector(self):
+        fixture = json.loads((Path(__file__).parent / 'fixtures/gdpevo_rejected_target_evaluation.json').read_text())
+        real_content = copy.deepcopy(next(iter(fixture['candidate_snapshot']['skills'].values()))['content'])
+        patch = copy.deepcopy(self.patch)
+        patch['operations'][0]['content'] = real_content
+        refs = set(patch['evidence_refs']) | set(real_content['evidence_refs'])
+        with self.assertRaises(DomainError) as caught:
+            self.apply(patch, allowed_evidence_refs=refs)
+        self.assertEqual(caught.exception.code, 'scope_selector')
+
     def test_candidate_retains_and_checks_exact_diagnosis_obligations(self):
         diagnosis={'diagnosis_id':'intent','project_id':'p','base_digest':self.base['snapshot_id'],
             'draft':{'check_plan':self.patch['check_plan']}}

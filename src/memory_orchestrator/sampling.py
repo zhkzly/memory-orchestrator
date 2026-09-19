@@ -404,6 +404,12 @@ def _resume(store, batch, plans, execute, evaluate, resolutions, proxy_model):
                 episode['gaps'].append('Malformed reported trace omitted from derived index; raw output retained.')
                 error, binding_error, status = _error(exc), _error(exc), 'adapter_error'
             episode['events'][-1]['text'] = json.dumps({'artifact': output.get('artifact'), 'error': error}, ensure_ascii=False)
+            artifact_hash = digest(output['artifact']) if 'artifact' in output and binding_error is None else None
+            if artifact_hash is not None:
+                episode['events'][-1]['resources'] = [{
+                    'kind': 'artifact', 'ref': 'evaluated-state:' + artifact_hash,
+                    'access': 'check', 'version_ref': artifact_hash,
+                }]
             if binding_error is None and (output.get('trace_path') is not None or output.get('trace_ref') is not None):
                 try:
                     if output.get('events') or output.get('trace_path') is not None and output.get('trace_ref') is not None:
@@ -412,9 +418,12 @@ def _resume(store, batch, plans, execute, evaluate, resolutions, proxy_model):
                 except (DomainError, OSError) as exc:
                     error = binding_error = _error(exc)
                     episode['gaps'].append('Trace archive could not be bound: ' + str(exc))
+            if binding_error is not None:
+                artifact_hash = None
+                if episode.get('events'):
+                    episode['events'][-1].pop('resources', None)
             disposition = parse_execution(output, binding_error, policy['scoring_policy'])
             status = disposition['execution_status']
-            artifact_hash = digest(output['artifact']) if 'artifact' in output and binding_error is None else None
             if legacy and previous_episodes:
                 episode = previous_episodes[0]
             if not legacy:

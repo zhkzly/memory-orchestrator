@@ -1,0 +1,200 @@
+{
+  "provenance": {
+    "source": "real rejected-candidate GDPevo evaluator feedback, assessment, and frozen plan",
+    "feedback_source": ".trellis/tasks/archive/2026-09/09-19-evidence-repair-boundaries/research/pilot/revised/store/records/feedback/a9da7968882ec06fd3b67f2ace1dfbcd403becd46d50177393343a197084d6f4.json",
+    "assessment_source": ".trellis/tasks/archive/2026-09/09-19-evidence-repair-boundaries/research/pilot/revised/store/records/assessments/c634a211d794eff15b41f40ed00a1adff45ec6e5c1023ef7bffd4f8abceadea4.json",
+    "plan_source": ".trellis/tasks/archive/2026-09/09-19-evidence-repair-boundaries/research/pilot/revised/store/records/feedback_plans/375439b6b00366429b62d1e28b50bdf6aeaf3b83dfb90c455763f1c9bf709e57.json",
+    "callback_return_source": ".trellis/tasks/archive/2026-09/09-19-evidence-repair-boundaries/research/pilot/revised/store/records/callback_returns/92aba79f45168458f3d423c67fa9abc99d641ac7e85c7bcb52996236b227e090.json"
+  },
+  "feedback": {
+    "attempt_ref": "attempt_02dac8d11c235fb47b98bf211865f97875bf90515aadef538e286596af32b8a9",
+    "binding_status": "bound",
+    "check_id": "feedback_plan_21314faffca847f4a2480c30137084cf:feedback:task_outcome",
+    "checked_at": "2026-09-19T05:52:08.052311Z",
+    "criterion_id": "task_outcome",
+    "evaluated_state_digest": "2257ec7f5b761fa4051a541aa4c14179190e1f6e9f5e5b651f38dbaee58b9132",
+    "evaluator_status": "ok",
+    "evidence_refs": [
+      "attempt_02dac8d11c235fb47b98bf211865f97875bf90515aadef538e286596af32b8a9"
+    ],
+    "execution_ref": "attempt_914f313765537f8be6cbdcc2a2185b046fef6612cef2c188ee2203b3414f451a",
+    "feedback_plan_ref": "feedback_plan_21314faffca847f4a2480c30137084cf",
+    "outcome": "fail",
+    "project_id": "gdpevo-group007",
+    "reason": "{\"evidence\":[{\"candidate_sha256\":\"c145a8c404df3c4e4d3222b57217edd1e1f5d0ab88a4c814cb64ba14d420ac22\",\"group_id\":\"task_group_007\",\"kind\":\"gdpevo_official_evaluator\",\"result\":{\"earned_weight\":5,\"score\":0.29411764705882354,\"scoring_points\":[{\"id\":\"SP001_order_set_and_count\",\"matched\":true,\"normalized_weight\":0.058823529411764705,\"weight\":1},{\"id\":\"SP002_inventory_statuses_and_shortages\",\"matched\":false,\"normalized_weight\":0.17647058823529413,\"weight\":3},{\"id\":\"SP003_inactive_and_low_stock_sku_sets\",\"matched\":false,\"normalized_weight\":0.11764705882352941,\"weight\":2},{\"id\":\"SP004_customer_exceptions\",\"matched\":true,\"normalized_weight\":0.11764705882352941,\"weight\":2},{\"id\":\"SP005_final_decisions\",\"matched\":false,\"normalized_weight\":0.17647058823529413,\"weight\":3},{\"id\":\"SP006_next_actions\",\"matched\":false,\"normalized_weight\":0.11764705882352941,\"weight\":2},{\"id\":\"SP007_shipping_quotes\",\"matched\":true,\"normalized_weight\":0.11764705882352941,\"weight\":2},{\"id\":\"SP008_summary_rollups\",\"matched\":false,\"normalized_weight\":0.11764705882352941,\"weight\":2}],\"total_weight\":17},\"returncode\":0,\"scorer_sha256\":\"a3848ca0e4a9d00536c8e675515b16d5008bf883dfe98dfafb2d87568db35f5d\",\"source_commit\":\"56d60ae4ae5e067d1ec0ee1f850622e69f422179\",\"stderr\":\"\",\"stdout\":\"{\\n  \\\"earned_weight\\\": 5,\\n  \\\"score\\\": 0.29411764705882354,\\n  \\\"scoring_points\\\": [\\n    {\\n      \\\"id\\\": \\\"SP001_order_set_and_count\\\",\\n      \\\"matched\\\": true,\\n      \\\"normalized_weight\\\": 0.058823529411764705,\\n      \\\"weight\\\": 1\\n    },\\n    {\\n      \\\"id\\\": \\\"SP002_inventory_statuses_and_shortages\\\",\\n      \\\"matched\\\": false,\\n      \\\"normalized_weight\\\": 0.17647058823529413,\\n      \\\"weight\\\": 3\\n    },\\n    {\\n      \\\"id\\\": \\\"SP003_inactive_and_low_stock_sku_sets\\\",\\n      \\\"matched\\\": false,\\n      \\\"normalized_weight\\\": 0.11764705882352941,\\n      \\\"weight\\\": 2\\n    },\\n    {\\n      \\\"id\\\": \\\"SP004_customer_exceptions\\\",\\n      \\\"matched\\\": true,\\n      \\\"normalized_weight\\\": 0.11764705882352941,\\n      \\\"weight\\\": 2\\n    },\\n    {\\n      \\\"id\\\": \\\"SP005_final_decisions\\\",\\n      \\\"matched\\\": false,\\n      \\\"normalized_weight\\\": 0.17647058823529413,\\n      \\\"weight\\\": 3\\n    },\\n    {\\n      \\\"id\\\": \\\"SP006_next_actions\\\",\\n      \\\"matched\\\": false,\\n      \\\"normalized_weight\\\": 0.11764705882352941,\\n      \\\"weight\\\": 2\\n    },\\n    {\\n      \\\"id\\\": \\\"SP007_shipping_quotes\\\",\\n      \\\"matched\\\": true,\\n      \\\"normalized_weight\\\": 0.11764705882352941,\\n      \\\"weight\\\": 2\\n    },\\n    {\\n      \\\"id\\\": \\\"SP008_summary_rollups\\\",\\n      \\\"matched\\\": false,\\n      \\\"normalized_weight\\\": 0.11764705882352941,\\n      \\\"weight\\\": 2\\n    }\\n  ],\\n  \\\"total_weight\\\": 17\\n}\\n\",\"task_id\":\"train_001\"}],\"message\":\"Official weighted field-group exact match; original score and per-point evidence retained.\"}",
+    "received_at": "2026-09-19T05:52:08.052311Z",
+    "request_ref": "feedback_plan_21314faffca847f4a2480c30137084cf:task_outcome",
+    "run_id": null,
+    "score": 0.29411764705882354,
+    "source": "external",
+    "subject_ref": "request_0d33211eb2944ca992e462ff3c058450",
+    "task_revision": null,
+    "visibility": "selection_only"
+  },
+  "assessment": {
+    "aggregation_rule": "single_task_outcome",
+    "assessment_id": "feedback_plan_21314faffca847f4a2480c30137084cf:assessment",
+    "criterion_coverage": 1,
+    "criterion_feedback_ids": [
+      "feedback_plan_21314faffca847f4a2480c30137084cf:feedback:task_outcome"
+    ],
+    "execution_ref": "attempt_914f313765537f8be6cbdcc2a2185b046fef6612cef2c188ee2203b3414f451a",
+    "expected_criterion_ids": [
+      "task_outcome"
+    ],
+    "feedback_plan_ref": "feedback_plan_21314faffca847f4a2480c30137084cf",
+    "feedback_sources": [
+      "external"
+    ],
+    "missing_criterion_ids": [],
+    "outcome": "fail",
+    "project_id": "gdpevo-group007",
+    "protocol_id": "gdpevo-pilot-comparison/v1",
+    "run_id": null,
+    "score": 0.29411764705882354,
+    "score_bounds": [
+      0.29411764705882354,
+      0.29411764705882354
+    ],
+    "subject_ref": "request_0d33211eb2944ca992e462ff3c058450",
+    "supersedes": null,
+    "unknown_reasons": []
+  },
+  "feedback_plan": {
+    "aggregation": {
+      "kind": "single_task_outcome"
+    },
+    "assessment_id": "feedback_plan_21314faffca847f4a2480c30137084cf:assessment",
+    "batch_id": "comparison_191b81ff0e8849a3b0674240ce0463c3",
+    "created_at": "2026-09-19T05:48:52.717170Z",
+    "criteria": [
+      {
+        "criterion_id": "task_outcome",
+        "rule": {
+          "task_id": "train_001"
+        }
+      }
+    ],
+    "evaluated_state_digest": null,
+    "evaluator": {
+      "config": {
+        "commit": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+      },
+      "id": "gdpevo-official-script/v1"
+    },
+    "feedback_plan_id": "feedback_plan_21314faffca847f4a2480c30137084cf",
+    "project_id": "gdpevo-group007",
+    "protocol_hash": "5a25c972c59eff7aab9a64639034c49e8043e760f336b0f21a640c6544ab4832",
+    "protocol_id": "gdpevo-pilot-comparison/v1",
+    "proxy": null,
+    "purpose": "validation",
+    "request": {
+      "arm": "candidate",
+      "case_ref": "train_001",
+      "repeat_index": 0,
+      "request_id": "request_0d33211eb2944ca992e462ff3c058450",
+      "snapshot_digest": "de057a6066291b03928eec39d63111b41f52519b5d565e6be8b58c34775f3b5d"
+    },
+    "requests": [
+      {
+        "criterion_id": "task_outcome",
+        "feedback_id": "feedback_plan_21314faffca847f4a2480c30137084cf:feedback:task_outcome",
+        "request_id": "feedback_plan_21314faffca847f4a2480c30137084cf:task_outcome"
+      }
+    ],
+    "run_id": null,
+    "scoring_policy": "available_artifact",
+    "subject": {
+      "authority_ref": "plan_0ec67b465efd4fc7ba538b907c77657c",
+      "execution_ref": null,
+      "kind": "evaluation_request",
+      "ref": "request_0d33211eb2944ca992e462ff3c058450"
+    },
+    "task_revision": null,
+    "visibility": "selection_only"
+  },
+  "callback_return": {
+    "attempt_id": "attempt_02dac8d11c235fb47b98bf211865f97875bf90515aadef538e286596af32b8a9",
+    "elapsed_seconds": 0.029586009011836722,
+    "error": null,
+    "measured_usage": null,
+    "project_id": "gdpevo-group007",
+    "raw_output": {
+      "evidence": [
+        {
+          "candidate_sha256": "c145a8c404df3c4e4d3222b57217edd1e1f5d0ab88a4c814cb64ba14d420ac22",
+          "group_id": "task_group_007",
+          "kind": "gdpevo_official_evaluator",
+          "result": {
+            "earned_weight": 5,
+            "score": 0.29411764705882354,
+            "scoring_points": [
+              {
+                "id": "SP001_order_set_and_count",
+                "matched": true,
+                "normalized_weight": 0.058823529411764705,
+                "weight": 1
+              },
+              {
+                "id": "SP002_inventory_statuses_and_shortages",
+                "matched": false,
+                "normalized_weight": 0.17647058823529413,
+                "weight": 3
+              },
+              {
+                "id": "SP003_inactive_and_low_stock_sku_sets",
+                "matched": false,
+                "normalized_weight": 0.11764705882352941,
+                "weight": 2
+              },
+              {
+                "id": "SP004_customer_exceptions",
+                "matched": true,
+                "normalized_weight": 0.11764705882352941,
+                "weight": 2
+              },
+              {
+                "id": "SP005_final_decisions",
+                "matched": false,
+                "normalized_weight": 0.17647058823529413,
+                "weight": 3
+              },
+              {
+                "id": "SP006_next_actions",
+                "matched": false,
+                "normalized_weight": 0.11764705882352941,
+                "weight": 2
+              },
+              {
+                "id": "SP007_shipping_quotes",
+                "matched": true,
+                "normalized_weight": 0.11764705882352941,
+                "weight": 2
+              },
+              {
+                "id": "SP008_summary_rollups",
+                "matched": false,
+                "normalized_weight": 0.11764705882352941,
+                "weight": 2
+              }
+            ],
+            "total_weight": 17
+          },
+          "returncode": 0,
+          "scorer_sha256": "a3848ca0e4a9d00536c8e675515b16d5008bf883dfe98dfafb2d87568db35f5d",
+          "source_commit": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "stderr": "",
+          "stdout": "{\n  \"earned_weight\": 5,\n  \"score\": 0.29411764705882354,\n  \"scoring_points\": [\n    {\n      \"id\": \"SP001_order_set_and_count\",\n      \"matched\": true,\n      \"normalized_weight\": 0.058823529411764705,\n      \"weight\": 1\n    },\n    {\n      \"id\": \"SP002_inventory_statuses_and_shortages\",\n      \"matched\": false,\n      \"normalized_weight\": 0.17647058823529413,\n      \"weight\": 3\n    },\n    {\n      \"id\": \"SP003_inactive_and_low_stock_sku_sets\",\n      \"matched\": false,\n      \"normalized_weight\": 0.11764705882352941,\n      \"weight\": 2\n    },\n    {\n      \"id\": \"SP004_customer_exceptions\",\n      \"matched\": true,\n      \"normalized_weight\": 0.11764705882352941,\n      \"weight\": 2\n    },\n    {\n      \"id\": \"SP005_final_decisions\",\n      \"matched\": false,\n      \"normalized_weight\": 0.17647058823529413,\n      \"weight\": 3\n    },\n    {\n      \"id\": \"SP006_next_actions\",\n      \"matched\": false,\n      \"normalized_weight\": 0.11764705882352941,\n      \"weight\": 2\n    },\n    {\n      \"id\": \"SP007_shipping_quotes\",\n      \"matched\": true,\n      \"normalized_weight\": 0.11764705882352941,\n      \"weight\": 2\n    },\n    {\n      \"id\": \"SP008_summary_rollups\",\n      \"matched\": false,\n      \"normalized_weight\": 0.11764705882352941,\n      \"weight\": 2\n    }\n  ],\n  \"total_weight\": 17\n}\n",
+          "task_id": "train_001"
+        }
+      ],
+      "outcome": "fail",
+      "reason": "Official weighted field-group exact match; original score and per-point evidence retained.",
+      "score": 0.29411764705882354,
+      "source": "executable"
+    },
+    "request_ref": "feedback_plan_21314faffca847f4a2480c30137084cf:task_outcome",
+    "returned_at": "2026-09-19T05:52:08.052311Z",
+    "stage": "evaluate"
+  }
+}

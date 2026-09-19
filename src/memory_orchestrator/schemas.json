@@ -1,8 +1,8 @@
 {
   "source": {
     "path": "docs/blueprint/project-contract.json",
-    "version": "1.9.0",
-    "sha256": "5864a65cac2295e4359a662d24a779bfa815ca6c0b857bb73ad9869e62ca4cf7"
+    "version": "1.10.0",
+    "sha256": "d39a35d4b9d111d35f341353b6401efc9a436f291fb48e67dea5b797d39f2ce8"
   },
   "schemas": {
     "ExperienceDraft": {
@@ -50,6 +50,33 @@
                 "minLength": 1
               },
               "minItems": 0
+            },
+            "retrieval": {
+              "type": "object",
+              "properties": {
+                "require_any": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "exclude_any": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "require_any",
+                "exclude_any"
+              ],
+              "additionalProperties": false,
+              "description": "可选的机器检索短语；新 ADD 必须提供。exclude_any 命中优先，旧资产缺失时保持 legacy 选择。"
             }
           },
           "required": [
@@ -231,6 +258,33 @@
                       "minLength": 1
                     },
                     "minItems": 0
+                  },
+                  "retrieval": {
+                    "type": "object",
+                    "properties": {
+                      "require_any": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 1
+                      },
+                      "exclude_any": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 0
+                      }
+                    },
+                    "required": [
+                      "require_any",
+                      "exclude_any"
+                    ],
+                    "additionalProperties": false,
+                    "description": "可选的机器检索短语；新 ADD 必须提供。exclude_any 命中优先，旧资产缺失时保持 legacy 选择。"
                   }
                 },
                 "required": [
@@ -774,6 +828,33 @@
                 "minLength": 1
               },
               "minItems": 0
+            },
+            "retrieval": {
+              "type": "object",
+              "properties": {
+                "require_any": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1
+                },
+                "exclude_any": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "require_any",
+                "exclude_any"
+              ],
+              "additionalProperties": false,
+              "description": "可选的机器检索短语；新 ADD 必须提供。exclude_any 命中优先，旧资产缺失时保持 legacy 选择。"
             }
           },
           "required": [
@@ -911,6 +992,33 @@
                               "minLength": 1
                             },
                             "minItems": 0
+                          },
+                          "retrieval": {
+                            "type": "object",
+                            "properties": {
+                              "require_any": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "minItems": 1
+                              },
+                              "exclude_any": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "minItems": 0
+                              }
+                            },
+                            "required": [
+                              "require_any",
+                              "exclude_any"
+                            ],
+                            "additionalProperties": false,
+                            "description": "可选的机器检索短语；新 ADD 必须提供。exclude_any 命中优先，旧资产缺失时保持 legacy 选择。"
                           }
                         },
                         "required": [
@@ -1078,6 +1186,33 @@
                                     "minLength": 1
                                   },
                                   "minItems": 0
+                                },
+                                "retrieval": {
+                                  "type": "object",
+                                  "properties": {
+                                    "require_any": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "minItems": 1
+                                    },
+                                    "exclude_any": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "minLength": 1
+                                      },
+                                      "minItems": 0
+                                    }
+                                  },
+                                  "required": [
+                                    "require_any",
+                                    "exclude_any"
+                                  ],
+                                  "additionalProperties": false,
+                                  "description": "可选的机器检索短语；新 ADD 必须提供。exclude_any 命中优先，旧资产缺失时保持 legacy 选择。"
                                 }
                               },
                               "required": [

@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from memory_orchestrator.engine import evolve
+from memory_orchestrator.evidence import build_packet, index_episodes
 from memory_orchestrator.evaluation import capture_rejected_target_episodes
 from memory_orchestrator.learning import learn
 from memory_orchestrator.lineage import require_learning_source
@@ -17,6 +18,8 @@ from test_memory_model import EXAMPLES, FakeCall, limits as model_limits, respon
 
 
 FIXTURE = json.loads((Path(__file__).parent / 'fixtures/gdpevo_rejected_target_evaluation.json').read_text())
+ORIGINAL_FEEDBACK = json.loads(
+    (Path(__file__).parent / 'fixtures/gdpevo_original_criterion_feedback.json').read_text())
 
 
 class RejectedTargetLearningTests(unittest.TestCase):
@@ -47,6 +50,76 @@ class RejectedTargetLearningTests(unittest.TestCase):
 
     def capture(self):
         return capture_rejected_target_episodes(self.store, copy.deepcopy(self.data['comparison']))
+
+    def load_original_criterion_feedback(self):
+        feedback = copy.deepcopy(ORIGINAL_FEEDBACK['feedback'])
+        assessment = copy.deepcopy(ORIGINAL_FEEDBACK['assessment'])
+        plan = copy.deepcopy(ORIGINAL_FEEDBACK['feedback_plan'])
+        returned = copy.deepcopy(ORIGINAL_FEEDBACK['callback_return'])
+        self.store.put('feedback_plans', plan['feedback_plan_id'], plan)
+        self.store.put('callback_returns', returned['attempt_id'], returned)
+        self.store.put('feedback', feedback['check_id'], feedback)
+        self.store.put('assessments', assessment['assessment_id'], assessment)
+        return feedback, assessment
+
+    def test_rejected_target_preserves_bound_original_criterion_feedback(self):
+        source, assessment = self.load_original_criterion_feedback()
+        episode_id = self.capture()[0]
+        adaptation = self.store.feedback_for(episode_id)[0]
+        reason = json.loads(adaptation['reason'])
+        self.assertEqual(reason['source_assessment_ref'], assessment['assessment_id'])
+        self.assertEqual(reason['source_criterion_feedback'], [{
+            key: source[key] for key in ('check_id', 'criterion_id', 'evaluator_status', 'outcome',
+                                         'score', 'source', 'evidence_refs', 'reason')
+        }])
+        detail = json.loads(reason['source_criterion_feedback'][0]['reason'])
+        points = detail['evidence'][0]['result']['scoring_points']
+        self.assertEqual([row['id'] for row in points if not row['matched']], [
+            'SP002_inventory_statuses_and_shortages',
+            'SP003_inactive_and_low_stock_sku_sets',
+            'SP005_final_decisions',
+            'SP006_next_actions',
+            'SP008_summary_rollups',
+        ])
+
+    def test_rejected_target_binds_evaluated_artifact_to_adaptation_feedback(self):
+        self.load_original_criterion_feedback()
+        episode_id = self.capture()[0]
+        episode = self.store.get('episodes', episode_id)
+        feedback = self.store.feedback_for(episode_id)
+        index = index_episodes([episode], feedback=feedback)
+        result = next(row for row in index['records'].values()
+                      if row['source_event'] and row['event_id'] == 'result')
+        projected = next(row for row in index['records'].values()
+                         if not row['source_event'] and row['event_id'] == feedback[0]['check_id'])
+        self.assertEqual(result['resources'], projected['resources'])
+        self.assertEqual(result['resources'], [{
+            'kind': 'artifact',
+            'ref': 'evaluated-state:' + feedback[0]['evaluated_state_digest'],
+            'access': 'check',
+            'version_ref': feedback[0]['evaluated_state_digest'],
+        }])
+        packet = build_packet(index, limits={
+            'max_chars': 1000000, 'max_fragment_chars': 200000,
+            'max_catalog_refs': 256, 'token_budget': 1000000,
+        }, allowed_refs=set(index['records']))
+        self.assertTrue(any(link['resource_ref'] == result['resources'][0]['ref']
+                            and link['version_match'] is True
+                            for link in packet['resource_relations']))
+
+    def test_tampered_original_criterion_feedback_blocks_rejection_projection(self):
+        source, _ = self.load_original_criterion_feedback()
+        changed = copy.deepcopy(source)
+        changed['score'] = 1.0
+        original = self.store.get
+        def tampered(kind, identifier):
+            if kind == 'feedback' and identifier == source['check_id']:
+                return changed
+            return original(kind, identifier)
+        with patch.object(self.store, 'get', side_effect=tampered), \
+             self.assertRaises(DomainError) as caught:
+            self.capture()
+        self.assertEqual(caught.exception.code, 'feedback_binding')
 
     def test_rejected_target_candidate_becomes_one_grounded_adaptation_episode(self):
         before = self.store.active(self.data['plan']['project_id'])

@@ -5,7 +5,7 @@ import unittest
 from concurrent.futures import CancelledError
 
 from memory_orchestrator.sampling import sample_tasks
-from memory_orchestrator.schemas import DomainError
+from memory_orchestrator.schemas import DomainError, digest
 from memory_orchestrator.store import Store
 from memory_orchestrator.report import report
 from memory_orchestrator.evidence import build_packet, index_episodes
@@ -53,6 +53,19 @@ class SamplingTests(unittest.TestCase):
         self.assertEqual(result, again)
         self.assertEqual(reopened.list('usage', 'p'), before)
         self.assertEqual(len(result['run_ids']), 1)
+
+    def test_host_terminal_result_keeps_artifact_identity(self):
+        result = self.run_samples(lambda *args: {'artifact': {'value': '001'}}, repeat_count=1)
+        episode = result['episodes'][0]
+        terminal = episode['events'][-1]
+        self.assertEqual((terminal['event_id'], terminal['kind'], terminal['source_role']),
+                         ('result', 'result', 'environment'))
+        self.assertEqual(json.loads(terminal['text'])['artifact'], {'value': '001'})
+        state = digest({'value': '001'})
+        self.assertEqual(terminal['resources'], [{
+            'kind': 'artifact', 'ref': 'evaluated-state:' + state,
+            'access': 'check', 'version_ref': state,
+        }])
 
     def test_started_without_return_blocks_until_explicit_original_result(self):
         from memory_orchestrator.sampling import prepare_sampling, resume_sampling
@@ -439,6 +452,12 @@ resume_sampling(Store(sys.argv[1]), sys.argv[2], execute, None)
         archived = (self.store.root / manifest['raw_path']).read_text()
         self.assertIn(original, archived)
         self.assertIn('host:' + result['run_ids'][0] + ':result', archived)
+        host_result = json.loads(archived.splitlines()[-1])
+        state = digest('001')
+        self.assertEqual(host_result['resources'], [{
+            'kind': 'artifact', 'ref': 'evaluated-state:' + state,
+            'access': 'check', 'version_ref': state,
+        }])
 
     def test_streamed_parent_source_is_checked_after_index_without_fabricating_missing_parent(self):
         from pathlib import Path

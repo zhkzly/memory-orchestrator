@@ -24,8 +24,8 @@ from memory_orchestrator.store import Store
 CONTEXT = {'max_roots': 2, 'max_context_chars': 12000, 'relation_weight': 0.5}
 MODEL_LIMITS = {'max_input_chars': 100000, 'max_output_chars': 16000, 'max_output_tokens': 4000,
                 'max_total_input_chars': 500000, 'max_calls': 12, 'max_format_repairs': 1}
-LEARNING = {'packet': {'max_chars': 28000, 'max_fragment_chars': 1200, 'max_catalog_refs': 8, 'token_budget': 16000},
-            'expanded_packet': {'max_chars': 38000, 'max_fragment_chars': 1200, 'max_catalog_refs': 8, 'token_budget': 24000},
+LEARNING = {'packet': {'max_chars': 40000, 'max_fragment_chars': 1200, 'max_catalog_refs': 8, 'token_budget': 20000},
+            'expanded_packet': {'max_chars': 50000, 'max_fragment_chars': 1200, 'max_catalog_refs': 8, 'token_budget': 28000},
             'max_expansions': 2, 'max_experiences': 3, 'max_read_requests': 4,
             'max_related_experiences': 4, 'max_related_episodes': 8, 'max_related_chars': 16000,
             'candidate_count': 1, 'max_operations': 3, 'max_skills': 20, 'max_asset_bytes': 20000,
@@ -82,6 +82,17 @@ def callbacks(store):
                     except ValueError:
                         converted[key] = value
             transformed.append(converted)
+        transform_call = (request.get('request_id') or 'scripted') + ':csv-transform'
+        events.extend([
+            {'event_id': 'transform_action', 'kind': 'action',
+             'text': 'Transform CSV rows using the declared column types and current policy.',
+             'call_id': transform_call, 'task_revision': task_data['revision'],
+             'task_id': task_data['task_id'], 'source_role': 'agent'},
+            {'event_id': 'transform_result', 'kind': 'result',
+             'text': json.dumps({'rows': transformed}, ensure_ascii=False, sort_keys=True),
+             'call_id': transform_call, 'task_revision': task_data['revision'],
+             'task_id': task_data['task_id'], 'source_role': 'tool'},
+        ])
         return {'artifact': transformed, 'events': events, 'consumption_events': consumption}
 
     def evaluate(request, execution, case):
@@ -118,7 +129,8 @@ class ScriptedTeacher:
             refs = [f['ref_id'] for f in packet['fragments']]
             exp = {'kind': 'procedure', 'title': 'Preserve declared CSV column types',
                    'conditions': ['CSV declares string and numeric column types'],
-                   'scope': {'task_family': 'csv', 'applies_when': ['CSV has declared types'], 'exclusions': []},
+                   'scope': {'task_family': 'csv', 'applies_when': ['CSV has declared types'], 'exclusions': [],
+                             'retrieval': {'require_any': ['CSV', 'declared column types'], 'exclude_any': []}},
                    'observed_facts': [{'claim': 'A local CSV execution and its checker result are available.', 'evidence_refs': refs}],
                    'guidance': {'steps': ['Use the declared type for each column.', 'Handle empty numeric values explicitly.'],
                                 'checks': ['Compare typed rows with the expected result.']},
@@ -154,7 +166,9 @@ class ScriptedTeacher:
             skills = inputs['allowed_skill_contents']
             if not skills:
                 owner = 'new:csv-types'
-                content = {'title': 'CSV typed conversion', 'scope': {'task_family': 'csv', 'applies_when': ['CSV types declared'], 'exclusions': []},
+                content = {'title': 'CSV typed conversion',
+                           'scope': {'task_family': 'csv', 'applies_when': ['CSV types declared'], 'exclusions': [],
+                                     'retrieval': {'require_any': ['CSV', 'declared column types'], 'exclude_any': []}},
                            'triggers': ['CSV'], 'preconditions': ['Column schema is supplied'],
                            'steps': ['Load references/csv-policy.json.', 'Preserve declared string columns.'],
                            'exceptions': [], 'checks': ['Check output row values and types.'],

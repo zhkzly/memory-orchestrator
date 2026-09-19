@@ -227,10 +227,31 @@ def index_episodes(episodes, *, feedback=(), contexts=None, store=None, trace_li
         if fb["binding_status"] != "bound" or fb["evaluated_state_digest"] is None:
             gaps.append(f"Feedback {fb['check_id']}: checked-state binding incomplete")
         allowed_feedback.append(fb)
+        state_resource = None
+        if fb['binding_status'] == 'bound' and fb['evaluated_state_digest'] is not None:
+            state_resource = {'kind': 'artifact', 'ref': 'evaluated-state:' + fb['evaluated_state_digest'],
+                              'access': 'check', 'version_ref': fb['evaluated_state_digest']}
+            # Older in-memory Episodes predate Host artifact resources. Derive
+            # only after parsing the exact environment result and matching the
+            # feedback's evaluated-state digest; raw event text remains intact.
+            for record in records.values():
+                if (not record['source_event'] or record['episode_id'] != ep['episode_id']
+                        or record['source_role'] != 'environment'
+                        or record['source_kind'] not in ('result', 'observation')):
+                    continue
+                try:
+                    material = json.loads(record['text'])
+                except (TypeError, ValueError):
+                    continue
+                if (isinstance(material, dict) and 'artifact' in material
+                        and digest(material['artifact']) == fb['evaluated_state_digest']
+                        and state_resource not in record['resources']):
+                    record['resources'].append(copy.deepcopy(state_resource))
         event_count = next((reader.checkpoint['event_count'] for reader in readers
                             if reader.manifest['episode_id'] == ep['episode_id']), len(ep['events']))
         full = add(ep, {"event_id": fb["check_id"], "kind": "feedback", "text": _json(fb),
-                 "task_revision": fb["task_revision"], "source_ref": f"feedback:{fb['check_id']}"},
+                 "task_revision": fb["task_revision"], "source_ref": f"feedback:{fb['check_id']}",
+                 **({'resources': [state_resource]} if state_resource is not None else {})},
             event_count, namespace="feedback", kind="feedback")
         if fb["reason"]:
             # Keep the original whole-record coordinates. This fixed field view

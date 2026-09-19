@@ -34,8 +34,12 @@ def policy(**changes):
 
 
 def drafts(source):
-    packet = build_packet(index_episodes(source), limits=policy()["packet"])
+    packet = build_packet(index_episodes(source, feedback=[copy.deepcopy(EXAMPLES['criterion-feedback'])]),
+                          limits=policy()["packet"])
     mapping = {f["event_id"]: f["ref_id"] for f in packet["fragments"]}
+    mapping['demo:E5'] = next(f['ref_id'] for f in packet['fragments']
+                              if f['kind'] == 'feedback'
+                              and f['structure']['namespace'] == 'feedback')
     def replace(value):
         if isinstance(value, dict): return {k: replace(v) for k, v in value.items()}
         if isinstance(value, list): return [replace(v) for v in value]
@@ -65,6 +69,7 @@ class LearningTests(unittest.TestCase):
         self.store = Store(self.temp.name)
         self.source = csv_episodes()
         for ep in self.source: self.store.add_episode(ep)
+        self.store.add_feedback(copy.deepcopy(EXAMPLES['criterion-feedback']))
         self.ids = [ep["episode_id"] for ep in self.source]
 
     def model(self, values):
@@ -369,6 +374,34 @@ class LearningTests(unittest.TestCase):
         self.assertIn("csv-typed-transformation", str(call.calls[2]["messages"][-1]))
         self.assertEqual(self.store.active("demo-project")["generation"], 0)
 
+    def test_reusable_extraction_repairs_task_and_score_only_refs_before_diagnosis(self):
+        extraction, diagnosis, patch = drafts(self.source)
+        incomplete = copy.deepcopy(extraction)
+        supporting = incomplete['experiences'][0]['supporting_refs']
+        # The real illustrative chain is E1 task, E3 action, E4 result,
+        # E5 feedback and E6 evaluated output. Retain only task + score.
+        incomplete['experiences'][0]['supporting_refs'] = [supporting[0], supporting[3]]
+        model, call = self.model([incomplete, extraction, diagnosis, patch])
+        result = learn(self.store, self.ids, model, policy=policy())
+        self.assertEqual(result['status'], 'proposed')
+        self.assertEqual([row['prompt_id'] for row in call.calls[:2]], ['extract_v1', 'extract_v1'])
+        first = self.store.get('reports', result['report_ids'][0])
+        diagnostics = first['result']['attempts'][0]['diagnostics']
+        self.assertEqual(diagnostics['code'], 'reusable_evidence_incomplete')
+
+    def test_add_without_machine_scope_repairs_inside_proposal_budget(self):
+        extraction, diagnosis, patch = drafts(self.source)
+        incomplete = copy.deepcopy(patch)
+        del incomplete['operations'][0]['content']['scope']['retrieval']
+        model, call = self.model([extraction, diagnosis, incomplete, patch])
+        result = learn(self.store, self.ids, model, policy=policy())
+        self.assertEqual(result['status'], 'proposed')
+        proposal_calls = [row for row in call.calls if row['prompt_id'] == 'propose_v1']
+        self.assertEqual(len(proposal_calls), 2)
+        proposal_report = next(self.store.get('reports', ref) for ref in result['report_ids']
+                               if self.store.get('reports', ref)['prompt_id'] == 'propose_v1')
+        self.assertEqual(proposal_report['result']['attempts'][0]['diagnostics']['code'], 'scope_selector')
+
     def test_semantic_repair_cannot_escape_shared_model_call_cap(self):
         extraction, bad, _ = drafts(self.source)
         bad["targets"] = [{"skill_id": "csv-typed-transformation", "revision": "new", "rule_id": None}]
@@ -524,19 +557,24 @@ class LearningTests(unittest.TestCase):
 
     def test_large_feedback_uses_only_packet_fragments_and_binding_metadata(self):
         fb = copy.deepcopy(EXAMPLES["criterion-feedback"])
-        fb["subject_ref"] = self.ids[0]
+        # Use the same-revision reference episode without the setup feedback so
+        # this test isolates one oversized reason rather than a multi-feedback
+        # incomplete-group path that deliberately requires summary budgets.
+        fb["subject_ref"] = self.ids[1]
+        fb["check_id"] = "demo:check-large-feedback"
         fb["reason"] = "Detailed verifier log: " + "X" * 180000
         self.store.add_feedback(fb)
         empty = copy.deepcopy(EXAMPLES["extraction"]); empty["experiences"] = []
         call = FakeCall([response(empty)])
         model = StructuredModel(call, limits=model_limits(max_input_chars=20000))
-        result = learn(self.store, [self.ids[0]], model,
-                       policy=policy(packet=packet_limits(6000, 350, 3)))
+        result = learn(self.store, [self.ids[1]], model,
+                       policy=policy(packet=packet_limits(8000, 350, 3)))
         self.assertEqual(result["status"], "noop")
         self.assertEqual(len(call.calls), 1)
         self.assertLessEqual(len(json.dumps(call.calls[0]["messages"], ensure_ascii=False, separators=(",", ":"))), 20000)
         record = self.store.get("reports", result["report_ids"][0])
-        visible = record["inputs"]["available_feedback"][0]
+        visible = next(row for row in record["inputs"]["available_feedback"]
+                       if row['check_id'] == fb['check_id'])
         for key in ("subject_ref", "task_revision", "evaluated_state_digest", "binding_status", "source", "visibility"):
             self.assertEqual(visible[key], fb[key])
         self.assertNotIn("reason", visible)

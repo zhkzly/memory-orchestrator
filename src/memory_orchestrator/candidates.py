@@ -37,6 +37,13 @@ def _path(path):
     return path
 
 
+def _require_scope_selector(content):
+    selector = content.get('scope', {}).get('retrieval')
+    if not isinstance(selector, dict) or not selector.get('require_any'):
+        raise DomainError('scope_selector',
+                          'A new Skill needs explicit scope.retrieval.require_any and exclude_any task-text phrases.')
+
+
 def _edit_skill(skill, edits):
     rows = [(f'R{i + 1}', value) for i, value in enumerate(skill['content']['steps'])]
     original = {key for key, _ in rows}
@@ -174,10 +181,12 @@ def apply_candidate(store, project_id, patch, *, base_digest, expected_generatio
     for sid in changed & skills.keys():
         skill = skills[sid]
         skill['content'] = validate('SkillContent', skill['content'])
+        old = base['skills'].get(sid)
+        if old is None or skill['content'].get('scope') != old['content'].get('scope'):
+            _require_scope_selector(skill['content'])
         skill['asset_refs'] = sorted(path for path in assets if path.startswith(sid + '/'))
         # An unchanged PATCH cannot create a new version solely by changing its revision string.
         material = {'content': skill['content'], 'assets': {key: assets[key] for key in skill['asset_refs']}}
-        old = base['skills'].get(sid)
         old_material = None if old is None else {'content': old['content'], 'assets': {key: base['assets'][key] for key in old['asset_refs']}}
         skill['revision'] = old['revision'] if material == old_material else digest(material)
     if skills == base['skills'] and assets == base['assets']:

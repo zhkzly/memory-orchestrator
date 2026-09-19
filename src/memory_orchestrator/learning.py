@@ -6,7 +6,7 @@ import json
 import re
 import time
 
-from .candidates import apply_candidate, skill_view
+from .candidates import apply_candidate, skill_view, _require_scope_selector
 from .context import terms as _terms
 from .evidence import build_packet, expand_packet, feedback_view, index_episodes, validate_citations
 from .evidence import _refresh, _fits, validate_packet
@@ -438,6 +438,89 @@ def _diagnosis_targets(diagnosis, view):
     return _unique(targets)
 
 
+def _grounding_error(refs, packet, *, path, reuse_level, repair_options=None):
+    """Describe missing source roles for a reusable behavior hypothesis.
+
+    This is a structural sufficiency check, not a semantic or causal proof. It
+    prevents task text plus a score from being promoted as a reusable
+    procedure while preserving instance-level observations.
+    """
+    selected = set(refs)
+    selected_bases = {ref.rsplit(':', 2)[0] for ref in selected}
+    fragments = {row['ref_id']: row for row in packet['fragments']}
+    cited = [fragments[ref] for ref in selected if ref in fragments]
+    task = any(row['kind'] == 'task' or row.get('structure', {}).get('source_role') == 'user'
+               for row in cited)
+    feedback_rows = [row for row in cited if row['kind'] == 'feedback'
+                     and row.get('structure', {}).get('namespace') == 'feedback']
+    feedback = bool(feedback_rows)
+    feedback_bases = {row['ref_id'].rsplit(':', 2)[0] for row in feedback_rows}
+    output_rows = [row for row in cited
+                   if row.get('structure', {}).get('source_kind') in ('result', 'observation')]
+    output_bases = {row['ref_id'].rsplit(':', 2)[0] for row in output_rows}
+    evaluated_output = False
+    for relation in packet.get('resource_relations', []):
+        if relation.get('version_match') is not True:
+            continue
+        endpoints = {relation['from_ref'].rsplit(':', 2)[0],
+                     relation['to_ref'].rsplit(':', 2)[0]}
+        if endpoints <= selected_bases and endpoints & feedback_bases and endpoints & output_bases:
+            evaluated_output = True
+            break
+    paired = False
+    for call in packet.get('relations', {}).get('calls', []):
+        if call.get('status') != 'paired' or call.get('coverage') != 'complete':
+            continue
+        action_bases = {ref.rsplit(':', 2)[0] for ref in call.get('action_refs', [])}
+        result_bases = {ref.rsplit(':', 2)[0] for ref in call.get('result_refs', [])}
+        if action_bases & selected_bases and result_bases & selected_bases:
+            paired = True
+            break
+    roles = [('task_requirement', task), ('action_result_pair', paired),
+             ('evaluated_output', evaluated_output), ('feedback', feedback)]
+    missing = [name for name, present in roles if not present]
+    if not missing:
+        return None
+    role_refs = {
+        'task_requirement': [row['ref_id'] for row in packet['fragments'] if row['kind'] == 'task'],
+        'evaluated_output': [row['ref_id'] for row in packet['fragments']
+            if row.get('structure', {}).get('source_kind') in ('result', 'observation')],
+        'feedback': [row['ref_id'] for row in packet['fragments']
+                     if row['kind'] == 'feedback'
+                     and row.get('structure', {}).get('namespace') == 'feedback'],
+        'artifact_feedback_links': [row for row in packet.get('resource_relations', [])
+                                    if row.get('version_match') is True],
+        'action_result_pair': [
+            {'action_refs': row.get('action_refs', []), 'result_refs': row.get('result_refs', [])}
+            for row in packet.get('relations', {}).get('calls', [])
+            if row.get('status') == 'paired' and row.get('coverage') == 'complete'],
+    }
+    return {'path': path, 'reuse_level': reuse_level, 'missing_roles': missing,
+            'provided_candidates': role_refs,
+            'repair_options': repair_options or ['cite_provided_refs', 'needs_more_evidence',
+                                                 'downgrade_to_instance', 'abstain'],
+            'message': 'Reusable guidance needs a requirement -> executed call -> evaluated output -> feedback evidence chain; role coverage is not causal proof.'}
+
+
+def _check_reusable_extraction(extraction, packet):
+    """Reject reusable drafts that cite only requirements and outcome labels."""
+    validate_citations(extraction, packet)
+    errors = []
+    for index, experience in enumerate(extraction['experiences']):
+        if experience['reuse_level'] == 'instance':
+            continue
+        error = _grounding_error(experience['supporting_refs'], packet,
+                                 path=f'$.experiences[{index}].supporting_refs',
+                                 reuse_level=experience['reuse_level'])
+        if error is not None:
+            errors.append(error)
+    if errors:
+        raise DomainError('reusable_evidence_incomplete',
+                          'Task-family guidance lacks a complete provided execution evidence chain.',
+                          {'errors': errors})
+    return extraction
+
+
 def _check_necessity(diagnosis, view, packet, limits):
     decision = diagnosis.get("necessity")
     if decision is None:
@@ -456,6 +539,11 @@ def _check_necessity(diagnosis, view, packet, limits):
             errors.append({"path": "$.necessity", "message": "Proceed needs grounded reusable behavior difference; it is still a hypothesis."})
         if decision["allow_add"] and (not decision["capability_gap"].strip() or actual != expected):
             errors.append({"path": "$.necessity.allow_add", "message": "ADD requires a stated gap and comparison of every provided existing capability."})
+        grounding = _grounding_error(decision['evidence_refs'], packet,
+                                     path='$.necessity.evidence_refs', reuse_level='task_family',
+                                     repair_options=['cite_provided_refs', 'necessity_needs_evidence', 'abstain'])
+        if grounding is not None:
+            errors.append(grounding)
     for i, check in enumerate(diagnosis["check_plan"]):
         if "check_ref" not in check:
             errors.append({"path": f"$.check_plan[{i}].check_ref", "message": "Use a supplied public check reference or explicit null."})
@@ -688,12 +776,13 @@ def learn(store, episode_ids, model, *, policy, verification_catalog=None):
             store.put("evidence_packets", packet["packet_id"], packet)
             stage = "extract_v1"
             extraction = call(stage, _extraction_inputs(episodes, index, packet, related, policy, expansions),
-                              check=lambda value: validate_citations(value, packet))
+                              check=lambda value: _check_reusable_extraction(value, packet))
             processing_state = result["trajectory_processing"]
             if processing_state["mode"] == "direct":
                 processing_state["analyzed_event_count"] = packet["coverage"]["selected_event_count"]
                 processing_state["analyzed_packet_count"] += 1
             validate_citations(extraction, packet)
+            _check_reusable_extraction(extraction, packet)
             if len(extraction["experiences"]) > policy["max_experiences"] or len(extraction["read_requests"]) > policy["max_read_requests"]:
                 raise DomainError("extraction_limit_exceeded", "Extraction exceeds its visible cycle limits.")
             if extraction["status"] == "abstained":
@@ -806,6 +895,13 @@ def learn(store, episode_ids, model, *, policy, verification_catalog=None):
             _check_verification_refs(value, public_checks)
             if any(op["op"] not in operations for op in value["operations"]):
                 raise DomainError("necessity_operation", "necessity.allow_add=false excludes ADD from this proposal.")
+            for operation in value['operations']:
+                if operation['op'] == 'ADD':
+                    _require_scope_selector(operation['content'])
+                elif operation['op'] == 'PATCH':
+                    for edit in operation['edits']:
+                        if edit.get('kind') == 'SET_FIELD' and edit.get('field') == 'scope':
+                            _require_scope_selector({'scope': edit['value']})
             if any("check_ref" not in c for c in value["check_plan"]):
                 raise DomainError("verification_reference", "Each generated check needs check_ref or explicit null.")
         for slot in result["candidate_slots"]:

@@ -135,8 +135,31 @@ def _rejected_target_context(store, execution_ref):
     _require(isinstance(returned, dict) and returned.get('execution_status') == 'completed'
              and isinstance(returned.get('events'), list) and 'artifact' in returned,
              'rejection_ineligible', 'Rejected target needs a completed event trace and artifact')
+    source_assessment, source_feedback, assessment_gap = None, [], None
+    assessment_ref = result.get('assessment_ref')
+    if assessment_ref:
+        try:
+            store.get('assessments', assessment_ref)
+        except DomainError as exc:
+            if exc.code != 'NOT_FOUND':
+                raise
+            assessment_gap = 'The original criterion assessment is unavailable; only the aggregate EvaluationResult can be projected.'
+        else:
+            from .feedback import verify_assessment
+            verified = verify_assessment(store, assessment_ref,
+                expected_subject=request['request_id'], expected_protocol=plan['protocol_hash'])
+            source_assessment = verified['assessment']
+            source_feedback = verified['feedbacks']
+            _require(source_assessment['project_id'] == plan['project_id']
+                     and source_assessment['execution_ref'] == execution_ref
+                     and source_assessment['subject_ref'] == request['request_id']
+                     and source_assessment['outcome'] == result['outcome']
+                     and source_assessment['score'] == result['score'],
+                     'rejection_binding', 'Original criterion assessment differs from the selected EvaluationResult')
     return {'execution': execution, 'result': result, 'plan': plan, 'request': request,
-            'validation': validation, 'selection': selection, 'case': case}
+            'validation': validation, 'selection': selection, 'case': case,
+            'source_assessment': source_assessment, 'source_feedback': source_feedback,
+            'assessment_gap': assessment_gap}
 
 
 def _rejected_target_records(store, execution_ref):
@@ -174,30 +197,43 @@ def _rejected_target_records(store, execution_ref):
                      'Evaluation event parent is absent from the trace')
             item['parent_event_id'] = mapping[parent]
         events.append(item)
+    state_digest = digest(returned['artifact'])
+    state_resource = {'kind': 'artifact', 'ref': 'evaluated-state:' + state_digest,
+                      'access': 'check', 'version_ref': state_digest}
     events.append({'event_id': 'result', 'kind': 'result',
         'text': json.dumps({'artifact': returned['artifact'], 'error': None}, ensure_ascii=False,
                            sort_keys=True, separators=(',', ':')),
         'source_ref': f'{execution_ref}#/returned/artifact', 'call_id': None,
         'task_revision': task['revision'], 'task_id': task['task_id'],
-        'source_role': 'environment'})
+        'source_role': 'environment', 'resources': [state_resource]})
     check_id = 'feedback_' + digest(
         ['rejected_target_evaluation', selection['selection_id'], request['request_id']])[:32]
     failed_gates = [row['gate'] for row in validation['gate_results']
                     if row['passed'] is not True and row['gate'] == 'target_gain']
+    source_fields = ('check_id', 'criterion_id', 'evaluator_status', 'outcome',
+                     'score', 'source', 'evidence_refs', 'reason')
+    source_feedback = [{key: row[key] for key in source_fields}
+                       for row in context['source_feedback']]
     reason = {'kind': 'rejected_target_candidate', 'selection_id': selection['selection_id'],
               'validation_id': validation['validation_id'], 'validation_status': validation['status'],
               'failed_gates': failed_gates, 'request_id': request['request_id'],
               'score': result['score'], 'outcome': result['outcome'],
               'evaluation_gaps': result['gaps'],
+              'source_assessment_ref': None if context['source_assessment'] is None
+                  else context['source_assessment']['assessment_id'],
+              'source_criterion_feedback': source_feedback,
+              'source_feedback_gap': context['assessment_gap'],
               'scope_note': 'This target is now adaptation material; it is not unseen validation evidence.'}
     feedback = {'check_id': check_id, 'run_id': request['request_id'],
         'criterion_id': 'candidate_rejection', 'task_revision': task['revision'],
-        'evaluated_state_digest': digest(returned['artifact']), 'evaluator_status': 'ok',
+        'evaluated_state_digest': state_digest, 'evaluator_status': 'ok',
         'outcome': result['outcome'], 'score': result['score'],
         'source': 'external' if result['source'] == 'executable' else result['source'],
         'visibility': 'adaptation',
         'evidence_refs': [execution_ref, result['request_id'], validation['validation_id'],
-                          selection['selection_id']],
+                          selection['selection_id'], *([context['source_assessment']['assessment_id']]
+                          if context['source_assessment'] else []),
+                          *[row['check_id'] for row in context['source_feedback']]],
         'reason': json.dumps(reason, ensure_ascii=False, sort_keys=True, separators=(',', ':')),
         'checked_at': validation['evidence_cutoff'], 'received_at': validation['evidence_cutoff'],
         'subject_ref': episode_id, 'project_id': context['plan']['project_id'],

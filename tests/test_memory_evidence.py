@@ -28,12 +28,20 @@ def csv_episodes():
     mapping = {"task": "instruction", "skill": "note", "action": "action",
                "observation": "observation", "feedback": "feedback",
                "recovery": "result", "counterexample": "note"}
+    roles = {"task": "user", "skill": "agent", "action": "agent",
+             "observation": "tool", "feedback": "environment",
+             "recovery": "environment", "counterexample": "environment"}
     for fragment in EXAMPLES["evidence-packet"]["fragments"]:
         ep = groups.setdefault(fragment["episode_id"], episode())
         if ep["episode_id"] != fragment["episode_id"]:
             ep.update(episode_id=fragment["episode_id"], events=[])
+        call_id = "demo:conversion" if fragment["kind"] in ("action", "observation") else None
+        resources = ([{'kind': 'artifact', 'ref': 'evaluated-state:' + EXAMPLES['criterion-feedback']['evaluated_state_digest'],
+                       'access': 'check', 'version_ref': EXAMPLES['criterion-feedback']['evaluated_state_digest']}]
+                     if fragment['event_id'] == 'demo:E4' else [])
         ep["events"].append(dict(event_id=fragment["event_id"], kind=mapping[fragment["kind"]],
-            text=fragment["text"], source_ref=fragment["raw_ref"], call_id=None,
+            text=fragment["text"], source_ref=fragment["raw_ref"], call_id=call_id,
+            source_role=roles[fragment["kind"]], resources=resources,
             task_revision=fragment["task_revision"], task_id=fragment["task_revision"].split("@")[0]))
     return list(groups.values())
 
