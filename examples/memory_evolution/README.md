@@ -30,11 +30,11 @@ from memory_orchestrator.report import report
 ```
 
 1. `Store(root)` 显式指定存储根目录。`initialize_project(project_id, seed=None, source=...)` 建立空库或 `{skills, assets}` 预置基线，并记录来源；初始基线不是演化发布。`remember()` 保存事实，`add_episode()` 导入经历，`add_feedback()` 追加迟到反馈；已知身份必须一致，未知字段可以为空。随经历带来的反馈可通过 `feedback_records` 同包导入。
-2. `select_context()` 固定库版本，再按任务选择 Skill 和依赖；提供清单记录实际披露内容。默认读取 active，比较时可显式传入候选快照。字符预算和估算 token 均保留计量方式。
+2. `select_context()` 固定库版本，再按任务选择 Skill 和依赖；提供清单记录实际披露内容。新 Skill 的 `scope.retrieval.require_any/exclude_any` 是机器边界：exclude 先执行，require 至少命中一项，随后才进入原 family/trigger 排名。旧 Skill 没有该字段时保留 legacy 路径。默认读取 active，比较时可显式传入候选快照。字符预算和估算 token 均保留计量方式。
 3. `sample_tasks()` 在调用前保存全部计划与输入。支持同题多次和固定快照微批；每次执行、取消、异常和未知都计入分母。回调负责环境重置与硬超时，核心的线程池不提供进程隔离。
-4. `learn()` 检查来源资格，逐步索引轨迹、关联缺标目标、检索失败模式，再统一经过角色分层与调用组计划。足够短的处理后视图直接提取；长轨迹按阶段预算生成局部记录与精确短引文，再执行经验提取、语义维护、必要性判断、归因和提案。补读与格式修复受同一模型实例的显式预算控制。事实记忆不由 reward 改写。返回的 `candidate_ids` 是 proposal ID，可用 `store.get('candidates', id)` 读取完整候选。
+4. `learn()` 检查来源资格，逐步索引轨迹、关联缺标目标、检索失败模式，再统一经过角色分层与调用组计划。足够短的处理后视图直接提取；长轨迹按阶段预算生成局部记录与精确短引文，再执行经验提取、语义维护、必要性判断、归因和提案。task-family/cross-family 指导还必须引用任务、完整 action/result、以及由相同 artifact digest 绑定的 output/Feedback；只有任务文字和失败分数时会修复、补读、降为 instance 或弃权。补读与格式修复受同一模型实例的显式预算控制。事实记忆不由 reward 改写。返回的 `candidate_ids` 是 proposal ID，可用 `store.get('candidates', id)` 读取完整候选。
 5. `compare_candidates()` 固定案例、协议、候选集合和检查义务，执行旧版／候选对照、附属脚本检查及适用的局部组合对照。`ValidationRecord` 表示是否通过，`SelectionRecord` 表示最终选择。缺材料、缺执行或未知不能冒充检查通过。
-6. `evolve()` 遇到被拒的candidate target时不原地重试，而把确切评价执行投影成下一轮adaptation Episode，返回`next_episode_ids`。base/regression/transfer/final/unknown不进入；调用方用新的模型预算显式调用下一轮。
+6. `evolve()` 遇到被拒的candidate target时不原地重试，而把确切评价执行投影成下一轮adaptation Episode，返回`next_episode_ids`。原 TaskAssessment 可用时会复验并保留 criterion feedback；artifact 与新 Feedback 共享 evaluated-state digest。base/regression/transfer/final/unknown不进入；调用方用新的模型预算显式调用下一轮。
 7. `publish()` 核对项目、完整资产、确切候选、验证／选择关系和 base/generation 后切换 active。`rollback()` 只回到同项目的已提交发布历史，并产生新代次。下一次召回使用新的 active；正在执行的任务仍用原快照。
 
 记录保存后可以查询，但不一定可以学习。对于本地采样，`learn()` 会检查计划中的全部槽位、实际终态记录和完成回执；`frozen_microbatch` 还检查调用前冻结的全部成员组。父经历、相关经验和同内容历史经验合并使用同一资格判断。未知外部导入可以保留，不要求伪造本地运行计划；已知本地矛盾不能降为未知以绕过检查。

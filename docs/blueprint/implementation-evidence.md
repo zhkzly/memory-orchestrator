@@ -1,8 +1,22 @@
 # 完整 Python 记忆演化实现证据
 
-本页保留 v1.7.0 的历史交付，并记录 v1.8.0 的轨迹学习入口重写、v1.8.1 的证据输入修复及 v1.9.0 的拒绝候选学习交接。原 K01–K14、Q01–Q28、N01–N11 均保留。具体 Codex/Claude 适配、CLI/MCP 和目录同步仍按原约定暂缓，旧 TypeScript 和用户数据保留。
+本页保留 v1.7.0 的历史交付，并记录 v1.8.0 的轨迹学习入口重写、v1.8.1 的证据输入修复、v1.9.0 的拒绝候选学习交接及 v1.10.0 的反馈闭环/Skill适用性修复。原 K01–K14、Q01–Q28、N01–N11 均保留。具体 Codex/Claude 适配、CLI/MCP 和目录同步仍按原约定暂缓，旧 TypeScript 和用户数据保留。
 
 调用入口与参数见 [Python 使用说明](../../examples/memory_evolution/README.md)。`evolve()` 组织学习、候选比较、选择与发布；提供方负责实际执行环境和评分依据。核心不要求调用方重写演化决策。
+
+## v1.10.0：反馈闭环与 Skill 机器适用性
+
+真实 GDPevo 回放显示，原 `extract_v1` 把一条仅引用任务要求与评分组的经验标为 `task_family`；其 unknowns 同时承认完整 ERP 请求/响应和 artifact 不可见。`diagnose_v1` 仍将通用 field-by-field checklist 判为 `proceed`。生成 Skill 虽在自然语言 exclusions 中写明不适用于 allocation/transfer，N02 只读取宽泛 `task_family=northwind_erp` 与 triggers，仍把 3877 字符内容注入 train_004。
+
+本版不改 v1.8.0 的角色分层、调用组、局部摘要、补读和累计预算，补足其上层三条边：
+
+- rejected target 回流会复验并保留原 TaskAssessment 的 criterion feedback；真实 fixture 中五个失败评分组不再只剩总分。旧记录若整个 assessment 不存在可带 gap 读取；assessment 已存在但其 plan/feedback/callback 不完整或被篡改时阻止投影。
+- Host 终态 artifact 与 Feedback 使用同一 `evaluated-state:<digest>` resource。可复用经验与 `necessity.proceed` 必须引用 task、完整 action/result、可信 feedback，以及通过该 resource 绑定的被评 output；缺项在同一模型修复/补读预算内处理，或降为 instance/needs_evidence/abstain。
+- `SkillContent.scope.retrieval` 提供机器 `require_any/exclude_any` 短语；新 ADD 和显式 scope 重写必须提供。exclude 命中优先于原 family/trigger 排名。真实候选派生检查中 train_001 被选中，train_004 因 `allocation desk`/`transfer` 排除；旧 Skill 无 selector 保持 legacy 行为。
+
+提示词 revision 更新为 extract 5、diagnose 8、propose 5；同样约束由宿主语义检查执行，不能靠提示词自愿遵守。真实坏提取、坏诊断、被篡改 criterion、缺 artifact-feedback 边、ADD 缺 selector、正/负 selector、inline/磁盘 Host 终态均有行为检查；完整 Python 回归 **383/383 通过（79.807秒）**，compileall、总纲 check/render/verify 与 packaged prompt/schema 同源检查通过。
+
+本轮未得到新的模型或 benchmark 效果数字。本机 `localhost:8317` 在沙箱外只读探测确认无服务监听，因此未把确定性模型修复测试冒充为真实 Teacher 回放。此前 train001 5/17→5/17、train004 12/17→10/17 和 0 发布仍是最近一次真实效果证据；v1.10.0 只证明旧坏草稿现在会被拒绝或要求补证，以及声明的 Skill 排除边界会实际执行。
 
 ## v1.9.0：被拒target进入显式下一轮
 
