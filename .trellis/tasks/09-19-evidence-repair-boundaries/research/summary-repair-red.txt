@@ -1,0 +1,31 @@
+test_actual_rejected_draft_is_not_silently_unescaped (test_memory_summary_repair.SummaryRepairTests.test_actual_rejected_draft_is_not_silently_unescaped) ... ok
+test_lower_request_limit_still_stops_before_second_dispatch (test_memory_summary_repair.SummaryRepairTests.test_lower_request_limit_still_stops_before_second_dispatch) ... ok
+test_reference_profile_accepts_a_grounded_first_response (test_memory_summary_repair.SummaryRepairTests.test_reference_profile_accepts_a_grounded_first_response) ... ok
+test_reference_profile_can_repair_the_recorded_rejection (test_memory_summary_repair.SummaryRepairTests.test_reference_profile_can_repair_the_recorded_rejection) ... ERROR
+
+======================================================================
+ERROR: test_reference_profile_can_repair_the_recorded_rejection (test_memory_summary_repair.SummaryRepairTests.test_reference_profile_can_repair_the_recorded_rejection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_summary_repair.py", line 64, in test_reference_profile_can_repair_the_recorded_rejection
+    result = generate()
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_summary_repair.py", line 44, in generate
+    return model.generate('summarize_trace_v1', supplied, check=lambda value: _summary_excerpts(
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        value, supplied['evidence_packet'], supplied['summary_limits']))
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/model.py", line 267, in generate
+    fail("model_budget_exhausted", "Call or input/output budget exhausted before the next attempt.",
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         requested_input_chars=count, limits=copy.deepcopy(self.limits), preview=inspected)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/model.py", line 255, in fail
+    raise DomainError(code, message, {"prompt_id": prompt_id, "usage": copy.deepcopy(usage),
+        "attempts": copy.deepcopy(attempts), "calls_consumed": self.calls,
+        "input_chars_consumed": self.input_chars, **details})
+memory_orchestrator.schemas.DomainError: Call or input/output budget exhausted before the next attempt.
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.023s
+
+FAILED (errors=1)

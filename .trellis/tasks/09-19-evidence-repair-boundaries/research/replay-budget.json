@@ -1,0 +1,13 @@
+{
+  "purpose": "One new v1.8.1 learning replay on the exact archived train001 prelearning store; imported actor costs remain historical, all new SDK calls use this fresh ledger.",
+  "previous_ledger": "calls-default-empty",
+  "new_ledger": "calls-replay",
+  "config": {
+    "model": "gpt-5.6-terra",
+    "base_url": "http://localhost:8317/v1",
+    "timeout": 120,
+    "max_calls": 36,
+    "max_total_input_chars": 3000000,
+    "max_output_tokens": 8192
+  }
+}

@@ -1,0 +1,9 @@
+test_actual_rejected_draft_is_not_silently_unescaped (test_memory_summary_repair.SummaryRepairTests.test_actual_rejected_draft_is_not_silently_unescaped) ... ok
+test_lower_request_limit_still_stops_before_second_dispatch (test_memory_summary_repair.SummaryRepairTests.test_lower_request_limit_still_stops_before_second_dispatch) ... ok
+test_reference_profile_accepts_a_grounded_first_response (test_memory_summary_repair.SummaryRepairTests.test_reference_profile_accepts_a_grounded_first_response) ... ok
+test_reference_profile_can_repair_the_recorded_rejection (test_memory_summary_repair.SummaryRepairTests.test_reference_profile_can_repair_the_recorded_rejection) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.024s
+
+OK

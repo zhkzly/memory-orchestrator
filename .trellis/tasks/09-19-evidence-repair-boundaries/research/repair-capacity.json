@@ -1,0 +1,23 @@
+{
+  "kind": "deterministic_replay_with_scripted_repair_not_live",
+  "physical_sdk_calls": 0,
+  "injected_calls": 2,
+  "attempts": [
+    {
+      "status": "invalid_output",
+      "input_chars": 19126,
+      "estimated_input_tokens": 6818,
+      "reported_input_tokens": 6028,
+      "measurement": "provider_reported"
+    },
+    {
+      "status": "completed",
+      "input_chars": 24525,
+      "estimated_input_tokens": 8851,
+      "reported_input_tokens": null,
+      "measurement": "missing"
+    }
+  ],
+  "rule": "Recorded first response plus a constructed exact-copy repair; not measured learning quality.",
+  "usage_note": "The first usage object is copied from the archived provider response. No modified request in this replay was sent to the provider; only the complete-request estimates measure the new rendered messages."
+}

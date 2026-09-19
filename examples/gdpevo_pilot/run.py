@@ -32,7 +32,7 @@ MODEL = {'max_input_chars': 120000, 'max_output_chars': 30000, 'max_output_token
          'token_budget': {
              'max_input_tokens': 40000, 'max_total_input_tokens': 160000, 'max_total_output_tokens': 24000,
              'stages': {
-                 'summarize_trace_v1': {'max_calls': 4, 'max_input_tokens': 8000, 'max_output_tokens': 1000,
+                 'summarize_trace_v1': {'max_calls': 4, 'max_input_tokens': 12000, 'max_output_tokens': 1000,
                      'max_total_input_tokens': 32000, 'max_total_output_tokens': 4000},
                  'extract_v1': {'max_calls': 2, 'max_input_tokens': 16000, 'max_output_tokens': 3000,
                      'max_total_input_tokens': 32000, 'max_total_output_tokens': 6000},

@@ -229,9 +229,15 @@ def index_episodes(episodes, *, feedback=(), contexts=None, store=None, trace_li
         allowed_feedback.append(fb)
         event_count = next((reader.checkpoint['event_count'] for reader in readers
                             if reader.manifest['episode_id'] == ep['episode_id']), len(ep['events']))
-        add(ep, {"event_id": fb["check_id"], "kind": "feedback", "text": _json(fb),
+        full = add(ep, {"event_id": fb["check_id"], "kind": "feedback", "text": _json(fb),
                  "task_revision": fb["task_revision"], "source_ref": f"feedback:{fb['check_id']}"},
             event_count, namespace="feedback", kind="feedback")
+        if fb["reason"]:
+            # Keep the original whole-record coordinates. This fixed field view
+            # avoids a second JSON-string encoding without parsing its contents.
+            base = "ev:" + digest([project, ep["episode_id"], "feedback", fb["check_id"], "reason-text-v1"])[:24]
+            records[base] = {**full, "base_ref": base, "text": fb["reason"],
+                             "raw_ref": f"feedback:{fb['check_id']}#/reason", "raw_hash": digest(fb["reason"])}
     for ep in episodes:
         if not any(f["subject_ref"] == ep["episode_id"] for f in allowed_feedback):
             gaps.append(f"{ep['episode_id']}: no separately supplied adaptation feedback; outcome unknown")
@@ -499,10 +505,22 @@ def _dependencies(index, focus, limits, *, ordered=None):
     return found
 
 
+def _is_feedback_reason(record):
+    return (record["namespace"] == "feedback"
+            and record["raw_ref"] == f"feedback:{record['event_id']}#/reason")
+
+
 def _refresh(packet, index):
     packet.pop("goal_annotations", None)
     packet.pop("resource_relations", None)
     selected = {_resolve(index, f["ref_id"], body=False)[0]["base_ref"] for f in packet["fragments"]}
+    # The optional field view neither creates another source obligation nor
+    # substitutes for an unread original record. Only inspect in-memory views;
+    # disk event metadata must not be materialized to count this fixed field.
+    records = index["records"]
+    metadata = records.memory if hasattr(records, "memory") else records
+    required_count = len(records) - sum(_is_feedback_reason(row) for row in metadata.values())
+    selected_required = {ref for ref in selected if not _is_feedback_reason(records[ref])}
     catalog_refs = [c["ref_id"] for c in packet["readable_ref_catalog"]]
     provided = {f["ref_id"] for f in packet["fragments"]}
     packet["omitted_refs"] = [ref for ref in catalog_refs if ref not in provided]
@@ -511,7 +529,9 @@ def _refresh(packet, index):
         "total_event_count": sum(len(ep["events"]) for ep in index["episodes"]) + sum(p["event_count"] for p in index.get("trace_progress", [])),
         "mandatory_roles_present": sorted({f["kind"] for f in packet["fragments"]}),
         "incomplete_reasons": ["Catalog and original ranges are bounded; unlisted material remains in the source index."]
-            if len(selected) < len(index["records"]) or any(len(f["text"].encode("utf-8")) < _byte_length(_resolve(index, f["ref_id"], body=False)[0]) for f in packet["fragments"]) else [],
+            if len(selected_required) < required_count or any(
+                len(f["text"].encode("utf-8")) < _byte_length(_resolve(index, f["ref_id"], body=False)[0])
+                for f in packet["fragments"] if f["ref_id"].rsplit(":", 2)[0] in selected_required) else [],
         "omitted_episode_refs": [ep["episode_id"] for ep in index["episodes"]
                                  if ep["episode_id"] not in {f["episode_id"] for f in packet["fragments"]}],
     }
@@ -562,12 +582,19 @@ def _selection_units(index, candidates, focus, cap, allowed_refs=None):
     terminals = {ep['episode_id']: len(ep['events']) - 1 for ep in index['episodes'] if ep['events']}
     terminals.update({reader.manifest['episode_id']: reader.checkpoint['event_count'] - 1
                       for reader in index.get('trace_readers', [])})
+    feedback_views = defaultdict(list)
+    for row in candidates:
+        if row['namespace'] == 'feedback':
+            feedback_views[(row['episode_id'], row['event_id'])].append(row)
     seen, units = set(), []
     for row in candidates:
-        key = (row['episode_id'], row['call_id']) if row['call_id'] is not None else (row['base_ref'],)
+        key = (('feedback', row['episode_id'], row['event_id']) if row['namespace'] == 'feedback' else
+               (row['episode_id'], row['call_id']) if row['call_id'] is not None else (row['base_ref'],))
         if key in seen: continue
         seen.add(key)
-        members = (list(islice(_matching(index, episode_id=row['episode_id'], call_id=row['call_id']), cap))
+        members = (sorted(feedback_views[(row['episode_id'], row['event_id'])], key=_is_feedback_reason)
+                   if row['namespace'] == 'feedback' else
+                   list(islice(_matching(index, episode_id=row['episode_id'], call_id=row['call_id']), cap))
                    if row['call_id'] is not None else [row])
         if allowed_refs is not None:
             members = [item for item in members if item['base_ref'] in allowed_refs]
@@ -579,7 +606,8 @@ def _selection_units(index, candidates, focus, cap, allowed_refs=None):
             if item['kind'] in ('recovery', 'counterexample'): return 1
             if (_trace_hint(item) if '_reader' in item else _failure_position(item.get('text', ''))) is not None: return 1
             return 2
-        units.append({'base_ref': row['base_ref'], 'episode_id': row['episode_id'],
+        units.append({'base_ref': members[0]['base_ref'] if row['namespace'] == 'feedback' else row['base_ref'],
+                      'episode_id': row['episode_id'],
                       'position': min(item['position'] for item in members), 'members': members,
                       'priority': min(map(priority, members))})
     return [unit for priority in sorted({u['priority'] for u in units})
@@ -655,6 +683,27 @@ def build_packet(index, *, limits, focus_refs=(), dependency_limits=None, allowe
                   [index['records'][ref] for ref in sorted(allowed)])
     units = _selection_units(index, candidates, focus, metadata_cap, allowed)
     pieces = {}
+    for unit in units:
+        members = unit['members']
+        if len(members) != 2 or any(row['namespace'] != 'feedback' for row in members): continue
+        full, reason = sorted(members, key=_is_feedback_reason)
+        if _is_feedback_reason(full) or not _is_feedback_reason(reason): continue
+        width = _role_width(reason, limits, role_max_chars)
+        # One feedback gets one body allowance. Its fixed metadata prefix is
+        # useful control evidence, but never consumes more than half of it.
+        # The known outer fields are canonical JSON; reason itself is unparsed.
+        start, end = 0, full['text'].index(',"reason":')
+        if end > width // 2:
+            outcome = re.search(r'"outcome":"(?:pass|fail|unknown)"', full['text'])
+            start, end = outcome.span()
+        if end - start > width // 2:
+            pieces[full['base_ref']] = None
+            metadata_chars = 0
+        else:
+            pieces[full['base_ref']] = _piece(full, len(full['text'][:start].encode('utf-8')),
+                                             len(full['text'][:end].encode('utf-8')))
+            metadata_chars = end - start
+        pieces[reason['base_ref']] = next(_pieces(reason, width - metadata_chars, 0))
     def piece(row):
         if row['base_ref'] not in pieces:
             pieces[row['base_ref']] = next(_pieces(row, _role_width(row, limits, role_max_chars), 0))
@@ -670,6 +719,13 @@ def build_packet(index, *, limits, focus_refs=(), dependency_limits=None, allowe
         if locator_only and (not actions or not results): return None
         for row in members:
             fragment = piece(row)
+            if fragment is None:
+                # Tiny allowances favor reason. The whole-record source is
+                # still readable if the independently charged catalog fits.
+                locator = _catalog(next(_pieces(row, _role_width(row, limits, role_max_chars), 0)))
+                if locator['ref_id'] not in readable and len(readable) < limits['max_catalog_refs']:
+                    proposed['readable_ref_catalog'].append(locator); readable.add(locator['ref_id'])
+                continue
             if fragment['ref_id'] in provided: continue
             if locator_only and row in results:
                 if fragment['ref_id'] not in readable:
@@ -688,6 +744,7 @@ def build_packet(index, *, limits, focus_refs=(), dependency_limits=None, allowe
         if proposed is not None: packet = proposed
     if not packet["fragments"]:
         for row in candidates:
+            if piece(row) is None: continue
             candidate = copy.deepcopy(packet)
             candidate["fragments"] = [piece(row)]
             _refresh(candidate, index)

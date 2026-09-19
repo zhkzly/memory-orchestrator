@@ -200,7 +200,11 @@ class TrajectoryTests(unittest.TestCase):
         self.assert_original(plan, index)
 
     def test_disk_and_inline_group_projections_match_without_whole_text_load(self):
-        expected = self.plan(indexed())
+        # Compare grouping semantics with room for disk-only source locators and
+        # both feedback views. Equal byte ceilings can legitimately select less
+        # disk text when its additional provenance exhausts the packet budget.
+        packet = {**trajectory_limits()['packet'], 'max_chars': 80000, 'token_budget': 40000}
+        expected = self.plan(indexed(), packet=packet)
         with tempfile.TemporaryDirectory() as directory:
             store = Store(Path(directory) / 'store')
             ep = copy.deepcopy(FIXTURE['episode']); events = ep['events']; ep['events'] = []
@@ -217,7 +221,7 @@ class TrajectoryTests(unittest.TestCase):
             with patch.object(Path, 'read_text', guarded):
                 index = evidence.index_episodes([ep], feedback=[FIXTURE['feedback']],
                     contexts={FIXTURE['context']['manifest_id']: FIXTURE['context']}, store=store, trace_limits=caps)
-                actual = self.plan(index)
+                actual = self.plan(index, packet=packet)
             def view(plan):
                 return [[(f['event_id'], f['range'], f['text']) for f in p['fragments']] for p in plan['segments']]
             self.assertEqual(view(actual), view(expected))

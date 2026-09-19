@@ -1,0 +1,48 @@
+test_call_budget_and_global_budget_do_not_fabricate_success (test_gdpevo_actor.ActorTests.test_call_budget_and_global_budget_do_not_fabricate_success) ... ok
+test_complete_payload_budget_blocks_dispatch_without_removing_context (test_gdpevo_actor.ActorTests.test_complete_payload_budget_blocks_dispatch_without_removing_context) ... ok
+test_dynamic_host_state_is_included_in_the_complete_input_budget (test_gdpevo_actor.ActorTests.test_dynamic_host_state_is_included_in_the_complete_input_budget) ... ok
+test_final_context_is_pinned_and_cross_version_manifest_is_rejected (test_gdpevo_actor.ActorTests.test_final_context_is_pinned_and_cross_version_manifest_is_rejected) ... ok
+test_gold_unknown_tool_and_judge_are_rejected_without_dispatch (test_gdpevo_actor.ActorTests.test_gold_unknown_tool_and_judge_are_rejected_without_dispatch) ... ok
+test_malformed_list_tool_id_keeps_partial_trace_without_dispatch (test_gdpevo_actor.ActorTests.test_malformed_list_tool_id_keeps_partial_trace_without_dispatch) ... ok
+test_normal_stop_preserves_non_json_without_host_repair (test_gdpevo_actor.ActorTests.test_normal_stop_preserves_non_json_without_host_repair) ... ok
+test_only_an_actual_selected_asset_read_records_consumption (test_gdpevo_actor.ActorTests.test_only_an_actual_selected_asset_read_records_consumption) ... ok
+test_oversized_tool_json_is_rejected_whole_not_silently_cut (test_gdpevo_actor.ActorTests.test_oversized_tool_json_is_rejected_whole_not_silently_cut) ... ok
+test_real_public_prompt_and_parallel_tool_pairs_reach_the_next_sdk_call (test_gdpevo_actor.ActorTests.test_real_public_prompt_and_parallel_tool_pairs_reach_the_next_sdk_call) ... ok
+test_recorded_five_round_submission_keeps_one_unused_model_call_visible (test_gdpevo_actor.ActorTests.test_recorded_five_round_submission_keeps_one_unused_model_call_visible) ... ok
+test_recorded_six_round_pattern_discloses_remaining_budget_without_inventing_answer (test_gdpevo_actor.ActorTests.test_recorded_six_round_pattern_discloses_remaining_budget_without_inventing_answer) ... ok
+test_sixty_gets_in_one_sdk_reply_are_allowed_and_paired (test_gdpevo_actor.ActorTests.test_sixty_gets_in_one_sdk_reply_are_allowed_and_paired) ... ok
+test_timeout_length_and_malformed_sdk_envelope_keep_terminal_state (test_gdpevo_actor.ActorTests.test_timeout_length_and_malformed_sdk_envelope_keep_terminal_state) ... ok
+test_tool_batch_over_budget_executes_none_and_keeps_attempts (test_gdpevo_actor.ActorTests.test_tool_batch_over_budget_executes_none_and_keeps_attempts) ... ok
+test_actual_budget_raw_ranges_and_all_scoring_points_remain_intact (test_gdpevo_context.GDPevoContextTests.test_actual_budget_raw_ranges_and_all_scoring_points_remain_intact) ... ok
+test_catalog_offers_returns_and_selected_template_continuation (test_gdpevo_context.GDPevoContextTests.test_catalog_offers_returns_and_selected_template_continuation) ... ok
+test_failed_business_categories_have_actual_return_evidence (test_gdpevo_context.GDPevoContextTests.test_failed_business_categories_have_actual_return_evidence) ... ok
+test_real_trajectory_disk_index_keeps_the_same_useful_call_categories (test_gdpevo_context.GDPevoContextTests.test_real_trajectory_disk_index_keeps_the_same_useful_call_categories) ... FAIL
+test_selected_business_requests_keep_their_actual_return_reachable (test_gdpevo_context.GDPevoContextTests.test_selected_business_requests_keep_their_actual_return_reachable) ... ok
+test_business_get_matches_real_filtered_data_and_returns_copies (test_gdpevo_dataset.GDPevoDatasetTests.test_business_get_matches_real_filtered_data_and_returns_copies) ... ok
+test_judge_files_and_documented_but_unimplemented_routes_are_denied (test_gdpevo_dataset.GDPevoDatasetTests.test_judge_files_and_documented_but_unimplemented_routes_are_denied) ... ok
+test_official_positive_and_missing_field_negative_keep_exact_score (test_gdpevo_dataset.GDPevoDatasetTests.test_official_positive_and_missing_field_negative_keep_exact_score) ... ok
+test_read_input_only_allows_current_public_files (test_gdpevo_dataset.GDPevoDatasetTests.test_read_input_only_allows_current_public_files) ... ok
+test_request_case_identity_is_bound_before_scoring (test_gdpevo_dataset.GDPevoDatasetTests.test_request_case_identity_is_bound_before_scoring) ... ok
+test_source_commit_is_an_actual_precondition (test_gdpevo_dataset.GDPevoDatasetTests.test_source_commit_is_an_actual_precondition) ... ok
+test_task_preserves_full_public_prompt_without_private_paths (test_gdpevo_dataset.GDPevoDatasetTests.test_task_preserves_full_public_prompt_without_private_paths) ... ok
+test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero (test_gdpevo_dataset.GDPevoDatasetTests.test_zero_and_invalid_json_are_not_success_because_exit_code_is_zero) ... ok
+test_identical_deployable_states_skip_but_changed_state_reaches_probe (test_gdpevo_probe.ProbeTests.test_identical_deployable_states_skip_but_changed_state_reaches_probe) ... {"stage": "probe", "status": "not_run", "reason": "identical_deployable_memory"}
+ok
+test_diagnosis_gets_scope_before_it_commits_verification_obligations (test_gdpevo_prompt_scope.PromptScopeTests.test_diagnosis_gets_scope_before_it_commits_verification_obligations) ... ok
+test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen (test_gdpevo_sdk.LedgerTests.test_actual_call_envelope_is_saved_and_budget_is_shared_after_reopen) ... ok
+test_full_real_messages_and_tools_count_before_dispatch (test_gdpevo_sdk.LedgerTests.test_full_real_messages_and_tools_count_before_dispatch) ... ok
+test_interrupted_and_failed_transports_remain_unknown_attempts (test_gdpevo_sdk.LedgerTests.test_interrupted_and_failed_transports_remain_unknown_attempts) ... ok
+
+======================================================================
+FAIL: test_real_trajectory_disk_index_keeps_the_same_useful_call_categories (test_gdpevo_context.GDPevoContextTests.test_real_trajectory_disk_index_keeps_the_same_useful_call_categories)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_gdpevo_context.py", line 133, in test_real_trajectory_disk_index_keeps_the_same_useful_call_categories
+    self.assertTrue({'orders', 'products', 'inventory'} <= families, families)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true : {'inventory', 'customers', 'products'}
+
+----------------------------------------------------------------------
+Ran 33 tests in 8.083s
+
+FAILED (failures=1)
