@@ -227,9 +227,11 @@ def index_episodes(episodes, *, feedback=(), contexts=None, store=None, trace_li
         if fb["binding_status"] != "bound" or fb["evaluated_state_digest"] is None:
             gaps.append(f"Feedback {fb['check_id']}: checked-state binding incomplete")
         allowed_feedback.append(fb)
+        event_count = next((reader.checkpoint['event_count'] for reader in readers
+                            if reader.manifest['episode_id'] == ep['episode_id']), len(ep['events']))
         add(ep, {"event_id": fb["check_id"], "kind": "feedback", "text": _json(fb),
                  "task_revision": fb["task_revision"], "source_ref": f"feedback:{fb['check_id']}"},
-            len(ep["events"]), namespace="feedback", kind="feedback")
+            event_count, namespace="feedback", kind="feedback")
     for ep in episodes:
         if not any(f["subject_ref"] == ep["episode_id"] for f in allowed_feedback):
             gaps.append(f"{ep['episode_id']}: no separately supplied adaptation feedback; outcome unknown")
@@ -287,11 +289,12 @@ def _piece(record, start, end, *, body=True):
 
 
 def _pieces(record, width, extra):
+    preserve_prefix = learning_role(record) == 'user'
     if "_reader" in record:
         length = _byte_length(record)
         # Older indexes carry a broad lexical hint. It is rechecked before use;
         # raw archives and previously saved checkpoints are not rewritten.
-        failure = _trace_hint(record)
+        failure = None if preserve_prefix else _trace_hint(record)
         starts = ([max(0, failure - width // 4)] if failure is not None else [])
         starts += [0, max(0, length-width), *[i*width for i in range(1, min(extra+1, math.ceil(length/width)))]]
         for start in _unique(starts):
@@ -301,8 +304,8 @@ def _pieces(record, width, extra):
             yield {**_piece(record, start, start + len(text.encode()), body=False), "text": text}
         return
     text = record["text"]
-    failure = _failure_position(text)
-    recovery = _RECOVERY.search(text)
+    failure = None if preserve_prefix else _failure_position(text)
+    recovery = None if preserve_prefix else _RECOVERY.search(text)
     anchor = failure if failure is not None else recovery.start() if recovery else None
     starts = ([max(0, anchor - width // 4)] if anchor is not None else []) + [0, max(0, len(text) - width)]
     starts += [i * width for i in range(1, min(extra + 1, math.ceil(len(text) / width)))]
@@ -464,7 +467,7 @@ def _resource_relations(packet, index):
     return links
 
 
-def _dependencies(index, focus, limits):
+def _dependencies(index, focus, limits, *, ordered=None):
     if limits is None: return set()
     if any(type(limits.get(k)) is not int or limits[k] < 0 for k in ("max_hops", "max_events")):
         raise DomainError("dependency_budget", "Explicit nonnegative hop/event limits required")
@@ -491,6 +494,7 @@ def _dependencies(index, focus, limits):
                 if key in found or key in focus: continue
                 if len(found) >= limits["max_events"]: return found
                 found.add(key); next_frontier.append(key)
+                if ordered is not None: ordered.append(key)
         frontier = next_frontier
     return found
 
@@ -552,7 +556,7 @@ def _metadata_candidates(index, focus, cap):
     return list(selected.values())
 
 
-def _selection_units(index, candidates, focus, cap):
+def _selection_units(index, candidates, focus, cap, allowed_refs=None):
     """Choose calls by identity and local phase, not all requests before results."""
     from itertools import islice
     terminals = {ep['episode_id']: len(ep['events']) - 1 for ep in index['episodes'] if ep['events']}
@@ -565,6 +569,8 @@ def _selection_units(index, candidates, focus, cap):
         seen.add(key)
         members = (list(islice(_matching(index, episode_id=row['episode_id'], call_id=row['call_id']), cap))
                    if row['call_id'] is not None else [row])
+        if allowed_refs is not None:
+            members = [item for item in members if item['base_ref'] in allowed_refs]
         if not members: continue
         def priority(item):
             if item['base_ref'] in focus: return -1
@@ -580,16 +586,53 @@ def _selection_units(index, candidates, focus, cap):
             for unit in _spread([u for u in units if u['priority'] == priority])]
 
 
-def build_packet(index, *, limits, focus_refs=(), dependency_limits=None):
+def learning_role(record):
+    """A selection role, never a rewrite of the observed source metadata."""
+    if record['namespace'] == 'feedback' or record['source_kind'] == 'feedback': return 'feedback'
+    if record['namespace'] == 'requirement' or record['source_role'] == 'user': return 'user'
+    if record['source_kind'] == 'action': return 'action'
+    if record['source_role'] == 'agent' and record['source_kind'] in ('note', 'instruction'): return 'note'
+    if record['source_kind'] in ('result', 'observation'): return 'result'
+    return 'unknown'
+
+
+def _role_limits(caps):
+    if caps is not None:
+        for role in ('user', 'action', 'note', 'result', 'feedback', 'unknown'):
+            if type(caps.get(role)) is not int or caps[role] < 1:
+                raise DomainError('invalid_budget', f'Explicit positive role_max_chars.{role} required')
+    return caps
+
+
+def _role_width(row, limits, caps):
+    width = limits['max_fragment_chars']
+    if caps is None: return width
+    role = learning_role(row)
+    cap = caps[role]
+    if role == 'result' and (row['kind'] in ('recovery', 'counterexample') or
+            (_trace_hint(row) if '_reader' in row else _failure_position(row.get('text', ''))) is not None):
+        cap = max(cap, caps['feedback'])
+    return min(width, cap)
+
+
+def build_packet(index, *, limits, focus_refs=(), dependency_limits=None, allowed_refs=None, role_max_chars=None):
     """Select exact snippets; metadata and the read catalog count toward the budget."""
     _limits(limits)
+    _role_limits(role_max_chars)
+    allowed = None if allowed_refs is None else set(allowed_refs)
+    if allowed is not None:
+        for ref in allowed:
+            if ref not in index['records']:
+                raise DomainError('unsupported_evidence', 'allowed_refs must contain original event base references', {'ref_id': ref})
     for reader in index.get("trace_readers", []): reader.set_read_budget(limits["max_chars"] * 4)
     focus = {_resolve(index, ref, body=False)[0]["base_ref"] for ref in focus_refs}
+    if allowed is not None: focus &= allowed
     if dependency_limits and not focus:
         from itertools import islice
         focus = {row["base_ref"] for row in islice((r for r in index["records"].values()
                  if r["parent_event_id"] or r.get("resources") or r.get("failure_terms")), dependency_limits.get("max_events", 0))}
     focus |= _dependencies(index, focus, dependency_limits)
+    if allowed is not None: focus &= allowed
     bindings = _bindings(index)
     revisions = {b["task_revision"] for b in bindings}
     gaps = index["gaps"][:16]
@@ -608,12 +651,13 @@ def build_packet(index, *, limits, focus_refs=(), dependency_limits=None):
         "coverage": {}, "token_budget": limits["token_budget"], "token_count_source": "estimated",
     }
     metadata_cap = max(1, limits["max_chars"] // 350 + limits["max_catalog_refs"])
-    candidates = _metadata_candidates(index, focus, metadata_cap)
-    units = _selection_units(index, candidates, focus, metadata_cap)
+    candidates = (_metadata_candidates(index, focus, metadata_cap) if allowed is None else
+                  [index['records'][ref] for ref in sorted(allowed)])
+    units = _selection_units(index, candidates, focus, metadata_cap, allowed)
     pieces = {}
     def piece(row):
         if row['base_ref'] not in pieces:
-            pieces[row['base_ref']] = next(_pieces(row, limits['max_fragment_chars'], 0))
+            pieces[row['base_ref']] = next(_pieces(row, _role_width(row, limits, role_max_chars), 0))
         return pieces[row['base_ref']]
     reserve = min(limits["max_chars"] // 4, limits["max_catalog_refs"] * 450)
     def place(unit, reserve, *, locator_only=False):
@@ -665,7 +709,7 @@ def build_packet(index, *, limits, focus_refs=(), dependency_limits=None):
         for row in ordered_rows:
             if not any(f['ref_id'].startswith(row['base_ref'] + ':') and len(f['text'].encode('utf-8')) == _byte_length(row)
                        for f in packet['fragments']):
-                streams.append(iter(_pieces(row, limits['max_fragment_chars'], limits['max_catalog_refs'])))
+                streams.append(iter(_pieces(row, _role_width(row, limits, role_max_chars), limits['max_catalog_refs'])))
         pending = deque(streams)
         while pending:
             iterator = pending.popleft()
@@ -690,6 +734,278 @@ def build_packet(index, *, limits, focus_refs=(), dependency_limits=None):
     index["read_stats"] = {key: sum(r.stats[key] for r in index.get("trace_readers", []))
                            for key in ("body_bytes", "range_reads")}
     return packet
+
+
+def _group_binding(index, members):
+    values = {key: set() for key in ('task_id', 'goal_id', 'task_revision')}
+    derived, missing = False, False
+    annotations = defaultdict(list)
+    for row in index.get('goal_annotations', []):
+        if row['relation'] != 'ambiguous': annotations[row['event_ref']].append(row)
+    for member in members:
+        effective = {}
+        for key in values:
+            value = member[key]
+            fallback = annotations.get(member['base_ref'], [])
+            if value is None and fallback and key in ('goal_id', 'task_revision'):
+                inferred = {row['revision' if key == 'task_revision' else key] for row in fallback}
+                values[key].update(inferred)
+                value = next(iter(inferred)) if len(inferred) == 1 else None
+                derived = True
+            if value is not None: values[key].add(value)
+            effective[key] = value
+        missing |= effective['task_revision'] is None or effective['task_id'] is None and effective['goal_id'] is None
+    conflict = any(len(v) > 1 for v in values.values())
+    binding = {key: next(iter(v)) if len(v) == 1 else None for key, v in values.items()}
+    status = 'ambiguous' if conflict else 'unknown' if missing else 'derived' if derived else 'observed'
+    return {'episode_id': members[0]['episode_id'], **binding, 'binding_status': status}
+
+
+def _trajectory_records(index, maximum):
+    """Read bounded metadata pages, never materialize all disk event bodies."""
+    remaining = maximum
+    readers = {r.manifest['episode_id']: r for r in index.get('trace_readers', [])}
+    for episode in index['episodes']:
+        if remaining <= 0: return
+        eid = episode['episode_id']
+        if eid in readers:
+            rows = readers[eid].rows(limit=remaining)
+        else:
+            rows = (index['records']['ev:' + digest([index['project_id'], eid, 'event', event['event_id']])[:24]]
+                    for event in episode['events'][:remaining])
+        for row in rows:
+            remaining -= 1
+            yield row
+
+
+def build_trajectory_plan(index, *, limits, dependency_limits=None):
+    """Project complete observed call groups into finite, source-backed packets.
+
+    max_scan_events bounds selection scanning, not provenance metadata queries
+    or integrity I/O. Actual reader work is returned separately as read_stats.
+    Summaries are produced elsewhere and never replace these fragments.
+    """
+    for key in ('max_scan_events', 'max_segments', 'max_groups_per_segment'):
+        if type(limits.get(key)) is not int or limits[key] < 1:
+            raise DomainError('invalid_budget', f'Explicit positive trajectory {key} required')
+    packet_limits = _limits(limits.get('packet', {}))
+    role_caps = _role_limits(limits.get('role_max_chars', {}))
+    if dependency_limits is not None and (not isinstance(dependency_limits, dict) or any(
+            type(dependency_limits.get(key)) is not int or dependency_limits[key] < 0
+            for key in ('max_hops', 'max_events'))):
+        raise DomainError('dependency_budget', 'Explicit nonnegative dependency max_hops/max_events required')
+    before_reads = {key: sum(r.stats[key] for r in index.get('trace_readers', []))
+                    for key in ('body_bytes', 'range_reads', 'metadata_rows')}
+    rows = list(_trajectory_records(index, limits['max_scan_events']))
+    metadata = index['records'].memory if hasattr(index['records'], 'memory') else index['records']
+    groups = {}
+    for row in rows:
+        # Scan position controls progression. Fetching a late call result never
+        # advances past another call's earlier action or creates a second group.
+        key = (row['episode_id'], row['call_id']) if row['call_id'] is not None else (row['base_ref'],)
+        groups.setdefault(key, []).append(row)
+    if not rows:
+        # Imported material may contain only a requirement and separately
+        # supplied feedback. Keep that evidence without inventing execution.
+        for row in metadata.values():
+            if not row['source_event']:
+                groups.setdefault((row['episode_id'], 'control-only'), []).append(row)
+    queued, current, current_scope = [], [], None
+    for members in groups.values():
+        scope = _group_binding(index, members)
+        if current and (scope != current_scope or scope['binding_status'] == 'ambiguous'
+                        or len(current) >= limits['max_groups_per_segment']):
+            queued.append((current_scope, current)); current = []
+        current_scope = scope
+        current.append(members)
+        if scope['binding_status'] == 'ambiguous':
+            queued.append((scope, current)); current = []
+    if current: queued.append((current_scope, current))
+
+    terminal_positions = {ep['episode_id']: len(ep['events']) - 1 for ep in index['episodes']}
+    terminal_positions.update({r.manifest['episode_id']: r.checkpoint['event_count'] - 1
+                               for r in index.get('trace_readers', [])})
+    def span_priority(item):
+        priorities = []
+        for group in item[1]:
+            for row in group:
+                role = learning_role(row)
+                failed = role != 'user' and (_trace_hint(row) if '_reader' in row else _failure_position(row.get('text', ''))) is not None
+                if role == 'feedback' or failed: priority = 0
+                elif role == 'user' or row['kind'] in ('counterexample', 'recovery'): priority = 1
+                elif row['position'] == terminal_positions[row['episode_id']]: priority = 2
+                elif role == 'action': priority = 3
+                elif role == 'note': priority = 4
+                else: priority = 5
+                priorities.append(priority)
+        return min(priorities)
+    # The segment cap is applied AFTER importance selection; it must not make
+    # late failures disappear simply because routine calls occurred earlier.
+    queued.sort(key=span_priority)
+
+    anchors = [row for row in rows if learning_role(row) == 'user']
+    anchors += [row for row in metadata.values() if not row['source_event']]
+    def support(scope, members):
+        refs, preceding_users = set(), []
+        for row in anchors:
+            if row['episode_id'] != scope['episode_id']: continue
+            if scope['binding_status'] == 'ambiguous': continue
+            if row['task_revision'] != scope['task_revision']: continue
+            if any(row[key] is not None and scope[key] is not None and row[key] != scope[key]
+                   for key in ('task_id', 'goal_id')): continue
+            if row['source_event'] and row['position'] > min(r['position'] for r in members): continue
+            if row['source_event']: preceding_users.append(row)
+            else: refs.add(row['base_ref'])
+        if preceding_users:
+            refs.add(max(preceding_users, key=lambda row: row['position'])['base_ref'])
+        # A derived binding remains a sidecar, with its actual user basis visible.
+        member_refs = {row['base_ref'] for row in members}
+        for annotation in index.get('goal_annotations', []):
+            if annotation['event_ref'] in member_refs:
+                refs.update([annotation['anchor_user_ref'], *annotation['evidence_refs']])
+        return refs
+
+    from collections import deque
+    pending = deque(queued)
+    segments, scopes, reasons, folded, result_hashes = [], [], [], set(), set()
+    dependency_charged, dependency_all, already_provided = set(), set(), set()
+    while pending and len(segments) < limits['max_segments']:
+        scope, chunk_groups = pending.popleft()
+        members = [row for group in chunk_groups for row in group]
+        required = {row['base_ref'] for row in members}
+        neighbor_refs, dependency_gaps = set(), []
+        if dependency_limits is not None:
+            remaining = dependency_limits['max_events'] - len(dependency_charged)
+            known = dependency_charged | already_provided
+            order = []
+            # Existing evidence is free to reuse. The enlarged discovery limit
+            # only makes room for these known IDs; novel accepted neighbors are
+            # still charged against one plan-wide balance below. Hops remain a
+            # per-chain depth ceiling, never a count of span calls.
+            _dependencies(index, sorted(required), {'max_hops': dependency_limits['max_hops'],
+                'max_events': remaining + len(known)}, ordered=order)
+            for ref in order:
+                if ref in required: continue
+                if ref not in known:
+                    if len(dependency_charged) >= dependency_limits['max_events']:
+                        dependency_gaps.append('dependency_budget'); continue
+                    dependency_charged.add(ref); known.add(ref)
+                neighbor_refs.add(ref)
+            if (not remaining or not dependency_limits['max_hops']) and any(
+                    r['parent_event_id'] or r.get('resources') for r in members):
+                dependency_gaps.append('dependency_budget')
+        dependency_all.update(neighbor_refs)
+        allowed = required | support(scope, members) | neighbor_refs
+        try:
+            packet = build_packet(index, limits=packet_limits, allowed_refs=allowed,
+                                  role_max_chars=role_caps)
+            dependency_rows = []
+            for ref in sorted(neighbor_refs):
+                source = index['records'][ref]
+                source_scope = {key: source[key] for key in ('episode_id', 'task_id', 'goal_id', 'task_revision')}
+                conflict = any(source_scope[key] is not None and scope[key] is not None
+                               and source_scope[key] != scope[key] for key in source_scope)
+                relation = ('different_scope' if conflict else 'same_scope' if
+                    source_scope == {key: scope[key] for key in source_scope}
+                    and source_scope['task_revision'] is not None
+                    and (source_scope['task_id'] is not None or source_scope['goal_id'] is not None)
+                    else 'unknown_scope')
+                dependency_rows.append({'event_ref': ref, 'event_id': source['event_id'],
+                    'source_scope': source_scope, 'scope_relation': relation,
+                    'resources': copy.deepcopy(source.get('resources', []))})
+            if dependency_rows or dependency_gaps:
+                # A single bounded notice is also visible in the raw packet.
+                # Detailed source scope remains in the segment sidecar passed
+                # to the local model; neither changes observed event identity.
+                relations = sorted({row['scope_relation'] for row in dependency_rows})
+                packet['gaps'].append('Dependency support is candidate context, not current-goal or current-version truth: '
+                    + ','.join(relations + _unique(dependency_gaps)) + '. Original scope/resource versions remain unchanged.')
+                _refresh(packet, index)
+                while not _fits(packet, packet_limits) and packet['readable_ref_catalog']:
+                    packet['readable_ref_catalog'].pop(); _refresh(packet, index)
+                if not _fits(packet, packet_limits):
+                    raise DomainError('evidence_budget_exhausted', 'Dependency notice and source evidence cannot fit this segment')
+        except DomainError as exc:
+            if exc.code != 'evidence_budget_exhausted': raise
+            if len(chunk_groups) > 1:
+                half = len(chunk_groups) // 2
+                pending.appendleft((scope, chunk_groups[half:])); pending.appendleft((scope, chunk_groups[:half]))
+                continue
+            reasons.append('packet_budget'); continue
+        visible = {item['ref_id'].rsplit(':', 2)[0] for item in packet['fragments'] + packet['readable_ref_catalog']}
+        if not required <= visible and len(chunk_groups) > 1:
+            half = len(chunk_groups) // 2
+            pending.appendleft((scope, chunk_groups[half:])); pending.appendleft((scope, chunk_groups[:half]))
+            continue
+        if not required <= visible: reasons.append('group_partial')
+        if scope['binding_status'] == 'ambiguous': reasons.append('binding_conflict')
+        if not neighbor_refs <= visible:
+            dependency_gaps.append('dependency_packet_budget')
+            reasons.append('dependency_packet_budget')
+        reasons.extend(dependency_gaps)
+        scope_key = tuple(scope.values())
+        # Repeated ordinary tool output keeps its own read locator and call
+        # membership. Errors/recovery and environment final results stay bodies.
+        for row in members:
+            if row['source_role'] != 'tool' or learning_role(row) != 'result': continue
+            critical = row['kind'] in ('feedback', 'recovery', 'counterexample') or (
+                _trace_hint(row) if '_reader' in row else _failure_position(row.get('text', ''))) is not None
+            identity = (scope_key, row['raw_hash'])
+            if not critical and identity in result_hashes:
+                bodies = [f for f in packet['fragments'] if f['ref_id'].startswith(row['base_ref'] + ':')]
+                if bodies and len(packet['readable_ref_catalog']) < packet_limits['max_catalog_refs']:
+                    candidate = copy.deepcopy(packet)
+                    candidate['fragments'] = [f for f in candidate['fragments'] if f not in bodies]
+                    existing = {r['ref_id'] for r in candidate['readable_ref_catalog']}
+                    if bodies[0]['ref_id'] not in existing:
+                        candidate['readable_ref_catalog'].append(_catalog(bodies[0]))
+                    candidate['gaps'].append(f"Repeated ordinary result {row['event_id']} folded to its original read locator; body not supplied.")
+                    _refresh(candidate, index)
+                    if candidate['fragments'] and _fits(candidate, packet_limits):
+                        packet = validate_packet(candidate, index); folded.add(row['base_ref'])
+            if any(f['ref_id'].startswith(row['base_ref'] + ':') for f in packet['fragments']):
+                result_hashes.add(identity)
+        # Importance chooses spans; each selected span still exposes the actual
+        # local source order, including interleaved calls and late returns.
+        packet['fragments'].sort(key=lambda f: (f['episode_id'], f['structure']['source_position'], f['range']['start_byte']))
+        _refresh(packet, index)
+        packet = validate_packet(packet, index)
+        actual_visible = {f['ref_id'].rsplit(':', 2)[0] for f in packet['fragments'] + packet['readable_ref_catalog']}
+        actual_bodies = {f['ref_id'].rsplit(':', 2)[0] for f in packet['fragments']}
+        for row in dependency_rows:
+            row['availability'] = 'provided' if row['event_ref'] in actual_bodies else 'readable' if row['event_ref'] in actual_visible else 'omitted'
+        segments.append(packet); scopes.append({'packet_id': packet['packet_id'], **scope,
+            'dependency_support': dependency_rows, 'dependency_gaps': _unique(dependency_gaps)})
+        already_provided.update(ref for ref in actual_visible if index['records'][ref]['source_event'])
+    if pending: reasons.append('segment_budget')
+    total = sum(len(ep['events']) for ep in index['episodes']) + sum(r.checkpoint['event_count'] for r in index.get('trace_readers', []))
+    if len(rows) < total: reasons.append('scan_budget')
+    ranges, visible = defaultdict(list), set()
+    for packet in segments:
+        for item in packet['fragments'] + packet['readable_ref_catalog']:
+            record, _ = _resolve(index, item['ref_id'], body=False)
+            if record['source_event']: visible.add(record['base_ref'])
+        for item in packet['fragments']:
+            record, _ = _resolve(index, item['ref_id'], body=False)
+            if record['source_event']:
+                ranges[record['base_ref']].append((item['range']['start_byte'], item['range']['end_byte_exclusive']))
+    full = set()
+    for ref, intervals in ranges.items():
+        end = 0
+        for start, finish in sorted(intervals):
+            if start > end: break
+            end = max(end, finish)
+        if end == _byte_length(index['records'][ref]): full.add(ref)
+    reads = {key: sum(r.stats[key] for r in index.get('trace_readers', [])) - value for key, value in before_reads.items()}
+    return {'segments': segments, 'segment_scopes': scopes, 'read_stats': reads, 'coverage': {
+        'total_events': total, 'scanned_events': len(rows), 'projected_events': len(ranges),
+        'folded_events': len(folded), 'truncated_events': len(set(ranges) - full),
+        'dependency_discovered_events': len(dependency_charged),
+        'dependency_provided_events': len(dependency_charged & set(ranges)),
+        'dependency_support_events': len(dependency_all & visible),
+        'dependency_omitted_events': len(dependency_all - visible),
+        'omitted_events': total - len(visible), 'scan_complete': len(rows) == total,
+        'scan_limit_scope': 'selection_events', 'raw_body_complete': len(full) == total, 'stop_reasons': _unique(reasons)}}
 
 
 def validate_packet(packet, index):

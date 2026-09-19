@@ -14,7 +14,7 @@ from memory_orchestrator.model import StructuredModel
 from memory_orchestrator.report import report
 from memory_orchestrator.learning import find_related, learn
 from memory_orchestrator.sampling import sample_tasks
-from memory_orchestrator.evidence import build_packet, expand_packet, index_episodes, validate_citations
+from memory_orchestrator.evidence import build_packet, index_episodes, validate_citations
 from test_memory_evidence import EXAMPLES, csv_episodes, episode, event, limits as packet_limits
 from test_memory_model import FakeCall, response, limits as model_limits
 
@@ -412,43 +412,85 @@ class LearningTests(unittest.TestCase):
         self.assertEqual(updated["source_episode_count"], original["source_episode_count"])
         self.assertEqual(self.store.get("experiences", original["record_id"]), original)
 
-    def test_real_packet_expansion_is_finite_and_recorded(self):
-        ep = copy.deepcopy(self.source[0]); ep["episode_id"] = "long-episode"
+    def _runtime_expansion_case(self, *, request_after_limit):
+        """Request only locators actually delivered by the unified input pipeline."""
+        from memory_orchestrator.schemas import load_contracts
+        from memory_orchestrator.evidence import _resolve
+        ep = copy.deepcopy(self.source[0]); ep["episode_id"] = "bounded-reads" if request_after_limit else "long-episode"
         template = ep["events"][-1]
         ep["events"] += [{**template, "event_id": f"extra{i}", "kind": "observation", "text": "ordinary details " * 150} for i in range(16)]
         self.store.add_episode(ep)
-        p = policy(packet=packet_limits(6500, 200, 4), expanded_packet=packet_limits(18000, 200, 4), max_expansions=1)
-        packet = build_packet(index_episodes([ep], contexts={}), limits=p["packet"])
-        request = {"status": "needs_more_evidence", "experiences": [], "read_requests": [
-            {"ref_id": packet["omitted_refs"][0], "purpose": "Read omitted original"}], "missing_evidence": ["details"], "reason": "Need source"}
-        empty = copy.deepcopy(EXAMPLES["extraction"]); empty["experiences"] = []
-        model, call = self.model([request, empty])
+        processing = {"direct_max_input_tokens": 0,
+            "plan": {"max_scan_events": 128, "max_segments": 2, "max_groups_per_segment": 4,
+                "packet": packet_limits(15000, 400, 8),
+                "role_max_chars": {"user": 400, "action": 400, "note": 200,
+                                   "result": 300, "feedback": 400, "unknown": 200}},
+            "summary_limits": {"max_observations": 3, "max_quote_chars": 120}}
+        p = policy(packet=packet_limits(20000, 400, 8), expanded_packet=packet_limits(40000, 400, 8),
+                   max_expansions=1, trajectory_processing=processing)
+        calls, extracts, requested = [], [], []
+        def visible_value(request, field):
+            template = load_contracts()["prompts"][request["prompt_id"]]["user_template"]
+            marker = template.split("{{" + field + "}}")[0].rsplit("\n", 1)[-1]
+            return json.JSONDecoder().raw_decode(request["messages"][1]["content"].split(marker, 1)[1].lstrip())[0]
+        def transport(request):
+            calls.append(copy.deepcopy(request))
+            packet = visible_value(request, "evidence_packet")
+            if request["prompt_id"] == "summarize_trace_v1":
+                source = packet["fragments"][0]
+                return response({"status": "completed", "observations": [{"kind": "observation",
+                    "text": "A quoted part of the supplied source; not a claim of task success.",
+                    "excerpts": [{"ref_id": source["ref_id"], "quote": source["text"][:80]}]}],
+                    "unknowns": ["Other original ranges remain unread."], "reason": "Local source only."})
+            self.assertEqual(request["prompt_id"], "extract_v1")
+            extracts.append(packet)
+            if len(extracts) == 2:
+                self.assertEqual(visible_value(request, "extraction_limits")["remaining_evidence_expansions"], 0)
+            if len(extracts) == 1 or request_after_limit:
+                provided = {f["ref_id"] for f in packet["fragments"]}
+                unseen = [c for c in packet["readable_ref_catalog"] if c["available"] and c["ref_id"] not in provided]
+                self.assertTrue(unseen, "The actual extraction request must offer an unread original range")
+                requested.append(unseen[0]["ref_id"])
+                return response({"status": "needs_more_evidence", "experiences": [],
+                    "read_requests": [{"ref_id": requested[-1], "purpose": "Read the actual delivered original locator"}],
+                    "missing_evidence": ["Unprovided original body"], "reason": "Need source before forming experience."})
+            empty = copy.deepcopy(EXAMPLES["extraction"]); empty["experiences"] = []
+            return response(empty)
+        budget = {"max_input_tokens": 100000, "max_total_input_tokens": 500000, "max_total_output_tokens": 30000,
+            "stages": {name: {"max_calls": 8, "max_input_tokens": 100000, "max_output_tokens": 3000,
+                "max_total_input_tokens": 500000, "max_total_output_tokens": 30000} for name in load_contracts()["prompts"]}}
+        model = StructuredModel(transport, limits=model_limits(max_calls=8, max_input_chars=200000,
+            max_total_input_chars=1000000, max_format_repairs=0, token_budget=budget))
         result = learn(self.store, [ep["episode_id"]], model, policy=p)
+        self.assertEqual(result["trajectory_processing"]["mode"], "partial")
+        self.assertIn("segment_budget", result["trajectory_processing"]["planned_coverage"]["stop_reasons"])
+        self.assertEqual(len(extracts), 2)
+        summary_calls = sum(c["prompt_id"] == "summarize_trace_v1" for c in calls)
+        self.assertGreater(summary_calls, 0)
+        self.assertEqual(len(calls), summary_calls + 2)
+        self.assertEqual(len(result["usage_ids"]), len(calls))
+        self.assertEqual(self.store.get("episodes", ep["episode_id"])["events"], ep["events"])
+        expanded = next(f for f in extracts[1]["fragments"] if f["ref_id"] == requested[0])
+        _, original = _resolve(index_episodes([ep], contexts={}), requested[0])
+        for key in ("text", "raw_ref", "raw_hash", "range"):
+            self.assertEqual(expanded[key], original[key])
+        self.assertNotIn(requested[0], {f["ref_id"] for f in extracts[0]["fragments"]})
+        return result, extracts, requested
+
+    def test_real_packet_expansion_is_finite_and_recorded(self):
+        result, extracts, requested = self._runtime_expansion_case(request_after_limit=False)
         self.assertEqual(result["status"], "noop")
-        self.assertEqual(len(call.calls), 2)
-        packets = self.store.list("evidence_packets", "demo-project")
-        self.assertEqual(len(packets), 2)
-        self.assertTrue(any(request["read_requests"][0]["ref_id"] in {f["ref_id"] for f in x["fragments"]} for x in packets))
+        self.assertEqual(len(requested), 1)
+        stored = self.store.get("evidence_packets", extracts[1]["packet_id"])
+        self.assertIn(requested[0], {f["ref_id"] for f in stored["fragments"]})
 
     def test_more_evidence_request_after_limit_abstains(self):
-        ep = copy.deepcopy(self.source[0]); ep["episode_id"] = "bounded-reads"
-        template = ep["events"][-1]
-        ep["events"] += [{**template, "event_id": f"extra{i}", "kind": "observation", "text": "source details " * 200} for i in range(16)]
-        self.store.add_episode(ep)
-        p = policy(packet=packet_limits(6500, 200, 4), expanded_packet=packet_limits(18000, 200, 4), max_expansions=1)
-        index = index_episodes([ep], contexts={})
-        packet = build_packet(index, limits=p["packet"])
-        def request(ref):
-            return {"status": "needs_more_evidence", "experiences": [], "read_requests": [{"ref_id": ref, "purpose": "read"}],
-                    "missing_evidence": ["detail"], "reason": "Need another range"}
-        first = request(packet["omitted_refs"][0])
-        expanded = expand_packet(index, packet, first["read_requests"], limits=p["expanded_packet"])
-        second = request(expanded["omitted_refs"][0])
-        model, call = self.model([first, second])
-        result = learn(self.store, [ep["episode_id"]], model, policy=p)
+        result, extracts, requested = self._runtime_expansion_case(request_after_limit=True)
         self.assertEqual(result["status"], "abstained")
-        self.assertEqual(len(call.calls), 2)
         self.assertEqual(result["candidate_ids"], [])
+        self.assertEqual(len(requested), 2)
+        self.assertNotEqual(requested[0], requested[1])
+        self.assertNotIn(requested[1], {f["ref_id"] for f in extracts[1]["fragments"]})
 
     def test_related_experience_loads_bounded_original_sources(self):
         extraction, diagnosis, _ = drafts(self.source); diagnosis["route"] = "external_issue"

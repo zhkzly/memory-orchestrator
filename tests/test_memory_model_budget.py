@@ -43,7 +43,7 @@ class ModelBudgetTests(unittest.TestCase):
                 "revision": ep["task"]["revision"], "provided_requirement_refs": [
                     row["ref_id"] for row in packet["fragments"] if row["kind"] == "task"]}],
             "evidence_packet": packet, "available_feedback": feedback_view(index, packet),
-            "related_experiences": [], "readable_ref_catalog": packet["readable_ref_catalog"],
+            "related_experiences": [],
             "extraction_limits": {"max_experiences": 3, "max_read_requests": 2, "max_evidence_expansions": 1}}
 
     def make_model(self, replies, *, config=None, counter=None):

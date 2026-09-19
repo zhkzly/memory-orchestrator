@@ -1,0 +1,35 @@
+test_selected_span_retrieves_its_resource_producer_under_dependency_budget (test_memory_trajectory.TrajectoryTests.test_selected_span_retrieves_its_resource_producer_under_dependency_budget) ... ERROR
+test_dependency_new_events_share_one_plan_balance_and_keep_chain_depth (test_memory_trajectory.TrajectoryTests.test_dependency_new_events_share_one_plan_balance_and_keep_chain_depth) ... ERROR
+test_dependency_other_revision_and_resource_version_remains_candidate_context (test_memory_trajectory.TrajectoryTests.test_dependency_other_revision_and_resource_version_remains_candidate_context) ... ERROR
+
+======================================================================
+ERROR: test_selected_span_retrieves_its_resource_producer_under_dependency_budget (test_memory_trajectory.TrajectoryTests.test_selected_span_retrieves_its_resource_producer_under_dependency_budget)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 257, in test_selected_span_retrieves_its_resource_producer_under_dependency_budget
+    off = evidence.build_trajectory_plan(index, limits=config,
+        dependency_limits={'max_hops': 0, 'max_events': 0})
+TypeError: build_trajectory_plan() got an unexpected keyword argument 'dependency_limits'
+
+======================================================================
+ERROR: test_dependency_new_events_share_one_plan_balance_and_keep_chain_depth (test_memory_trajectory.TrajectoryTests.test_dependency_new_events_share_one_plan_balance_and_keep_chain_depth)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 273, in test_dependency_new_events_share_one_plan_balance_and_keep_chain_depth
+    plan = evidence.build_trajectory_plan(index, limits=config,
+        dependency_limits={'max_hops': 2, 'max_events': 1})
+TypeError: build_trajectory_plan() got an unexpected keyword argument 'dependency_limits'
+
+======================================================================
+ERROR: test_dependency_other_revision_and_resource_version_remains_candidate_context (test_memory_trajectory.TrajectoryTests.test_dependency_other_revision_and_resource_version_remains_candidate_context)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 287, in test_dependency_other_revision_and_resource_version_remains_candidate_context
+    plan = evidence.build_trajectory_plan(index, limits=trajectory_limits(max_segments=1, max_groups_per_segment=1),
+        dependency_limits={'max_hops': 1, 'max_events': 3})
+TypeError: build_trajectory_plan() got an unexpected keyword argument 'dependency_limits'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.011s
+
+FAILED (errors=3)

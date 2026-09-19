@@ -1,0 +1,138 @@
+[
+  {
+    "name": "source_handoff",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory.TrajectoryTests.test_selected_span_retrieves_its_resource_producer_under_dependency_budget -v",
+      "--target",
+      "src/memory_orchestrator/evidence.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/evidence.py'\"'\"'); s=p.read_text(); old='\"'\"'allowed = required | support(scope, members) | neighbor_refs'\"'\"'; assert s.count(old)==1,s.count(old); p.write_text(s.replace(old,'\"'\"'allowed = required | support(scope, members)'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "after": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "exact_restore": true
+  },
+  {
+    "name": "global_balance",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory.TrajectoryTests.test_dependency_new_events_share_one_plan_balance_and_keep_chain_depth -v",
+      "--target",
+      "src/memory_orchestrator/evidence.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/evidence.py'\"'\"'); s=p.read_text(); old=\"remaining = dependency_limits['\"'\"'max_events'\"'\"'] - len(dependency_charged)\"; assert s.count(old)==1,s.count(old); p.write_text(s.replace(old,\"dependency_charged.clear()\\n            remaining = dependency_limits['\"'\"'max_events'\"'\"'] - len(dependency_charged)\",1))'"
+    ],
+    "exit_code": 0,
+    "before": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "after": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "exact_restore": true
+  },
+  {
+    "name": "depth_ceiling",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory.TrajectoryTests.test_dependency_depth_limit_controls_second_hop_call_context -v",
+      "--target",
+      "src/memory_orchestrator/evidence.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/evidence.py'\"'\"'); s=p.read_text(); old=\"_dependencies(index, sorted(required), {'\"'\"'max_hops'\"'\"': dependency_limits['\"'\"'max_hops'\"'\"'],\"; assert s.count(old)==1,s.count(old); p.write_text(s.replace(old,\"_dependencies(index, sorted(required), {'\"'\"'max_hops'\"'\"': 999,\",1))'"
+    ],
+    "exit_code": 0,
+    "before": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "after": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "exact_restore": true
+  },
+  {
+    "name": "known_ref_reuse",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory.TrajectoryTests.test_dependency_already_counted_producer_is_reused_without_new_charge -v",
+      "--target",
+      "src/memory_orchestrator/evidence.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/evidence.py'\"'\"'); s=p.read_text(); old=\"'\"'\"'max_events'\"'\"': remaining + len(known)\"; assert s.count(old)==1,s.count(old); p.write_text(s.replace(old,\"'\"'\"'max_events'\"'\"': remaining\",1))'"
+    ],
+    "exit_code": 0,
+    "before": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "after": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "exact_restore": true
+  },
+  {
+    "name": "observed_scope",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory.TrajectoryTests.test_dependency_other_revision_and_resource_version_remains_candidate_context -v",
+      "--target",
+      "src/memory_orchestrator/evidence.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/evidence.py'\"'\"'); s=p.read_text(); old=\"source_scope = {key: source[key] for key in ('\"'\"'episode_id'\"'\"', '\"'\"'task_id'\"'\"', '\"'\"'goal_id'\"'\"', '\"'\"'task_revision'\"'\"')}\"; assert s.count(old)==1,s.count(old); p.write_text(s.replace(old,\"source_scope = {key: scope[key] for key in ('\"'\"'episode_id'\"'\"', '\"'\"'task_id'\"'\"', '\"'\"'goal_id'\"'\"', '\"'\"'task_revision'\"'\"')}\",1))'"
+    ],
+    "exit_code": 0,
+    "before": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "after": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "exact_restore": true
+  },
+  {
+    "name": "source_versions",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory.TrajectoryTests.test_dependency_other_revision_and_resource_version_remains_candidate_context -v",
+      "--target",
+      "src/memory_orchestrator/evidence.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/evidence.py'\"'\"'); s=p.read_text(); old=\"'\"'\"'resources'\"'\"': copy.deepcopy(source.get('\"'\"'resources'\"'\"', []))\"; assert s.count(old)==1,s.count(old); p.write_text(s.replace(old,\"'\"'\"'resources'\"'\"': []\",1))'"
+    ],
+    "exit_code": 0,
+    "before": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "after": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "exact_restore": true
+  },
+  {
+    "name": "missing_support_gap",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory.TrajectoryTests.test_dependency_that_cannot_fit_has_an_explicit_gap -v",
+      "--target",
+      "src/memory_orchestrator/evidence.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/evidence.py'\"'\"'); s=p.read_text(); old=\"dependency_gaps.append('\"'\"'dependency_packet_budget'\"'\"')\"; assert s.count(old)==1,s.count(old); p.write_text(s.replace(old,'\"'\"'pass'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "after": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "exact_restore": true
+  },
+  {
+    "name": "parent_path",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory.TrajectoryTests.test_dependency_declared_parent_is_selected_without_a_resource_match -v",
+      "--target",
+      "src/memory_orchestrator/evidence.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/evidence.py'\"'\"'); s=p.read_text(); old='\"'\"'if record[\"parent_event_id\"]:\\n                parent = _parent_base(index, record)'\"'\"'; assert s.count(old)==1,s.count(old); p.write_text(s.replace(old,'\"'\"'if False:\\n                parent = _parent_base(index, record)'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "after": "b4e783b65359b141c06cd912ce28642873719e80e9db4b4b2b645a21f254ada1",
+    "exact_restore": true
+  }
+]

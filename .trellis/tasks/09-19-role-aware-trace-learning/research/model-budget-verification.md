@@ -534,3 +534,435 @@ OK
 - 报告中的 provider token 和金钱费用继续来自原 transport；预留不等于真实 token 或价格。未知不补零，不采集隐藏推理。
 - 本轮没有改 learning/evidence/schema/发布/实验入口。根代理负责新单一轨迹→学习输入链及真实配置消费；实例未启用 token_budget 的字符语义继续兼容。
 - 没有真实模型效果、摘要准确性或学习收益证据。本次证据只支持预算机制和失败边界。
+
+## Extract prompt revision 4：同源 fixture 迁移后的复验
+
+根代理完整套件定位到唯一同族 fixture 根因：extract prompt revision 4 已删掉顶层重复 `readable_ref_catalog`，真实 learn 已同步，本测试类仍硬编码旧字段而被严格输入校验正确拒绝。本次仅删该 fixture 一项；目录仍在 `evidence_packet.readable_ref_catalog`，没有恢复重复 prompt 字段或放宽输入检查。
+
+相同命令 `PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget test_memory_model -v`：迁移后 40 项 GREEN（0.338s）；原 18 条官方 mutants 全部复验成功并精确恢复；恢复后再次 40 项 GREEN（0.339s），均 exit 0。
+
+model.py 未变：`ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356`。新 fixture SHA-256：`8e08d70013da10e3dda72ea2bdf5f2bae8c492ff157367bba2b7185f68504a43`。上文旧 fixture hash 对应原先 prompt 的历史验收，本节是当前修订后的验收。完整 suite 的失败原日志由根代理保留，没有覆写。
+
+<details>
+<summary>revision 4 下相同 18 条变体：实际命令、原始输出与恢复 hash</summary>
+
+```json
+[
+  {
+    "name": "global-input",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "(\"global\", \"input_tokens\", self._token_spent[\"input\"], estimated, config[\"max_total_input_tokens\"])",
+    "new": "(\"global\", \"input_tokens\", self._token_spent[\"input\"], estimated, 10**20)",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_global_input_cumulative_limit_and_preview_are_rechecked -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_global_input_cumulative_limit_and_preview_are_rechecked -v >> /tmp/model-budget-mutations-revision4/global-input.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'(\"global\", \"input_tokens\", self._token_spent[\"input\"], estimated, config[\"max_total_input_tokens\"])'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'(\"global\", \"input_tokens\", self._token_spent[\"input\"], estimated, 10**20)'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_global_input_cumulative_limit_and_preview_are_rechecked (test_memory_model_budget.ModelBudgetTests.test_global_input_cumulative_limit_and_preview_are_rechecked) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.110s\n\nOK\ntest_global_input_cumulative_limit_and_preview_are_rechecked (test_memory_model_budget.ModelBudgetTests.test_global_input_cumulative_limit_and_preview_are_rechecked) ... FAIL\n\n======================================================================\nFAIL: test_global_input_cumulative_limit_and_preview_are_rechecked (test_memory_model_budget.ModelBudgetTests.test_global_input_cumulative_limit_and_preview_are_rechecked)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 109, in test_global_input_cumulative_limit_and_preview_are_rechecked\n    self.assertFalse(model.preview(\"extract_v1\", self.extract_inputs)[\"fits\"])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not false\n\n----------------------------------------------------------------------\nRan 1 test in 0.108s\n\nFAILED (failures=1)\ntest_global_input_cumulative_limit_and_preview_are_rechecked (test_memory_model_budget.ModelBudgetTests.test_global_input_cumulative_limit_and_preview_are_rechecked) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.111s\n\nOK\n"
+  },
+  {
+    "name": "global-output",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "(\"global\", \"output_tokens\", self._token_spent[\"output\"], cap, config[\"max_total_output_tokens\"])",
+    "new": "(\"global\", \"output_tokens\", self._token_spent[\"output\"], cap, 10**20)",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_global_output_reservation_survives_unknown_usage -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_global_output_reservation_survives_unknown_usage -v >> /tmp/model-budget-mutations-revision4/global-output.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'(\"global\", \"output_tokens\", self._token_spent[\"output\"], cap, config[\"max_total_output_tokens\"])'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'(\"global\", \"output_tokens\", self._token_spent[\"output\"], cap, 10**20)'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_global_output_reservation_survives_unknown_usage (test_memory_model_budget.ModelBudgetTests.test_global_output_reservation_survives_unknown_usage) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nOK\ntest_global_output_reservation_survives_unknown_usage (test_memory_model_budget.ModelBudgetTests.test_global_output_reservation_survives_unknown_usage) ... FAIL\n\n======================================================================\nFAIL: test_global_output_reservation_survives_unknown_usage (test_memory_model_budget.ModelBudgetTests.test_global_output_reservation_survives_unknown_usage)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 127, in test_global_output_reservation_survives_unknown_usage\n    with self.assertRaises(DomainError): model.generate(\"extract_v1\", self.extract_inputs)\n         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nAssertionError: DomainError not raised\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nFAILED (failures=1)\ntest_global_output_reservation_survives_unknown_usage (test_memory_model_budget.ModelBudgetTests.test_global_output_reservation_survives_unknown_usage) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nOK\n"
+  },
+  {
+    "name": "request-input",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "(\"request\", \"input_tokens\", 0, estimated, config[\"max_input_tokens\"])",
+    "new": "(\"request\", \"input_tokens\", 0, estimated, 10**20)",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_global_single_request_token_limit_includes_full_input -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_global_single_request_token_limit_includes_full_input -v >> /tmp/model-budget-mutations-revision4/request-input.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'(\"request\", \"input_tokens\", 0, estimated, config[\"max_input_tokens\"])'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'(\"request\", \"input_tokens\", 0, estimated, 10**20)'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_global_single_request_token_limit_includes_full_input (test_memory_model_budget.ModelBudgetTests.test_global_single_request_token_limit_includes_full_input) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.106s\n\nOK\ntest_global_single_request_token_limit_includes_full_input (test_memory_model_budget.ModelBudgetTests.test_global_single_request_token_limit_includes_full_input) ... FAIL\n\n======================================================================\nFAIL: test_global_single_request_token_limit_includes_full_input (test_memory_model_budget.ModelBudgetTests.test_global_single_request_token_limit_includes_full_input)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 116, in test_global_single_request_token_limit_includes_full_input\n    self.assertFalse(model.preview(\"extract_v1\", self.extract_inputs)[\"fits\"])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not false\n\n----------------------------------------------------------------------\nRan 1 test in 0.104s\n\nFAILED (failures=1)\ntest_global_single_request_token_limit_includes_full_input (test_memory_model_budget.ModelBudgetTests.test_global_single_request_token_limit_includes_full_input) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.105s\n\nOK\n"
+  },
+  {
+    "name": "stage-request-input",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "(\"stage_request\", \"input_tokens\", 0, estimated, stage[\"max_input_tokens\"])",
+    "new": "(\"stage_request\", \"input_tokens\", 0, estimated, 10**20)",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics -v >> /tmp/model-budget-mutations-revision4/stage-request-input.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'(\"stage_request\", \"input_tokens\", 0, estimated, stage[\"max_input_tokens\"])'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'(\"stage_request\", \"input_tokens\", 0, estimated, 10**20)'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_repair_recounts_original_rejected_output_and_diagnostics (test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.106s\n\nOK\ntest_repair_recounts_original_rejected_output_and_diagnostics (test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics) ... FAIL\n\n======================================================================\nFAIL: test_repair_recounts_original_rejected_output_and_diagnostics (test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 165, in test_repair_recounts_original_rejected_output_and_diagnostics\n    with self.assertRaises(DomainError) as caught: model.generate(\"extract_v1\", self.extract_inputs)\n         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nAssertionError: DomainError not raised\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nFAILED (failures=1)\ntest_repair_recounts_original_rejected_output_and_diagnostics (test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.105s\n\nOK\n"
+  },
+  {
+    "name": "stage-input",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "(\"stage\", \"input_tokens\", spent[\"input\"], estimated, stage[\"max_total_input_tokens\"])",
+    "new": "(\"stage\", \"input_tokens\", spent[\"input\"], estimated, 10**20)",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_stage_input_total_cannot_borrow_other_stage_allowance -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_stage_input_total_cannot_borrow_other_stage_allowance -v >> /tmp/model-budget-mutations-revision4/stage-input.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'(\"stage\", \"input_tokens\", spent[\"input\"], estimated, stage[\"max_total_input_tokens\"])'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'(\"stage\", \"input_tokens\", spent[\"input\"], estimated, 10**20)'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_stage_input_total_cannot_borrow_other_stage_allowance (test_memory_model_budget.ModelBudgetTests.test_stage_input_total_cannot_borrow_other_stage_allowance) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.109s\n\nOK\ntest_stage_input_total_cannot_borrow_other_stage_allowance (test_memory_model_budget.ModelBudgetTests.test_stage_input_total_cannot_borrow_other_stage_allowance) ... ERROR\n\n======================================================================\nERROR: test_stage_input_total_cannot_borrow_other_stage_allowance (test_memory_model_budget.ModelBudgetTests.test_stage_input_total_cannot_borrow_other_stage_allowance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 142, in test_stage_input_total_cannot_borrow_other_stage_allowance\n    model.generate(\"diagnose_v1\", inputs(\"diagnose_v1\"))\n    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/model.py\", line 267, in generate\n    fail(\"model_budget_exhausted\", \"Call or input/output budget exhausted before the next attempt.\",\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n         requested_input_chars=count, limits=copy.deepcopy(self.limits), preview=inspected)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/model.py\", line 255, in fail\n    raise DomainError(code, message, {\"prompt_id\": prompt_id, \"usage\": copy.deepcopy(usage),\n        \"attempts\": copy.deepcopy(attempts), \"calls_consumed\": self.calls,\n        \"input_chars_consumed\": self.input_chars, **details})\nmemory_orchestrator.schemas.DomainError: Call or input/output budget exhausted before the next attempt.\n\n----------------------------------------------------------------------\nRan 1 test in 0.110s\n\nFAILED (errors=1)\ntest_stage_input_total_cannot_borrow_other_stage_allowance (test_memory_model_budget.ModelBudgetTests.test_stage_input_total_cannot_borrow_other_stage_allowance) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.110s\n\nOK\n"
+  },
+  {
+    "name": "stage-output",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "(\"stage\", \"output_tokens\", spent[\"output\"], cap, stage[\"max_total_output_tokens\"])",
+    "new": "(\"stage\", \"output_tokens\", spent[\"output\"], cap, 10**20)",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_stage_output_total_counts_unknown_completion -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_stage_output_total_counts_unknown_completion -v >> /tmp/model-budget-mutations-revision4/stage-output.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'(\"stage\", \"output_tokens\", spent[\"output\"], cap, stage[\"max_total_output_tokens\"])'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'(\"stage\", \"output_tokens\", spent[\"output\"], cap, 10**20)'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_stage_output_total_counts_unknown_completion (test_memory_model_budget.ModelBudgetTests.test_stage_output_total_counts_unknown_completion) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nOK\ntest_stage_output_total_counts_unknown_completion (test_memory_model_budget.ModelBudgetTests.test_stage_output_total_counts_unknown_completion) ... FAIL\n\n======================================================================\nFAIL: test_stage_output_total_counts_unknown_completion (test_memory_model_budget.ModelBudgetTests.test_stage_output_total_counts_unknown_completion)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 155, in test_stage_output_total_counts_unknown_completion\n    with self.assertRaises(DomainError): model.generate(\"extract_v1\", self.extract_inputs)\n         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nAssertionError: DomainError not raised\n\n----------------------------------------------------------------------\nRan 1 test in 0.106s\n\nFAILED (failures=1)\ntest_stage_output_total_counts_unknown_completion (test_memory_model_budget.ModelBudgetTests.test_stage_output_total_counts_unknown_completion) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nOK\n"
+  },
+  {
+    "name": "stage-calls",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "(\"stage\", \"calls\", spent[\"calls\"], 1, stage[\"max_calls\"])",
+    "new": "(\"stage\", \"calls\", spent[\"calls\"], 1, 10**20)",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_stage_call_limit_counts_repeated_generate -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_stage_call_limit_counts_repeated_generate -v >> /tmp/model-budget-mutations-revision4/stage-calls.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'(\"stage\", \"calls\", spent[\"calls\"], 1, stage[\"max_calls\"])'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'(\"stage\", \"calls\", spent[\"calls\"], 1, 10**20)'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_stage_call_limit_counts_repeated_generate (test_memory_model_budget.ModelBudgetTests.test_stage_call_limit_counts_repeated_generate) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.105s\n\nOK\ntest_stage_call_limit_counts_repeated_generate (test_memory_model_budget.ModelBudgetTests.test_stage_call_limit_counts_repeated_generate) ... FAIL\n\n======================================================================\nFAIL: test_stage_call_limit_counts_repeated_generate (test_memory_model_budget.ModelBudgetTests.test_stage_call_limit_counts_repeated_generate)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 148, in test_stage_call_limit_counts_repeated_generate\n    with self.assertRaises(DomainError): model.generate(\"extract_v1\", self.extract_inputs)\n         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nAssertionError: DomainError not raised\n\n----------------------------------------------------------------------\nRan 1 test in 0.108s\n\nFAILED (failures=1)\ntest_stage_call_limit_counts_repeated_generate (test_memory_model_budget.ModelBudgetTests.test_stage_call_limit_counts_repeated_generate) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.109s\n\nOK\n"
+  },
+  {
+    "name": "transport-output-cap",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "\"max_output_tokens\": inspected[\"effective_output_cap\"]",
+    "new": "\"max_output_tokens\": self.limits[\"max_output_tokens\"]",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_stage_output_cap_is_enforced_in_actual_transport -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_stage_output_cap_is_enforced_in_actual_transport -v >> /tmp/model-budget-mutations-revision4/transport-output-cap.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'\"max_output_tokens\": inspected[\"effective_output_cap\"]'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'\"max_output_tokens\": self.limits[\"max_output_tokens\"]'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_stage_output_cap_is_enforced_in_actual_transport (test_memory_model_budget.ModelBudgetTests.test_stage_output_cap_is_enforced_in_actual_transport) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nOK\ntest_stage_output_cap_is_enforced_in_actual_transport (test_memory_model_budget.ModelBudgetTests.test_stage_output_cap_is_enforced_in_actual_transport) ... FAIL\n\n======================================================================\nFAIL: test_stage_output_cap_is_enforced_in_actual_transport (test_memory_model_budget.ModelBudgetTests.test_stage_output_cap_is_enforced_in_actual_transport)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 226, in test_stage_output_cap_is_enforced_in_actual_transport\n    self.assertEqual(call.calls[0][\"max_output_tokens\"], 50)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 3000 != 50\n\n----------------------------------------------------------------------\nRan 1 test in 0.109s\n\nFAILED (failures=1)\ntest_stage_output_cap_is_enforced_in_actual_transport (test_memory_model_budget.ModelBudgetTests.test_stage_output_cap_is_enforced_in_actual_transport) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.113s\n\nOK\n"
+  },
+  {
+    "name": "repair-full-input",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "estimated = self._count_tokens(copy.deepcopy(messages))",
+    "new": "estimated = self._count_tokens(copy.deepcopy(messages[:2]))",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics -v >> /tmp/model-budget-mutations-revision4/repair-full-input.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'estimated = self._count_tokens(copy.deepcopy(messages))'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'estimated = self._count_tokens(copy.deepcopy(messages[:2]))'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_repair_recounts_original_rejected_output_and_diagnostics (test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nOK\ntest_repair_recounts_original_rejected_output_and_diagnostics (test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics) ... FAIL\n\n======================================================================\nFAIL: test_repair_recounts_original_rejected_output_and_diagnostics (test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 165, in test_repair_recounts_original_rejected_output_and_diagnostics\n    with self.assertRaises(DomainError) as caught: model.generate(\"extract_v1\", self.extract_inputs)\n         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nAssertionError: DomainError not raised\n\n----------------------------------------------------------------------\nRan 1 test in 0.105s\n\nFAILED (failures=1)\ntest_repair_recounts_original_rejected_output_and_diagnostics (test_memory_model_budget.ModelBudgetTests.test_repair_recounts_original_rejected_output_and_diagnostics) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.105s\n\nOK\n"
+  },
+  {
+    "name": "full-default-input",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "len(_json(messages).encode(\"utf-8\"))",
+    "new": "len(_json(messages[-1:]).encode(\"utf-8\"))",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage -v >> /tmp/model-budget-mutations-revision4/full-default-input.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'len(_json(messages).encode(\"utf-8\"))'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'len(_json(messages[-1:]).encode(\"utf-8\"))'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_default_estimate_is_declared_and_does_not_replace_provider_usage (test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.108s\n\nOK\ntest_default_estimate_is_declared_and_does_not_replace_provider_usage (test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage) ... FAIL\n\n======================================================================\nFAIL: test_default_estimate_is_declared_and_does_not_replace_provider_usage (test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 98, in test_default_estimate_is_declared_and_does_not_replace_provider_usage\n    self.assertEqual(preview[\"estimated_input_tokens\"], math.ceil(len(serialized.encode(\"utf-8\")) / 3))\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 19036 != 19638\n\n----------------------------------------------------------------------\nRan 1 test in 0.106s\n\nFAILED (failures=1)\ntest_default_estimate_is_declared_and_does_not_replace_provider_usage (test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nOK\n"
+  },
+  {
+    "name": "unknown-not-zero",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "actual = entry[side + \"_tokens\"]",
+    "new": "actual = entry[side + \"_tokens\"] or 0",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_partial_and_invalid_usage_cannot_refund_missing_dimensions -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_partial_and_invalid_usage_cannot_refund_missing_dimensions -v >> /tmp/model-budget-mutations-revision4/unknown-not-zero.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'actual = entry[side + \"_tokens\"]'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'actual = entry[side + \"_tokens\"] or 0'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_partial_and_invalid_usage_cannot_refund_missing_dimensions (test_memory_model_budget.ModelBudgetTests.test_partial_and_invalid_usage_cannot_refund_missing_dimensions) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.115s\n\nOK\ntest_partial_and_invalid_usage_cannot_refund_missing_dimensions (test_memory_model_budget.ModelBudgetTests.test_partial_and_invalid_usage_cannot_refund_missing_dimensions) ... \n  test_partial_and_invalid_usage_cannot_refund_missing_dimensions (test_memory_model_budget.ModelBudgetTests.test_partial_and_invalid_usage_cannot_refund_missing_dimensions) (tokens={'input_tokens': 1.5, 'output_tokens': True, 'total_tokens': 10}) ... FAIL\n  test_partial_and_invalid_usage_cannot_refund_missing_dimensions (test_memory_model_budget.ModelBudgetTests.test_partial_and_invalid_usage_cannot_refund_missing_dimensions) (tokens={'total_tokens': 10}) ... FAIL\n  test_partial_and_invalid_usage_cannot_refund_missing_dimensions (test_memory_model_budget.ModelBudgetTests.test_partial_and_invalid_usage_cannot_refund_missing_dimensions) (tokens={'output_tokens': 7}) ... FAIL\n\n======================================================================\nFAIL: test_partial_and_invalid_usage_cannot_refund_missing_dimensions (test_memory_model_budget.ModelBudgetTests.test_partial_and_invalid_usage_cannot_refund_missing_dimensions) (tokens={'input_tokens': 1.5, 'output_tokens': True, 'total_tokens': 10})\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 199, in test_partial_and_invalid_usage_cannot_refund_missing_dimensions\n    self.assertEqual(entry[\"budget\"][\"input_debit\"], 100)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 0 != 100\n\n======================================================================\nFAIL: test_partial_and_invalid_usage_cannot_refund_missing_dimensions (test_memory_model_budget.ModelBudgetTests.test_partial_and_invalid_usage_cannot_refund_missing_dimensions) (tokens={'total_tokens': 10})\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 199, in test_partial_and_invalid_usage_cannot_refund_missing_dimensions\n    self.assertEqual(entry[\"budget\"][\"input_debit\"], 100)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 0 != 100\n\n======================================================================\nFAIL: test_partial_and_invalid_usage_cannot_refund_missing_dimensions (test_memory_model_budget.ModelBudgetTests.test_partial_and_invalid_usage_cannot_refund_missing_dimensions) (tokens={'output_tokens': 7})\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 199, in test_partial_and_invalid_usage_cannot_refund_missing_dimensions\n    self.assertEqual(entry[\"budget\"][\"input_debit\"], 100)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 0 != 100\n\n----------------------------------------------------------------------\nRan 1 test in 0.117s\n\nFAILED (failures=3)\ntest_partial_and_invalid_usage_cannot_refund_missing_dimensions (test_memory_model_budget.ModelBudgetTests.test_partial_and_invalid_usage_cannot_refund_missing_dimensions) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.115s\n\nOK\n"
+  },
+  {
+    "name": "reconcile-known",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "difference = actual - record[side + \"_debit\"]",
+    "new": "difference = 0",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_known_output_releases_only_unused_reservation -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_known_output_releases_only_unused_reservation -v >> /tmp/model-budget-mutations-revision4/reconcile-known.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'difference = actual - record[side + \"_debit\"]'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'difference = 0'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_known_output_releases_only_unused_reservation (test_memory_model_budget.ModelBudgetTests.test_known_output_releases_only_unused_reservation) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.108s\n\nOK\ntest_known_output_releases_only_unused_reservation (test_memory_model_budget.ModelBudgetTests.test_known_output_releases_only_unused_reservation) ... ERROR\n\n======================================================================\nERROR: test_known_output_releases_only_unused_reservation (test_memory_model_budget.ModelBudgetTests.test_known_output_releases_only_unused_reservation)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 133, in test_known_output_releases_only_unused_reservation\n    second = model.generate(\"extract_v1\", self.extract_inputs)\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/model.py\", line 267, in generate\n    fail(\"model_budget_exhausted\", \"Call or input/output budget exhausted before the next attempt.\",\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n         requested_input_chars=count, limits=copy.deepcopy(self.limits), preview=inspected)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/src/memory_orchestrator/model.py\", line 255, in fail\n    raise DomainError(code, message, {\"prompt_id\": prompt_id, \"usage\": copy.deepcopy(usage),\n        \"attempts\": copy.deepcopy(attempts), \"calls_consumed\": self.calls,\n        \"input_chars_consumed\": self.input_chars, **details})\nmemory_orchestrator.schemas.DomainError: Call or input/output budget exhausted before the next attempt.\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nFAILED (errors=1)\ntest_known_output_releases_only_unused_reservation (test_memory_model_budget.ModelBudgetTests.test_known_output_releases_only_unused_reservation) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.110s\n\nOK\n"
+  },
+  {
+    "name": "actual-overrun",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "if actual > maximum:",
+    "new": "if False:",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_reported_overrun_keeps_actual_tokens_and_stops_later_calls -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_reported_overrun_keeps_actual_tokens_and_stops_later_calls -v >> /tmp/model-budget-mutations-revision4/actual-overrun.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'if actual > maximum:'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'if False:'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_reported_overrun_keeps_actual_tokens_and_stops_later_calls (test_memory_model_budget.ModelBudgetTests.test_reported_overrun_keeps_actual_tokens_and_stops_later_calls) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nOK\ntest_reported_overrun_keeps_actual_tokens_and_stops_later_calls (test_memory_model_budget.ModelBudgetTests.test_reported_overrun_keeps_actual_tokens_and_stops_later_calls) ... FAIL\n\n======================================================================\nFAIL: test_reported_overrun_keeps_actual_tokens_and_stops_later_calls (test_memory_model_budget.ModelBudgetTests.test_reported_overrun_keeps_actual_tokens_and_stops_later_calls)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 213, in test_reported_overrun_keeps_actual_tokens_and_stops_later_calls\n    with self.assertRaises(DomainError) as caught: model.generate(\"extract_v1\", self.extract_inputs)\n         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nAssertionError: DomainError not raised\n\n----------------------------------------------------------------------\nRan 1 test in 0.106s\n\nFAILED (failures=1)\ntest_reported_overrun_keeps_actual_tokens_and_stops_later_calls (test_memory_model_budget.ModelBudgetTests.test_reported_overrun_keeps_actual_tokens_and_stops_later_calls) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.108s\n\nOK\n"
+  },
+  {
+    "name": "measurement-separation",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "overrun = self._settle(entry)",
+    "new": "overrun = self._settle(entry)\n            if \"budget\" in entry: entry[\"input_tokens\"] = entry[\"budget\"][\"estimated_input_tokens\"]",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage -v >> /tmp/model-budget-mutations-revision4/measurement-separation.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'overrun = self._settle(entry)'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'overrun = self._settle(entry)\\n            if \"budget\" in entry: entry[\"input_tokens\"] = entry[\"budget\"][\"estimated_input_tokens\"]'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_default_estimate_is_declared_and_does_not_replace_provider_usage (test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nOK\ntest_default_estimate_is_declared_and_does_not_replace_provider_usage (test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage) ... FAIL\n\n======================================================================\nFAIL: test_default_estimate_is_declared_and_does_not_replace_provider_usage (test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 100, in test_default_estimate_is_declared_and_does_not_replace_provider_usage\n    self.assertEqual(entry[\"input_tokens\"], 11)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 19638 != 11\n\n----------------------------------------------------------------------\nRan 1 test in 0.109s\n\nFAILED (failures=1)\ntest_default_estimate_is_declared_and_does_not_replace_provider_usage (test_memory_model_budget.ModelBudgetTests.test_default_estimate_is_declared_and_does_not_replace_provider_usage) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.106s\n\nOK\n"
+  },
+  {
+    "name": "missing-stage",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "reason = {\"scope\": \"stage\", \"dimension\": \"unconfigured_stage\", \"prompt_id\": prompt_id}",
+    "new": "reason = None",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied -v >> /tmp/model-budget-mutations-revision4/missing-stage.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'reason = {\"scope\": \"stage\", \"dimension\": \"unconfigured_stage\", \"prompt_id\": prompt_id}'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'reason = None'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_missing_stage_is_not_unlimited_and_config_is_copied (test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nOK\ntest_missing_stage_is_not_unlimited_and_config_is_copied (test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied) ... FAIL\n\n======================================================================\nFAIL: test_missing_stage_is_not_unlimited_and_config_is_copied (test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 237, in test_missing_stage_is_not_unlimited_and_config_is_copied\n    self.assertFalse(model.preview(\"extract_v1\", self.extract_inputs)[\"fits\"])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: True is not false\n\n----------------------------------------------------------------------\nRan 1 test in 0.105s\n\nFAILED (failures=1)\ntest_missing_stage_is_not_unlimited_and_config_is_copied (test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.108s\n\nOK\n"
+  },
+  {
+    "name": "repair-error-usage",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "fail(exc.code, exc.message, **exc.details)",
+    "new": "raise",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_counter_failure_during_repair_preserves_the_prior_attempt_usage -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_counter_failure_during_repair_preserves_the_prior_attempt_usage -v >> /tmp/model-budget-mutations-revision4/repair-error-usage.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'fail(exc.code, exc.message, **exc.details)'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'raise'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_counter_failure_during_repair_preserves_the_prior_attempt_usage (test_memory_model_budget.ModelBudgetTests.test_counter_failure_during_repair_preserves_the_prior_attempt_usage) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.105s\n\nOK\ntest_counter_failure_during_repair_preserves_the_prior_attempt_usage (test_memory_model_budget.ModelBudgetTests.test_counter_failure_during_repair_preserves_the_prior_attempt_usage) ... ERROR\n\n======================================================================\nERROR: test_counter_failure_during_repair_preserves_the_prior_attempt_usage (test_memory_model_budget.ModelBudgetTests.test_counter_failure_during_repair_preserves_the_prior_attempt_usage)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 260, in test_counter_failure_during_repair_preserves_the_prior_attempt_usage\n    self.assertEqual(len(caught.exception.details[\"usage\"]), 1)\n                         ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\nKeyError: 'usage'\n\n----------------------------------------------------------------------\nRan 1 test in 0.105s\n\nFAILED (errors=1)\ntest_counter_failure_during_repair_preserves_the_prior_attempt_usage (test_memory_model_budget.ModelBudgetTests.test_counter_failure_during_repair_preserves_the_prior_attempt_usage) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.103s\n\nOK\n"
+  },
+  {
+    "name": "unknown-budget-key",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "or value.keys() - required - {\"counter_id\", \"count_kind\"}",
+    "new": "or False",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_token_configuration_rejects_unknown_fields_and_ambiguous_counter_identity -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_token_configuration_rejects_unknown_fields_and_ambiguous_counter_identity -v >> /tmp/model-budget-mutations-revision4/unknown-budget-key.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'or value.keys() - required - {\"counter_id\", \"count_kind\"}'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'or False'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_token_configuration_rejects_unknown_fields_and_ambiguous_counter_identity (test_memory_model_budget.ModelBudgetTests.test_token_configuration_rejects_unknown_fields_and_ambiguous_counter_identity) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.104s\n\nOK\ntest_token_configuration_rejects_unknown_fields_and_ambiguous_counter_identity (test_memory_model_budget.ModelBudgetTests.test_token_configuration_rejects_unknown_fields_and_ambiguous_counter_identity) ... FAIL\n\n======================================================================\nFAIL: test_token_configuration_rejects_unknown_fields_and_ambiguous_counter_identity (test_memory_model_budget.ModelBudgetTests.test_token_configuration_rejects_unknown_fields_and_ambiguous_counter_identity)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 267, in test_token_configuration_rejects_unknown_fields_and_ambiguous_counter_identity\n    with self.assertRaises(DomainError): StructuredModel(FakeCall([]), limits=config)\n         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nAssertionError: DomainError not raised\n\n----------------------------------------------------------------------\nRan 1 test in 0.101s\n\nFAILED (failures=1)\ntest_token_configuration_rejects_unknown_fields_and_ambiguous_counter_identity (test_memory_model_budget.ModelBudgetTests.test_token_configuration_rejects_unknown_fields_and_ambiguous_counter_identity) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.103s\n\nOK\n"
+  },
+  {
+    "name": "frozen-budget-config",
+    "target": "src/memory_orchestrator/model.py",
+    "old": "result = copy.deepcopy(value)",
+    "new": "result = value",
+    "test": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied -v",
+    "command": [
+      "python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied -v >> /tmp/model-budget-mutations-revision4/frozen-budget-config.tests.txt 2>&1",
+      "--target",
+      "src/memory_orchestrator/model.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/model.py'\"'\"'); s=p.read_text(); old='\"'\"'result = copy.deepcopy(value)'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'result = value'\"'\"'))'"
+    ],
+    "before_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "after_sha256": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "exit_code": 0,
+    "stdout": "✅ 执照发放:src/memory_orchestrator/model.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": "",
+    "test_output": "test_missing_stage_is_not_unlimited_and_config_is_copied (test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.105s\n\nOK\ntest_missing_stage_is_not_unlimited_and_config_is_copied (test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied) ... FAIL\n\n======================================================================\nFAIL: test_missing_stage_is_not_unlimited_and_config_is_copied (test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_model_budget.py\", line 239, in test_missing_stage_is_not_unlimited_and_config_is_copied\n    with self.assertRaises(DomainError): model.generate(\"extract_v1\", self.extract_inputs)\n         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\nAssertionError: DomainError not raised\n\n----------------------------------------------------------------------\nRan 1 test in 0.107s\n\nFAILED (failures=1)\ntest_missing_stage_is_not_unlimited_and_config_is_copied (test_memory_model_budget.ModelBudgetTests.test_missing_stage_is_not_unlimited_and_config_is_copied) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.108s\n\nOK\n"
+  }
+]
+```
+
+</details>

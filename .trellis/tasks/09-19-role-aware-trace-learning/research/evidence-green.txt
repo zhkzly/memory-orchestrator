@@ -1,0 +1,19 @@
+test_allowed_refs_is_a_strict_boundary_including_empty_set (test_memory_trajectory.TrajectoryTests.test_allowed_refs_is_a_strict_boundary_including_empty_set) ... ok
+test_conflicting_derived_bindings_are_not_last_write_wins (test_memory_trajectory.TrajectoryTests.test_conflicting_derived_bindings_are_not_last_write_wins) ... ok
+test_cross_revision_call_is_explicitly_ambiguous (test_memory_trajectory.TrajectoryTests.test_cross_revision_call_is_explicitly_ambiguous) ... ok
+test_disk_and_inline_group_projections_match_without_whole_text_load (test_memory_trajectory.TrajectoryTests.test_disk_and_inline_group_projections_match_without_whole_text_load) ... ok
+test_failure_result_uses_protected_diagnostic_cap (test_memory_trajectory.TrajectoryTests.test_failure_result_uses_protected_diagnostic_cap) ... ok
+test_goal_revision_chunks_do_not_inherit_final_requirement (test_memory_trajectory.TrajectoryTests.test_goal_revision_chunks_do_not_inherit_final_requirement) ... ok
+test_late_verifier_failure_is_prioritized_before_early_routine_groups (test_memory_trajectory.TrajectoryTests.test_late_verifier_failure_is_prioritized_before_early_routine_groups) ... ok
+test_missing_binding_does_not_inherit_episode_final_revision (test_memory_trajectory.TrajectoryTests.test_missing_binding_does_not_inherit_episode_final_revision) ... ok
+test_missing_execution_events_still_preserves_supplied_feedback_and_requirement (test_memory_trajectory.TrajectoryTests.test_missing_execution_events_still_preserves_supplied_feedback_and_requirement) ... ok
+test_missing_limits_and_unprovided_citations_still_rejected (test_memory_trajectory.TrajectoryTests.test_missing_limits_and_unprovided_citations_still_rejected) ... ok
+test_real_trace_is_covered_by_multiple_bounded_call_groups (test_memory_trajectory.TrajectoryTests.test_real_trace_is_covered_by_multiple_bounded_call_groups) ... ok
+test_repeated_results_fold_but_failure_remains_source_evidence (test_memory_trajectory.TrajectoryTests.test_repeated_results_fold_but_failure_remains_source_evidence) ... ok
+test_scan_and_segment_caps_report_unprocessed_events (test_memory_trajectory.TrajectoryTests.test_scan_and_segment_caps_report_unprocessed_events) ... ok
+test_user_paste_and_visible_analysis_have_distinct_source_caps (test_memory_trajectory.TrajectoryTests.test_user_paste_and_visible_analysis_have_distinct_source_caps) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 5.392s
+
+OK

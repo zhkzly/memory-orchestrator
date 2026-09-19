@@ -9,6 +9,7 @@ import time
 from .candidates import apply_candidate, skill_view
 from .context import terms as _terms
 from .evidence import build_packet, expand_packet, feedback_view, index_episodes, validate_citations
+from .evidence import _refresh, _fits, validate_packet
 from .lineage import require_learning_source
 from .goals import associate_goals, missing_user_goals
 from .maintenance import (eligible_experience as _eligible_experience, retained_evidence as _retained_evidence,
@@ -40,7 +41,284 @@ def _policy(policy):
                 raise DomainError("learning_policy", f"Invalid policy.{name}.{field}.")
     if not isinstance(policy.get("evaluation_scope"), str) or not policy["evaluation_scope"].strip():
         raise DomainError("learning_policy", "Describe the evaluation scope before learning.")
+    policy = copy.deepcopy(policy)
+    if "trajectory_processing" not in policy:
+        width = policy["packet"]["max_fragment_chars"]
+        policy["trajectory_processing"] = {
+            "direct_max_input_tokens": policy["packet"]["token_budget"],
+            "plan": {"max_scan_events": 4096, "max_segments": 32, "max_groups_per_segment": 8,
+                     "packet": copy.deepcopy(policy["packet"]),
+                     "role_max_chars": {"user": width, "action": width, "feedback": width,
+                                        "note": min(width, 400), "result": min(width, 800), "unknown": min(width, 400)}},
+            "summary_limits": {"max_observations": 3, "max_quote_chars": 240},
+        }
+    processing = policy["trajectory_processing"]
+    if processing is None:
+        raise DomainError("learning_policy", "Trajectory processing is the learning input path; null does not disable it.")
+    if processing is not None:
+        if (not isinstance(processing, dict) or type(processing.get("direct_max_input_tokens")) is not int
+                or processing["direct_max_input_tokens"] < 0 or not isinstance(processing.get("plan"), dict)):
+            raise DomainError("learning_policy", "Trajectory processing needs a plan and a nonnegative direct input threshold.")
+        summary = processing.get("summary_limits", {})
+        if any(type(summary.get(key)) is not int or summary[key] < 1
+               for key in ("max_observations", "max_quote_chars")):
+            raise DomainError("learning_policy", "Declare positive local observation and exact-quote limits.")
     return copy.deepcopy(policy)
+
+
+def _extraction_inputs(episodes, index, packet, related, policy, expansions=0):
+    return {
+        "task_requirements": [{"episode_id": ep["episode_id"], "task_id": ep["task"]["task_id"],
+            "revision": ep["task"]["revision"], "provided_requirement_refs": [f["ref_id"] for f in packet["fragments"]
+                if f["episode_id"] == ep["episode_id"] and f["kind"] == "task"]} for ep in episodes],
+        "evidence_packet": packet, "available_feedback": feedback_view(index, packet),
+        "related_experiences": _visible_related(related, packet),
+        "extraction_limits": {"max_experiences": policy["max_experiences"],
+            "max_read_requests": policy["max_read_requests"], "max_evidence_expansions": policy["max_expansions"],
+            "remaining_evidence_expansions": policy["max_expansions"] - expansions},
+    }
+
+
+def _summary_excerpts(draft, packet, limits):
+    """Pure validation plus exact subrange derivation; prose is never raw evidence."""
+    draft = validate("LocalSummaryDraft", draft)
+    errors, observations, fragments = [], [], {}
+    supplied = {f["ref_id"]: f for f in packet["fragments"]}
+    if len(draft["observations"]) > limits["max_observations"]:
+        errors.append({"path": "$.observations", "maximum": limits["max_observations"],
+                       "actual_count": len(draft["observations"])})
+    for position, observation in enumerate(draft["observations"]):
+        refs = []
+        sources = []
+        for number, excerpt in enumerate(observation["excerpts"]):
+            source = supplied.get(excerpt["ref_id"])
+            quote = excerpt["quote"]
+            path = f"$.observations[{position}].excerpts[{number}]"
+            if source is None or not quote or len(quote) > limits["max_quote_chars"]:
+                errors.append({"path": path, "ref_id": excerpt["ref_id"],
+                    "expected": "A provided original fragment and a nonempty exact substring within max_quote_chars",
+                    "max_quote_chars": limits["max_quote_chars"]})
+                continue
+            offset = source["text"].find(quote)
+            if offset < 0:
+                errors.append({"path": path + ".quote", "ref_id": excerpt["ref_id"],
+                               "expected": "Copy an exact substring from this provided fragment; do not paraphrase the quote"})
+                continue
+            start = source["range"]["start_byte"] + len(source["text"][:offset].encode("utf-8"))
+            end = start + len(quote.encode("utf-8"))
+            ref = source["ref_id"].rsplit(":", 2)[0] + f":{start}:{end}"
+            fragments[ref] = {**copy.deepcopy(source), "ref_id": ref, "text": quote,
+                "range": {"start_byte": start, "end_byte_exclusive": end}}
+            refs.append(ref)
+            sources.append(source)
+        if (sources and observation["kind"] != "intention" and all(
+                f.get("structure", {}).get("source_role") in ("assistant", "agent")
+                and f.get("structure", {}).get("source_kind") in ("note", "analysis", "thought", "message")
+                for f in sources)):
+            errors.append({"path": f"$.observations[{position}].kind", "actual": observation["kind"],
+                           "expected": "intention: assistant analysis alone is a reported belief, not an observed environment outcome"})
+        observations.append({"kind": observation["kind"], "text": observation["text"], "quote_refs": _unique(refs)})
+    if errors:
+        raise DomainError("summary_evidence", "Local records need exact excerpts from their own provided packet.", {"errors": errors})
+    return observations, list(fragments.values())
+
+
+def _packet_union(index, packets, limits, *, anchors_only=False):
+    """One projected source view; never substitute a summary for an original range."""
+    combined = copy.deepcopy(packets[0])
+    combined["packet_id"] = new_id("packet")
+    combined["token_budget"] = limits["token_budget"]
+    bodies = {}
+    for packet in packets:
+        for fragment in packet["fragments"]:
+            if not anchors_only or fragment["kind"] in ("task", "feedback"):
+                bodies.setdefault(fragment["ref_id"], fragment)
+    combined["fragments"] = list(bodies.values())
+    combined["readable_ref_catalog"] = []
+    combined["gaps"] = _unique(gap for packet in packets for gap in packet["gaps"])[:24]
+    _refresh(combined, index)
+    if not anchors_only:
+        for packet in packets:
+            for locator in packet["readable_ref_catalog"]:
+                if len(combined["readable_ref_catalog"]) >= limits["max_catalog_refs"]:
+                    break
+                if locator["ref_id"] in bodies or locator["ref_id"] in {r["ref_id"] for r in combined["readable_ref_catalog"]}:
+                    continue
+                trial = copy.deepcopy(combined)
+                trial["readable_ref_catalog"].append(locator)
+                _refresh(trial, index)
+                if _fits(trial, limits):
+                    combined = trial
+    return combined
+
+
+def _paired_summary_context(quotes, packet, width):
+    """Keep a short matching action/result context without asking the model to copy it."""
+    result = {f["ref_id"]: f for f in quotes}
+    for source in quotes:
+        structure = source.get("structure", {})
+        call_id = structure.get("call_id")
+        kind = structure.get("source_kind")
+        wanted = ("result", "observation") if kind == "action" else ("action",) if kind in ("result", "observation") else ()
+        if call_id is None:
+            continue
+        for other in packet["fragments"]:
+            meta = other.get("structure", {})
+            if (other["episode_id"] != source["episode_id"] or meta.get("call_id") != call_id
+                    or meta.get("source_kind") not in wanted):
+                continue
+            if any(left is not None and right is not None and left != right for left, right in (
+                (source["task_revision"], other["task_revision"]),
+                (structure.get("task_id"), meta.get("task_id")), (structure.get("goal_id"), meta.get("goal_id")))):
+                continue
+            text = other["text"][:width]
+            start = other["range"]["start_byte"]
+            end = start + len(text.encode("utf-8"))
+            ref = other["ref_id"].rsplit(":", 2)[0] + f":{start}:{end}"
+            result.setdefault(ref, {**copy.deepcopy(other), "ref_id": ref, "text": text,
+                                   "range": {"start_byte": start, "end_byte_exclusive": end}})
+    return list(result.values())
+
+
+def _learning_packet(store, index, episodes, related, policy, model, call, result, error_record):
+    """The single N06 input path: role-aware plan, direct or bounded local analysis."""
+    from .evidence import build_trajectory_plan
+    processing = policy["trajectory_processing"]
+    if not callable(getattr(model, "preview", None)):
+        raise DomainError("model_boundary", "Learning requires full-request preview from the same structured model boundary.")
+    with measure_stage(store, index["project_id"], "index", subject_ref=result["cycle_id"]):
+        plan = build_trajectory_plan(index, limits=processing["plan"], dependency_limits=policy.get("dependency_lookup"))
+    state = {"mode": "planned", "planned_coverage": copy.deepcopy(plan["coverage"]),
+             "analyzed_event_count": 0, "analyzed_packet_count": 0, "segments": [], "summary_count": 0,
+             "limitations": ["Local model records are unverified interpretations; quoted text alone is original evidence."]}
+    result["trajectory_processing"] = state
+    if not plan["segments"]:
+        state["mode"] = "abstained"
+        raise DomainError("trajectory_no_summary", "No trajectory group fits the declared source projection budget.")
+    raw = _packet_union(index, plan["segments"], policy["packet"])
+    if (plan["coverage"]["scan_complete"] and plan["coverage"]["omitted_events"] == 0
+            and _fits(raw, policy["packet"])):
+        direct = model.preview("extract_v1", _extraction_inputs(episodes, index, raw, related, policy))
+        if direct["fits"] and direct["estimated_input_tokens"] <= processing["direct_max_input_tokens"]:
+            state.update(mode="direct", direct_packet_id=raw["packet_id"])
+            return validate_packet(raw, index)
+    if not model.limits.get("token_budget"):
+        state["mode"] = "abstained"
+        raise DomainError("trajectory_no_summary", "Long-trajectory analysis requires explicit cumulative token and stage budgets.")
+    anchors = _packet_union(index, plan["segments"], policy["packet"], anchors_only=True)
+    minimum = anchors
+    if not minimum["fragments"]:
+        minimum = copy.deepcopy(raw)
+        minimum["fragments"] = raw["fragments"][:1]
+        minimum["readable_ref_catalog"] = []
+        _refresh(minimum, index)
+    extraction_preview = model.preview("extract_v1", _extraction_inputs(episodes, index, minimum, related, policy))
+    if not extraction_preview["fits"]:
+        state.update(mode="abstained", blocking_reason=extraction_preview["blocking_reason"])
+        raise DomainError("trajectory_no_summary", "The extraction prompt and task anchors already exceed the declared budget; local calls were not started.")
+    state["segments"] = [{"source_packet_id": packet["packet_id"], "scope": copy.deepcopy(scope), "status": "not_started"}
+                         for packet, scope in zip(plan["segments"], plan["segment_scopes"])]
+    summaries, seen_events = [], set()
+    for segment, scope, row in zip(plan["segments"], plan["segment_scopes"], state["segments"]):
+        caps = {**processing["summary_limits"], "source_scope": scope}
+        inputs = {"evidence_packet": segment, "summary_limits": caps}
+        preview = model.preview("summarize_trace_v1", inputs)
+        # Shrink only this segment's original source set; a focus ranking would
+        # silently import unrelated events and therefore is not a chunk boundary.
+        smaller = copy.deepcopy(processing["plan"]["packet"])
+        for _ in range(4):
+            if preview["fits"]:
+                break
+            smaller["max_chars"] = max(1, smaller["max_chars"] * 2 // 3)
+            smaller["max_fragment_chars"] = max(1, smaller["max_fragment_chars"] * 2 // 3)
+            smaller["max_catalog_refs"] = min(smaller["max_catalog_refs"], 2)
+            allowed = {f["ref_id"].rsplit(":", 2)[0] for f in segment["fragments"] + segment["readable_ref_catalog"]}
+            try:
+                segment = build_packet(index, limits=smaller, allowed_refs=allowed,
+                    role_max_chars=processing["plan"]["role_max_chars"])
+            except DomainError as exc:
+                if exc.code != "evidence_budget_exhausted":
+                    raise
+                break
+            caps["source_scope"] = {**scope, "packet_id": segment["packet_id"]}
+            inputs = {"evidence_packet": segment, "summary_limits": caps}
+            preview = model.preview("summarize_trace_v1", inputs)
+        row["source_packet_id"] = segment["packet_id"]
+        row["scope"] = copy.deepcopy(caps["source_scope"])
+        if not preview["fits"]:
+            row.update(status="not_analyzed_budget", reason=preview["blocking_reason"])
+            continue
+        store.put("evidence_packets", segment["packet_id"], segment)
+        try:
+            draft = call("summarize_trace_v1", inputs,
+                         check=lambda value: _summary_excerpts(value, segment, processing["summary_limits"]))
+        except DomainError as exc:
+            row.update(status="failed", error_code=exc.code,
+                       report_ref=result["report_ids"][-1] if result["report_ids"] else None)
+            error_record(exc, "summarize_trace_v1")
+            state["limitations"].append("Local analysis stopped after a failed attempt; previous valid records remain available.")
+            break
+        row["report_ref"] = result["report_ids"][-1]
+        row["status"] = draft["status"]
+        state["analyzed_packet_count"] += 1
+        seen_events.update((f["episode_id"], f["event_id"]) for f in segment["fragments"]
+                           if f.get("structure", {}).get("namespace") == "event")
+        state["analyzed_event_count"] = len(seen_events)
+        if draft["status"] == "abstained" or not draft["observations"]:
+            continue
+        observations, quotes = _summary_excerpts(draft, segment, processing["summary_limits"])
+        quotes = _paired_summary_context(quotes, segment, processing["summary_limits"]["max_quote_chars"])
+        summary = {"summary_id": new_id("summary"), "source_packet_id": segment["packet_id"],
+                   "report_ref": row["report_ref"], "observations": observations, "unknowns": draft["unknowns"]}
+        summaries.append((summary, quotes, segment))
+    for row in state["segments"]:
+        if row["status"] == "not_started":
+            row["status"] = "not_analyzed_after_stop"
+    if not summaries:
+        state["mode"] = "abstained"
+        raise DomainError("trajectory_no_summary", "No grounded local records fit the declared learning budget.")
+    combined = anchors
+    combined["trajectory_summaries"] = []
+    combined["gaps"].append("Only budget-selected local records and exact excerpts were analyzed; omitted results and unselected segments remain unknown.")
+    for summary, quotes, segment in summaries:
+        trial = copy.deepcopy(combined)
+        bodies = {f["ref_id"]: f for f in trial["fragments"]}
+        bodies.update((f["ref_id"], f) for f in quotes)
+        trial["fragments"] = list(bodies.values())
+        trial["trajectory_summaries"].append(summary)
+        _refresh(trial, index)
+        if (_fits(trial, policy["packet"]) and
+                model.preview("extract_v1", _extraction_inputs(episodes, index, trial, related, policy))["fits"]):
+            combined = trial
+        else:
+            state["limitations"].append("A completed local record was not included in the extractor input budget: " + summary["summary_id"])
+    if not combined["trajectory_summaries"]:
+        state["mode"] = "abstained"
+        raise DomainError("trajectory_no_summary", "Local records cannot fit together with the actual extraction prompt and task anchors.")
+    # Original ranges remain available for bounded follow-up reads. A locator is
+    # not promoted to evidence merely because a local model saw its body.
+    offered = []
+    from .evidence import _catalog
+    # Include selected original ranges even if their local summary failed or did
+    # not use them. Availability is bounded; it never changes the analyzed count.
+    for segment in plan["segments"]:
+        offered.extend(_catalog(f) for f in segment["fragments"])
+        offered.extend(segment["readable_ref_catalog"])
+    visible = {f["ref_id"] for f in combined["fragments"]}
+    for locator in offered:
+        if len(combined["readable_ref_catalog"]) >= policy["packet"]["max_catalog_refs"]:
+            break
+        if locator["ref_id"] in visible or locator["ref_id"] in {r["ref_id"] for r in combined["readable_ref_catalog"]}:
+            continue
+        trial = copy.deepcopy(combined)
+        trial["readable_ref_catalog"].append(locator)
+        _refresh(trial, index)
+        if (_fits(trial, policy["packet"]) and
+                model.preview("extract_v1", _extraction_inputs(episodes, index, trial, related, policy))["fits"]):
+            combined = trial
+    _refresh(combined, index)
+    state.update(mode="partial", summary_count=len(combined["trajectory_summaries"]))
+    return validate_packet(combined, index)
 
 
 def _visible_related(records, packet):
@@ -304,7 +582,7 @@ def learn(store, episode_ids, model, *, policy, verification_catalog=None):
             if not usage_id or usage_id in result["usage_ids"]:
                 raise DomainError("duplicate_model_usage", "Each attempted call needs a unique usage identity.")
             stored = {"usage_id": usage_id, "project_id": project,
-                      "exclusive_stage": {"extract_v1": "extract", "diagnose_v1": "diagnose", "propose_v1": "propose",
+                      "exclusive_stage": {"summarize_trace_v1": "extract", "extract_v1": "extract", "diagnose_v1": "diagnose", "propose_v1": "propose",
                                           "goal_binding_v1": "index", "maintain_experience_v1": "extract"}[prompt_id],
                       "purpose": "learning", "run_or_proposal_id": cycle_id,
                       "tokens": {key: entry.get(key) for key in ("input_tokens", "output_tokens", "total_tokens")},
@@ -323,7 +601,7 @@ def learn(store, episode_ids, model, *, policy, verification_catalog=None):
         result["report_ids"].append(report_id)
 
     def call(prompt_id, inputs, *, check=None):
-        stage_name = {"extract_v1": "extract", "diagnose_v1": "diagnose", "propose_v1": "propose",
+        stage_name = {"summarize_trace_v1": "extract", "extract_v1": "extract", "diagnose_v1": "diagnose", "propose_v1": "propose",
                       "goal_binding_v1": "index", "maintain_experience_v1": "extract"}[prompt_id]
         with measure_stage(store, project, stage_name, subject_ref=cycle_id) as meter:
             call_started = time.monotonic()
@@ -403,22 +681,18 @@ def learn(store, episode_ids, model, *, policy, verification_catalog=None):
             index["gaps"].insert(0, "Prior memories with frozen or learning-disabled execution sources were excluded from this learning input.")
         if len(related_ids) > policy["max_related_episodes"]:
             index["gaps"].insert(0, "Additional related source episodes omitted by explicit retrieval budget.")
-        with measure_stage(store, project, "index", subject_ref=cycle_id):
-            packet = build_packet(index, limits=policy["packet"], dependency_limits=policy.get("dependency_lookup"))
+        stage = "summarize_trace_v1"
+        packet = _learning_packet(store, index, episodes, related, policy, model, call, result, error_record)
         expansions = 0
         while True:
             store.put("evidence_packets", packet["packet_id"], packet)
             stage = "extract_v1"
-            extraction = call(stage, {
-                "task_requirements": [{"episode_id": ep["episode_id"], "task_id": ep["task"]["task_id"],
-                    "revision": ep["task"]["revision"], "provided_requirement_refs": [f["ref_id"] for f in packet["fragments"]
-                        if f["episode_id"] == ep["episode_id"] and f["kind"] == "task"]} for ep in episodes],
-                "evidence_packet": packet, "available_feedback": feedback_view(index, packet),
-                "related_experiences": _visible_related(related, packet), "readable_ref_catalog": packet["readable_ref_catalog"],
-                "extraction_limits": {"max_experiences": policy["max_experiences"],
-                    "max_read_requests": policy["max_read_requests"], "max_evidence_expansions": policy["max_expansions"],
-                    "remaining_evidence_expansions": policy["max_expansions"] - expansions},
-            }, check=lambda value: validate_citations(value, packet))
+            extraction = call(stage, _extraction_inputs(episodes, index, packet, related, policy, expansions),
+                              check=lambda value: validate_citations(value, packet))
+            processing_state = result["trajectory_processing"]
+            if processing_state["mode"] == "direct":
+                processing_state["analyzed_event_count"] = packet["coverage"]["selected_event_count"]
+                processing_state["analyzed_packet_count"] += 1
             validate_citations(extraction, packet)
             if len(extraction["experiences"]) > policy["max_experiences"] or len(extraction["read_requests"]) > policy["max_read_requests"]:
                 raise DomainError("extraction_limit_exceeded", "Extraction exceeds its visible cycle limits.")
@@ -573,4 +847,5 @@ def learn(store, episode_ids, model, *, policy, verification_catalog=None):
     except DomainError as exc:
         error_record(exc, stage)
         if exc.code == "needs_index": return finish("needs_index", exc.message)
-        return finish("abstained" if exc.code in ("evidence_budget_exhausted", "model_budget_exhausted") else "error", exc.message)
+        return finish("abstained" if exc.code in ("evidence_budget_exhausted", "model_budget_exhausted",
+                                                 "trajectory_no_summary") else "error", exc.message)

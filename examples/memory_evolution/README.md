@@ -32,7 +32,7 @@ from memory_orchestrator.report import report
 1. `Store(root)` 显式指定存储根目录。`initialize_project(project_id, seed=None, source=...)` 建立空库或 `{skills, assets}` 预置基线，并记录来源；初始基线不是演化发布。`remember()` 保存事实，`add_episode()` 导入经历，`add_feedback()` 追加迟到反馈；已知身份必须一致，未知字段可以为空。随经历带来的反馈可通过 `feedback_records` 同包导入。
 2. `select_context()` 固定库版本，再按任务选择 Skill 和依赖；提供清单记录实际披露内容。默认读取 active，比较时可显式传入候选快照。字符预算和估算 token 均保留计量方式。
 3. `sample_tasks()` 在调用前保存全部计划与输入。支持同题多次和固定快照微批；每次执行、取消、异常和未知都计入分母。回调负责环境重置与硬超时，核心的线程池不提供进程隔离。
-4. `learn()` 检查来源资格，逐步索引轨迹，关联缺标目标，检索失败模式，构造有界证据包，再执行提取、语义维护、必要性判断、归因和提案。补读与格式修复受同一组显式预算控制。事实记忆不由 reward 改写。返回的 `candidate_ids` 是 proposal ID，可用 `store.get('candidates', id)` 读取完整候选。
+4. `learn()` 检查来源资格，逐步索引轨迹、关联缺标目标、检索失败模式，再统一经过角色分层与调用组计划。足够短的处理后视图直接提取；长轨迹按阶段预算生成局部记录与精确短引文，再执行经验提取、语义维护、必要性判断、归因和提案。补读与格式修复受同一模型实例的显式预算控制。事实记忆不由 reward 改写。返回的 `candidate_ids` 是 proposal ID，可用 `store.get('candidates', id)` 读取完整候选。
 5. `compare_candidates()` 固定案例、协议、候选集合和检查义务，执行旧版／候选对照、附属脚本检查及适用的局部组合对照。`ValidationRecord` 表示是否通过，`SelectionRecord` 表示最终选择。缺材料、缺执行或未知不能冒充检查通过。
 6. `publish()` 核对项目、完整资产、确切候选、验证／选择关系和 base/generation 后切换 active。`rollback()` 只回到同项目的已提交发布历史，并产生新代次。下一次召回使用新的 active；正在执行的任务仍用原快照。
 
@@ -43,6 +43,27 @@ from memory_orchestrator.report import report
 完整参数和可运行调用见 [demo.py](demo.py)。采样次数、候选数、准入门槛、模型及证据预算均来自显式配置；本例数值不是库的全局默认。
 
 调用方可直接使用 `evolve()` 串起步骤 4–6，由核心选择并发布通过的候选；无需自己重写演化决策。只需积累候选、暂缺评价材料时使用 `learn()`。
+
+## 轨迹学习输入与预算
+
+`learn()` 只有一个轨迹输入流程，不能用 `trajectory_processing=None` 切回旧抽样器。可在学习策略中覆盖 `trajectory_processing`；省略时也使用同一算法的默认参数。
+
+- `plan.max_scan_events` 限制候选选择扫描，`max_segments` 和 `max_groups_per_segment` 限制局部包数量与调用组。先按段的重要性选择，再保留段内源顺序，已知目标/修订冲突不强行合并。
+- `plan.packet` 沿用字符、片段、目录和估算token四个上限；`role_max_chars` 分别限定 user/action/note/result/feedback/unknown 的原文片段。任务前缀不会被其粘贴材料中的错误词挤走，普通工具回执与重复正文可以折叠，关键错误/反馈仍保留正文。
+- `direct_max_input_tokens` 针对完整提取请求的估算值。直接提取不表示全部原文已读：角色裁剪、目录、缺失与coverage仍明确保留。
+- `summary_limits.max_observations` 限制每次局部记录数，`max_quote_chars` 限制每条精确引文的字符数。局部模型只整理当前片段；宿主核对引文、计算字节范围、附上匹配的行动/返回短上下文。叙述与原文分开；助手自述不能仅凭自己引用就标成真实环境结果。
+
+长轨迹模型整理要求 `StructuredModel.limits.token_budget`，包含全局 `max_input_tokens/max_total_input_tokens/max_total_output_tokens`，以及按实际prompt ID配置的 `stages`；每阶段设置 `max_calls/max_input_tokens/max_output_tokens/max_total_input_tokens/max_total_output_tokens`。未配置的阶段不能无限调用。完整system、schema、证据、修复消息均计入预检；`preview()` 与实际发送使用同一renderer，实际发送前再次检查。
+
+可运行的参考配置在 [GDPevo入口的MODEL/LEARNING](../gdpevo_pilot/run.py)。按用户最新要求放宽：局部整理每次输入8000/输出1000，最多4次、累计输入32000/输出4000；提取每次输入16000/输出3000，最多2次、累计输入32000/输出6000。两阶段合计输入64000/输出10000。完整Teacher最多12次、累计输入160000/输出24000，另覆盖目标关联、维护、诊断和提案。这是后续运行的可调参考，不重算或改写已归档的51次SDK实验，也不是通用最优参数。
+
+真实轨迹加反馈的最小完整提取请求初次预检约需6435个估算token，证明最初6000的草案上限过紧；现在按用户授权提高，并继续对完整请求逐次检查单次与累计余额。
+
+计数器可通过 `StructuredModel(..., token_counter=...)` 注入，并声明 `counter_id/count_kind`；默认是完整消息UTF-8 JSON字节数除3向上取整的**估计**，不是tokenizer实测或数学上界。合法provider用量用于结算；缺失/失败保留预留而不填零。实际回报超过上限会阻止继续调用，不能把账本裁小。
+
+预算作用于当前model实例，初始preview不预留后续阶段份额，也不保证摘要后一定有预算继续。调用方应为期望流程安排各阶段/全局配额；余额不足时会保留partial或abstained及失败费用。这里不声称跨进程、跨实验臂或账号级预算控制。磁盘原文按范围读取；来源绑定/验证还会读取额外元数据，`max_scan_events`不是全部I/O硬上限，实际read_stats另外记录。
+
+局部中断不会删除之前完成的合法记录；未处理段和模型弃权分别记录。`report().memory_progress.trajectory_processing` 展示每周期计划覆盖、实际完成分析、摘要数量及段状态；token实测汇总不会加入预算预留。以上机制检查不代表摘要质量、归因正确率或学习收益已测。
 
 ## 执行与反馈接口
 
@@ -166,6 +187,8 @@ model = StructuredModel(
 # OPENAI_API_KEY 由环境提供；不要把密钥写入任务或存储。
 # learn(store, episode_ids, model, policy=explicit_learning_policy)
 ```
+
+处理长轨迹时，还需在上述 `limits` 中配置前文的 `token_budget` 与各阶段配额；完整参考见 [MODEL配置](../gdpevo_pilot/run.py)。这段最小配置用于可以直接容纳的短输入，缺少长轨迹预算时会正常弃权。
 
 模型模板与 Schema 从总纲精确打包；SDK 不进行隐式重试，格式和纯引用／目标语义修复共用显式额度。原始输出、失败、实际 token 与未知费用保留在账本。测试替身、真实 SDK 接线、真实学习调用及 benchmark 效果是四种不同证据。
 

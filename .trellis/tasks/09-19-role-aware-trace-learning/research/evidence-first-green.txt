@@ -1,0 +1,29 @@
+test_allowed_refs_is_a_strict_boundary_including_empty_set (test_memory_trajectory.TrajectoryTests.test_allowed_refs_is_a_strict_boundary_including_empty_set) ... ok
+test_cross_revision_call_is_explicitly_ambiguous (test_memory_trajectory.TrajectoryTests.test_cross_revision_call_is_explicitly_ambiguous) ... ok
+test_disk_and_inline_group_projections_match_without_whole_text_load (test_memory_trajectory.TrajectoryTests.test_disk_and_inline_group_projections_match_without_whole_text_load) ... FAIL
+test_goal_revision_chunks_do_not_inherit_final_requirement (test_memory_trajectory.TrajectoryTests.test_goal_revision_chunks_do_not_inherit_final_requirement) ... ok
+test_missing_limits_and_unprovided_citations_still_rejected (test_memory_trajectory.TrajectoryTests.test_missing_limits_and_unprovided_citations_still_rejected) ... ok
+test_real_trace_is_covered_by_multiple_bounded_call_groups (test_memory_trajectory.TrajectoryTests.test_real_trace_is_covered_by_multiple_bounded_call_groups) ... ok
+test_repeated_results_fold_but_failure_remains_source_evidence (test_memory_trajectory.TrajectoryTests.test_repeated_results_fold_but_failure_remains_source_evidence) ... ok
+test_scan_and_segment_caps_report_unprocessed_events (test_memory_trajectory.TrajectoryTests.test_scan_and_segment_caps_report_unprocessed_events) ... ok
+test_user_paste_and_visible_analysis_have_distinct_source_caps (test_memory_trajectory.TrajectoryTests.test_user_paste_and_visible_analysis_have_distinct_source_caps) ... ok
+
+======================================================================
+FAIL: test_disk_and_inline_group_projections_match_without_whole_text_load (test_memory_trajectory.TrajectoryTests.test_disk_and_inline_group_projections_match_without_whole_text_load)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 169, in test_disk_and_inline_group_projections_match_without_whole_text_load
+    self.assertEqual(view(actual), view(expected))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [[('t[122712 chars]), ('result', {'end_byte_exclusive': 1800, 'st[7821 chars]}')]] != [[('t[122712 chars]), ('feedback_plan_9a85e09850c142c8a58145bcc79[7821 chars][')]]
+
+First differing element 12:
+[('ta[732 chars]), ('result', {'end_byte_exclusive': 1800, 'st[7820 chars]"}')]
+[('ta[732 chars]), ('feedback_plan_9a85e09850c142c8a58145bcc79[7820 chars] [')]
+
+Diff is 146998 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 9 tests in 4.435s
+
+FAILED (failures=1)

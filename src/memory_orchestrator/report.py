@@ -415,6 +415,17 @@ def _memory_progress(store, project_id):
         if prior is None or (row['next_raw_byte'], row['created_at']) > (prior['next_raw_byte'], prior['created_at']):
             checkpoints[row['trace_id']] = row
     return {'maintenance': maintenance_summary(store, project_id),
+            'trajectory_processing': [
+                {'cycle_id': row['cycle_id'], 'mode': state['mode'],
+                 'planned_coverage': state.get('planned_coverage'),
+                 'analyzed_event_count': state.get('analyzed_event_count', 0),
+                 'analyzed_packet_count': state.get('analyzed_packet_count', 0),
+                 'summary_count': state.get('summary_count', 0),
+                 'segment_status_counts': dict(Counter(part['status'] for part in state.get('segments', []))),
+                 'limitations': state.get('limitations', []),
+                 'token_budget': row.get('model_limits', {}).get('token_budget'),
+                 'budget_scope': 'One model instance/cycle; reservations are not provider-measured token usage.'}
+                for row in cycles if isinstance((state := row.get('trajectory_processing')), dict)],
             'goal_binding_statuses': dict(Counter(row['status'] for row in bindings)),
             'derived_goal_bindings': sum(len(row['resolved_bindings']) for row in bindings),
             'trace_count': len(manifests), 'archived_trace_bytes': sum(row['byte_length'] for row in manifests),

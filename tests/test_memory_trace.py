@@ -117,24 +117,60 @@ class TraceTests(unittest.TestCase):
     def test_actual_learn_waits_for_index_then_supplies_source_backed_fragments(self):
         from memory_orchestrator.learning import learn
         from memory_orchestrator.model import StructuredModel
+        from memory_orchestrator.schemas import digest, load_contracts
         from test_memory_learning import policy
-        from test_memory_model import FakeCall, response, limits as model_limits
+        from test_memory_model import response, limits as model_limits
         from test_memory_evidence import EXAMPLES
         imported = import_trace(self.store, self.ep, self.source, limits=self.caps)
         caps = policy(trace_index=self.caps, dependency_lookup={"max_hops": 2, "max_events": 4})
-        transport = FakeCall([response(EXAMPLES["abstain"])])
-        model = StructuredModel(transport, limits=model_limits())
+        calls = []
+        def transport(request):
+            calls.append(copy.deepcopy(request))
+            if request["prompt_id"] == "summarize_trace_v1":
+                return response({"status": "abstained", "observations": [],
+                    "unknowns": ["This test only checks delivery of indexed original ranges."],
+                    "reason": "No semantic learning claim is made by this constructed transport."})
+            self.assertEqual(request["prompt_id"], "extract_v1")
+            return response(EXAMPLES["abstain"])
+        budget = {"max_input_tokens": 50000, "max_total_input_tokens": 200000,
+            "max_total_output_tokens": 20000, "stages": {
+                name: {"max_calls": count, "max_input_tokens": 50000, "max_output_tokens": 2000,
+                       "max_total_input_tokens": count * 50000, "max_total_output_tokens": count * 2000}
+                for name, count in (("summarize_trace_v1", 4), ("extract_v1", 2))}}
+        model = StructuredModel(transport, limits=model_limits(max_input_chars=150000,
+            max_total_input_chars=600000, max_calls=6, max_format_repairs=0, token_budget=budget))
         first = learn(self.store, [imported["episode_id"]], model, policy=caps)
         self.assertEqual(first["status"], "needs_index")
-        self.assertEqual(transport.calls, [])
+        self.assertEqual(calls, [])
         second = learn(self.store, [imported["episode_id"]], model, policy=caps)
         self.assertEqual(second["status"], "needs_index")
+        self.assertEqual(calls, [])
         result = learn(self.store, [imported["episode_id"]], model, policy=caps)
         self.assertEqual(result["status"], "abstained")
-        text = transport.calls[0]["messages"][1]["content"]
-        packet, _ = json.JSONDecoder().raw_decode(text.split("证据包及缺口：", 1)[1].lstrip())
-        self.assertEqual(packet["coverage"]["total_event_count"], 12)
-        self.assertIn(imported["trace_ref"], json.dumps(packet))
+        self.assertTrue(calls)
+        manifest = self.store.get("trace_manifests", imported["trace_ref"])
+        packets = []
+        for request in calls:
+            template = load_contracts()["prompts"][request["prompt_id"]]["user_template"]
+            marker = template.split("{{evidence_packet}}")[0].rsplit("\n", 1)[-1]
+            text = request["messages"][1]["content"].split(marker, 1)[1].lstrip()
+            packet, _ = json.JSONDecoder().raw_decode(text)
+            packets.append(packet)
+            self.assertEqual(packet["coverage"]["total_event_count"], 12)
+            for fragment in packet["fragments"]:
+                if fragment["structure"]["namespace"] != "event": continue
+                original = next(e for e in self.events if e["event_id"] == fragment["event_id"])
+                span = fragment["range"]
+                self.assertEqual(fragment["text"].encode(), original["text"].encode()[span["start_byte"]:span["end_byte_exclusive"]])
+                self.assertEqual(fragment["raw_hash"], digest(original["text"]))
+                record = fragment["source_record"]
+                self.assertEqual(record["trace_ref"], imported["trace_ref"])
+                self.assertEqual(record["raw_sha256"], manifest["raw_sha256"])
+                with (self.store.root / manifest["raw_path"]).open("rb") as source:
+                    source.seek(record["raw_range"]["start_byte"])
+                    raw = source.read(record["raw_range"]["end_byte_exclusive"] - record["raw_range"]["start_byte"])
+                self.assertEqual(json.loads(raw), original)
+        self.assertTrue(any(f["structure"]["namespace"] == "event" for p in packets for f in p["fragments"]))
         self.assertTrue(result["trace_checkpoint_ids"])
 
     def test_archived_frozen_parent_cannot_reenter_learning_via_empty_header(self):

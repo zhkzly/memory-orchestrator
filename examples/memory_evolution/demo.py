@@ -13,6 +13,7 @@ import time
 
 from memory_orchestrator.context import select_context
 from memory_orchestrator.engine import evolve
+from memory_orchestrator.model import StructuredModel
 from memory_orchestrator.release import rollback
 from memory_orchestrator.report import report
 from memory_orchestrator.sampling import sample_tasks
@@ -98,6 +99,14 @@ class ScriptedTeacher:
 
     def __init__(self):
         self.calls = 0
+
+    def preview(self, prompt_id, inputs):
+        """Use the real renderer for a dry run; scripted output has no provider usage."""
+        def no_transport(request):
+            raise AssertionError('A scripted preview cannot invoke a model transport')
+        boundary = StructuredModel(no_transport, limits=deepcopy(self.limits))
+        boundary.calls = self.calls
+        return boundary.preview(prompt_id, inputs)
 
     def generate(self, prompt_id, inputs, *, check=None):
         started = time.monotonic()

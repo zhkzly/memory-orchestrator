@@ -1,0 +1,15 @@
+{
+  "command": [
+    "python3",
+    "/home/kelong/ai-workbench/tools/mutation_license.py",
+    "--tests",
+    "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_evidence.EvidenceTests.test_expand_only_catalogued_ranges_and_reject_raw_tampering -v",
+    "--target",
+    "src/memory_orchestrator/evidence.py",
+    "--mutate",
+    "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/evidence.py'\"'\"'); s=p.read_text(); old='\"'\"'if field == \"fragments\" and any(item[key] != expected[key] for key in (\"text\", \"event_id\", \"kind\")):'\"'\"'; assert s.count(old)==1; p.write_text(s.replace(old,'\"'\"'if False:'\"'\"',1))'"
+  ],
+  "exit_code": 0,
+  "before": "4acd95426975198dac938dedb97d426d94f5274769fee4aba72dd3b101f85309",
+  "after": "4acd95426975198dac938dedb97d426d94f5274769fee4aba72dd3b101f85309"
+}

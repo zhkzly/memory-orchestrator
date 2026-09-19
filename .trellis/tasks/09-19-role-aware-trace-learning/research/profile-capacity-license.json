@@ -1,0 +1,8 @@
+{
+  "cmd": "python3 /home/kelong/ai-workbench/tools/mutation_license.py --tests 'PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_real_feedback_and_prompt_overhead_fit_the_reference_input_cap -v' --target 'examples/gdpevo_pilot/run.py' --mutate 'python3 -c '\"'\"'from pathlib import Path; p=Path(\"examples/gdpevo_pilot/run.py\"); s=p.read_text(); old=\"\\'\"'\"'\"'\"'\"'\"'\"'\"'extract_v1\\'\"'\"'\"'\"'\"'\"'\"'\"': {\\'\"'\"'\"'\"'\"'\"'\"'\"'max_calls\\'\"'\"'\"'\"'\"'\"'\"'\"': 2, \\'\"'\"'\"'\"'\"'\"'\"'\"'max_input_tokens\\'\"'\"'\"'\"'\"'\"'\"'\"': 16000\"; assert old in s; p.write_text(s.replace(old, \"\\'\"'\"'\"'\"'\"'\"'\"'\"'extract_v1\\'\"'\"'\"'\"'\"'\"'\"'\"': {\\'\"'\"'\"'\"'\"'\"'\"'\"'max_calls\\'\"'\"'\"'\"'\"'\"'\"'\"': 2, \\'\"'\"'\"'\"'\"'\"'\"'\"'max_input_tokens\\'\"'\"'\"'\"'\"'\"'\"'\"': 6000\",1))'\"'\"''",
+  "chunk_id": "e8d04e",
+  "wall_time_seconds": 0.436313645,
+  "exit_code": 0,
+  "original_token_count": 32,
+  "output": "✅ 执照发放:examples/gdpevo_pilot/run.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n"
+}

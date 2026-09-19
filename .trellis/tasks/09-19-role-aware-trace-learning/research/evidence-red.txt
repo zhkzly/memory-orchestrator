@@ -1,0 +1,112 @@
+test_allowed_refs_is_a_strict_boundary_including_empty_set (test_memory_trajectory.TrajectoryTests.test_allowed_refs_is_a_strict_boundary_including_empty_set) ... ERROR
+test_cross_revision_call_is_explicitly_ambiguous (test_memory_trajectory.TrajectoryTests.test_cross_revision_call_is_explicitly_ambiguous) ... ERROR
+test_disk_and_inline_group_projections_match_without_whole_text_load (test_memory_trajectory.TrajectoryTests.test_disk_and_inline_group_projections_match_without_whole_text_load) ... ERROR
+test_goal_revision_chunks_do_not_inherit_final_requirement (test_memory_trajectory.TrajectoryTests.test_goal_revision_chunks_do_not_inherit_final_requirement) ... ERROR
+test_missing_limits_and_unprovided_citations_still_rejected (test_memory_trajectory.TrajectoryTests.test_missing_limits_and_unprovided_citations_still_rejected) ... ERROR
+test_real_trace_is_covered_by_multiple_bounded_call_groups (test_memory_trajectory.TrajectoryTests.test_real_trace_is_covered_by_multiple_bounded_call_groups) ... ERROR
+test_repeated_results_fold_but_failure_remains_source_evidence (test_memory_trajectory.TrajectoryTests.test_repeated_results_fold_but_failure_remains_source_evidence) ... ERROR
+test_scan_and_segment_caps_report_unprocessed_events (test_memory_trajectory.TrajectoryTests.test_scan_and_segment_caps_report_unprocessed_events) ... ERROR
+test_user_paste_and_visible_analysis_have_distinct_source_caps (test_memory_trajectory.TrajectoryTests.test_user_paste_and_visible_analysis_have_distinct_source_caps) ... ERROR
+
+======================================================================
+ERROR: test_allowed_refs_is_a_strict_boundary_including_empty_set (test_memory_trajectory.TrajectoryTests.test_allowed_refs_is_a_strict_boundary_including_empty_set)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 59, in test_allowed_refs_is_a_strict_boundary_including_empty_set
+    packet = evidence.build_packet(index, limits=trajectory_limits()['packet'], allowed_refs={one})
+TypeError: build_packet() got an unexpected keyword argument 'allowed_refs'
+
+======================================================================
+ERROR: test_cross_revision_call_is_explicitly_ambiguous (test_memory_trajectory.TrajectoryTests.test_cross_revision_call_is_explicitly_ambiguous)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 120, in test_cross_revision_call_is_explicitly_ambiguous
+    plan = self.plan(indexed(ep))
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 45, in plan
+    return evidence.build_trajectory_plan(index, limits=trajectory_limits(**overrides))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'memory_orchestrator.evidence' has no attribute 'build_trajectory_plan'
+
+======================================================================
+ERROR: test_disk_and_inline_group_projections_match_without_whole_text_load (test_memory_trajectory.TrajectoryTests.test_disk_and_inline_group_projections_match_without_whole_text_load)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 149, in test_disk_and_inline_group_projections_match_without_whole_text_load
+    expected = self.plan(indexed())
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 45, in plan
+    return evidence.build_trajectory_plan(index, limits=trajectory_limits(**overrides))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'memory_orchestrator.evidence' has no attribute 'build_trajectory_plan'
+
+======================================================================
+ERROR: test_goal_revision_chunks_do_not_inherit_final_requirement (test_memory_trajectory.TrajectoryTests.test_goal_revision_chunks_do_not_inherit_final_requirement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 108, in test_goal_revision_chunks_do_not_inherit_final_requirement
+    index = indexed(ep); plan = self.plan(index)
+                                ~~~~~~~~~^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 45, in plan
+    return evidence.build_trajectory_plan(index, limits=trajectory_limits(**overrides))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'memory_orchestrator.evidence' has no attribute 'build_trajectory_plan'
+
+======================================================================
+ERROR: test_missing_limits_and_unprovided_citations_still_rejected (test_memory_trajectory.TrajectoryTests.test_missing_limits_and_unprovided_citations_still_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 174, in test_missing_limits_and_unprovided_citations_still_rejected
+    with self.assertRaises(DomainError): evidence.build_trajectory_plan(index, limits={})
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'memory_orchestrator.evidence' has no attribute 'build_trajectory_plan'
+
+======================================================================
+ERROR: test_real_trace_is_covered_by_multiple_bounded_call_groups (test_memory_trajectory.TrajectoryTests.test_real_trace_is_covered_by_multiple_bounded_call_groups)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 65, in test_real_trace_is_covered_by_multiple_bounded_call_groups
+    index = indexed(); plan = self.plan(index)
+                              ~~~~~~~~~^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 45, in plan
+    return evidence.build_trajectory_plan(index, limits=trajectory_limits(**overrides))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'memory_orchestrator.evidence' has no attribute 'build_trajectory_plan'
+
+======================================================================
+ERROR: test_repeated_results_fold_but_failure_remains_source_evidence (test_memory_trajectory.TrajectoryTests.test_repeated_results_fold_but_failure_remains_source_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 141, in test_repeated_results_fold_but_failure_remains_source_evidence
+    index = indexed(ep); plan = self.plan(index)
+                                ~~~~~~~~~^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 45, in plan
+    return evidence.build_trajectory_plan(index, limits=trajectory_limits(**overrides))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'memory_orchestrator.evidence' has no attribute 'build_trajectory_plan'
+
+======================================================================
+ERROR: test_scan_and_segment_caps_report_unprocessed_events (test_memory_trajectory.TrajectoryTests.test_scan_and_segment_caps_report_unprocessed_events)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 127, in test_scan_and_segment_caps_report_unprocessed_events
+    plan = self.plan(index, **caps)
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 45, in plan
+    return evidence.build_trajectory_plan(index, limits=trajectory_limits(**overrides))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'memory_orchestrator.evidence' has no attribute 'build_trajectory_plan'
+
+======================================================================
+ERROR: test_user_paste_and_visible_analysis_have_distinct_source_caps (test_memory_trajectory.TrajectoryTests.test_user_paste_and_visible_analysis_have_distinct_source_caps)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 89, in test_user_paste_and_visible_analysis_have_distinct_source_caps
+    index = indexed(ep); plan = self.plan(index)
+                                ~~~~~~~~~^^^^^^^
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 45, in plan
+    return evidence.build_trajectory_plan(index, limits=trajectory_limits(**overrides))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'memory_orchestrator.evidence' has no attribute 'build_trajectory_plan'
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.065s
+
+FAILED (errors=9)

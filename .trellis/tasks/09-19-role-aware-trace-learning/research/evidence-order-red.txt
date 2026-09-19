@@ -1,0 +1,22 @@
+test_real_trace_is_covered_by_multiple_bounded_call_groups (test_memory_trajectory.TrajectoryTests.test_real_trace_is_covered_by_multiple_bounded_call_groups) ... FAIL
+
+======================================================================
+FAIL: test_real_trace_is_covered_by_multiple_bounded_call_groups (test_memory_trajectory.TrajectoryTests.test_real_trace_is_covered_by_multiple_bounded_call_groups)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 79, in test_real_trace_is_covered_by_multiple_bounded_call_groups
+    self.assertEqual(positions, sorted(positions))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [0, 1, 2, 9, 10, 5, 6, 3, 4, 7, 8] != [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+First differing element 3:
+9
+3
+
+- [0, 1, 2, 9, 10, 5, 6, 3, 4, 7, 8]
++ [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+----------------------------------------------------------------------
+Ran 1 test in 0.130s
+
+FAILED (failures=1)

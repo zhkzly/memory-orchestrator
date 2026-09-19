@@ -28,10 +28,37 @@ CONTEXT = {'max_roots': 3, 'max_context_chars': 18000, 'relation_weight': 0.5}
 ACTOR = {'max_model_calls': 6, 'max_tool_calls': 128, 'max_input_chars': 100000,
          'max_tool_output_chars': 20000, 'max_completion_tokens': 8192, 'context_policy': CONTEXT}
 MODEL = {'max_input_chars': 120000, 'max_output_chars': 30000, 'max_output_tokens': 6000,
-         'max_total_input_chars': 480000, 'max_calls': 8, 'max_format_repairs': 1}
+         'max_total_input_chars': 720000, 'max_calls': 12, 'max_format_repairs': 1,
+         'token_budget': {
+             'max_input_tokens': 40000, 'max_total_input_tokens': 160000, 'max_total_output_tokens': 24000,
+             'stages': {
+                 'summarize_trace_v1': {'max_calls': 4, 'max_input_tokens': 8000, 'max_output_tokens': 1000,
+                     'max_total_input_tokens': 32000, 'max_total_output_tokens': 4000},
+                 'extract_v1': {'max_calls': 2, 'max_input_tokens': 16000, 'max_output_tokens': 3000,
+                     'max_total_input_tokens': 32000, 'max_total_output_tokens': 6000},
+                 'goal_binding_v1': {'max_calls': 2, 'max_input_tokens': 10000, 'max_output_tokens': 1200,
+                     'max_total_input_tokens': 16000, 'max_total_output_tokens': 2400},
+                 'maintain_experience_v1': {'max_calls': 1, 'max_input_tokens': 12000, 'max_output_tokens': 1000,
+                     'max_total_input_tokens': 12000, 'max_total_output_tokens': 1000},
+                 'diagnose_v1': {'max_calls': 2, 'max_input_tokens': 30000, 'max_output_tokens': 3000,
+                     'max_total_input_tokens': 45000, 'max_total_output_tokens': 4500},
+                 'propose_v1': {'max_calls': 2, 'max_input_tokens': 20000, 'max_output_tokens': 4000,
+                     'max_total_input_tokens': 30000, 'max_total_output_tokens': 6000},
+             },
+         }}
 SDK = {'model': 'gpt-5.6-terra', 'base_url': 'http://localhost:8317/v1', 'timeout': 45,
        'max_calls': 96, 'max_total_input_chars': 3000000, 'max_output_tokens': 8192}
 LEARNING = {
+    # This changes future learning inputs, not the archived 51-call pilot record.
+    'trajectory_processing': {
+        'direct_max_input_tokens': 16000,
+        'plan': {'max_scan_events': 512, 'max_segments': 4, 'max_groups_per_segment': 4,
+                 'packet': {'max_chars': 15000, 'max_fragment_chars': 1600,
+                            'max_catalog_refs': 4, 'token_budget': 6000},
+                 'role_max_chars': {'user': 1600, 'action': 1200, 'note': 400,
+                                    'result': 600, 'feedback': 1600, 'unknown': 320}},
+        'summary_limits': {'max_observations': 3, 'max_quote_chars': 240},
+    },
     'packet': {'max_chars': 42000, 'max_fragment_chars': 1800, 'max_catalog_refs': 24, 'token_budget': 24000},
     'expanded_packet': {'max_chars': 60000, 'max_fragment_chars': 3000, 'max_catalog_refs': 24, 'token_budget': 34000},
     'max_expansions': 1, 'max_experiences': 3, 'max_read_requests': 3,

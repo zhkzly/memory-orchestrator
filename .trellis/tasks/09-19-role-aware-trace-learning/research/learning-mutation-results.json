@@ -1,0 +1,342 @@
+[
+  {
+    "label": "exact_quote",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_unread_or_paraphrased_quotes_are_rejected_together -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_unread_or_paraphrased_quotes_are_rejected_together -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'if offset < 0:'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'if False:'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "provided_source",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_quote_cannot_borrow_identical_text_from_an_unprovided_reference -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_quote_cannot_borrow_identical_text_from_an_unprovided_reference -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'source = supplied.get(excerpt[\"ref_id\"])'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'source = next(iter(supplied.values()))'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "observation_limit",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_all_local_count_and_quote_limits_are_enforced_with_field_paths -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_all_local_count_and_quote_limits_are_enforced_with_field_paths -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'if len(draft[\"observations\"]) > limits[\"max_observations\"]:'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'if False:'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "quote_limit",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_all_local_count_and_quote_limits_are_enforced_with_field_paths -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_all_local_count_and_quote_limits_are_enforced_with_field_paths -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'or len(quote) > limits[\"max_quote_chars\"]'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'or False'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "raw_not_summary",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_local_excerpts_are_original_byte_ranges_not_relabelled_summaries -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_local_excerpts_are_original_byte_ranges_not_relabelled_summaries -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'\"ref_id\": ref, \"text\": quote,'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'\"ref_id\": ref, \"text\": observation[\"text\"],'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "utf8_range",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_local_excerpts_are_original_byte_ranges_not_relabelled_summaries -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_local_excerpts_are_original_byte_ranges_not_relabelled_summaries -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'len(source[\"text\"][:offset].encode(\"utf-8\"))'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'offset'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "assistant_claim",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_visible_assistant_claim_is_not_retyped_as_a_verified_outcome -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_visible_assistant_claim_is_not_retyped_as_a_verified_outcome -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'observation[\"kind\"] != \"intention\"'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'False'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "call_pair",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_long_real_trace_is_summarized_before_extraction -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_long_real_trace_is_summarized_before_extraction -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'return list(result.values())'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'return quotes'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "direct_catalog",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_short_projected_trace_keeps_continuation_catalog_without_summary_calls -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_short_projected_trace_keeps_continuation_catalog_without_summary_calls -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'if not anchors_only:'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'if False:'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "partial_progress",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_later_local_failure_keeps_prior_summary_and_actual_failed_usage -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_later_local_failure_keeps_prior_summary_and_actual_failed_usage -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'            error_record(exc, \"summarize_trace_v1\")'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'            error_record(exc, \"summarize_trace_v1\")\\n            raise'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "abstain_state",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_all_local_abstentions_are_not_an_error_or_a_skill -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_all_local_abstentions_are_not_an_error_or_a_skill -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'\"trajectory_no_summary\") else \"error\"'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'\"unreachable_state\") else \"error\"'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "disabled_path",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_null_strategy_cannot_disable_the_unified_input_path -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_null_strategy_cannot_disable_the_unified_input_path -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'if processing is None:'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'if False:'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "preflight_extract",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_impossible_extraction_budget_does_not_spend_on_local_summaries -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_impossible_extraction_budget_does_not_spend_on_local_summaries -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'if not extraction_preview[\"fits\"]:'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'if False:'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "unified_consumer",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_long_real_trace_is_summarized_before_extraction -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_long_real_trace_is_summarized_before_extraction -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'packet = _learning_packet(store, index, episodes, related, policy, model, call, result, error_record)'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'packet = build_packet(index, limits=policy[\"packet\"])'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "reported_partial",
+    "target": "src/memory_orchestrator/report.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_project_report_exposes_partial_analysis_without_counting_reserves_as_usage -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_project_report_exposes_partial_analysis_without_counting_reserves_as_usage -v",
+      "--target",
+      "src/memory_orchestrator/report.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/report.py'\"'\"'); s=p.read_text(); old=\"'\"'\"'trajectory_processing'\"'\"': [\"; assert old in s; p.write_text(s.replace(old,\"'\"'\"'trajectory_processing_omitted'\"'\"': [\",1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "4ee999cd382a379b4accb055f28573f0311b07d4e775a7db27959dd96e4f292c",
+    "after_sha256": "4ee999cd382a379b4accb055f28573f0311b07d4e775a7db27959dd96e4f292c",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/report.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "enabled_example",
+    "target": "examples/gdpevo_pilot/run.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_pilot_profile_enables_budgeted_processing_of_its_real_trace -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_pilot_profile_enables_budgeted_processing_of_its_real_trace -v",
+      "--target",
+      "examples/gdpevo_pilot/run.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'examples/gdpevo_pilot/run.py'\"'\"'); s=p.read_text(); old=\"'\"'\"'token_budget'\"'\"': {\"; assert old in s; p.write_text(s.replace(old,\"'\"'\"'disabled_token_budget'\"'\"': {\",1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "d63b39cc6721d405f61b7bb8d991088565c44bf055e1c75d12fb606ba6dead26",
+    "after_sha256": "d63b39cc6721d405f61b7bb8d991088565c44bf055e1c75d12fb606ba6dead26",
+    "stdout": "✅ 执照发放:examples/gdpevo_pilot/run.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  },
+  {
+    "label": "dependency_consumer",
+    "target": "src/memory_orchestrator/learning.py",
+    "test": "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_dependency_lookup_reaches_actual_local_and_extraction_inputs -v",
+    "command": [
+      "/usr/bin/python3",
+      "/home/kelong/ai-workbench/tools/mutation_license.py",
+      "--tests",
+      "PYTHONPATH=src:tests .venv/bin/python -m unittest test_memory_trajectory_learning.TrajectoryLearningTests.test_dependency_lookup_reaches_actual_local_and_extraction_inputs -v",
+      "--target",
+      "src/memory_orchestrator/learning.py",
+      "--mutate",
+      "python3 -c 'from pathlib import Path; p=Path('\"'\"'src/memory_orchestrator/learning.py'\"'\"'); s=p.read_text(); old='\"'\"'dependency_limits=policy.get(\"dependency_lookup\")'\"'\"'; assert old in s; p.write_text(s.replace(old,'\"'\"'dependency_limits=None'\"'\"',1))'"
+    ],
+    "exit_code": 0,
+    "before_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "after_sha256": "c428fb4ba1ed77c8cfe9477ee40c37fafee61f03ac520a70d9b679ee1ef01c9f",
+    "stdout": "✅ 执照发放:src/memory_orchestrator/learning.py 注入错误时变红、按快照还原后回绿——该验收有资格存在。\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,15 @@
+test_user_control_prefix_is_not_displaced_by_quoted_error_material (test_memory_trajectory.TrajectoryTests.test_user_control_prefix_is_not_displaced_by_quoted_error_material) ... FAIL
+
+======================================================================
+FAIL: test_user_control_prefix_is_not_displaced_by_quoted_error_material (test_memory_trajectory.TrajectoryTests.test_user_control_prefix_is_not_displaced_by_quoted_error_material)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/kelong/orca/workspaces/memory-orchestrator/codex-add-vault-maintenance-controller/tests/test_memory_trajectory.py", line 113, in test_user_control_prefix_is_not_displaced_by_quoted_error_material
+    self.assertTrue(any(control in f['text'] for f in supplied))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.016s
+
+FAILED (failures=1)
