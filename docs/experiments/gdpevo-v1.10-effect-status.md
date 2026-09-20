@@ -10,6 +10,25 @@
 
 当前证据证明了**演化闭环能够发现并阻止有害 Skill 发布**，但尚未证明记忆系统能稳定提升后续任务分数。简历应写“构建演化与回归防护机制，并在真实小批实验中拦截退化候选”，不能写“显著提升 Agent 性能”。
 
+## 2026-09-20 v1.10 真实 Teacher 重放
+
+在本机模型服务恢复后，使用相同归档 train_001 Episode、固定 v1.10 prompt/schema 和 `gpt-5.6-terra` 执行了两次独立 study；没有重跑旧 Actor，也未读取 test split。
+
+首轮 extract 成功生成 1 条 `instance` Experience。模型明确指出，当前只看到模板/备忘录读取、部分评分与不完整覆盖，缺少完整 ERP action/result、最终输出和完整反馈，不能识别具体失败原因，也不能升级为 task-family procedure。这与旧版在相同证据上生成通用 task-family checklist 形成直接对照。
+
+首轮随后在 diagnosis 遇到 `InternalServerError`；独立重试在摘要和 extract 分别遇到 APIStatusError 与 120 秒超时。两轮合计：
+
+| 指标 | 结果 |
+|---|---:|
+| 物理模型请求 | 11 |
+| 有 usage 返回 | 8 |
+| usage 未知的失败调用 | 3 |
+| 已知 Token | 71,076 |
+| Experience | 1 条 instance（首轮） |
+| Candidate / Actor 对照 / Release | 0 / 0 / 0 |
+
+因此 v1.10 新增了真实的安全性证据：证据不足时，Teacher 会把经验限制在实例级，而非继续生成跨任务 Skill。provider 中断使本轮无法测得新的 target/regression 分数，不能据此声称性能提升。完整原始 ledger、Store 与输出保存在对应 Trellis 实验任务中。
+
 ## 实验问题
 
 从一次失败任务及其长轨迹、工具调用和外部评分中提炼经验，生成 Skill 后，是否能：
@@ -76,6 +95,7 @@ v1.10 增加四项确定性约束：
 - 演化链路实际运行到经验提取、Skill 候选、base/candidate 对照、Selection 和拒绝发布。
 - 冻结评分与回归门成功阻止无增益且回归的 candidate 进入 active library。
 - v1.10 对真实旧坏草稿执行确定性拒绝，并使声明的任务排除边界成为实际选择逻辑。
+- v1.10 真实 Teacher 重放将相同不完整证据降为 instance 经验；两次运行在 provider 失败下保持 0 Candidate、0 发布并保留未知 usage。
 - 当前 Python 核心 383/383 回归通过；v1.10 关键保护完成 22 次 mutation 检查。
 
 ### 尚无证据
@@ -91,7 +111,7 @@ v1.10 增加四项确定性约束：
 
 ## 得到正向收益数字还需什么
 
-下一轮应固定 v1.10 代码和预算，在同一开发任务流上重新执行：
+下一轮应在稳定 provider 窗口中固定 v1.10 代码和预算，在同一开发任务流上重新执行：
 
 1. 用真实 Teacher 处理 exact rejected-target Episode，记录补读/弃权/候选内容和全部成本；
 2. 若生成候选，至少对 target 与 regression 各重复 3 次，保留全部失败运行；
