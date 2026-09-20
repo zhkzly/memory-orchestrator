@@ -1,0 +1,111 @@
+{
+  "experiment": "gdpevo-v110-benchmark",
+  "date": "2026-09-20",
+  "product_commit": "1ad555f583e1d14a7b58372ae43850d94b70cf67",
+  "current_head_before_experiment_commit": "76528ec00e2947b13f5bdd5b6985745d58e59c42",
+  "contract": {
+    "version": "1.10.0",
+    "sha256": "d39a35d4b9d111d35f341353b6401efc9a436f291fb48e67dea5b797d39f2ce8"
+  },
+  "dataset": {
+    "name": "GDPevo",
+    "commit": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+    "group": "task_group_007",
+    "learning_case": "train_001",
+    "regression_case": "train_004",
+    "frozen_test_case": "test_001"
+  },
+  "readiness": {
+    "status": "passed",
+    "physical_calls": 1,
+    "payload_sha256": "59aed5fafc0ef94796df7645813cba23078070fc321ac206c8308b164f4bbf1f",
+    "serialized_input_chars": 51692,
+    "elapsed_seconds": 23.459646440998768,
+    "finish_reason": "stop",
+    "json_object": true,
+    "known_tokens": {
+      "prompt_tokens": 16640,
+      "completion_tokens": 1081,
+      "total_tokens": 17721
+    },
+    "unknown_usage_calls": 0
+  },
+  "development": {
+    "runner_status": "completed",
+    "evolution_status": "abstained",
+    "reason": "Necessity judgment: needs_evidence",
+    "physical_teacher_calls": 6,
+    "returned_teacher_calls": 6,
+    "known_tokens": {
+      "prompt_tokens": 58607,
+      "completion_tokens": 5328,
+      "total_tokens": 63935
+    },
+    "unknown_usage_calls": 0,
+    "historical_learning_episode": {
+      "task": "train_001",
+      "score": 0.29411764705882354,
+      "weighted_points": "5/17",
+      "new_actor_call_in_this_run": false
+    },
+    "trajectory": {
+      "total_events": 138,
+      "scanned_events": 138,
+      "projected_events": 11,
+      "analyzed_events": 7,
+      "omitted_events": 126,
+      "planned_segments": 4,
+      "completed_segments": 3,
+      "segments_not_analyzed_budget": 1,
+      "physical_summary_calls": 4,
+      "completed_summaries": 3,
+      "stop_reasons": [
+        "segment_budget"
+      ]
+    },
+    "experience": {
+      "count": 1,
+      "reuse_level": "instance",
+      "kind": "pitfall",
+      "title": "Do not treat correct order coverage as sufficient for ERP fulfillment classification"
+    },
+    "diagnosis": {
+      "route": "skill_patch",
+      "necessity_verdict": "needs_evidence",
+      "allow_add": true,
+      "candidate_created": false
+    },
+    "candidate_count": 0,
+    "actor_comparison_requests": 0,
+    "release_count": 0,
+    "active_generation": 0,
+    "active_snapshot": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa"
+  },
+  "combined_new_provider_usage": {
+    "physical_calls": 7,
+    "returned_calls": 7,
+    "unknown_usage_calls": 0,
+    "known_tokens": {
+      "prompt_tokens": 75247,
+      "completion_tokens": 6409,
+      "total_tokens": 81656
+    },
+    "monetary_cost": null
+  },
+  "deterministic_coverage_audit": {
+    "same_episode_total_segments_for_all_events": 36,
+    "current_max_segments": 4,
+    "first_inventory_segment": 22,
+    "first_shipping_quote_segment": 32,
+    "submit_segment": 36,
+    "interpretation": "The current chronological tie-break among ordinary action spans excludes the inventory and shipping evidence most relevant to the failed criteria. Raising only the token cap modestly cannot fix this ordering."
+  },
+  "gates": {
+    "development_candidate_gate": "not_passed_no_candidate",
+    "repeat_evaluation": "not_started",
+    "frozen_test": "not_started",
+    "frozen_test_public_inputs_or_evaluator_opened_by_runner": false,
+    "setup_note": "The group manifest and filenames were inspected during setup; test task prompt, payloads, notes, output and evaluator were not opened or executed by the benchmark runner."
+  },
+  "result_boundary": "The provider and all six development Teacher requests completed, and v1.10 conservatively retained an instance experience then abstained from creating a Skill. No candidate existed, so no new task-performance comparison or unseen-test score was measured. The run exposes trajectory selection as the next causal bottleneck."
+}

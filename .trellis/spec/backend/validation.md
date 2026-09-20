@@ -35,6 +35,14 @@ Python 核心使用 `PYTHONPATH=src .venv/bin/python -m unittest discover -s tes
 - 所有执行、提炼、失败候选、验证及补救成本均入账。
 - target评价在Selection完成后若被明确转为下一轮adaptation Episode，该target从此不再作为未见验证证据；regression/transfer/final及其详细轨迹不写回学习。交接只返回Episode ID，不在同一验证周期自动重试模型或改门槛。
 
+### 长轨迹实验的覆盖核对
+
+- 报告 `total/scanned/projected/analyzed/omitted events`、计划片段及各片段终态。扫描全部元数据不等于模型看到了全部正文，局部摘要数量也不能代替实际事件覆盖。
+- 用**实际冻结的 trajectory plan 与预算**核对失败 criterion 相关的 action/result 是否进入正文或可补读目录。宽预算 `build_packet` 能找到相关返回，不能证明受限 planner 在前 N 段中提供了它们。
+- stage `max_calls` 同时包含 schema/语义修复调用。计划 M 个片段却只给 M 次物理调用时，一次合法修复就会饿死后续片段；实验必须预留并报告修复容量，或把未分析片段作为真实结果。
+- 只提高 Token 上限不能修复片段顺序偏差。若失败相关证据在大量等优先级普通调用之后，应先验证通用的相关性/多样性选择或可补读入口，再重跑效果实验。
+- 冻结 test 的声明要精确到文件层：group manifest/文件名、task prompt/payload、reference output、evaluator 和实际执行分别报告，避免把“未运行 test”扩大成“未接触任何 test 元数据”。
+
 ## Trellis 接入验证
 
 本轮使用 Trellis 自身的版本、platforms、packages、task validate 和 update dry-run 检查配置/导航。直接运行 hook 脚本只证明脚本可执行；原生会话中的实际触发及用户批准状态需要另外验证。

@@ -1,0 +1,35 @@
+{
+  "created_at": "2026-09-20T01:17:10Z",
+  "stage": "revised",
+  "purpose": "gdpevo_v110_development_candidate_gate",
+  "product_commit": "1ad555f583e1d14a7b58372ae43850d94b70cf67",
+  "current_head": "76528ec00e2947b13f5bdd5b6985745d58e59c42",
+  "frozen_product_tree_matches": true,
+  "contract": {
+    "version": "1.10.0",
+    "sha256": "d39a35d4b9d111d35f341353b6401efc9a436f291fb48e67dea5b797d39f2ce8"
+  },
+  "dataset": {
+    "checkout": "/tmp/gdpevo-memory-v110/repo",
+    "commit": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+    "group": "task_group_007",
+    "learning_case": "train_001",
+    "regression_case": "train_004",
+    "frozen_test_case": "test_001",
+    "frozen_test_access_allowed": false
+  },
+  "learning_input_sha256": "b62973e85f7211bc4c5d7298a91f50d9567b0be334c2bbe5b6a34948fcd56cc4",
+  "transport_budget_sha256": "1d75d44cc9e28fbe925fe56afef56379eb6dab9a213e4112bf9786ac92844b31",
+  "model": "gpt-5.6-terra",
+  "base_url": "http://localhost:8317/v1",
+  "timeout_seconds": 120,
+  "new_ledger": "calls-live",
+  "conditions": [
+    "Teacher outputs are preserved including NOOP, abstention, invalid output and error",
+    "Actor comparison starts only when a Candidate exists",
+    "GDPevo official scorer evaluates train_001 and train_004",
+    "test_001 remains unread and unrun during this stage",
+    "prompt, thresholds, model and timeout stay fixed after the first request"
+  ],
+  "claim_boundary": "Development evidence for a local train_001 repair with train_004 regression protection; not an official GDPevo score or unseen-test generalization result."
+}

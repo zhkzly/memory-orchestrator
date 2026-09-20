@@ -1,0 +1,72 @@
+{
+  "status": "passed",
+  "transport_status": "returned",
+  "payload_sha256": "59aed5fafc0ef94796df7645813cba23078070fc321ac206c8308b164f4bbf1f",
+  "finish_reason": "stop",
+  "json_object": true,
+  "response_id": "resp_05e043c10b694b68016aaf33d501e087d099c1ecb203405c36",
+  "response_model": "gpt-5.6-terra",
+  "elapsed_seconds": 23.459646440998768,
+  "usage": {
+    "completion_tokens": 1081,
+    "prompt_tokens": 16640,
+    "total_tokens": 17721,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 0,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "cached_creation_tokens": 0
+    }
+  },
+  "ledger": {
+    "calls": 1,
+    "input_chars": 51692,
+    "records": [
+      {
+        "call_ref": "call_0001",
+        "stage": "provider_readiness",
+        "subject": "exact-prior-diagnose-v1",
+        "input_chars": 51692,
+        "status": "returned",
+        "usage": {
+          "completion_tokens": 1081,
+          "prompt_tokens": 16640,
+          "total_tokens": 17721,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": null,
+            "audio_tokens": null,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": null,
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "cached_creation_tokens": 0
+          }
+        },
+        "elapsed_seconds": 23.459646440998768
+      }
+    ],
+    "known_token_subtotals": {
+      "prompt_tokens": 16640,
+      "completion_tokens": 1081,
+      "total_tokens": 17721
+    },
+    "complete_token_totals": {
+      "prompt_tokens": 16640,
+      "completion_tokens": 1081,
+      "total_tokens": 17721
+    },
+    "unknown_usage_calls": 0,
+    "monetary_cost": null,
+    "cost_note": "No price was supplied for this pilot; no price is inferred from tokens."
+  },
+  "next_stage": "development"
+}

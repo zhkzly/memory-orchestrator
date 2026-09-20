@@ -1,0 +1,42 @@
+{
+  "created_at": "2026-09-20T01:14:26Z",
+  "purpose": "provider_readiness_before_gdpevo_v110_benchmark",
+  "gate": {
+    "attempts": 1,
+    "pass_conditions": [
+      "transport returns within 120 seconds",
+      "one response choice has a finish_reason",
+      "message content parses as a JSON object"
+    ],
+    "on_failure": "stop_before_development_and_frozen_test"
+  },
+  "model": "gpt-5.6-terra",
+  "base_url": "http://localhost:8317/v1",
+  "timeout_seconds": 120,
+  "max_completion_tokens": 3000,
+  "source_request": {
+    "path": ".trellis/tasks/archive/2026-09/09-20-gdpevo-v110-live-effect/research/study/calls-live/call_0006.start.json",
+    "file_sha256": "5464ae14a5e59c126340d8f69dce819adc32c118edf627a841f9d83483330d90",
+    "payload_sha256": "59aed5fafc0ef94796df7645813cba23078070fc321ac206c8308b164f4bbf1f",
+    "serialized_input_chars": 51692,
+    "original_stage": "diagnose_v1"
+  },
+  "frozen_product": {
+    "commit": "1ad555f583e1d14a7b58372ae43850d94b70cf67",
+    "current_head": "76528ec00e2947b13f5bdd5b6985745d58e59c42",
+    "src_and_gdpevo_runner_match_frozen_commit": true,
+    "contract_version": "1.10.0",
+    "contract_sha256": "d39a35d4b9d111d35f341353b6401efc9a436f291fb48e67dea5b797d39f2ce8"
+  },
+  "dataset": {
+    "checkout": "/tmp/gdpevo-memory-v110/repo",
+    "commit": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+    "group": "task_group_007",
+    "test_task_access_allowed": false
+  },
+  "learning_source": {
+    "episode_file_sha256": "b62973e85f7211bc4c5d7298a91f50d9567b0be334c2bbe5b6a34948fcd56cc4",
+    "prelearning_store_manifest_sha256": "1e6224ce42aec50e5cf23b1919aeb9cdf58483eb95e00bc65c73d6c33c8c0475"
+  },
+  "claim_boundary": "This probe tests provider transport and JSON response readiness only; it is not a memory-quality or task-performance score."
+}

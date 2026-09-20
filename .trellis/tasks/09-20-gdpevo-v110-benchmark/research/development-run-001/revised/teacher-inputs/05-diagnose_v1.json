@@ -1,0 +1,1370 @@
+{
+  "prompt_id": "diagnose_v1",
+  "sequence": 5,
+  "inputs": {
+    "evaluation_scope": "Local procedural improvement for the observed GDPevo train_001 workflow; train_004 is a regression check. No general transfer claim. The actor can query official read-only business GET endpoints, read public input files and selected Skill assets, and submit an answer. It cannot execute scripts or access grading materials. Only the trusted checks in verification_catalog are supplied in this pilot.",
+    "experiences": [
+      {
+        "alternatives": [
+          "If the requested output does not include inventory-derived fulfillment fields, restrict validation to the fields actually required."
+        ],
+        "boundary_refs": [
+          "ev:381ecea52c12123b6912c0e7:270:430"
+        ],
+        "conditions": [
+          "The task requires per-order inventory status, SKU exception lists, fulfillment decisions, and next actions.",
+          "Evaluation separately scores order coverage and operational classification fields."
+        ],
+        "counterevidence_refs": [],
+        "guidance": {
+          "checks": [
+            "Confirm that every required operational classification field has a source-backed value for every order.",
+            "Do not use a correct order set or customer-exception result as evidence that inventory-derived decisions are correct."
+          ],
+          "steps": [
+            "Build each record from explicit per-order ERP evidence rather than inferring fulfillment fields from having identified the queue order.",
+            "Before finalizing, review inventory status, shortage SKUs, inactive/low-stock SKU lists, final decision, and next action as separate fields."
+          ]
+        },
+        "kind": "pitfall",
+        "observed_facts": [
+          {
+            "claim": "The evaluator marked the order set and count as matched, while inventory statuses and shortages were not matched.",
+            "evidence_refs": [
+              "ev:b1564b8f87528965274ffc77:238:285",
+              "ev:b1564b8f87528965274ffc77:340:401"
+            ]
+          },
+          {
+            "claim": "The evaluator also marked customer exceptions as matched but final decisions as not matched.",
+            "evidence_refs": [
+              "ev:b1564b8f87528965274ffc77:569:616",
+              "ev:b1564b8f87528965274ffc77:670:714"
+            ]
+          },
+          {
+            "claim": "The overall evaluated outcome was fail with a visible score of 0.29411764705882354.",
+            "evidence_refs": [
+              "ev:d8d0d6ef08955637f732e689:603:619",
+              "ev:b1564b8f87528965274ffc77:191:218"
+            ]
+          }
+        ],
+        "reuse_level": "instance",
+        "scope": {
+          "applies_when": [
+            "Preparing structured dispatch-control JSON from queue records and ERP data."
+          ],
+          "exclusions": [
+            "Tasks that only request the order list or customer exceptions and do not require inventory or fulfillment classifications."
+          ],
+          "retrieval": {
+            "exclude_any": [
+              "order-list-only"
+            ],
+            "require_any": [
+              "Northwind ERP dispatch-control inventory fulfillment decision JSON"
+            ]
+          },
+          "task_family": "northwind_erp"
+        },
+        "supporting_refs": [
+          "ev:381ecea52c12123b6912c0e7:270:430",
+          "ev:b1564b8f87528965274ffc77:238:285",
+          "ev:b1564b8f87528965274ffc77:340:401",
+          "ev:b1564b8f87528965274ffc77:569:616",
+          "ev:b1564b8f87528965274ffc77:670:714"
+        ],
+        "title": "Do not treat correct order coverage as sufficient for ERP fulfillment classification",
+        "unknowns": [
+          "The visible material does not show the ERP-query sequence or the complete submitted JSON, so it does not establish which missing or incorrect calculation caused each mismatch.",
+          "The feedback detail is truncated; unshown scoring points and detailed comparison rules remain unknown."
+        ]
+      }
+    ],
+    "evidence_packets": [
+      {
+        "context_refs": [
+          "context_95405b20ad004beb999b59ef5b79016f"
+        ],
+        "coverage": {
+          "incomplete_reasons": [
+            "Catalog and original ranges are bounded; unlisted material remains in the source index."
+          ],
+          "mandatory_roles_present": [
+            "action",
+            "feedback",
+            "observation",
+            "task"
+          ],
+          "omitted_episode_refs": [],
+          "selected_event_count": 6,
+          "total_event_count": 138
+        },
+        "episode_bindings": [
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "relation": "same_task",
+            "task_ref": "train_001",
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "relation": "unknown",
+            "task_ref": null,
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+          }
+        ],
+        "episode_refs": [
+          "episode_9f9c73a7539c49859029290d202d7464"
+        ],
+        "feedback_ids": [
+          "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome"
+        ],
+        "fragments": [
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "task",
+            "kind": "task",
+            "range": {
+              "end_byte_exclusive": 672,
+              "start_byte": 0
+            },
+            "raw_hash": "d837cf71a80804308e4f2c61be85b3adfaebee9c64e4df331014d16b7bf3fa27",
+            "raw_ref": "episode:episode_9f9c73a7539c49859029290d202d7464/requirement:task",
+            "ref_id": "ev:381ecea52c12123b6912c0e7:0:672",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "requirement",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "instruction",
+              "source_position": -1,
+              "source_role": null,
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "Northwind Components operations has an expedite queue for wave TRAIN_EXPEDITE_A. Use the local queue memo in input/payloads/expedite_queue_memo.json and the shared Northwind ERP API to prepare the dispatch-control answer.\n\nShared API entry point: `<TASK_ENV_BASE_URL>`\n\nFor each order in the memo, classify the inventory status, customer exception, final fulfillment decision, next action, SKU exception lists, and shipping quote. Use the live API records for orders, products, customers, inventory, warehouses, and shipping quotes. Return only JSON matching input/payloads/answer_template.json.\n\nKeep records sorted by order_id. Currency must be rounded to two decimals.\n"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "instruction",
+            "kind": "task",
+            "range": {
+              "end_byte_exclusive": 1131,
+              "start_byte": 0
+            },
+            "raw_hash": "b2103cf15c5cbe87d7a9ee09eb979ae70c82c00820e020b0d4d0010ae2f49444",
+            "raw_ref": "sampling_input_a4a8c685671e48f5b375cfff427471b3#/public_case/task",
+            "ref_id": "ev:07bfd9311af76463176ef532:0:1131",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "instruction",
+              "source_position": 0,
+              "source_role": "user",
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "{\"description\":\"Northwind Components operations has an expedite queue for wave TRAIN_EXPEDITE_A. Use the local queue memo in input/payloads/expedite_queue_memo.json and the shared Northwind ERP API to prepare the dispatch-control answer.\\n\\nShared API entry point: `<TASK_ENV_BASE_URL>`\\n\\nFor each order in the memo, classify the inventory status, customer exception, final fulfillment decision, next action, SKU exception lists, and shipping quote. Use the live API records for orders, products, customers, inventory, warehouses, and shipping quotes. Return only JSON matching input/payloads/answer_template.json.\\n\\nKeep records sorted by order_id. Currency must be rounded to two decimals.\\n\",\"input_files\":{\"payloads/answer_template.json\":4000,\"payloads/expedite_queue_memo.json\":1562,\"prompt.txt\":672},\"project_id\":\"gdpevo-group007\",\"revision\":\"56d60ae4ae5e067d1ec0ee1f850622e69f422179\",\"shared_environment_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:env\",\"source_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:train_001:input\",\"task_family\":\"northwind_erp\",\"task_id\":\"train_001\"}"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 650,
+              "start_byte": 0
+            },
+            "raw_hash": "3acda2f318e34bef888b0ab34d562e555c5bb2bb88f168bb8a04e367f2e633b6",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "ref_id": "ev:d8d0d6ef08955637f732e689:0:650",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "{\"attempt_ref\":\"attempt_4d19361c8e63c00d38181a0143467f10357059bdc812d2e847f0f4b71e2e5ff1\",\"binding_status\":\"bound\",\"check_id\":\"feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome\",\"checked_at\":\"2026-09-19T04:36:42.153965Z\",\"criterion_id\":\"task_outcome\",\"evaluated_state_digest\":\"860b76043744cf25809491291ecabcef68daeab4ff30b0e6adcf960d14853c35\",\"evaluator_status\":\"ok\",\"evidence_refs\":[\"attempt_4d19361c8e63c00d38181a0143467f10357059bdc812d2e847f0f4b71e2e5ff1\"],\"execution_ref\":\"run_7dd305c3ef2047c29b721e06a6901fe8\",\"feedback_plan_ref\":\"feedback_plan_76d2ac12fde04bdfbb3991ff690ff163\",\"outcome\":\"fail\",\"project_id\":\"gdpevo-group007\""
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 950,
+              "start_byte": 0
+            },
+            "raw_hash": "582a62f3e53bfed625c9ea2ead7dedbbf7e5ceeea3710081bd530ec7e4ad2dbb",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome#/reason",
+            "ref_id": "ev:b1564b8f87528965274ffc77:0:950",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "{\"evidence\":[{\"candidate_sha256\":\"68cd68c922ca18dcc72572e17bd2c3f0729c4bc082e358829e53b1cdf993c63b\",\"group_id\":\"task_group_007\",\"kind\":\"gdpevo_official_evaluator\",\"result\":{\"earned_weight\":5,\"score\":0.29411764705882354,\"scoring_points\":[{\"id\":\"SP001_order_set_and_count\",\"matched\":true,\"normalized_weight\":0.058823529411764705,\"weight\":1},{\"id\":\"SP002_inventory_statuses_and_shortages\",\"matched\":false,\"normalized_weight\":0.17647058823529413,\"weight\":3},{\"id\":\"SP003_inactive_and_low_stock_sku_sets\",\"matched\":false,\"normalized_weight\":0.11764705882352941,\"weight\":2},{\"id\":\"SP004_customer_exceptions\",\"matched\":true,\"normalized_weight\":0.11764705882352941,\"weight\":2},{\"id\":\"SP005_final_decisions\",\"matched\":false,\"normalized_weight\":0.17647058823529413,\"weight\":3},{\"id\":\"SP006_next_actions\",\"matched\":false,\"normalized_weight\":0.11764705882352941,\"weight\":2},{\"id\":\"SP007_shipping_quotes\",\"matched\":true,\"normalized_weight\":0.11764705882352941,\"we"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "task",
+            "kind": "task",
+            "range": {
+              "end_byte_exclusive": 430,
+              "start_byte": 270
+            },
+            "raw_hash": "d837cf71a80804308e4f2c61be85b3adfaebee9c64e4df331014d16b7bf3fa27",
+            "raw_ref": "episode:episode_9f9c73a7539c49859029290d202d7464/requirement:task",
+            "ref_id": "ev:381ecea52c12123b6912c0e7:270:430",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "requirement",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "instruction",
+              "source_position": -1,
+              "source_role": null,
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "For each order in the memo, classify the inventory status, customer exception, final fulfillment decision, next action, SKU exception lists, and shipping quote."
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "task",
+            "kind": "task",
+            "range": {
+              "end_byte_exclusive": 671,
+              "start_byte": 533
+            },
+            "raw_hash": "d837cf71a80804308e4f2c61be85b3adfaebee9c64e4df331014d16b7bf3fa27",
+            "raw_ref": "episode:episode_9f9c73a7539c49859029290d202d7464/requirement:task",
+            "ref_id": "ev:381ecea52c12123b6912c0e7:533:671",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "requirement",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "instruction",
+              "source_position": -1,
+              "source_role": null,
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "Return only JSON matching input/payloads/answer_template.json.\n\nKeep records sorted by order_id. Currency must be rounded to two decimals."
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "observation_0",
+            "kind": "action",
+            "range": {
+              "end_byte_exclusive": 142,
+              "start_byte": 0
+            },
+            "raw_hash": "45ec279462e0e357ce168f42e4fee2f508ec41be82567643862ad6bfb6c2eeb4",
+            "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8:events:0",
+            "ref_id": "ev:33c1ed03017768a369d954cd:0:142",
+            "structure": {
+              "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_xVsy5t4z4jsDWtcS51ghVTpE",
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "action",
+              "source_position": 1,
+              "source_role": "agent",
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "{\"arguments\":\"{\\\"path\\\":\\\"input/payloads/answer_template.json\\\"}\",\"provider_tool_call_id\":\"call_xVsy5t4z4jsDWtcS51ghVTpE\",\"tool\":\"read_input\"}"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 385,
+              "start_byte": 362
+            },
+            "raw_hash": "3acda2f318e34bef888b0ab34d562e555c5bb2bb88f168bb8a04e367f2e633b6",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "ref_id": "ev:d8d0d6ef08955637f732e689:362:385",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "\"evaluator_status\":\"ok\""
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 619,
+              "start_byte": 603
+            },
+            "raw_hash": "3acda2f318e34bef888b0ab34d562e555c5bb2bb88f168bb8a04e367f2e633b6",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "ref_id": "ev:d8d0d6ef08955637f732e689:603:619",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "\"outcome\":\"fail\""
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 218,
+              "start_byte": 191
+            },
+            "raw_hash": "582a62f3e53bfed625c9ea2ead7dedbbf7e5ceeea3710081bd530ec7e4ad2dbb",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome#/reason",
+            "ref_id": "ev:b1564b8f87528965274ffc77:191:218",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "\"score\":0.29411764705882354"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 401,
+              "start_byte": 340
+            },
+            "raw_hash": "582a62f3e53bfed625c9ea2ead7dedbbf7e5ceeea3710081bd530ec7e4ad2dbb",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome#/reason",
+            "ref_id": "ev:b1564b8f87528965274ffc77:340:401",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "\"id\":\"SP002_inventory_statuses_and_shortages\",\"matched\":false"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "observation_1",
+            "kind": "observation",
+            "range": {
+              "end_byte_exclusive": 240,
+              "start_byte": 0
+            },
+            "raw_hash": "07d573059f1e2594640eb7f82dd7cafadcf56dc45afe8ddd82f9beaf5c8810b5",
+            "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8:events:1",
+            "ref_id": "ev:04977db42b0868ed65a175d9:0:240",
+            "structure": {
+              "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_xVsy5t4z4jsDWtcS51ghVTpE",
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "result",
+              "source_position": 2,
+              "source_role": "tool",
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "{\"path\":\"payloads/answer_template.json\",\"status\":\"ok\",\"text\":\"{\\n  \\\"description\\\": \\\"Required JSON output shape for the TRAIN_EXPEDITE_A expedite queue decision task.\\\",\\n  \\\"required_top_level_keys\\\": [\\n    \\\"wave_id\\\",\\n    \\\"records\\\","
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "observation_2",
+            "kind": "action",
+            "range": {
+              "end_byte_exclusive": 146,
+              "start_byte": 0
+            },
+            "raw_hash": "e7fcfc29fc8ef561991a792240a48c1f562a6c888744538909d76734df9528b2",
+            "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8:events:2",
+            "ref_id": "ev:3c8c9a4e1273b1ebc4194fd7:0:146",
+            "structure": {
+              "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_RHzYuNzZqRArpKXPoWylvUtc",
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "action",
+              "source_position": 3,
+              "source_role": "agent",
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "{\"arguments\":\"{\\\"path\\\":\\\"input/payloads/expedite_queue_memo.json\\\"}\",\"provider_tool_call_id\":\"call_RHzYuNzZqRArpKXPoWylvUtc\",\"tool\":\"read_input\"}"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "observation_3",
+            "kind": "observation",
+            "range": {
+              "end_byte_exclusive": 57,
+              "start_byte": 44
+            },
+            "raw_hash": "68db738c44ef939fa8be4a26ff94c0953fa990f54eeb737882ebba1582ce81c6",
+            "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8:events:3",
+            "ref_id": "ev:2657c8082ee6b3f546773d10:44:57",
+            "structure": {
+              "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_RHzYuNzZqRArpKXPoWylvUtc",
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "result",
+              "source_position": 4,
+              "source_role": "tool",
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "\"status\":\"ok\""
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "observation_3",
+            "kind": "observation",
+            "range": {
+              "end_byte_exclusive": 152,
+              "start_byte": 119
+            },
+            "raw_hash": "68db738c44ef939fa8be4a26ff94c0953fa990f54eeb737882ebba1582ce81c6",
+            "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8:events:3",
+            "ref_id": "ev:2657c8082ee6b3f546773d10:119:152",
+            "structure": {
+              "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_RHzYuNzZqRArpKXPoWylvUtc",
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "result",
+              "source_position": 4,
+              "source_role": "tool",
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "\\\"wave_id\\\": \\\"TRAIN_EXPEDITE_A\\\""
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 285,
+              "start_byte": 238
+            },
+            "raw_hash": "582a62f3e53bfed625c9ea2ead7dedbbf7e5ceeea3710081bd530ec7e4ad2dbb",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome#/reason",
+            "ref_id": "ev:b1564b8f87528965274ffc77:238:285",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "\"id\":\"SP001_order_set_and_count\",\"matched\":true"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 616,
+              "start_byte": 569
+            },
+            "raw_hash": "582a62f3e53bfed625c9ea2ead7dedbbf7e5ceeea3710081bd530ec7e4ad2dbb",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome#/reason",
+            "ref_id": "ev:b1564b8f87528965274ffc77:569:616",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "\"id\":\"SP004_customer_exceptions\",\"matched\":true"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 714,
+              "start_byte": 670
+            },
+            "raw_hash": "582a62f3e53bfed625c9ea2ead7dedbbf7e5ceeea3710081bd530ec7e4ad2dbb",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome#/reason",
+            "ref_id": "ev:b1564b8f87528965274ffc77:670:714",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "\"id\":\"SP005_final_decisions\",\"matched\":false"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "observation_3",
+            "kind": "observation",
+            "range": {
+              "end_byte_exclusive": 240,
+              "start_byte": 0
+            },
+            "raw_hash": "68db738c44ef939fa8be4a26ff94c0953fa990f54eeb737882ebba1582ce81c6",
+            "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8:events:3",
+            "ref_id": "ev:2657c8082ee6b3f546773d10:0:240",
+            "structure": {
+              "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_RHzYuNzZqRArpKXPoWylvUtc",
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "result",
+              "source_position": 4,
+              "source_role": "tool",
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "{\"path\":\"payloads/expedite_queue_memo.json\",\"status\":\"ok\",\"text\":\"{\\n  \\\"memo_id\\\": \\\"EXPEDITE-MEMO-2026-06-01-A\\\",\\n  \\\"wave_id\\\": \\\"TRAIN_EXPEDITE_A\\\",\\n  \\\"requester\\\": \\\"Northwind Components Dispatch Control\\\",\\n  \\\"as_of_date\\\": \\\"2026"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "task",
+            "kind": "task",
+            "range": {
+              "end_byte_exclusive": 671,
+              "start_byte": 597
+            },
+            "raw_hash": "d837cf71a80804308e4f2c61be85b3adfaebee9c64e4df331014d16b7bf3fa27",
+            "raw_ref": "episode:episode_9f9c73a7539c49859029290d202d7464/requirement:task",
+            "ref_id": "ev:381ecea52c12123b6912c0e7:597:671",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "requirement",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "instruction",
+              "source_position": -1,
+              "source_role": null,
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "Keep records sorted by order_id. Currency must be rounded to two decimals."
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "result",
+            "kind": "observation",
+            "range": {
+              "end_byte_exclusive": 220,
+              "start_byte": 26
+            },
+            "raw_hash": "bad1c2a9a4fc811887b2ef6924324c2a4146c5428c2186c0e892a302749abe95",
+            "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8",
+            "ref_id": "ev:cafa3e1831f7ccf338ace0d5:26:220",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "result",
+              "source_position": 137,
+              "source_role": "environment",
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "{\"customer_exception\": \"none\", \"final_decision\": \"backorder\", \"inactive_skus\": [], \"inventory_status\": \"shortage\", \"low_stock_skus\": [], \"next_action\": \"create_backorder\", \"order_id\": \"SO-70000\""
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "result",
+            "kind": "observation",
+            "range": {
+              "end_byte_exclusive": 358,
+              "start_byte": 308
+            },
+            "raw_hash": "bad1c2a9a4fc811887b2ef6924324c2a4146c5428c2186c0e892a302749abe95",
+            "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8",
+            "ref_id": "ev:cafa3e1831f7ccf338ace0d5:308:358",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "result",
+              "source_position": 137,
+              "source_role": "environment",
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "\"shortage_skus\": [\"NW-1003\", \"NW-1011\", \"NW-1049\"]"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 285,
+              "start_byte": 237
+            },
+            "raw_hash": "582a62f3e53bfed625c9ea2ead7dedbbf7e5ceeea3710081bd530ec7e4ad2dbb",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome#/reason",
+            "ref_id": "ev:b1564b8f87528965274ffc77:237:285",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "{\"id\":\"SP001_order_set_and_count\",\"matched\":true"
+          },
+          {
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "kind": "feedback",
+            "range": {
+              "end_byte_exclusive": 401,
+              "start_byte": 339
+            },
+            "raw_hash": "582a62f3e53bfed625c9ea2ead7dedbbf7e5ceeea3710081bd530ec7e4ad2dbb",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome#/reason",
+            "ref_id": "ev:b1564b8f87528965274ffc77:339:401",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+            "text": "{\"id\":\"SP002_inventory_statuses_and_shortages\",\"matched\":false"
+          }
+        ],
+        "gaps": [
+          "Related-memory lookup found no in-budget matches; this does not establish absence of counterexamples.",
+          "episode_9f9c73a7539c49859029290d202d7464: Execution did not report both reset-state and environment identity; independent comparability unknown.",
+          "episode_9f9c73a7539c49859029290d202d7464: source=execution_function; reported material is not independent verification.",
+          "Token estimate = ceil(UTF-8 JSON bytes / 3); not a tokenizer measurement.",
+          "Only budget-selected local records and exact excerpts were analyzed; omitted results and unselected segments remain unknown."
+        ],
+        "omitted_refs": [
+          "ev:04977db42b0868ed65a175d9:0:600",
+          "ev:d8d0d6ef08955637f732e689:214:1814",
+          "ev:cafa3e1831f7ccf338ace0d5:0:600"
+        ],
+        "packet_id": "packet_a7e4eb2d35fd4ec29f58768ce2565787",
+        "project_id": "gdpevo-group007",
+        "projection_version": 2,
+        "readable_ref_catalog": [
+          {
+            "available": true,
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "range": {
+              "end_byte_exclusive": 600,
+              "start_byte": 0
+            },
+            "raw_hash": "07d573059f1e2594640eb7f82dd7cafadcf56dc45afe8ddd82f9beaf5c8810b5",
+            "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8:events:1",
+            "ref_id": "ev:04977db42b0868ed65a175d9:0:600",
+            "structure": {
+              "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_xVsy5t4z4jsDWtcS51ghVTpE",
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "result",
+              "source_position": 2,
+              "source_role": "tool",
+              "task_id": "train_001"
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+          },
+          {
+            "available": true,
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "range": {
+              "end_byte_exclusive": 1814,
+              "start_byte": 214
+            },
+            "raw_hash": "3acda2f318e34bef888b0ab34d562e555c5bb2bb88f168bb8a04e367f2e633b6",
+            "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+            "ref_id": "ev:d8d0d6ef08955637f732e689:214:1814",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "feedback",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "feedback",
+              "source_position": 138,
+              "source_role": null,
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+          },
+          {
+            "available": true,
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "range": {
+              "end_byte_exclusive": 600,
+              "start_byte": 0
+            },
+            "raw_hash": "bad1c2a9a4fc811887b2ef6924324c2a4146c5428c2186c0e892a302749abe95",
+            "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8",
+            "ref_id": "ev:cafa3e1831f7ccf338ace0d5:0:600",
+            "structure": {
+              "call_id": null,
+              "goal_id": null,
+              "namespace": "event",
+              "parent_episode_id": null,
+              "parent_event_id": null,
+              "source_kind": "result",
+              "source_position": 137,
+              "source_role": "environment",
+              "task_id": null
+            },
+            "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+          }
+        ],
+        "relations": {
+          "calls": [
+            {
+              "action_refs": [
+                "ev:3c8c9a4e1273b1ebc4194fd7:0:146"
+              ],
+              "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_RHzYuNzZqRArpKXPoWylvUtc",
+              "coverage": "complete",
+              "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+              "result_refs": [
+                "ev:2657c8082ee6b3f546773d10:44:57"
+              ],
+              "status": "paired"
+            },
+            {
+              "action_refs": [
+                "ev:33c1ed03017768a369d954cd:0:142"
+              ],
+              "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_xVsy5t4z4jsDWtcS51ghVTpE",
+              "coverage": "complete",
+              "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+              "result_refs": [
+                "ev:04977db42b0868ed65a175d9:0:240"
+              ],
+              "status": "paired"
+            }
+          ],
+          "goals": [
+            {
+              "basis_refs": [],
+              "coverage": "complete",
+              "event_ref": "ev:07bfd9311af76463176ef532:0:1131",
+              "goal_id": "train_001",
+              "relation": "continues",
+              "revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+            }
+          ],
+          "parents": []
+        },
+        "resource_relations": [
+          {
+            "coverage": "complete",
+            "from_ref": "ev:d8d0d6ef08955637f732e689:0:650",
+            "relation": "same_resource_candidate",
+            "resource_ref": "evaluated-state:860b76043744cf25809491291ecabcef68daeab4ff30b0e6adcf960d14853c35",
+            "to_ref": "ev:b1564b8f87528965274ffc77:0:950",
+            "version_match": true
+          },
+          {
+            "coverage": "complete",
+            "from_ref": "ev:d8d0d6ef08955637f732e689:0:650",
+            "relation": "same_resource_candidate",
+            "resource_ref": "evaluated-state:860b76043744cf25809491291ecabcef68daeab4ff30b0e6adcf960d14853c35",
+            "to_ref": "ev:cafa3e1831f7ccf338ace0d5:26:220",
+            "version_match": true
+          },
+          {
+            "coverage": "complete",
+            "from_ref": "ev:b1564b8f87528965274ffc77:0:950",
+            "relation": "same_resource_candidate",
+            "resource_ref": "evaluated-state:860b76043744cf25809491291ecabcef68daeab4ff30b0e6adcf960d14853c35",
+            "to_ref": "ev:cafa3e1831f7ccf338ace0d5:26:220",
+            "version_match": true
+          }
+        ],
+        "source_snapshot_refs": [
+          "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa"
+        ],
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+        "token_budget": 24000,
+        "token_count_source": "estimated",
+        "trajectory_summaries": [
+          {
+            "observations": [
+              {
+                "kind": "task",
+                "quote_refs": [
+                  "ev:381ecea52c12123b6912c0e7:270:430",
+                  "ev:381ecea52c12123b6912c0e7:533:671"
+                ],
+                "text": "任务要求使用本地加急队列备忘录与共享 Northwind ERP API，为 TRAIN_EXPEDITE_A 中每个订单生成符合模板的调度控制 JSON，并按 order_id 排序及将货币四舍五入到两位小数。"
+              },
+              {
+                "kind": "action",
+                "quote_refs": [
+                  "ev:33c1ed03017768a369d954cd:0:142"
+                ],
+                "text": "助手调用 read_input，请求读取 answer_template.json。"
+              },
+              {
+                "kind": "outcome",
+                "quote_refs": [
+                  "ev:d8d0d6ef08955637f732e689:362:385",
+                  "ev:d8d0d6ef08955637f732e689:603:619",
+                  "ev:b1564b8f87528965274ffc77:191:218",
+                  "ev:b1564b8f87528965274ffc77:340:401"
+                ],
+                "text": "任务结果反馈标记为 fail；原因视图中可见官方评估得分约为 0.2941，且库存状态、SKU 集合、最终决策和后续动作等评分点显示未匹配。"
+              }
+            ],
+            "report_ref": "modelreport_45ffe4eb324f4475af4ce195837501e4",
+            "source_packet_id": "packet_88cbdf3424d9434c8f3495b2935d6747",
+            "summary_id": "summary_fdee591c9442452987e2702bb6596b37",
+            "unknowns": [
+              "仅提供了读取模板的单次工具动作及模板结果的截断正文；未提供队列备忘录、ERP 查询、完整模板内容、最终提交 JSON 或其验证记录，无法整理各订单的具体分类和决策。",
+              "反馈原因正文在可见片段中被截断，故不能完整确认所有评分点、详细错误原因或候选输出内容。目录中列出的未提供正文引用不能作为证据。",
+              "局部包覆盖 3 个已选事件，而总事件数为 138；未列材料仍存在于源索引，因此本整理不代表完整执行轨迹。"
+            ]
+          },
+          {
+            "observations": [
+              {
+                "kind": "task",
+                "quote_refs": [
+                  "ev:381ecea52c12123b6912c0e7:270:430",
+                  "ev:381ecea52c12123b6912c0e7:533:671"
+                ],
+                "text": "任务要求读取本地 expedite queue memo 并使用共享 Northwind ERP API，为备忘录中的各订单生成符合模板的 dispatch-control JSON；记录按 order_id 排序，货币保留两位小数。"
+              },
+              {
+                "kind": "action",
+                "quote_refs": [
+                  "ev:3c8c9a4e1273b1ebc4194fd7:0:146",
+                  "ev:2657c8082ee6b3f546773d10:44:57",
+                  "ev:2657c8082ee6b3f546773d10:119:152"
+                ],
+                "text": "助手调用 read_input 读取 expedite_queue_memo.json；返回结果状态为 ok，且可见内容包含 TRAIN_EXPEDITE_A 波次，但正文在局部包中截断。"
+              },
+              {
+                "kind": "outcome",
+                "quote_refs": [
+                  "ev:d8d0d6ef08955637f732e689:603:619",
+                  "ev:b1564b8f87528965274ffc77:238:285",
+                  "ev:b1564b8f87528965274ffc77:340:401",
+                  "ev:b1564b8f87528965274ffc77:569:616",
+                  "ev:b1564b8f87528965274ffc77:670:714"
+                ],
+                "text": "反馈将任务结果标为 fail。其可见评分明细显示订单集合与数量、客户例外和运费报价项匹配，而库存状态与短缺、非活跃及低库存 SKU 集合、最终决策和下一步行动未匹配；明细在局部包中截断。"
+              }
+            ],
+            "report_ref": "modelreport_0e162a07954f4b0093f495b16a26d2a0",
+            "source_packet_id": "packet_b6543935aadd4220b36bd0912c6f201d",
+            "summary_id": "summary_f9b98ea4a9d643a3aad3088316058743",
+            "unknowns": [
+              "局部包只提供了两次 read_input 动作及其中一次工具结果的截断正文；未提供读取 prompt.txt 的工具返回正文，也未提供对 answer_template、ERP API、订单、产品、客户、库存、仓库或运费报价的后续调用与最终提交 JSON。",
+              "备忘录 order_ids 列表在可见工具返回中截断，无法确认完整订单集合或逐订单处理情况。",
+              "反馈 reason 的评分点列表在可见正文中截断；对于 SP003、SP006、SP007 及失败的具体比对依据，只能以未完整可见处理。",
+              "源材料明确说明 catalog 和原始范围有界，未列出的源索引材料仍未覆盖，因此本整理不能视为完整执行轨迹。"
+            ]
+          },
+          {
+            "observations": [
+              {
+                "kind": "task",
+                "quote_refs": [
+                  "ev:381ecea52c12123b6912c0e7:270:430",
+                  "ev:381ecea52c12123b6912c0e7:597:671"
+                ],
+                "text": "任务要求读取本地 expedite 队列备忘录并查询共享 Northwind ERP API，为备忘录中的每个订单生成符合模板的 dispatch-control JSON；记录须按 order_id 排序，货币保留两位小数。"
+              },
+              {
+                "kind": "observation",
+                "quote_refs": [
+                  "ev:cafa3e1831f7ccf338ace0d5:26:220",
+                  "ev:cafa3e1831f7ccf338ace0d5:308:358"
+                ],
+                "text": "可见执行结果包含 artifact.records 的开头：SO-70000 被标为 shortage、backorder，并列出三个 shortage SKU 和一项 shipping quote；SO-70007 记录仅可见至 shipping_quote 字段开头，未提供完整输出。"
+              },
+              {
+                "kind": "outcome",
+                "quote_refs": [
+                  "ev:d8d0d6ef08955637f732e689:603:619",
+                  "ev:b1564b8f87528965274ffc77:237:285",
+                  "ev:b1564b8f87528965274ffc77:339:401"
+                ],
+                "text": "任务结果反馈将本次尝试评为 fail。反馈原因的可见评分点显示订单集合与数量、客户例外项匹配，但库存状态与短缺 SKU 集合、非活跃与低库存 SKU 集合、最终决策和后续动作未匹配；该原因文本本身在此包中被截断。"
+              }
+            ],
+            "report_ref": "modelreport_4b63ce294d8f40b7b6dc40f31cbc6e75",
+            "source_packet_id": "packet_7e238726c666431183538e3605194032",
+            "summary_id": "summary_2a980808dba447099068902f2f4e2e10",
+            "unknowns": [
+              "未提供本地 memo、answer_template、ERP API 查询过程或完整 API 响应，因此无法整理订单级依据、执行动作或完整结果。",
+              "artifact 正文在 SO-70007 的 shipping_quote 内截断，完整 records、输出格式符合性及所有订单排序情况不可见。",
+              "反馈 reason 与评分点列表均为局部正文；未提供的目录引用和 omitted_refs 不能作为证据。评分中 SP007 及后续内容不可见。",
+              "覆盖信息明确指出 catalog 和原始范围受限，未列出的源索引材料仍未包含；本整理不代表完整任务轨迹。"
+            ]
+          }
+        ]
+      }
+    ],
+    "source_provenance": [
+      {
+        "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+        "source": {
+          "kind": "execution_function",
+          "reference": "run_7dd305c3ef2047c29b721e06a6901fe8"
+        },
+        "source_snapshot_ref": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa",
+        "context_ref": "context_95405b20ad004beb999b59ef5b79016f",
+        "provided_context": {
+          "manifest_id": "context_95405b20ad004beb999b59ef5b79016f",
+          "snapshot_digest": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa",
+          "selected_skills": [],
+          "supplied_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "observed_consumption": "unknown",
+        "consumption_event_refs": [],
+        "consumption_evidence_level": "reported_by_execution_function"
+      }
+    ],
+    "target_snapshot": {
+      "snapshot_id": "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa",
+      "project_id": "gdpevo-group007",
+      "skills": {}
+    },
+    "related_skills_and_relations": {
+      "skills": {},
+      "relations": [],
+      "related_experiences": [],
+      "relation_warning": "Observed co-use is not causal influence."
+    },
+    "available_feedback": [
+      {
+        "check_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+        "subject_ref": "episode_9f9c73a7539c49859029290d202d7464",
+        "project_id": "gdpevo-group007",
+        "criterion_id": "task_outcome",
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+        "evaluated_state_digest": "860b76043744cf25809491291ecabcef68daeab4ff30b0e6adcf960d14853c35",
+        "binding_status": "bound",
+        "source": "external",
+        "visibility": "adaptation",
+        "evaluator_status": "ok",
+        "outcome": "fail",
+        "score": 0.29411764705882354,
+        "checked_at": "2026-09-19T04:36:42.153965Z",
+        "received_at": "2026-09-19T04:36:42.153965Z",
+        "provided_refs": [
+          "ev:d8d0d6ef08955637f732e689:0:650",
+          "ev:b1564b8f87528965274ffc77:0:950",
+          "ev:d8d0d6ef08955637f732e689:362:385",
+          "ev:d8d0d6ef08955637f732e689:603:619",
+          "ev:b1564b8f87528965274ffc77:191:218",
+          "ev:b1564b8f87528965274ffc77:340:401",
+          "ev:b1564b8f87528965274ffc77:238:285",
+          "ev:b1564b8f87528965274ffc77:569:616",
+          "ev:b1564b8f87528965274ffc77:670:714",
+          "ev:b1564b8f87528965274ffc77:237:285",
+          "ev:b1564b8f87528965274ffc77:339:401"
+        ],
+        "readable_refs": [
+          "ev:d8d0d6ef08955637f732e689:214:1814"
+        ],
+        "read_status": "provided_ranges_only"
+      }
+    ],
+    "learning_limits": {
+      "max_input_chars": 120000,
+      "max_output_chars": 30000,
+      "max_output_tokens": 6000,
+      "max_total_input_chars": 720000,
+      "max_calls": 12,
+      "max_format_repairs": 1,
+      "token_budget": {
+        "max_input_tokens": 40000,
+        "max_total_input_tokens": 160000,
+        "max_total_output_tokens": 24000,
+        "stages": {
+          "summarize_trace_v1": {
+            "max_calls": 4,
+            "max_input_tokens": 12000,
+            "max_output_tokens": 1000,
+            "max_total_input_tokens": 32000,
+            "max_total_output_tokens": 4000
+          },
+          "extract_v1": {
+            "max_calls": 2,
+            "max_input_tokens": 16000,
+            "max_output_tokens": 3000,
+            "max_total_input_tokens": 32000,
+            "max_total_output_tokens": 6000
+          },
+          "goal_binding_v1": {
+            "max_calls": 2,
+            "max_input_tokens": 10000,
+            "max_output_tokens": 1200,
+            "max_total_input_tokens": 16000,
+            "max_total_output_tokens": 2400
+          },
+          "maintain_experience_v1": {
+            "max_calls": 1,
+            "max_input_tokens": 12000,
+            "max_output_tokens": 1000,
+            "max_total_input_tokens": 12000,
+            "max_total_output_tokens": 1000
+          },
+          "diagnose_v1": {
+            "max_calls": 2,
+            "max_input_tokens": 30000,
+            "max_output_tokens": 3000,
+            "max_total_input_tokens": 45000,
+            "max_total_output_tokens": 4500
+          },
+          "propose_v1": {
+            "max_calls": 2,
+            "max_input_tokens": 20000,
+            "max_output_tokens": 4000,
+            "max_total_input_tokens": 30000,
+            "max_total_output_tokens": 6000
+          }
+        },
+        "counter_id": "utf8-json-bytes-div3-v1",
+        "count_kind": "documented_estimate"
+      }
+    },
+    "verification_catalog": [
+      {
+        "check_ref": "case:train_001",
+        "purpose": "target",
+        "description": "Check the public task: {\"description\":\"Northwind Components operations has an expedite queue for wave TRAIN_EXPEDITE_A. Use the local queue memo in input/payloads/expedite_queue_memo.json and the shared Northwind ERP API to prepare the dispatch-control answer.\\n\\nShared API entry point: `<TASK_ENV_BASE_URL>`\\n\\nFor each order in the memo, classify the inventory status, customer exception, final fulfillment decision, next action, SKU exception lists, and shipping quote. Use the live API records for orders, products, customers, inventory, warehouses, and shipping quotes. Return only JSON matching input/payloads/answer_template.json.\\n\\nKeep records sorted by order_id. Currency must be rounded to two decimals.\\n\",\"input_files\":{\"payloads/answer_template.json\":4000,\"payloads/expedite_queue_memo.json\":1562,\"prompt.txt\":672},\"project_id\":\"gdpevo-group007\",\"revision\":\"56d60ae4ae5e067d1ec0ee1f850622e69f422179\",\"shared_environment_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:env\",\"source_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:train_001:input\",\"task_family\":\"northwind_erp\",\"task_id\":\"train_001\"}",
+        "evidence_kind": "task",
+        "case_ids": [
+          "train_001"
+        ],
+        "asset_test_ids": []
+      },
+      {
+        "check_ref": "case:train_004",
+        "purpose": "regression",
+        "description": "Check the public task: {\"description\":\"Northwind Components needs the allocation desk decision file for order wave TRAIN_TRANSFER_B.\\n\\nUse the shared ERP API described in the task group environment README. Use the API base URL supplied by the runner as `<TASK_ENV_BASE_URL>`. Inspect the live ERP records for the wave, customers, products, warehouses, and inventory as needed. A short desk memo is available in input/payloads/allocation_memo.md.\\n\\nReturn a single JSON object matching input/payloads/answer_template.json. The decision file should classify every order line in TRAIN_TRANSFER_B as one of the allowed actions, include transfer requests where internal movement can clear the shortage, identify account-blocked orders, and summarize the wave.\\n\",\"input_files\":{\"payloads/allocation_memo.md\":975,\"payloads/answer_template.json\":3342,\"prompt.txt\":714},\"project_id\":\"gdpevo-group007\",\"revision\":\"56d60ae4ae5e067d1ec0ee1f850622e69f422179\",\"shared_environment_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:env\",\"source_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:train_004:input\",\"task_family\":\"northwind_erp\",\"task_id\":\"train_004\"}",
+        "evidence_kind": "task",
+        "case_ids": [
+          "train_004"
+        ],
+        "asset_test_ids": []
+      }
+    ],
+    "existing_capability_catalog": {
+      "skills": {},
+      "all_bodies_provided": true,
+      "memory_relations": [],
+      "judgment_origin": "model_proxy"
+    },
+    "necessity_limits": {
+      "max_compared_skills": 12
+    }
+  },
+  "blocks": {
+    "evaluation_scope": {
+      "chars": 401,
+      "type": "str",
+      "items": null
+    },
+    "experiences": {
+      "chars": 2724,
+      "type": "list",
+      "items": 1
+    },
+    "evidence_packets": {
+      "chars": 31822,
+      "type": "list",
+      "items": 1
+    },
+    "source_provenance": {
+      "chars": 710,
+      "type": "list",
+      "items": 1
+    },
+    "target_snapshot": {
+      "chars": 130,
+      "type": "dict",
+      "items": 3
+    },
+    "related_skills_and_relations": {
+      "chars": 122,
+      "type": "dict",
+      "items": 4
+    },
+    "available_feedback": {
+      "chars": 1150,
+      "type": "list",
+      "items": 1
+    },
+    "learning_limits": {
+      "chars": 1297,
+      "type": "dict",
+      "items": 7
+    },
+    "verification_catalog": {
+      "chars": 2723,
+      "type": "list",
+      "items": 2
+    },
+    "existing_capability_catalog": {
+      "chars": 101,
+      "type": "dict",
+      "items": 4
+    },
+    "necessity_limits": {
+      "chars": 27,
+      "type": "dict",
+      "items": 1
+    }
+  },
+  "prompt_digest": "74227772005f78f432d1858d785e77061acf6059f3cadd14b2341c180941aa99",
+  "status": "returned",
+  "result": {
+    "value": {
+      "abstain_reason": "",
+      "check_plan": [
+        {
+          "behavior": "On train_001, produce the required JSON while independently checking each required inventory-derived and fulfillment field for every memo order rather than treating correct order coverage or customer exceptions as sufficient.",
+          "check_ref": "case:train_001",
+          "purpose": "target",
+          "required_evidence": "Run the public case and inspect the trusted task outcome for template compliance and the required operational classifications."
+        },
+        {
+          "behavior": "On train_004, preserve the ability to inspect ERP records and return template-conformant allocation decisions, including transfer requests and account-blocked orders, without applying train_001-specific dispatch labels where the template requires different actions.",
+          "check_ref": "case:train_004",
+          "purpose": "regression",
+          "required_evidence": "Run the supplied public regression case and inspect its trusted outcome; no private acceptance material is supplied."
+        }
+      ],
+      "evidence_refs": [
+        "ev:381ecea52c12123b6912c0e7:270:430",
+        "ev:381ecea52c12123b6912c0e7:533:671",
+        "ev:33c1ed03017768a369d954cd:0:142",
+        "ev:3c8c9a4e1273b1ebc4194fd7:0:146",
+        "ev:04977db42b0868ed65a175d9:0:240",
+        "ev:2657c8082ee6b3f546773d10:0:240",
+        "ev:cafa3e1831f7ccf338ace0d5:26:220",
+        "ev:cafa3e1831f7ccf338ace0d5:308:358",
+        "ev:d8d0d6ef08955637f732e689:603:619",
+        "ev:b1564b8f87528965274ffc77:191:218",
+        "ev:b1564b8f87528965274ffc77:238:285",
+        "ev:b1564b8f87528965274ffc77:340:401",
+        "ev:b1564b8f87528965274ffc77:569:616",
+        "ev:b1564b8f87528965274ffc77:670:714"
+      ],
+      "expected_behavior": "For Northwind ERP dispatch-control tasks requiring per-order fulfillment classifications, read the public memo and answer template, query the required official read-only ERP records, construct each order from source-backed values, and separately reconcile inventory status, shortage SKUs, inactive and low-stock SKU lists, final decision, and next action before submitting template-conformant sorted JSON. This is a local procedural improvement for train_001; train_004 remains a regression check rather than a general-transfer claim.",
+      "hypotheses": [
+        {
+          "alternatives": [
+            "The omitted portions of the trajectory may show ERP querying and a different execution or transformation error rather than absent field-by-field validation.",
+            "The mismatch may arise from task-specific business rules not visible in the provided prompt, template excerpt, memo excerpt, API responses, or evaluator detail.",
+            "The correct order set, customer exceptions, and shipping quotes may coexist with incorrect inventory classifications for reasons unrelated to workflow structure."
+          ],
+          "claim": "A reusable procedural Skill that requires an explicit per-order ERP evidence matrix and separate validation of inventory-derived fields may address the observed mismatch pattern, but the partial trajectory does not establish the exact query or calculation failure.",
+          "counterevidence_refs": [],
+          "supporting_refs": [
+            "ev:381ecea52c12123b6912c0e7:270:430",
+            "ev:b1564b8f87528965274ffc77:238:285",
+            "ev:b1564b8f87528965274ffc77:340:401",
+            "ev:b1564b8f87528965274ffc77:569:616",
+            "ev:b1564b8f87528965274ffc77:670:714",
+            "ev:d8d0d6ef08955637f732e689:603:619"
+          ]
+        }
+      ],
+      "necessity": {
+        "allow_add": true,
+        "behavior_delta": "Compared with the observed available capability disclosure of no Skills, the candidate would add an explicit behavior: query and record source support per order, then validate inventory status, shortage and exception SKU lists, decision, and next action as separate required outputs before final submission. The observed result had matched order coverage and customer exceptions while the visible evaluation marked inventory statuses/shortages and final decisions unmatched.",
+        "capability_gap": "The provided snapshot has no Skills, and the observed context supplied no selected Skill. A candidate new Skill could provide a repeatable ERP dispatch-control evidence-matrix and field-level reconciliation procedure; however, the partial evidence does not establish that lack of such a Skill, rather than an omitted execution detail or task-specific rule, explains the failure.",
+        "compared_skill_refs": [],
+        "evidence_refs": [
+          "ev:381ecea52c12123b6912c0e7:270:430",
+          "ev:33c1ed03017768a369d954cd:0:142",
+          "ev:3c8c9a4e1273b1ebc4194fd7:0:146",
+          "ev:b1564b8f87528965274ffc77:238:285",
+          "ev:b1564b8f87528965274ffc77:340:401",
+          "ev:b1564b8f87528965274ffc77:569:616",
+          "ev:b1564b8f87528965274ffc77:670:714",
+          "ev:d8d0d6ef08955637f732e689:603:619"
+        ],
+        "repeatable": null,
+        "unknowns": [
+          "The catalog and visible trajectory are partial; omitted actions may contain ERP queries, transformations, or validations not shown here.",
+          "The complete answer template, queue memo, ERP responses, submitted JSON, and detailed evaluator comparisons are not visible, so no specific business-rule or calculation error can be attributed.",
+          "No repeated episode or train_004 outcome is provided, so repeatability and regression safety remain unverified.",
+          "The supplied public cases are check materials, but no trusted post-change outcome is available in this round; the candidate cannot be declared publishable until both required checks have known results."
+        ],
+        "verdict": "needs_evidence"
+      },
+      "route": "skill_patch",
+      "targets": []
+    },
+    "usage": [
+      {
+        "usage_id": "modelcall_49727e701ec84e8d85c57142ee268b72",
+        "prompt_id": "diagnose_v1",
+        "attempt": 1,
+        "input_chars": 51493,
+        "output_chars": 5125,
+        "input_tokens": 16415,
+        "output_tokens": 1274,
+        "total_tokens": 17689,
+        "monetary_cost": null,
+        "currency": null,
+        "price_version": null,
+        "measurement": "provider_reported",
+        "model": "gpt-5.6-terra",
+        "request_id": "resp_03eaef37d08ecd91016aaf348fe70487d0924d902d99f45c17",
+        "elapsed_seconds": 26.65380555300362,
+        "status": "completed",
+        "budget": {
+          "counter_id": "utf8-json-bytes-div3-v1",
+          "count_kind": "documented_estimate",
+          "stage": "diagnose_v1",
+          "estimated_input_tokens": 18581,
+          "reserved_input_tokens": 18581,
+          "reserved_output_tokens": 3000,
+          "input_debit": 16415,
+          "output_debit": 1274,
+          "debit_basis": {
+            "input": "provider_reported",
+            "output": "provider_reported"
+          },
+          "budget_status": "settled",
+          "messages_hash": "9a379aeafb537030690c4fc8880fe96ee51a0937ad4fc6afd6a8275efd4093e5"
+        }
+      }
+    ],
+    "raw_response": {
+      "text": "{\"route\":\"skill_patch\",\"hypotheses\":[{\"claim\":\"A reusable procedural Skill that requires an explicit per-order ERP evidence matrix and separate validation of inventory-derived fields may address the observed mismatch pattern, but the partial trajectory does not establish the exact query or calculation failure.\",\"supporting_refs\":[\"ev:381ecea52c12123b6912c0e7:270:430\",\"ev:b1564b8f87528965274ffc77:238:285\",\"ev:b1564b8f87528965274ffc77:340:401\",\"ev:b1564b8f87528965274ffc77:569:616\",\"ev:b1564b8f87528965274ffc77:670:714\",\"ev:d8d0d6ef08955637f732e689:603:619\"],\"counterevidence_refs\":[],\"alternatives\":[\"The omitted portions of the trajectory may show ERP querying and a different execution or transformation error rather than absent field-by-field validation.\",\"The mismatch may arise from task-specific business rules not visible in the provided prompt, template excerpt, memo excerpt, API responses, or evaluator detail.\",\"The correct order set, customer exceptions, and shipping quotes may coexist with incorrect inventory classifications for reasons unrelated to workflow structure.\"]}],\"targets\":[],\"expected_behavior\":\"For Northwind ERP dispatch-control tasks requiring per-order fulfillment classifications, read the public memo and answer template, query the required official read-only ERP records, construct each order from source-backed values, and separately reconcile inventory status, shortage SKUs, inactive and low-stock SKU lists, final decision, and next action before submitting template-conformant sorted JSON. This is a local procedural improvement for train_001; train_004 remains a regression check rather than a general-transfer claim.\",\"check_plan\":[{\"purpose\":\"target\",\"behavior\":\"On train_001, produce the required JSON while independently checking each required inventory-derived and fulfillment field for every memo order rather than treating correct order coverage or customer exceptions as sufficient.\",\"required_evidence\":\"Run the public case and inspect the trusted task outcome for template compliance and the required operational classifications.\",\"check_ref\":\"case:train_001\"},{\"purpose\":\"regression\",\"behavior\":\"On train_004, preserve the ability to inspect ERP records and return template-conformant allocation decisions, including transfer requests and account-blocked orders, without applying train_001-specific dispatch labels where the template requires different actions.\",\"required_evidence\":\"Run the supplied public regression case and inspect its trusted outcome; no private acceptance material is supplied.\",\"check_ref\":\"case:train_004\"}],\"evidence_refs\":[\"ev:381ecea52c12123b6912c0e7:270:430\",\"ev:381ecea52c12123b6912c0e7:533:671\",\"ev:33c1ed03017768a369d954cd:0:142\",\"ev:3c8c9a4e1273b1ebc4194fd7:0:146\",\"ev:04977db42b0868ed65a175d9:0:240\",\"ev:2657c8082ee6b3f546773d10:0:240\",\"ev:cafa3e1831f7ccf338ace0d5:26:220\",\"ev:cafa3e1831f7ccf338ace0d5:308:358\",\"ev:d8d0d6ef08955637f732e689:603:619\",\"ev:b1564b8f87528965274ffc77:191:218\",\"ev:b1564b8f87528965274ffc77:238:285\",\"ev:b1564b8f87528965274ffc77:340:401\",\"ev:b1564b8f87528965274ffc77:569:616\",\"ev:b1564b8f87528965274ffc77:670:714\"],\"abstain_reason\":\"\",\"necessity\":{\"verdict\":\"needs_evidence\",\"repeatable\":null,\"compared_skill_refs\":[],\"capability_gap\":\"The provided snapshot has no Skills, and the observed context supplied no selected Skill. A candidate new Skill could provide a repeatable ERP dispatch-control evidence-matrix and field-level reconciliation procedure; however, the partial evidence does not establish that lack of such a Skill, rather than an omitted execution detail or task-specific rule, explains the failure.\",\"behavior_delta\":\"Compared with the observed available capability disclosure of no Skills, the candidate would add an explicit behavior: query and record source support per order, then validate inventory status, shortage and exception SKU lists, decision, and next action as separate required outputs before final submission. The observed result had matched order coverage and customer exceptions while the visible evaluation marked inventory statuses/shortages and final decisions unmatched.\",\"allow_add\":true,\"evidence_refs\":[\"ev:381ecea52c12123b6912c0e7:270:430\",\"ev:33c1ed03017768a369d954cd:0:142\",\"ev:3c8c9a4e1273b1ebc4194fd7:0:146\",\"ev:b1564b8f87528965274ffc77:238:285\",\"ev:b1564b8f87528965274ffc77:340:401\",\"ev:b1564b8f87528965274ffc77:569:616\",\"ev:b1564b8f87528965274ffc77:670:714\",\"ev:d8d0d6ef08955637f732e689:603:619\"],\"unknowns\":[\"The catalog and visible trajectory are partial; omitted actions may contain ERP queries, transformations, or validations not shown here.\",\"The complete answer template, queue memo, ERP responses, submitted JSON, and detailed evaluator comparisons are not visible, so no specific business-rule or calculation error can be attributed.\",\"No repeated episode or train_004 outcome is provided, so repeatability and regression safety remain unverified.\",\"The supplied public cases are check materials, but no trusted post-change outcome is available in this round; the candidate cannot be declared publishable until both required checks have known results.\"]}}",
+      "finish_reason": "stop",
+      "usage": {
+        "input_tokens": 16415,
+        "output_tokens": 1274,
+        "total_tokens": 17689,
+        "monetary_cost": null,
+        "currency": null,
+        "price_version": null
+      },
+      "model": "gpt-5.6-terra",
+      "request_id": "resp_03eaef37d08ecd91016aaf348fe70487d0924d902d99f45c17"
+    },
+    "attempts": [
+      {
+        "attempt": 1,
+        "finish_reason": "stop",
+        "raw_response": {
+          "text": "{\"route\":\"skill_patch\",\"hypotheses\":[{\"claim\":\"A reusable procedural Skill that requires an explicit per-order ERP evidence matrix and separate validation of inventory-derived fields may address the observed mismatch pattern, but the partial trajectory does not establish the exact query or calculation failure.\",\"supporting_refs\":[\"ev:381ecea52c12123b6912c0e7:270:430\",\"ev:b1564b8f87528965274ffc77:238:285\",\"ev:b1564b8f87528965274ffc77:340:401\",\"ev:b1564b8f87528965274ffc77:569:616\",\"ev:b1564b8f87528965274ffc77:670:714\",\"ev:d8d0d6ef08955637f732e689:603:619\"],\"counterevidence_refs\":[],\"alternatives\":[\"The omitted portions of the trajectory may show ERP querying and a different execution or transformation error rather than absent field-by-field validation.\",\"The mismatch may arise from task-specific business rules not visible in the provided prompt, template excerpt, memo excerpt, API responses, or evaluator detail.\",\"The correct order set, customer exceptions, and shipping quotes may coexist with incorrect inventory classifications for reasons unrelated to workflow structure.\"]}],\"targets\":[],\"expected_behavior\":\"For Northwind ERP dispatch-control tasks requiring per-order fulfillment classifications, read the public memo and answer template, query the required official read-only ERP records, construct each order from source-backed values, and separately reconcile inventory status, shortage SKUs, inactive and low-stock SKU lists, final decision, and next action before submitting template-conformant sorted JSON. This is a local procedural improvement for train_001; train_004 remains a regression check rather than a general-transfer claim.\",\"check_plan\":[{\"purpose\":\"target\",\"behavior\":\"On train_001, produce the required JSON while independently checking each required inventory-derived and fulfillment field for every memo order rather than treating correct order coverage or customer exceptions as sufficient.\",\"required_evidence\":\"Run the public case and inspect the trusted task outcome for template compliance and the required operational classifications.\",\"check_ref\":\"case:train_001\"},{\"purpose\":\"regression\",\"behavior\":\"On train_004, preserve the ability to inspect ERP records and return template-conformant allocation decisions, including transfer requests and account-blocked orders, without applying train_001-specific dispatch labels where the template requires different actions.\",\"required_evidence\":\"Run the supplied public regression case and inspect its trusted outcome; no private acceptance material is supplied.\",\"check_ref\":\"case:train_004\"}],\"evidence_refs\":[\"ev:381ecea52c12123b6912c0e7:270:430\",\"ev:381ecea52c12123b6912c0e7:533:671\",\"ev:33c1ed03017768a369d954cd:0:142\",\"ev:3c8c9a4e1273b1ebc4194fd7:0:146\",\"ev:04977db42b0868ed65a175d9:0:240\",\"ev:2657c8082ee6b3f546773d10:0:240\",\"ev:cafa3e1831f7ccf338ace0d5:26:220\",\"ev:cafa3e1831f7ccf338ace0d5:308:358\",\"ev:d8d0d6ef08955637f732e689:603:619\",\"ev:b1564b8f87528965274ffc77:191:218\",\"ev:b1564b8f87528965274ffc77:238:285\",\"ev:b1564b8f87528965274ffc77:340:401\",\"ev:b1564b8f87528965274ffc77:569:616\",\"ev:b1564b8f87528965274ffc77:670:714\"],\"abstain_reason\":\"\",\"necessity\":{\"verdict\":\"needs_evidence\",\"repeatable\":null,\"compared_skill_refs\":[],\"capability_gap\":\"The provided snapshot has no Skills, and the observed context supplied no selected Skill. A candidate new Skill could provide a repeatable ERP dispatch-control evidence-matrix and field-level reconciliation procedure; however, the partial evidence does not establish that lack of such a Skill, rather than an omitted execution detail or task-specific rule, explains the failure.\",\"behavior_delta\":\"Compared with the observed available capability disclosure of no Skills, the candidate would add an explicit behavior: query and record source support per order, then validate inventory status, shortage and exception SKU lists, decision, and next action as separate required outputs before final submission. The observed result had matched order coverage and customer exceptions while the visible evaluation marked inventory statuses/shortages and final decisions unmatched.\",\"allow_add\":true,\"evidence_refs\":[\"ev:381ecea52c12123b6912c0e7:270:430\",\"ev:33c1ed03017768a369d954cd:0:142\",\"ev:3c8c9a4e1273b1ebc4194fd7:0:146\",\"ev:b1564b8f87528965274ffc77:238:285\",\"ev:b1564b8f87528965274ffc77:340:401\",\"ev:b1564b8f87528965274ffc77:569:616\",\"ev:b1564b8f87528965274ffc77:670:714\",\"ev:d8d0d6ef08955637f732e689:603:619\"],\"unknowns\":[\"The catalog and visible trajectory are partial; omitted actions may contain ERP queries, transformations, or validations not shown here.\",\"The complete answer template, queue memo, ERP responses, submitted JSON, and detailed evaluator comparisons are not visible, so no specific business-rule or calculation error can be attributed.\",\"No repeated episode or train_004 outcome is provided, so repeatability and regression safety remain unverified.\",\"The supplied public cases are check materials, but no trusted post-change outcome is available in this round; the candidate cannot be declared publishable until both required checks have known results.\"]}}",
+          "finish_reason": "stop",
+          "usage": {
+            "input_tokens": 16415,
+            "output_tokens": 1274,
+            "total_tokens": 17689,
+            "monetary_cost": null,
+            "currency": null,
+            "price_version": null
+          },
+          "model": "gpt-5.6-terra",
+          "request_id": "resp_03eaef37d08ecd91016aaf348fe70487d0924d902d99f45c17"
+        }
+      }
+    ]
+  }
+}

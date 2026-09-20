@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/backend/validation.md", "reason": "Audit benchmark and effect claims"}
+{"file": ".trellis/tasks/archive/2026-09/09-20-gdpevo-v110-live-effect/research/combined-summary.json", "reason": "Verify this run does not overwrite or merge prior costs"}
