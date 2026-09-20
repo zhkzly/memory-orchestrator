@@ -482,3 +482,26 @@ Unified role-aware trajectory input; grounded local summaries, original excerpts
 ### Status
 
 [OK] **Completed**
+
+
+## Session 16: v1.10 GDPevo 真实 Teacher 效果实验
+<!-- trellis-session: v=2 fp=de0988cd5c4292a8 -->
+
+**Date**: 2026-09-20
+**Task**: v1.10 GDPevo 真实 Teacher 效果实验
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+固定v1.10与GDPevo train001证据运行两次真实Teacher study；首轮将旧泛化checklist降为instance经验，provider在diagnose/重试extract阶段失败。合计11请求、71,076已知Token、0 Candidate/0发布；完整ledger和简历v2已保存。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0c639cc` | experiment: record v1.10 GDPevo live teacher runs |
+| `dc4a10d` | docs: report v1.10 live teacher evidence |
+
+### Status
+
+[OK] **Completed**
