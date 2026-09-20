@@ -1,0 +1,77 @@
+{
+  "experiment": "gdpevo-v110-live-effect",
+  "date": "2026-09-20",
+  "product_commit": "1ad555f583e1d14a7b58372ae43850d94b70cf67",
+  "contract": {
+    "version": "1.10.0",
+    "sha256": "d39a35d4b9d111d35f341353b6401efc9a436f291fb48e67dea5b797d39f2ce8"
+  },
+  "gdpevo_commit": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+  "model": "gpt-5.6-terra",
+  "runs": [
+    {
+      "id": "study",
+      "evolution_status": "error",
+      "learning_status": "error",
+      "physical_calls": 6,
+      "successful_usage_calls": 5,
+      "unknown_usage_calls": 1,
+      "known_tokens": {
+        "prompt_tokens": 43699,
+        "completion_tokens": 3891,
+        "total_tokens": 47590
+      },
+      "experience_count": 1,
+      "experience_reuse_level": "instance",
+      "candidate_count": 0,
+      "release_count": 0,
+      "terminal_error": {
+        "stage": "diagnose_v1",
+        "type": "InternalServerError"
+      }
+    },
+    {
+      "id": "study-retry",
+      "evolution_status": "error",
+      "learning_status": "error",
+      "physical_calls": 5,
+      "successful_usage_calls": 3,
+      "unknown_usage_calls": 2,
+      "known_tokens": {
+        "prompt_tokens": 21046,
+        "completion_tokens": 2440,
+        "total_tokens": 23486
+      },
+      "experience_count": 0,
+      "candidate_count": 0,
+      "release_count": 0,
+      "terminal_errors": [
+        {
+          "stage": "summarize_trace_v1",
+          "type": "APIStatusError"
+        },
+        {
+          "stage": "extract_v1",
+          "type": "APITimeoutError",
+          "elapsed_seconds": 120.1
+        }
+      ]
+    }
+  ],
+  "combined": {
+    "physical_calls": 11,
+    "successful_usage_calls": 8,
+    "unknown_usage_calls": 3,
+    "known_tokens": {
+      "prompt_tokens": 64745,
+      "completion_tokens": 6331,
+      "total_tokens": 71076
+    },
+    "candidate_count": 0,
+    "actor_comparison_calls": 0,
+    "release_count": 0,
+    "active_generation": 0,
+    "monetary_cost": null
+  },
+  "result_boundary": "The first real v1.10 extraction downgraded the prior generalized checklist to an instance-level pitfall and explicitly declined causal/task-family generalization. Provider failures prevented diagnosis/candidate comparison, so no task-performance effect was measured."
+}

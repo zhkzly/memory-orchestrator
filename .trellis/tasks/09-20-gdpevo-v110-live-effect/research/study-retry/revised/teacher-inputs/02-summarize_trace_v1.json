@@ -1,0 +1,544 @@
+{
+  "prompt_id": "summarize_trace_v1",
+  "sequence": 2,
+  "inputs": {
+    "evidence_packet": {
+      "context_refs": [
+        "context_95405b20ad004beb999b59ef5b79016f"
+      ],
+      "coverage": {
+        "incomplete_reasons": [
+          "Catalog and original ranges are bounded; unlisted material remains in the source index."
+        ],
+        "mandatory_roles_present": [
+          "action",
+          "feedback",
+          "observation",
+          "task"
+        ],
+        "omitted_episode_refs": [],
+        "selected_event_count": 4,
+        "total_event_count": 138
+      },
+      "episode_bindings": [
+        {
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "relation": "same_task",
+          "task_ref": "train_001",
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "relation": "unknown",
+          "task_ref": null,
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        }
+      ],
+      "episode_refs": [
+        "episode_9f9c73a7539c49859029290d202d7464"
+      ],
+      "feedback_ids": [
+        "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome"
+      ],
+      "fragments": [
+        {
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "event_id": "task",
+          "kind": "task",
+          "range": {
+            "end_byte_exclusive": 672,
+            "start_byte": 0
+          },
+          "raw_hash": "d837cf71a80804308e4f2c61be85b3adfaebee9c64e4df331014d16b7bf3fa27",
+          "raw_ref": "episode:episode_9f9c73a7539c49859029290d202d7464/requirement:task",
+          "ref_id": "ev:381ecea52c12123b6912c0e7:0:672",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "requirement",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "instruction",
+            "source_position": -1,
+            "source_role": null,
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "Northwind Components operations has an expedite queue for wave TRAIN_EXPEDITE_A. Use the local queue memo in input/payloads/expedite_queue_memo.json and the shared Northwind ERP API to prepare the dispatch-control answer.\n\nShared API entry point: `<TASK_ENV_BASE_URL>`\n\nFor each order in the memo, classify the inventory status, customer exception, final fulfillment decision, next action, SKU exception lists, and shipping quote. Use the live API records for orders, products, customers, inventory, warehouses, and shipping quotes. Return only JSON matching input/payloads/answer_template.json.\n\nKeep records sorted by order_id. Currency must be rounded to two decimals.\n"
+        },
+        {
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "event_id": "instruction",
+          "kind": "task",
+          "range": {
+            "end_byte_exclusive": 1131,
+            "start_byte": 0
+          },
+          "raw_hash": "b2103cf15c5cbe87d7a9ee09eb979ae70c82c00820e020b0d4d0010ae2f49444",
+          "raw_ref": "sampling_input_a4a8c685671e48f5b375cfff427471b3#/public_case/task",
+          "ref_id": "ev:07bfd9311af76463176ef532:0:1131",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "instruction",
+            "source_position": 0,
+            "source_role": "user",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"description\":\"Northwind Components operations has an expedite queue for wave TRAIN_EXPEDITE_A. Use the local queue memo in input/payloads/expedite_queue_memo.json and the shared Northwind ERP API to prepare the dispatch-control answer.\\n\\nShared API entry point: `<TASK_ENV_BASE_URL>`\\n\\nFor each order in the memo, classify the inventory status, customer exception, final fulfillment decision, next action, SKU exception lists, and shipping quote. Use the live API records for orders, products, customers, inventory, warehouses, and shipping quotes. Return only JSON matching input/payloads/answer_template.json.\\n\\nKeep records sorted by order_id. Currency must be rounded to two decimals.\\n\",\"input_files\":{\"payloads/answer_template.json\":4000,\"payloads/expedite_queue_memo.json\":1562,\"prompt.txt\":672},\"project_id\":\"gdpevo-group007\",\"revision\":\"56d60ae4ae5e067d1ec0ee1f850622e69f422179\",\"shared_environment_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:env\",\"source_id\":\"gdpevo:56d60ae4ae5e067d1ec0ee1f850622e69f422179:task_group_007:train_001:input\",\"task_family\":\"northwind_erp\",\"task_id\":\"train_001\"}"
+        },
+        {
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "event_id": "observation_2",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 146,
+            "start_byte": 0
+          },
+          "raw_hash": "e7fcfc29fc8ef561991a792240a48c1f562a6c888744538909d76734df9528b2",
+          "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8:events:2",
+          "ref_id": "ev:3c8c9a4e1273b1ebc4194fd7:0:146",
+          "structure": {
+            "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_RHzYuNzZqRArpKXPoWylvUtc",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 3,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"path\\\":\\\"input/payloads/expedite_queue_memo.json\\\"}\",\"provider_tool_call_id\":\"call_RHzYuNzZqRArpKXPoWylvUtc\",\"tool\":\"read_input\"}"
+        },
+        {
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "event_id": "observation_3",
+          "kind": "observation",
+          "range": {
+            "end_byte_exclusive": 600,
+            "start_byte": 0
+          },
+          "raw_hash": "68db738c44ef939fa8be4a26ff94c0953fa990f54eeb737882ebba1582ce81c6",
+          "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8:events:3",
+          "ref_id": "ev:2657c8082ee6b3f546773d10:0:600",
+          "structure": {
+            "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_RHzYuNzZqRArpKXPoWylvUtc",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 4,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"path\":\"payloads/expedite_queue_memo.json\",\"status\":\"ok\",\"text\":\"{\\n  \\\"memo_id\\\": \\\"EXPEDITE-MEMO-2026-06-01-A\\\",\\n  \\\"wave_id\\\": \\\"TRAIN_EXPEDITE_A\\\",\\n  \\\"requester\\\": \\\"Northwind Components Dispatch Control\\\",\\n  \\\"as_of_date\\\": \\\"2026-06-01\\\",\\n  \\\"queue_note\\\": \\\"Expedite desk needs a release, hold, review, or backorder decision for the listed live ERP orders. Use current ERP records for account, inventory, product, and parcel quote checks.\\\",\\n  \\\"order_ids\\\": [\\n    \\\"SO-70000\\\",\\n    \\\"SO-70007\\\",\\n    \\\"SO-70014\\\",\\n    \\\"SO-70028\\\",\\n    \\\"SO-70035\\\",\\n    \\\"SO-70049\\\",\\n    \\\"SO-7"
+        },
+        {
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "event_id": "observation_4",
+          "kind": "action",
+          "range": {
+            "end_byte_exclusive": 123,
+            "start_byte": 0
+          },
+          "raw_hash": "1784ae61d9387f110c224319055e6060f340ac38bfb733dae073e563503d049f",
+          "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8:events:4",
+          "ref_id": "ev:3cda98438e0208f751bf3bbf:0:123",
+          "structure": {
+            "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_FCiApsRhpZqVWydDmeEXlgIX",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "action",
+            "source_position": 5,
+            "source_role": "agent",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"arguments\":\"{\\\"path\\\":\\\"input/prompt.txt\\\"}\",\"provider_tool_call_id\":\"call_FCiApsRhpZqVWydDmeEXlgIX\",\"tool\":\"read_input\"}"
+        },
+        {
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+          "kind": "feedback",
+          "range": {
+            "end_byte_exclusive": 650,
+            "start_byte": 0
+          },
+          "raw_hash": "3acda2f318e34bef888b0ab34d562e555c5bb2bb88f168bb8a04e367f2e633b6",
+          "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+          "ref_id": "ev:d8d0d6ef08955637f732e689:0:650",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 138,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"attempt_ref\":\"attempt_4d19361c8e63c00d38181a0143467f10357059bdc812d2e847f0f4b71e2e5ff1\",\"binding_status\":\"bound\",\"check_id\":\"feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome\",\"checked_at\":\"2026-09-19T04:36:42.153965Z\",\"criterion_id\":\"task_outcome\",\"evaluated_state_digest\":\"860b76043744cf25809491291ecabcef68daeab4ff30b0e6adcf960d14853c35\",\"evaluator_status\":\"ok\",\"evidence_refs\":[\"attempt_4d19361c8e63c00d38181a0143467f10357059bdc812d2e847f0f4b71e2e5ff1\"],\"execution_ref\":\"run_7dd305c3ef2047c29b721e06a6901fe8\",\"feedback_plan_ref\":\"feedback_plan_76d2ac12fde04bdfbb3991ff690ff163\",\"outcome\":\"fail\",\"project_id\":\"gdpevo-group007\""
+        },
+        {
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "event_id": "feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+          "kind": "feedback",
+          "range": {
+            "end_byte_exclusive": 950,
+            "start_byte": 0
+          },
+          "raw_hash": "582a62f3e53bfed625c9ea2ead7dedbbf7e5ceeea3710081bd530ec7e4ad2dbb",
+          "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome#/reason",
+          "ref_id": "ev:b1564b8f87528965274ffc77:0:950",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 138,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+          "text": "{\"evidence\":[{\"candidate_sha256\":\"68cd68c922ca18dcc72572e17bd2c3f0729c4bc082e358829e53b1cdf993c63b\",\"group_id\":\"task_group_007\",\"kind\":\"gdpevo_official_evaluator\",\"result\":{\"earned_weight\":5,\"score\":0.29411764705882354,\"scoring_points\":[{\"id\":\"SP001_order_set_and_count\",\"matched\":true,\"normalized_weight\":0.058823529411764705,\"weight\":1},{\"id\":\"SP002_inventory_statuses_and_shortages\",\"matched\":false,\"normalized_weight\":0.17647058823529413,\"weight\":3},{\"id\":\"SP003_inactive_and_low_stock_sku_sets\",\"matched\":false,\"normalized_weight\":0.11764705882352941,\"weight\":2},{\"id\":\"SP004_customer_exceptions\",\"matched\":true,\"normalized_weight\":0.11764705882352941,\"weight\":2},{\"id\":\"SP005_final_decisions\",\"matched\":false,\"normalized_weight\":0.17647058823529413,\"weight\":3},{\"id\":\"SP006_next_actions\",\"matched\":false,\"normalized_weight\":0.11764705882352941,\"weight\":2},{\"id\":\"SP007_shipping_quotes\",\"matched\":true,\"normalized_weight\":0.11764705882352941,\"we"
+        }
+      ],
+      "gaps": [
+        "Related-memory lookup found no in-budget matches; this does not establish absence of counterexamples.",
+        "episode_9f9c73a7539c49859029290d202d7464: Execution did not report both reset-state and environment identity; independent comparability unknown.",
+        "episode_9f9c73a7539c49859029290d202d7464: source=execution_function; reported material is not independent verification.",
+        "Token estimate = ceil(UTF-8 JSON bytes / 3); not a tokenizer measurement."
+      ],
+      "omitted_refs": [
+        "ev:8ec31b789c83b2b75b3cb0e1:0:600",
+        "ev:d8d0d6ef08955637f732e689:214:1814",
+        "ev:b1564b8f87528965274ffc77:0:1600",
+        "ev:d8d0d6ef08955637f732e689:0:1600"
+      ],
+      "packet_id": "packet_8d528d3bca7d4ff9a2adf8b276a4a78a",
+      "project_id": "gdpevo-group007",
+      "projection_version": 2,
+      "readable_ref_catalog": [
+        {
+          "available": true,
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "range": {
+            "end_byte_exclusive": 600,
+            "start_byte": 0
+          },
+          "raw_hash": "266db12dc91894d8d2ae3f0c7eb2738051fa5b628900098bc3cf4bed2bb2976d",
+          "raw_ref": "run_7dd305c3ef2047c29b721e06a6901fe8:events:5",
+          "ref_id": "ev:8ec31b789c83b2b75b3cb0e1:0:600",
+          "structure": {
+            "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_FCiApsRhpZqVWydDmeEXlgIX",
+            "goal_id": null,
+            "namespace": "event",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "result",
+            "source_position": 6,
+            "source_role": "tool",
+            "task_id": "train_001"
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "range": {
+            "end_byte_exclusive": 1814,
+            "start_byte": 214
+          },
+          "raw_hash": "3acda2f318e34bef888b0ab34d562e555c5bb2bb88f168bb8a04e367f2e633b6",
+          "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+          "ref_id": "ev:d8d0d6ef08955637f732e689:214:1814",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 138,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "range": {
+            "end_byte_exclusive": 1600,
+            "start_byte": 0
+          },
+          "raw_hash": "582a62f3e53bfed625c9ea2ead7dedbbf7e5ceeea3710081bd530ec7e4ad2dbb",
+          "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome#/reason",
+          "ref_id": "ev:b1564b8f87528965274ffc77:0:1600",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 138,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        },
+        {
+          "available": true,
+          "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+          "range": {
+            "end_byte_exclusive": 1600,
+            "start_byte": 0
+          },
+          "raw_hash": "3acda2f318e34bef888b0ab34d562e555c5bb2bb88f168bb8a04e367f2e633b6",
+          "raw_ref": "feedback:feedback_plan_76d2ac12fde04bdfbb3991ff690ff163:feedback:task_outcome",
+          "ref_id": "ev:d8d0d6ef08955637f732e689:0:1600",
+          "structure": {
+            "call_id": null,
+            "goal_id": null,
+            "namespace": "feedback",
+            "parent_episode_id": null,
+            "parent_event_id": null,
+            "source_kind": "feedback",
+            "source_position": 138,
+            "source_role": null,
+            "task_id": null
+          },
+          "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+        }
+      ],
+      "relations": {
+        "calls": [
+          {
+            "action_refs": [
+              "ev:3cda98438e0208f751bf3bbf:0:123"
+            ],
+            "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_FCiApsRhpZqVWydDmeEXlgIX",
+            "coverage": "complete",
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "result_refs": [
+              "ev:8ec31b789c83b2b75b3cb0e1:0:600"
+            ],
+            "status": "paired"
+          },
+          {
+            "action_refs": [
+              "ev:3c8c9a4e1273b1ebc4194fd7:0:146"
+            ],
+            "call_id": "run_7dd305c3ef2047c29b721e06a6901fe8:m0:call_RHzYuNzZqRArpKXPoWylvUtc",
+            "coverage": "complete",
+            "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+            "result_refs": [
+              "ev:2657c8082ee6b3f546773d10:0:600"
+            ],
+            "status": "paired"
+          }
+        ],
+        "goals": [
+          {
+            "basis_refs": [],
+            "coverage": "complete",
+            "event_ref": "ev:07bfd9311af76463176ef532:0:1131",
+            "goal_id": "train_001",
+            "relation": "continues",
+            "revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179"
+          }
+        ],
+        "parents": []
+      },
+      "resource_relations": [
+        {
+          "coverage": "complete",
+          "from_ref": "ev:d8d0d6ef08955637f732e689:0:650",
+          "relation": "same_resource_candidate",
+          "resource_ref": "evaluated-state:860b76043744cf25809491291ecabcef68daeab4ff30b0e6adcf960d14853c35",
+          "to_ref": "ev:b1564b8f87528965274ffc77:0:950",
+          "version_match": true
+        }
+      ],
+      "source_snapshot_refs": [
+        "bea91769ced053115b2113b130dd384d8d1f0e3be1ca02625bbfb8f6092a82fa"
+      ],
+      "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+      "token_budget": 6000,
+      "token_count_source": "estimated"
+    },
+    "summary_limits": {
+      "max_observations": 3,
+      "max_quote_chars": 240,
+      "source_scope": {
+        "packet_id": "packet_8d528d3bca7d4ff9a2adf8b276a4a78a",
+        "episode_id": "episode_9f9c73a7539c49859029290d202d7464",
+        "task_id": "train_001",
+        "goal_id": null,
+        "task_revision": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+        "binding_status": "observed",
+        "dependency_support": [],
+        "dependency_gaps": []
+      }
+    }
+  },
+  "blocks": {
+    "evidence_packet": {
+      "chars": 15077,
+      "type": "dict",
+      "items": 18
+    },
+    "summary_limits": {
+      "chars": 360,
+      "type": "dict",
+      "items": 3
+    }
+  },
+  "prompt_digest": "25d6c60f0cd68dcf977aa93c34c80b00faaacf8c72654394661686ff7806e6ef",
+  "status": "returned",
+  "result": {
+    "value": {
+      "observations": [
+        {
+          "excerpts": [
+            {
+              "quote": "Use the local queue memo in input/payloads/expedite_queue_memo.json and the shared Northwind ERP API to prepare the dispatch-control answer.",
+              "ref_id": "ev:381ecea52c12123b6912c0e7:0:672"
+            },
+            {
+              "quote": "Return only JSON matching input/payloads/answer_template.json.\n\nKeep records sorted by order_id. Currency must be rounded to two decimals.",
+              "ref_id": "ev:381ecea52c12123b6912c0e7:0:672"
+            }
+          ],
+          "kind": "task",
+          "text": "任务要求读取本地加急队列备忘录并查询共享 Northwind ERP API，为备忘录中的每个订单生成符合答案模板的调度控制 JSON；记录须按 order_id 排序，货币保留两位小数。"
+        },
+        {
+          "excerpts": [
+            {
+              "quote": "{\"arguments\":\"{\\\"path\\\":\\\"input/payloads/expedite_queue_memo.json\\\"}\",\"provider_tool_call_id\":\"call_RHzYuNzZqRArpKXPoWylvUtc\",\"tool\":\"read_input\"}",
+              "ref_id": "ev:3c8c9a4e1273b1ebc4194fd7:0:146"
+            }
+          ],
+          "kind": "action",
+          "text": "助手调用 read_input，参数为 input/payloads/expedite_queue_memo.json。"
+        },
+        {
+          "excerpts": [
+            {
+              "quote": "\"outcome\":\"fail\"",
+              "ref_id": "ev:d8d0d6ef08955637f732e689:0:650"
+            },
+            {
+              "quote": "{\"id\":\"SP001_order_set_and_count\",\"matched\":true",
+              "ref_id": "ev:b1564b8f87528965274ffc77:0:950"
+            },
+            {
+              "quote": "{\"id\":\"SP002_inventory_statuses_and_shortages\",\"matched\":false",
+              "ref_id": "ev:b1564b8f87528965274ffc77:0:950"
+            },
+            {
+              "quote": "{\"id\":\"SP003_inactive_and_low_stock_sku_sets\",\"matched\":false",
+              "ref_id": "ev:b1564b8f87528965274ffc77:0:950"
+            }
+          ],
+          "kind": "outcome",
+          "text": "任务结果反馈标记为 fail。反馈理由片段显示订单集合与数量、客户例外及运费报价评分点匹配，但库存状态与短缺、停用及低库存 SKU 集合、最终决定和后续动作未匹配；完整评分点和理由正文未在本包中提供。"
+        }
+      ],
+      "reason": "依据所给片段整理任务、一次可见文件读取动作及任务结果反馈；覆盖范围明确不完整，未将目录中的未提供正文引用作为证据。",
+      "status": "completed",
+      "unknowns": [
+        "队列备忘录工具返回正文在订单列表中截断，无法从已提供内容确定完整 order_ids 或备忘录的全部要求。",
+        "已记录对 input/prompt.txt 的 read_input 调用，但其工具结果仅出现在目录中，未提供正文，不能据此陈述读取结果。",
+        "未提供后续 ERP API 查询、答案模板读取、最终 JSON 输出或其他执行事件的正文；局部包不能说明这些动作是否发生。",
+        "反馈 reason 仅提供前段正文，SP004 之后的评分点详情和完整 gaps 不可见。"
+      ]
+    },
+    "usage": [
+      {
+        "usage_id": "modelcall_a10bffa1e0c84d3caaab21bcd7c172e3",
+        "prompt_id": "summarize_trace_v1",
+        "attempt": 1,
+        "input_chars": 21021,
+        "output_chars": 1798,
+        "input_tokens": 6872,
+        "output_tokens": 717,
+        "total_tokens": 7589,
+        "monetary_cost": null,
+        "currency": null,
+        "price_version": null,
+        "measurement": "provider_reported",
+        "model": "gpt-5.6-terra",
+        "request_id": "resp_0253225e86639c36016aaf2f41417c87d08681491b8a860aee",
+        "elapsed_seconds": 20.22452486000111,
+        "status": "completed",
+        "budget": {
+          "counter_id": "utf8-json-bytes-div3-v1",
+          "count_kind": "documented_estimate",
+          "stage": "summarize_trace_v1",
+          "estimated_input_tokens": 7450,
+          "reserved_input_tokens": 7450,
+          "reserved_output_tokens": 1000,
+          "input_debit": 6872,
+          "output_debit": 717,
+          "debit_basis": {
+            "input": "provider_reported",
+            "output": "provider_reported"
+          },
+          "budget_status": "settled",
+          "messages_hash": "baf48b11d54513005a051eca26b35f6425772529d3c223738d9e743abd506a38"
+        }
+      }
+    ],
+    "raw_response": {
+      "text": "{\"status\":\"completed\",\"observations\":[{\"kind\":\"task\",\"text\":\"任务要求读取本地加急队列备忘录并查询共享 Northwind ERP API，为备忘录中的每个订单生成符合答案模板的调度控制 JSON；记录须按 order_id 排序，货币保留两位小数。\",\"excerpts\":[{\"ref_id\":\"ev:381ecea52c12123b6912c0e7:0:672\",\"quote\":\"Use the local queue memo in input/payloads/expedite_queue_memo.json and the shared Northwind ERP API to prepare the dispatch-control answer.\"},{\"ref_id\":\"ev:381ecea52c12123b6912c0e7:0:672\",\"quote\":\"Return only JSON matching input/payloads/answer_template.json.\\n\\nKeep records sorted by order_id. Currency must be rounded to two decimals.\"}]},{\"kind\":\"action\",\"text\":\"助手调用 read_input，参数为 input/payloads/expedite_queue_memo.json。\",\"excerpts\":[{\"ref_id\":\"ev:3c8c9a4e1273b1ebc4194fd7:0:146\",\"quote\":\"{\\\"arguments\\\":\\\"{\\\\\\\"path\\\\\\\":\\\\\\\"input/payloads/expedite_queue_memo.json\\\\\\\"}\\\",\\\"provider_tool_call_id\\\":\\\"call_RHzYuNzZqRArpKXPoWylvUtc\\\",\\\"tool\\\":\\\"read_input\\\"}\"}]},{\"kind\":\"outcome\",\"text\":\"任务结果反馈标记为 fail。反馈理由片段显示订单集合与数量、客户例外及运费报价评分点匹配，但库存状态与短缺、停用及低库存 SKU 集合、最终决定和后续动作未匹配；完整评分点和理由正文未在本包中提供。\",\"excerpts\":[{\"ref_id\":\"ev:d8d0d6ef08955637f732e689:0:650\",\"quote\":\"\\\"outcome\\\":\\\"fail\\\"\"},{\"ref_id\":\"ev:b1564b8f87528965274ffc77:0:950\",\"quote\":\"{\\\"id\\\":\\\"SP001_order_set_and_count\\\",\\\"matched\\\":true\"},{\"ref_id\":\"ev:b1564b8f87528965274ffc77:0:950\",\"quote\":\"{\\\"id\\\":\\\"SP002_inventory_statuses_and_shortages\\\",\\\"matched\\\":false\"},{\"ref_id\":\"ev:b1564b8f87528965274ffc77:0:950\",\"quote\":\"{\\\"id\\\":\\\"SP003_inactive_and_low_stock_sku_sets\\\",\\\"matched\\\":false\"}]}],\"unknowns\":[\"队列备忘录工具返回正文在订单列表中截断，无法从已提供内容确定完整 order_ids 或备忘录的全部要求。\",\"已记录对 input/prompt.txt 的 read_input 调用，但其工具结果仅出现在目录中，未提供正文，不能据此陈述读取结果。\",\"未提供后续 ERP API 查询、答案模板读取、最终 JSON 输出或其他执行事件的正文；局部包不能说明这些动作是否发生。\",\"反馈 reason 仅提供前段正文，SP004 之后的评分点详情和完整 gaps 不可见。\"],\"reason\":\"依据所给片段整理任务、一次可见文件读取动作及任务结果反馈；覆盖范围明确不完整，未将目录中的未提供正文引用作为证据。\"}",
+      "finish_reason": "stop",
+      "usage": {
+        "input_tokens": 6872,
+        "output_tokens": 717,
+        "total_tokens": 7589,
+        "monetary_cost": null,
+        "currency": null,
+        "price_version": null
+      },
+      "model": "gpt-5.6-terra",
+      "request_id": "resp_0253225e86639c36016aaf2f41417c87d08681491b8a860aee"
+    },
+    "attempts": [
+      {
+        "attempt": 1,
+        "finish_reason": "stop",
+        "raw_response": {
+          "text": "{\"status\":\"completed\",\"observations\":[{\"kind\":\"task\",\"text\":\"任务要求读取本地加急队列备忘录并查询共享 Northwind ERP API，为备忘录中的每个订单生成符合答案模板的调度控制 JSON；记录须按 order_id 排序，货币保留两位小数。\",\"excerpts\":[{\"ref_id\":\"ev:381ecea52c12123b6912c0e7:0:672\",\"quote\":\"Use the local queue memo in input/payloads/expedite_queue_memo.json and the shared Northwind ERP API to prepare the dispatch-control answer.\"},{\"ref_id\":\"ev:381ecea52c12123b6912c0e7:0:672\",\"quote\":\"Return only JSON matching input/payloads/answer_template.json.\\n\\nKeep records sorted by order_id. Currency must be rounded to two decimals.\"}]},{\"kind\":\"action\",\"text\":\"助手调用 read_input，参数为 input/payloads/expedite_queue_memo.json。\",\"excerpts\":[{\"ref_id\":\"ev:3c8c9a4e1273b1ebc4194fd7:0:146\",\"quote\":\"{\\\"arguments\\\":\\\"{\\\\\\\"path\\\\\\\":\\\\\\\"input/payloads/expedite_queue_memo.json\\\\\\\"}\\\",\\\"provider_tool_call_id\\\":\\\"call_RHzYuNzZqRArpKXPoWylvUtc\\\",\\\"tool\\\":\\\"read_input\\\"}\"}]},{\"kind\":\"outcome\",\"text\":\"任务结果反馈标记为 fail。反馈理由片段显示订单集合与数量、客户例外及运费报价评分点匹配，但库存状态与短缺、停用及低库存 SKU 集合、最终决定和后续动作未匹配；完整评分点和理由正文未在本包中提供。\",\"excerpts\":[{\"ref_id\":\"ev:d8d0d6ef08955637f732e689:0:650\",\"quote\":\"\\\"outcome\\\":\\\"fail\\\"\"},{\"ref_id\":\"ev:b1564b8f87528965274ffc77:0:950\",\"quote\":\"{\\\"id\\\":\\\"SP001_order_set_and_count\\\",\\\"matched\\\":true\"},{\"ref_id\":\"ev:b1564b8f87528965274ffc77:0:950\",\"quote\":\"{\\\"id\\\":\\\"SP002_inventory_statuses_and_shortages\\\",\\\"matched\\\":false\"},{\"ref_id\":\"ev:b1564b8f87528965274ffc77:0:950\",\"quote\":\"{\\\"id\\\":\\\"SP003_inactive_and_low_stock_sku_sets\\\",\\\"matched\\\":false\"}]}],\"unknowns\":[\"队列备忘录工具返回正文在订单列表中截断，无法从已提供内容确定完整 order_ids 或备忘录的全部要求。\",\"已记录对 input/prompt.txt 的 read_input 调用，但其工具结果仅出现在目录中，未提供正文，不能据此陈述读取结果。\",\"未提供后续 ERP API 查询、答案模板读取、最终 JSON 输出或其他执行事件的正文；局部包不能说明这些动作是否发生。\",\"反馈 reason 仅提供前段正文，SP004 之后的评分点详情和完整 gaps 不可见。\"],\"reason\":\"依据所给片段整理任务、一次可见文件读取动作及任务结果反馈；覆盖范围明确不完整，未将目录中的未提供正文引用作为证据。\"}",
+          "finish_reason": "stop",
+          "usage": {
+            "input_tokens": 6872,
+            "output_tokens": 717,
+            "total_tokens": 7589,
+            "monetary_cost": null,
+            "currency": null,
+            "price_version": null
+          },
+          "model": "gpt-5.6-terra",
+          "request_id": "resp_0253225e86639c36016aaf2f41417c87d08681491b8a860aee"
+        }
+      }
+    ]
+  }
+}

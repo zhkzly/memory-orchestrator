@@ -1,0 +1,218 @@
+{
+  "stage": "revised",
+  "created_at": "2026-09-20T00:55:57.988390Z",
+  "source_commit": "56d60ae4ae5e067d1ec0ee1f850622e69f422179",
+  "tasks": {
+    "learning": "train_001",
+    "regression": "train_004",
+    "probe": "test_001"
+  },
+  "actor": {
+    "max_model_calls": 6,
+    "max_tool_calls": 128,
+    "max_input_chars": 100000,
+    "max_tool_output_chars": 20000,
+    "max_completion_tokens": 8192,
+    "context_policy": {
+      "max_roots": 3,
+      "max_context_chars": 18000,
+      "relation_weight": 0.5
+    }
+  },
+  "teacher": {
+    "max_input_chars": 120000,
+    "max_output_chars": 30000,
+    "max_output_tokens": 6000,
+    "max_total_input_chars": 720000,
+    "max_calls": 12,
+    "max_format_repairs": 1,
+    "token_budget": {
+      "max_input_tokens": 40000,
+      "max_total_input_tokens": 160000,
+      "max_total_output_tokens": 24000,
+      "stages": {
+        "summarize_trace_v1": {
+          "max_calls": 4,
+          "max_input_tokens": 12000,
+          "max_output_tokens": 1000,
+          "max_total_input_tokens": 32000,
+          "max_total_output_tokens": 4000
+        },
+        "extract_v1": {
+          "max_calls": 2,
+          "max_input_tokens": 16000,
+          "max_output_tokens": 3000,
+          "max_total_input_tokens": 32000,
+          "max_total_output_tokens": 6000
+        },
+        "goal_binding_v1": {
+          "max_calls": 2,
+          "max_input_tokens": 10000,
+          "max_output_tokens": 1200,
+          "max_total_input_tokens": 16000,
+          "max_total_output_tokens": 2400
+        },
+        "maintain_experience_v1": {
+          "max_calls": 1,
+          "max_input_tokens": 12000,
+          "max_output_tokens": 1000,
+          "max_total_input_tokens": 12000,
+          "max_total_output_tokens": 1000
+        },
+        "diagnose_v1": {
+          "max_calls": 2,
+          "max_input_tokens": 30000,
+          "max_output_tokens": 3000,
+          "max_total_input_tokens": 45000,
+          "max_total_output_tokens": 4500
+        },
+        "propose_v1": {
+          "max_calls": 2,
+          "max_input_tokens": 20000,
+          "max_output_tokens": 4000,
+          "max_total_input_tokens": 30000,
+          "max_total_output_tokens": 6000
+        }
+      }
+    }
+  },
+  "global_sdk": {
+    "model": "gpt-5.6-terra",
+    "base_url": "http://localhost:8317/v1",
+    "timeout": 120,
+    "max_calls": 42,
+    "max_total_input_chars": 3000000,
+    "max_output_tokens": 8192
+  },
+  "continuation": {
+    "purpose": "Fresh post-rewrite study transport configuration; previous ledger starts empty, not a continuation of historical calls.",
+    "previous_ledger": "calls-default-empty",
+    "new_ledger": "calls-live",
+    "config": {
+      "model": "gpt-5.6-terra",
+      "base_url": "http://localhost:8317/v1",
+      "timeout": 120,
+      "max_calls": 42,
+      "max_total_input_chars": 3000000,
+      "max_output_tokens": 8192
+    }
+  },
+  "learning": {
+    "trajectory_processing": {
+      "direct_max_input_tokens": 16000,
+      "plan": {
+        "max_scan_events": 512,
+        "max_segments": 4,
+        "max_groups_per_segment": 4,
+        "packet": {
+          "max_chars": 15000,
+          "max_fragment_chars": 1600,
+          "max_catalog_refs": 4,
+          "token_budget": 6000
+        },
+        "role_max_chars": {
+          "user": 1600,
+          "action": 1200,
+          "note": 400,
+          "result": 600,
+          "feedback": 1600,
+          "unknown": 320
+        }
+      },
+      "summary_limits": {
+        "max_observations": 3,
+        "max_quote_chars": 240
+      }
+    },
+    "packet": {
+      "max_chars": 42000,
+      "max_fragment_chars": 1800,
+      "max_catalog_refs": 24,
+      "token_budget": 24000
+    },
+    "expanded_packet": {
+      "max_chars": 60000,
+      "max_fragment_chars": 3000,
+      "max_catalog_refs": 24,
+      "token_budget": 34000
+    },
+    "max_expansions": 1,
+    "max_experiences": 3,
+    "max_read_requests": 3,
+    "max_related_experiences": 4,
+    "max_related_episodes": 6,
+    "max_related_chars": 12000,
+    "candidate_count": 1,
+    "max_operations": 4,
+    "max_skills": 12,
+    "max_asset_bytes": 20000,
+    "necessity": {
+      "max_compared_skills": 12
+    },
+    "maintenance": {
+      "max_chars": 18000,
+      "max_pairs": 6,
+      "max_actions": 4
+    },
+    "goal_binding": {
+      "max_events": 6,
+      "max_bindings": 6,
+      "max_read_requests": 2,
+      "max_expansions": 1,
+      "max_catalog_goals": 12,
+      "packet": {
+        "max_chars": 18000,
+        "max_fragment_chars": 1800,
+        "max_catalog_refs": 16,
+        "token_budget": 10000
+      }
+    },
+    "evaluation_scope": "Local procedural improvement for the observed GDPevo train_001 workflow; train_004 is a regression check. No general transfer claim. The actor can query official read-only business GET endpoints, read public input files and selected Skill assets, and submit an answer. It cannot execute scripts or access grading materials. Only the trusted checks in verification_catalog are supplied in this pilot."
+  },
+  "contract_source": {
+    "path": "docs/blueprint/project-contract.json",
+    "version": "1.10.0",
+    "sha256": "d39a35d4b9d111d35f341353b6401efc9a436f291fb48e67dea5b797d39f2ce8"
+  },
+  "prompt_digests": {
+    "summarize_trace_v1": "25d6c60f0cd68dcf977aa93c34c80b00faaacf8c72654394661686ff7806e6ef",
+    "extract_v1": "56c4548a3299c2d7a76b9304babe95572c12b6f431c00135a9b991d90ab01545",
+    "diagnose_v1": "74227772005f78f432d1858d785e77061acf6059f3cadd14b2341c180941aa99",
+    "propose_v1": "e9c8248839571add0f60d01077217b5596398b31b1b5fa11b7a266fe2fac31c9",
+    "goal_binding_v1": "fcb38317aaf464ab34ddaedca8e64c3c3e50eef34fbb6099ee8a4cd5d8842ee2",
+    "proxy_judge_v1": "5b2f6a55e55332c77124af36d166bc1455809c1a359934b8a35527f63e473e3f",
+    "maintain_experience_v1": "fddb95f6adfc773c4d801f69b7af8496403fabdd1fc8f6a7dabd44629cb9af51"
+  },
+  "source_hashes": {
+    "src/memory_orchestrator/__init__.py": "34411261695cb1c20da720b9c792ae0bc4a8a7ff8278ce364cb24701221485d1",
+    "src/memory_orchestrator/assets.py": "c115c581d94c19cbf3312ad211bd28eebc0aebfb31bd9f590e3d217a918fd9e0",
+    "src/memory_orchestrator/candidates.py": "eed53bad0b36fcd01ee2c5e1d7bf6b9769b616b58c9c18fae0e3b7c25d52ac4f",
+    "src/memory_orchestrator/context.py": "012154af7e123ab4ee18b03fb2e603679b1c173e8183558f614489a976a24946",
+    "src/memory_orchestrator/engine.py": "d2701f1ccfa5b48ce40d3ba7fe8f9fd49887df6afe94369698bd90caed3e612b",
+    "src/memory_orchestrator/evaluation.py": "6783c56470aba2a4356a0c525bbffe6de69532ab9749378194402dded27f97ea",
+    "src/memory_orchestrator/evidence.py": "3eca705f1f11708b768ef08994e29616777d53b00dbd272ef5e293bd8cb7b7a4",
+    "src/memory_orchestrator/experiments.py": "bdbad3b5d605e4d20b19b682aae0f411ac532068d5f370774d77c5494b96a7d5",
+    "src/memory_orchestrator/feedback.py": "3d3667cd2dfaf5e003f07bb033502c452c227202d33d7791fe59b8ab76b605a5",
+    "src/memory_orchestrator/goals.py": "3f243124894a800a00f8c2c70b0b720aa32bffaf2786f94660d575babad1cd27",
+    "src/memory_orchestrator/learning.py": "2d7e5a0e57f131091961d4fd0673c45936b6c227f69eebd3a7368f3d39e1650b",
+    "src/memory_orchestrator/lineage.py": "dd2381e4839d4b420941494b13600313ac2552742fc0825a6f78aa545d69fde7",
+    "src/memory_orchestrator/maintenance.py": "e3c5e86af3d72c1689fa849d4afd757ebcd410730e67a99e3dad0296a5dd3b80",
+    "src/memory_orchestrator/model.py": "ebeca19f47c1f887861c9f0ed1acc0bc63cf3f3ca89ed2a6834e40d61084c356",
+    "src/memory_orchestrator/outcomes.py": "db4b1c5f368d758b726c17d6f6a63e7d982a4689fb7fb924cee6a625ac89ec37",
+    "src/memory_orchestrator/relations.py": "97fc3d526089f62a0d46faac361a42c974055bf0f86219d0eb3c6eab631d797f",
+    "src/memory_orchestrator/release.py": "1f931ebb93c81ec7e6bf95f8d44403961fc4e755512d6d8e26faf647ed2b6461",
+    "src/memory_orchestrator/report.py": "4ee999cd382a379b4accb055f28573f0311b07d4e775a7db27959dd96e4f292c",
+    "src/memory_orchestrator/sampling.py": "67bd03460cacf63366a3c9ac2795640d12f56a7da18de84d67c9a90775d95b31",
+    "src/memory_orchestrator/schemas.py": "ba1a4ccde874e80e1c1f4b80d1333913a75e5cfdb8bd485ff273d0d6246ebf1e",
+    "src/memory_orchestrator/store.py": "9017becd6982df2f92a6bffd56c5c5aed2edc640a45465ae3df700333470c325",
+    "src/memory_orchestrator/telemetry.py": "e21de9b9eeac619251f03957bbe59f555df3e4ae8085a8d797d211c91c6417c4",
+    "src/memory_orchestrator/trace.py": "52724de581b30eacc5b4791184b3962faddc9ed45d41c79960585ca728b2636b",
+    "src/memory_orchestrator/verification.py": "da174a3cbcbb0ffe84679d43902bf767ce6e25d799452b1b9eefc4bc5ab6aea4",
+    "examples/gdpevo_pilot/actor.py": "62a6f3be47ca66379c1ac387807f00fc3160ada652b399ba0b4118074a993608",
+    "examples/gdpevo_pilot/dataset.py": "fdf5f12d09fd4f96f1bf787e4ebd812c4433cabbb80e56d4c752828d1ddc03b3",
+    "examples/gdpevo_pilot/run.py": "ed83f1b05c841b80b53acb6ee4762f84b2cbd84e69d5818ee001a152ec45b1b3",
+    "examples/gdpevo_pilot/sdk.py": "edd55ea9b9af866e95b4f727d8cdc28df423d5978545031fb0b747e7d8b74777"
+  },
+  "seed_support": "unsupported/unconfirmed; repeated outputs are not paired random seeds",
+  "claim": "Small diagnostic subset with project-specific selection protocol, not an official benchmark score."
+}

@@ -1,0 +1,8 @@
+{
+  "model": "gpt-5.6-terra",
+  "base_url": "http://localhost:8317/v1",
+  "timeout": 120,
+  "max_calls": 42,
+  "max_total_input_chars": 3000000,
+  "max_output_tokens": 8192
+}

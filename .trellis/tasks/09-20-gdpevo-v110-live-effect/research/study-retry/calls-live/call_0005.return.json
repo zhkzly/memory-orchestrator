@@ -1,0 +1,8 @@
+{
+  "call_ref": "call_0005",
+  "status": "error",
+  "error_type": "APITimeoutError",
+  "elapsed_seconds": 120.10017598000559,
+  "usage": null,
+  "finished_at": "2026-09-20T00:59:29.227738Z"
+}
