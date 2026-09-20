@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 16
+- **Total Sessions**: 17
 - **Last Active**: 2026-09-20
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~507 | Active |
+| `journal-1.md` | ~530 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 17 | 2026-09-20 | GDPevo v1.10 benchmark | `20212a0`, `1a524b8` | `codex/vault-controller-maintenance` |
 | 16 | 2026-09-20 | v1.10 GDPevo 真实 Teacher 效果实验 | `0c639cc`, `dc4a10d` | `codex/vault-controller-maintenance` |
 | 15 | 2026-09-20 | 反馈闭环与 Skill 适用性优化 | `efd6ebb`, `298fe86`, `ecd2416` | `codex/vault-controller-maintenance` |
 | 14 | 2026-09-19 | 定位checklist型Skill无增益与回归根因 | `2ce0093` | `codex/vault-controller-maintenance` |

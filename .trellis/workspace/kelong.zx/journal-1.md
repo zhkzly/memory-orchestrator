@@ -505,3 +505,26 @@ Unified role-aware trajectory input; grounded local summaries, original excerpts
 ### Status
 
 [OK] **Completed**
+
+
+## Session 17: GDPevo v1.10 benchmark
+<!-- trellis-session: v=2 fp=2dab18ce6ae5c288 -->
+
+**Date**: 2026-09-20
+**Task**: GDPevo v1.10 benchmark
+**Branch**: `codex/vault-controller-maintenance`
+
+### Summary
+
+完成等长provider readiness与冻结development运行：7/7请求返回、81,656 Token，提取instance经验后needs_evidence弃权；0 Candidate/0发布。覆盖审计定位138事件仅分析7个、inventory证据排在第22段的轨迹选择瓶颈，并补充公开报告与简历v3。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `20212a0` | experiment: run v1.10 GDPevo benchmark |
+| `1a524b8` | docs: report v1.10 benchmark findings |
+
+### Status
+
+[OK] **Completed**
